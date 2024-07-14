@@ -1,0 +1,87 @@
+{
+  "bundles": [
+    {
+      "id": "org.slf4j:jcl-over-slf4j:${slf4j.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.slf4j:log4j-over-slf4j:${slf4j.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.slf4j:slf4j-api:${slf4j.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.log:${org.apache.sling.commons.log.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.logservice:${org.apache.sling.commons.logservice.version}",
+      "start-order": "1"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.commons.log.LogManager": {
+      "org.apache.sling.commons.log.packagingDataEnabled": true,
+      "org.apache.sling.commons.log.pattern": "%d{dd.MM.yyyy HH:mm:ss.SSS} *%level* [%thread] %logger %msg%n",
+      "org.apache.sling.commons.log.level": "info",
+      "org.apache.sling.commons.log.file": "logs/error.log",
+      "org.apache.sling.commons.log.file.number:Integer": "30",
+      "org.apache.sling.commons.log.file.size": "'.'yyyy-MM-dd"
+    },
+    "org.apache.sling.engine.impl.log.RequestLogger": {
+      "access.log.enabled": true,
+      "request.log.outputtype:Integer": "0",
+      "access.log.output": "log.access",
+      "request.log.output": "log.request",
+      "request.log.enabled": true,
+      "access.log.outputtype:Integer": "0"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.config~access.log": {
+      "org.apache.sling.commons.log.pattern": "%msg%n",
+      "org.apache.sling.commons.log.names": [
+        "log.access"
+      ],
+      "org.apache.sling.commons.log.level": "info",
+      "org.apache.sling.commons.log.file": "logs/access.log"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.config~request.log": {
+      "org.apache.sling.commons.log.pattern": "%msg%n",
+      "org.apache.sling.commons.log.names": [
+        "log.request"
+      ],
+      "org.apache.sling.commons.log.level": "info",
+      "org.apache.sling.commons.log.file": "logs/request.log"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.config~query.log": {
+      "org.apache.sling.commons.log.names": [
+        "org.apache.jackrabbit.oak.plugins.index",
+        "org.apache.jackrabbit.oak.query"
+      ],
+      "org.apache.sling.commons.log.level": "DEBUG",
+      "org.apache.sling.commons.log.file": "logs/query.log",
+      "org.apache.sling.commons.log.additiv": "false"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.writer~error.log": {
+      "org.apache.sling.commons.log.file": "logs/error.log",
+      "org.apache.sling.commons.log.file.number": 30,
+      "org.apache.sling.commons.log.file.size": "'.'yyyy-MM-dd"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.writer~access.log": {
+      "org.apache.sling.commons.log.file": "logs/access.log",
+      "org.apache.sling.commons.log.file.number": 30,
+      "org.apache.sling.commons.log.file.size": "'.'yyyy-MM-dd"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.writer~request.log": {
+      "org.apache.sling.commons.log.file": "logs/request.log",
+      "org.apache.sling.commons.log.file.number": 30,
+      "org.apache.sling.commons.log.file.size": "'.'yyyy-MM-dd"
+    },
+    "org.apache.sling.commons.log.LogManager.factory.writer~query.log": {
+      "org.apache.sling.commons.log.file": "logs/query.log",
+      "org.apache.sling.commons.log.file.number": 30,
+      "org.apache.sling.commons.log.file.size": "'.'yyyy-MM-dd"
+    }
+  }
+}

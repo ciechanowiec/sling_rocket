@@ -1,0 +1,36 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.commons:commons-text:${commons-text.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.commons:commons-lang3:${commons-lang3.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "commons-codec:commons-codec:${commons-codec.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "commons-fileupload:commons-fileupload:${commons-fileupload.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "commons-io:commons-io:${commons-io.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "commons-collections:commons-collections:${commons-collections.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.commons:commons-collections4:${commons-collections4.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.commons:commons-math3:${commons-math3.version}",
+      "start-order": "20"
+    }
+  ]
+}

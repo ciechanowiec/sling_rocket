@@ -1,0 +1,179 @@
+{
+  "variables": {
+    "sling.home": null
+  },
+  "prototype": {
+    "id": "org.apache.sling:org.apache.sling.jcr.maintenance:slingosgifeature:base:${org.apache.sling.jcr.maintenance.version}"
+  },
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.javax.activation:${org.apache.sling.javax.activation.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.settings:${org.apache.sling.settings.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.extensions.threaddump:${org.apache.sling.extensions.threaddump.version}",
+      "start-order": "4"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.api:${org.apache.sling.api.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.auth.core:${org.apache.sling.auth.core.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.serviceusermapper:${org.apache.sling.serviceusermapper.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.servlets.post:${org.apache.sling.servlets.post.version}",
+      "start-order": "18"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.validation.api:${org.apache.sling.validation.api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.validation.core:${org.apache.sling.validation.core.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.caconfig.api:${org.apache.sling.caconfig.api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.caconfig.spi:${org.apache.sling.caconfig.spi.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.hc.api:${org.apache.sling.hc.api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.hc.support:${org.apache.sling.hc.support.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.adapter:${org.apache.sling.adapter.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.auth.form:${org.apache.sling.auth.form.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.bundleresource.impl:${org.apache.sling.bundleresource.impl.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.engine:${org.apache.sling.engine.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.fsresource:${org.apache.sling.fsresource.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.i18n:${org.apache.sling.i18n.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.resourceresolver:${org.apache.sling.resourceresolver.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.servlets.get:${org.apache.sling.servlets.get.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.xss:${org.apache.sling.xss.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.resource.filter:${org.apache.sling.resource.filter.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.provisioning.model:${org.apache.sling.provisioning.model.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.event.dea:${org.apache.sling.event.dea.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.event:${org.apache.sling.event.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.servlets.resolver:${org.apache.sling.servlets.resolver.version}",
+      "start-order": "23"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.caconfig.impl:${org.apache.sling.caconfig.impl.version}",
+      "start-order": "23"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.jcr.davex.impl.servlets.SlingDavExServlet": {
+      "alias": "/server"
+    },
+    "org.apache.sling.jcr.webdav.impl.servlets.SimpleWebDavServlet": {
+      "dav.root": "/dav"
+    },
+    "org.apache.sling.commons.scheduler.impl.QuartzScheduler": {
+      "allowedPoolNames": [
+        "oak",
+        "org-apache-sling-event"
+      ]
+    },
+    "org.apache.sling.engine.impl.auth.SlingAuthenticator": {
+      "auth.annonymous": false,
+      "sling.auth.requirements": "+/"
+    },
+    "org.apache.sling.jcr.contentloader.hc.BundleContentLoadedCheck": {
+      "hc.tags": [
+        "bundles",
+        "content-loading"
+      ]
+    },
+    "org.apache.sling.commons.threads.impl.DefaultThreadPool.factory~sling-event": {
+      "name": "org-apache-sling-event",
+      "minPoolSize:Integer": "1",
+      "maxPoolSize:Integer": "5"
+    },
+    "org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment~sling": {
+      "whitelist.bundles": [
+        "org.apache.sling.discovery.commons",
+        "org.apache.sling.discovery.base",
+        "org.apache.sling.discovery.oak",
+        "org.apache.sling.i18n",
+        "org.apache.sling.jcr.base",
+        "org.apache.sling.jcr.contentloader",
+        "org.apache.sling.jcr.jackrabbit.usermanager",
+        "org.apache.sling.jcr.oak.server",
+        "org.apache.sling.jcr.repoinit",
+        "org.apache.sling.servlets.post"
+      ],
+      "whitelist.name": "sling"
+    },
+    "org.apache.sling.jcr.maintenance.internal.DataStoreCleanupScheduler": {
+      "scheduler.expression": "0 0 2 ? * *"
+    },
+    "org.apache.sling.jcr.maintenance.internal.RevisionCleanupScheduler": {
+      "scheduler.expression": "0 0 2 ? * *"
+    },
+    "org.apache.sling.jcr.maintenance.internal.VersionCleanup": {
+      "scheduler.expression": "0 0 2 ? * *"
+    },
+    "org.apache.sling.jcr.maintenance.internal.VersionCleanupPath~default": {
+      "path": "/",
+      "limit": 5
+    }
+  }
+}

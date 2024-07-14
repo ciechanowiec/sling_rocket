@@ -1,0 +1,24 @@
+{
+  "bundles": [
+    {
+      "id": "org.ow2.asm:asm:${asm.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.ow2.asm:asm-analysis:${asm.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.ow2.asm:asm-commons:${asm.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.ow2.asm:asm-tree:${asm.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.ow2.asm:asm-util:${asm.version}",
+      "start-order": "1"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+[.text-justify]
+= Sling Rocket
+:reproducible:
+:doctype: article
+:author: Herman Ciechanowiec
+:email: herman@ciechanowiec.eu
+:chapter-signifier:
+:sectnums:
+:sectnumlevels: 5
+:sectanchors:
+:toc: left
+:toclevels: 5
+:icons: font
+// Docinfo is used for foldable TOC.
+// -> For full usage example see https://github.com/remkop/picocli
+:docinfo: shared,private
+:linkcss:
+:stylesdir: https://www.ciechanowiec.eu/linux_mantra/
+:stylesheet: adoc-css-style.css
+
+== Overview
+
+_Sling Rocket_ is a framework for building dynamic web applications.
+
+== Architecture
+
+_Sling Rocket_ consists of two basic parts:
+[upperalpha]
+. Sling Rocket Parent POM ("*SR Parent POM*")
++
+A Maven project object model that declaratively describes basic and universal application components of _Sling Rocket_.
+. Sling Rocket Instance ("*SR Instance*")
++
+[upperroman]
+.. A standalone long-running OSGi container.
+.. Serves as the environment inside which business applications are running. Among others, it means that the SR Instance contains default dependencies and configurations that can be used by embedded business applications. The SR Instance itself is responsible for all non-business-related logic.
+.. Defined by the SR Parent POM.
+.. Has an embedded NoSQL database - Apache Jackrabbit Oak (Java Content Repository, JCR). It can be simultaneously connected to other databases.
+
+The development of business applications for _Sling Rocket_ has this flow:
+
+[upperalpha]
+. Deploy an SR Instance.
+. Develop a business application with the SR Parent POM.
+. Deploy the business application to the SR Instance.
+. The SR Parent POM will provide the business application with all dependencies and configurations available in the targeted SR Instance. In other words, the SR Parent POM will give the business application the environment in which it will run, as the SR Instance itself was built using the same SR Parent POM.
+. The business application can override the default application components of the targeted SR Instance.
+
+image::sling-rocket-architecture-diagram.svg[]
+
+.Raw diagram
+[%collapsible]
+====
+[ditaa, shadows=false, separation=false, target=sling-rocket-architecture-diagram, format=svg, opts=inline]
+....
+                                          /--------------\
+                                          |              |
+                                          | SR Parent POM|
+                                          |   c68F       |
+                                          \-------+------/
+                                                  |
+                   +------------------------------+------------------------------+
+                   |                              |                              |
+                   v                              |                              v
+      +------------------------+                  |                  +------------------------+
+      :                        |                  |                  :                        |
+      |   business application |                  |                  |   business application |
+      |          "UNO"         |                  |                  |          "DUO"         |
+      |                        |                  |                  |                        |
+      +------------+-----------+                  |                  +-----------+------------+
+                   |                              v                              |
+                   |                   +-------------------+                     |
+                   |                   |                   |                     |
+                   +------------------>|    SR Instance    |<--------------------+
+                                       | cGRE              |
+                                       | +---------------+ |
+                                       | |               | |
+                                       | |    database   | |
+                                       | |{s} cPNK       | |
+                                       +-+---------------+-+
+....
+====
+
+== Usage
+
+The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `13.0.0`, the version of the SR Instance must also be `13.0.0`.
+
+=== SR Parent POM
+
+The SR Parent POM is published in the Maven Central Repository. It should be defined as the parent POM of every business application deployed to an SR Instance:
+[source, xml]
+....
+<parent>
+    <groupId>eu.ciechanowiec</groupId>
+    <artifactId>sling.rocket.parent</artifactId>
+    <version>13.0.0</version>
+</parent>
+....
+
+=== SR Instance
+
+The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/sling`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository:
+
+[source,bash]
+....
+curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
+docker compose up -d
+....
+
+=== Persistence
+
+[upperalpha]
+. Static files related to an SR Instance reside in `/opt/sling/launcher`. This includes the directory `/opt/sling/launcher/repository`, where JCR static files are located. The directory with JCR static files, i.e. `/opt/sling/launcher/repository`, is a complete and independent set of files for a standalone JCR, and no other files are required for the correct operation of the JCR itself. However, the rest of the static files from `/opt/sling/launcher` maintain an inseparable relationship with the specific state of JCR static files from `/opt/sling/launcher/repository`. This means that mounting a new set of files to `/opt/sling/launcher/repository` that were not previously associated with the rest of the static files from `/opt/sling/launcher` might cause problems in the SR Instance, although the JCR itself might work correctly. Therefore, all static files from `/opt/sling/launcher` should be treated as an indivisible persistence layer of a given SR Instance. This means that the entire `/opt/sling/launcher` (not only `/opt/sling/launcher/repository`) should be mounted as a persistent Docker volume of a given SR instance.
+. Due to the persistence specifics described above and the fact that every new version of _Sling Rocket_ delivers a new and unique set of static files from `/opt/sling/launcher`, a new version of _Sling Rocket_ cannot replace the previous one in such a way that the new version will just start working as a new shell for the previous JCR. Every new version of _Sling Rocket_ is permanently associated with a new clean JCR. Therefore, _Sling Rocket_ version updates must be performed via content migration from the previous SR Instance to the new one.
+. To ease JCR data management, it is strongly recommended that all unique and runtime-generated business application data is stored under the `/content` path of JCR. Data stored under other JCR paths should be disposable and reproducible via code deployments.
+
+== Miscellaneous
+
+=== Apache Sling
+
+_Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling] framework. As a starting point for the build, the 13th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter] was used.
+
+=== Deployment
+
+Deployment of new versions of _Sling Rocket_ consists of the following steps:
+[upperalpha]
+. Build and deploy the SR Parent POM and subordinate artifacts to the Maven Central Repository:
++
+[source,bash]
+....
+cd "$PROJECT_REPO_ROOT"/src/2_sling/maven-project
+mvn clean deploy -P release
+....
++
+. Build and deploy the SR Instance image to Docker Hub:
++
+[source,bash]
+....
+cd "$PROJECT_REPO_ROOT"/src
+docker compose --progress=plain build
+docker push ciechanowiec/sling:13.0.0
+....
+
+=== Ideas to be Considered for Implementation
+
+[upperalpha]
+. Implementing an https://jackrabbit.apache.org/filevault/installhooks.html[installation hook] for index deployments, similar to https://github.com/code-distillery/filevault-oak-reindex-hook, but should reside in the OSGi container so that it can be referenced by packages.
+. Integration tests for the running SR Instance, including additional Apache Felix Health Checks, write-read operations on the JCR repository and Composum console verification. The https://github.com/apache/sling-org-apache-sling-starter/tree/master/src/test/java/org/apache/sling/launchpad[Apache Sling Starter integration tests] can serve as an example.
+. JMX plugin for the Apache Felix Web Console.
+
+== License
+The program is subject to MIT No Attribution License
+
+Copyright © 2024 Herman Ciechanowiec
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
+
+The Software is provided 'as is', without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software.

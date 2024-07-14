@@ -1,0 +1,24 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.discovery.api:${org.apache.sling.discovery.api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.discovery.base:${org.apache.sling.discovery.base.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.discovery.commons:${org.apache.sling.discovery.commons.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.discovery.oak:${org.apache.sling.discovery.oak.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.discovery.support:${org.apache.sling.discovery.support.version}",
+      "start-order": "20"
+    }
+  ]
+}

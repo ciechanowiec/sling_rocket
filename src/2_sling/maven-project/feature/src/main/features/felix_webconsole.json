@@ -1,0 +1,40 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole:${org.apache.felix.webconsole.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole.plugins.ds:${org.apache.felix.webconsole.plugins.ds.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole.plugins.event:${org.apache.felix.webconsole.plugins.event.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole.plugins.memoryusage:${org.apache.felix.webconsole.plugins.memoryusage.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole.plugins.obr:${org.apache.felix.webconsole.plugins.obr.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.webconsole.plugins.packageadmin:${org.apache.felix.webconsole.plugins.packageadmin.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.healthcheck.webconsoleplugin:${org.apache.felix.healthcheck.webconsoleplugin.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.http.webconsoleplugin:${org.apache.felix.http.webconsoleplugin.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.http.inventoryprinter:${org.apache.felix.http.inventoryprinter.version}",
+      "start-order": "5"
+    }
+  ]
+}

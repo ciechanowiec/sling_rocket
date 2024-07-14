@@ -1,0 +1,180 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-data:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-jcr-commons:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-jcr-rmi:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-spi-commons:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-spi:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:jackrabbit-webdav:${jackrabbit.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-api:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-blob-plugins:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-blob:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-commons:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-core-spi:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-core:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-jackrabbit-api:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-jcr:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-lucene:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-query-spi:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-shaded-guava:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-security-spi:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-store-composite:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-store-document:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-store-spi:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-authorization-principalbased:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-auth-external:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-auth-ldap:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-authorization-cug:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-search:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-search-elastic:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit:oak-segment-remote:${jackrabbit-oak-db.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.jackrabbit.vault:org.apache.jackrabbit.vault:${org.apache.jackrabbit.vault.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "javax.jcr:jcr:${jcr.version}",
+      "start-order": "30"
+    }
+  ],
+  "configurations": {
+    "org.apache.jackrabbit.oak.security.authentication.AuthenticationConfigurationImpl": {
+      "org.apache.jackrabbit.oak.authentication.configSpiName": "FelixJaasProvider"
+    },
+    "org.apache.jackrabbit.oak.security.user.RandomAuthorizableNodeName": {
+      "length:Integer": "21"
+    },
+    "org.apache.jackrabbit.oak.security.user.UserConfigurationImpl": {
+      "groupsPath": "/home/groups",
+      "defaultDepth": "1",
+      "importBehavior": "besteffort",
+      "usersPath": "/home/users"
+    },
+    "org.apache.jackrabbit.oak.security.authorization.AuthorizationConfigurationImpl": {
+      "importBehavior": "besteffort"
+    },
+    "org.apache.jackrabbit.oak.spi.security.user.action.DefaultAuthorizableActionProvider": {
+      "userPrivilegeNames": [
+        "jcr:all"
+      ],
+      "groupPrivilegeNames": [
+        "jcr:read"
+      ],
+      "enabledActions": [
+        "org.apache.jackrabbit.oak.spi.security.user.action.AccessControlAction"
+      ]
+    },
+    "org.apache.jackrabbit.oak.spi.security.authorization.principalbased.impl.PrincipalBasedAuthorizationConfiguration": {
+      "enableAggregationFilter": true
+    },
+    "org.apache.jackrabbit.oak.spi.security.authorization.principalbased.impl.FilterProviderImpl": {
+      "path": "/home/users/system/sling"
+    },
+    "org.apache.jackrabbit.oak.security.internal.SecurityProviderRegistration": {
+      "requiredServicePids": [
+        "org.apache.jackrabbit.oak.security.authorization.AuthorizationConfigurationImpl",
+        "org.apache.jackrabbit.oak.security.principal.PrincipalConfigurationImpl",
+        "org.apache.jackrabbit.oak.security.authentication.token.TokenConfigurationImpl",
+        "org.apache.jackrabbit.oak.spi.security.user.action.DefaultAuthorizableActionProvider",
+        "org.apache.jackrabbit.oak.security.authorization.restriction.RestrictionProviderImpl",
+        "org.apache.jackrabbit.oak.security.user.UserAuthenticationFactoryImpl",
+        "org.apache.jackrabbit.oak.spi.security.authorization.principalbased.impl.PrincipalBasedAuthorizationConfiguration"
+      ]
+    },
+    "org.apache.jackrabbit.vault.packaging.impl.PackagingImpl": {
+      "authIdsForRootInstallation": [
+        "sling-package-install"
+      ],
+      "packageRoots": [
+        "/etc/packages"
+      ],
+      "authIdsForHookExecution": [
+        "sling-package-install"
+      ]
+    }
+  }
+}

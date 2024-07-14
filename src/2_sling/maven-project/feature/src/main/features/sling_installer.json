@@ -1,0 +1,32 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.core:${org.apache.sling.installer.core.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.factory.configuration:${org.apache.sling.installer.factory.configuration.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.provider.file:${org.apache.sling.installer.provider.file.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.factory.packages:${org.apache.sling.installer.factory.packages.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.hc:${org.apache.sling.installer.hc.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.provider.jcr:${org.apache.sling.installer.provider.jcr.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.installer.console:${org.apache.sling.installer.console.version}",
+      "start-order": "20"
+    }
+  ]
+}

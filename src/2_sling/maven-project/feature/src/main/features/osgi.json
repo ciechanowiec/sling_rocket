@@ -1,0 +1,44 @@
+{
+  "bundles": [
+    {
+      "id": "org.osgi:org.osgi.service.component.annotations:${org.osgi.service.component.annotations.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.compendium:${org.osgi.compendium.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.service.log:${org.osgi.service.log.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.util.promise:${org.osgi.util.promise.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.util.pushstream:${org.osgi.util.pushstream.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.util.function:${org.osgi.util.function.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.service.component:${org.osgi.service.component.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.service.metatype.annotations:${org.osgi.service.metatype.annotations.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:osgi.annotation:${osgi.annotation.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.osgi:org.osgi.service.useradmin:${org.osgi.service.useradmin.version}",
+      "start-order": "1"
+    }
+  ]
+}

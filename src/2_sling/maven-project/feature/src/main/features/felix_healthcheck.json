@@ -1,0 +1,76 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.felix:org.apache.felix.healthcheck.api:${org.apache.felix.healthcheck.api.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.healthcheck.core:${org.apache.felix.healthcheck.core.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.felix:org.apache.felix.healthcheck.generalchecks:${org.apache.felix.healthcheck.generalchecks.version}",
+      "start-order": "5"
+    }
+  ],
+  "configurations": {
+    "org.apache.felix.hc.generalchecks.BundlesStartedCheck": {
+      "hc.tags": [
+        "bundles"
+      ]
+    },
+    "org.apache.felix.hc.generalchecks.CpuCheck": {
+      "hc.tags": [
+        "cpu",
+        "system-resources"
+      ],
+      "cpuPercentageThresholdWarn": 95
+    },
+    "org.apache.felix.hc.generalchecks.DiskSpaceCheck": {
+      "hc.tags": [
+        "diskspace",
+        "system-resources"
+      ],
+      "diskPaths": [
+        "."
+      ]
+    },
+    "org.apache.felix.hc.generalchecks.FrameworkStartCheck": {
+      "hc.tags": [
+        "systemalive"
+      ],
+      "targetStartLevel:Integer": "30"
+    },
+    "org.apache.felix.hc.generalchecks.MemoryCheck": {
+      "hc.tags": [
+        "memory",
+        "system-resources"
+      ],
+      "heapUsedPercentageThresholdCritical": 100,
+      "heapUsedPercentageThresholdWarn": 95
+    },
+    "org.apache.felix.hc.generalchecks.ServicesCheck": {
+      "hc.tags": [
+        "systemalive"
+      ],
+      "services.list": [
+        "org.apache.sling.jcr.api.SlingRepository",
+        "org.apache.sling.engine.auth.Authenticator",
+        "org.apache.sling.api.resource.ResourceResolverFactory",
+        "org.apache.sling.api.servlets.ServletResolver",
+        "javax.script.ScriptEngineManager"
+      ]
+    },
+    "org.apache.felix.hc.generalchecks.ThreadUsageCheck": {
+      "hc.tags": [
+        "threads",
+        "cpu",
+        "system-resources"
+      ]
+    },
+    "org.apache.felix.hc.core.impl.servlet.HealthCheckExecutorServlet~default": {
+      "servletPath": "/system/health",
+      "servletContextName": "org.osgi.service.http"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            font-family: Arial, sans-serif; /* Ensures unified font */
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"],
+        .login-container input[type="submit"] {
+            width: 100%;
+            box-sizing: border-box; /* Includes padding and border in the element's total width */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: Arial, sans-serif; /* Ensures unified font */
+        }
+        .login-container input[type="submit"] {
+            border: none;
+            background-color: #5cb85c;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 0; /* No margin-bottom for the last element */
+        }
+        .login-container input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+    <script>
+        // Function to focus on the Login button when the page loads
+        function focusOnLoginButton() {
+            var loginButton = document.querySelector('.login-container input[type="submit"]');
+            loginButton.focus(); // Set focus on the Login button
+        }
+
+        // Call focusOnLoginButton function when the window finishes loading
+        window.onload = function() {
+            focusOnLoginButton();
+        };
+    </script>
+</head>
+<body>
+<div class="login-container">
+    <form id="loginform" method="POST" action="${contextPath}/j_security_check" enctype="multipart/form-data" accept-charset="UTF-8">
+        <input type="hidden" name="_charset_" value="UTF-8" />
+        <input type="hidden" name="resource" value="${resource}" />
+        <div id="error">
+            <p>${j_reason}</p>
+        </div>
+        <input type="text" name="j_username" placeholder="Username" required>
+        <input type="password" name="j_password" placeholder="Password" required>
+        <input type="submit" value="Login">
+    </form>
+</div>
+</body>
+</html>

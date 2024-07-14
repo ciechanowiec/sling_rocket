@@ -1,0 +1,71 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.api:${org.apache.sling.scripting.api.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.spi:${org.apache.sling.scripting.spi.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.core:${org.apache.sling.scripting.core.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.el-api:${org.apache.sling.scripting.el-api.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.javascript:${org.apache.sling.scripting.javascript.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.jsp-api:${org.apache.sling.scripting.jsp-api.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.jsp.taglib:${org.apache.sling.scripting.jsp.taglib.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.jsp:${org.apache.sling.scripting.jsp.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.freemarker:${org.apache.sling.scripting.freemarker.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.thymeleaf:${org.apache.sling.scripting.thymeleaf.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.sightly.compiler.java:${org.apache.sling.scripting.sightly.compiler.java.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.sightly.compiler:${org.apache.sling.scripting.sightly.compiler.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.sightly.js.provider:${org.apache.sling.scripting.sightly.js.provider.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.sightly.runtime:${org.apache.sling.scripting.sightly.runtime.version}",
+      "start-order": "22"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.scripting.sightly:${org.apache.sling.scripting.sightly.version}",
+      "start-order": "22"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.scripting.core.impl.ScriptCacheImpl": {
+      "org.apache.sling.scripting.cache.additional_extensions": [
+        "js"
+      ]
+    }
+  }
+}

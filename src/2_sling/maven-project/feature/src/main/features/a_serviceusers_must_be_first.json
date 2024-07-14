@@ -1,0 +1,113 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.repoinit.parser:${org.apache.sling.repoinit.parser.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.jcr.repoinit:${org.apache.sling.jcr.repoinit.version}",
+      "start-order": "20"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~auth-core": {
+      "user.mapping": [
+        "org.apache.sling.auth.core=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~i18n": {
+      "user.mapping": [
+        "org.apache.sling.i18n=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~installer-packages": {
+      "user.mapping": [
+        "org.apache.sling.installer.factory.packages=[sling-package-install]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~jcr-install": {
+      "user.mapping": [
+        "org.apache.sling.installer.provider.jcr=[sling-readall,sling-jcr-install]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~jcr-resource": {
+      "user.mapping": [
+        "org.apache.sling.jcr.resource:validation=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~observation": {
+      "user.mapping": [
+        "org.apache.sling.jcr.resource:observation=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~resourceresolver": {
+      "user.mapping": [
+        "org.apache.sling.resourceresolver:mapping=[sling-readall]",
+        "org.apache.sling.resourceresolver:hierarchy=[sling-readall]",
+        "org.apache.sling.resourceresolver:observation=[sling-readall]",
+        "org.apache.sling.resourceresolver:console=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~servletsresolver": {
+      "user.mapping": [
+        "org.apache.sling.servlets.resolver:console=[sling-readall]",
+        "org.apache.sling.servlets.resolver:scripts=[sling-search-path-reader]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~xss": {
+      "user.mapping": [
+        "org.apache.sling.xss=[sling-xss]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~jcr-usermanager": {
+      "user.mapping": [
+        "org.apache.sling.jcr.jackrabbit.usermanager=[sling-jcr-usermanager]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~jcr-contentloader": {
+      "user.mapping": [
+        "org.apache.sling.jcr.contentloader=[sling-jcr-content-loader]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling-caconfig": {
+      "user.mapping": [
+        "org.apache.sling.caconfig.impl=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~scripting": {
+      "user.mapping": [
+        "org.apache.sling.scripting.core=[sling-search-path-reader]",
+        "org.apache.sling.scripting.thymeleaf=[sling-search-path-reader]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~hc-support": {
+      "user.mapping": [
+        "org.apache.sling.hc.support=[sling-readall]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~validation": {
+      "user.mapping": [
+        "org.apache.sling.validation.core=[sling-search-path-reader]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling-rocket": {
+      "user.mapping": [
+        "eu.ciechanowiec.sling.rocket.commons:sling-rocket-subservice=[sling-rocket-admin]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling.event": {
+      "user.mapping": [
+        "org.apache.sling.event=[sling-event]",
+        "org.apache.sling.event.dea=[sling-event]"
+      ]
+    },
+    "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling.discovery": {
+      "user.mapping": [
+        "org.apache.sling.discovery.commons=[sling-discovery]",
+        "org.apache.sling.discovery.base=[sling-discovery]",
+        "org.apache.sling.discovery.oak=[sling-discovery]"
+      ]
+    }
+  },
+  "repoinit:TEXT|true": "@file"
+}

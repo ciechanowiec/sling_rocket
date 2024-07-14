@@ -1,0 +1,30 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.log.webconsole:${org.apache.sling.commons.log.webconsole.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.extensions.webconsolesecurityprovider:${org.apache.sling.extensions.webconsolesecurityprovider.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.jcr.webconsole:${org.apache.sling.jcr.webconsole.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.serviceuser.webconsole:${org.apache.sling.serviceuser.webconsole.version}",
+      "start-order": "20"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.jcr.base.internal.LoginAdminWhitelist.fragment~webconsole": {
+      "whitelist.bundles": [
+        "org.apache.sling.extensions.webconsolesecurityprovider",
+        "org.apache.sling.jcr.webconsole",
+        "org.apache.sling.serviceuser.webconsole"
+      ],
+      "whitelist.name": "webconsole"
+    }
+  }
+}

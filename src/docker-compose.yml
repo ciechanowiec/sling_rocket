@@ -1,0 +1,70 @@
+services:
+  sling-base:
+    build:
+      context: .
+      dockerfile: 1_base/Dockerfile
+    image: sling-base:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: sling-base
+    hostname: sling-base
+    networks:
+      - sling-network
+
+  sling:
+    build:
+      context: .
+      dockerfile: 2_sling/Dockerfile
+      args:
+        SLING_DIR: /opt/sling
+        # comma-separated, like: basic,sling
+        RUN_MODES:
+        # On multi-version support: https://sling.apache.org/documentation/bundles/osgi-installer.html#multi-version-support-1
+        ENABLE_MULTI_VERSION_SUPPORT: false
+        HTTP_PORT: 8080
+        # Leave the debug port empty to disable debugging mode:
+        JAVA_DEBUG_PORT: 8081
+        EXTRA_JAVA_OPTS:
+        ROCKET_FEATURE_ARTIFACT_FINAL_NAME: ${ROCKET_FEATURE_ARTIFACT_ID}-${ROCKET_FEATURE_ARTIFACT_VERSION}-oak_tar.far
+    environment:
+      SLING_DIR: /opt/sling
+      # comma-separated, like: basic,sling
+      RUN_MODES:
+      # On multi-version support: https://sling.apache.org/documentation/bundles/osgi-installer.html#multi-version-support-1
+      ENABLE_MULTI_VERSION_SUPPORT: false
+      HTTP_PORT: 8080
+      # Leave the debug port empty to disable debugging mode:
+      JAVA_DEBUG_PORT: 8081
+      EXTRA_JAVA_OPTS:
+    image: ciechanowiec/sling:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: sling
+    volumes:
+      - type: volume
+        source: sling-data
+        target: /opt/sling/launcher
+    # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
+    stop_grace_period: 300s
+    hostname: sling
+    networks:
+      - sling-network
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: host
+    labels:
+      - "docker-volume-backup.stop-during-backup=false"
+    depends_on:
+      - sling-base
+
+volumes:
+  sling-data:
+    name: "sling-data"
+
+networks:
+  sling-network:
+    driver: bridge
+    # This name is required to avoid name prefixing by Docker:
+    name: sling-network

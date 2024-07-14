@@ -1,0 +1,92 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.groovy:groovy:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-ant:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-astbuilder:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-cli-picocli:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-console:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-datetime:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-docgenerator:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-groovydoc:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-groovysh:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-jmx:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-json:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-jsr223:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-macro:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-nio:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-servlet:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-sql:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-swing:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-templates:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-test:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-test-junit5:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-testng:${groovy.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.groovy:groovy-xml:${groovy.version}",
+      "start-order": "20"
+    }
+  ]
+}

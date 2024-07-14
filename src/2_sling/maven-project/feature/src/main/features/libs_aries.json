@@ -1,0 +1,24 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.aries:org.apache.aries.util:${org.apache.aries.util.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:${org.apache.aries.spifly.dynamic.bundle.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.aries.jmx:org.apache.aries.jmx.api:${org.apache.aries.jmx.api.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.aries.jmx:org.apache.aries.jmx.core:${org.apache.aries.jmx.core.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.aries.jmx:org.apache.aries.jmx.whiteboard:${org.apache.aries.jmx.whiteboard.version}",
+      "start-order": "5"
+    }
+  ]
+}

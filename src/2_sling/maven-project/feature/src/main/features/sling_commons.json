@@ -1,0 +1,48 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.johnzon:1.2.16",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.johnzon:${org.apache.sling.commons.johnzon.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.osgi:${org.apache.sling.commons.osgi.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.metrics:${org.apache.sling.commons.metrics.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.classloader:${org.apache.sling.commons.classloader.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.compiler:${org.apache.sling.commons.compiler.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.fsclassloader:${org.apache.sling.commons.fsclassloader.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.mime:${org.apache.sling.commons.mime.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.scheduler:${org.apache.sling.commons.scheduler.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.threads:${org.apache.sling.commons.threads.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.json:${org.apache.sling.commons.json.version}",
+      "start-order": "15"
+    }
+  ]
+}

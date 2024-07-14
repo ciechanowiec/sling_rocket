@@ -1,0 +1,160 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.geronimo.specs:geronimo-annotation_1.3_spec:${geronimo-annotation_1.3_spec.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.geronimo.specs:geronimo-atinject_1.0_spec:${geronimo-atinject_1.0_spec.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec:${geronimo-ws-metadata_2.0_spec.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.servicemix.specs:org.apache.servicemix.specs.saaj-api-1.3:${org.apache.servicemix.specs.saaj-api-1.3.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.servicemix.specs:org.apache.servicemix.specs.jaxb-api-2.3:${org.apache.servicemix.specs.jaxb-api-2.3.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.servicemix.specs:org.apache.servicemix.specs.jaxws-api-2.2:${org.apache.servicemix.specs.jaxws-api-2.2.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.jaxb-runtime:${org.apache.servicemix.bundles.jaxb-runtime.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.saaj-impl:${org.apache.servicemix.bundles.saaj-impl.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.jvnet.staxex:stax-ex:${stax-ex.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.codehaus.woodstox:stax2-api:${stax2-api.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.owasp.encoder:encoder:${encoder.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "io.dropwizard.metrics:metrics-core:${metrics-core.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.apache.pdfbox:fontbox:${fontbox.version}",
+      "start-order": "10"
+    },
+    {
+      "id": "org.apache.pdfbox:jempbox:${jempbox.version}",
+      "start-order": "10"
+    },
+    {
+      "id": "org.apache.pdfbox:pdfbox:${pdfbox.version}",
+      "start-order": "10"
+    },
+    {
+      "id": "org.apache.tika:tika-core:${tika-core.version}",
+      "start-order": "10"
+    },
+    {
+      "id": "org.apache.tika:tika-parsers:${tika-parsers.version}",
+      "start-order": "10"
+    },
+    {
+      "id": "org.apache.httpcomponents:httpclient-osgi:${httpclient-osgi.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.apache.httpcomponents:httpcore-osgi:${httpcore-osgi.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "org.antlr:antlr4-runtime:${antlr4-runtime.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.rhino:${org.apache.servicemix.bundles.rhino.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.freemarker:freemarker:${freemarker.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.thymeleaf:${org.apache.servicemix.bundles.thymeleaf.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.attoparser:attoparser:${attoparser.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.unbescape:unbescape:${unbescape.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.ognl:${org.apache.servicemix.bundles.ognl.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.javassist:javassist:${javassist.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.geronimo.bundles:jstl:${jstl.version}",
+      "start-order": "23"
+    },
+    {
+      "id": "javax.mail:mail:${javax.mail.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "eu.ciechanowiec:sling.rocket.login-form:${project.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "eu.ciechanowiec:sling.rocket.commons:${project.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "eu.ciechanowiec:sneakyfun:${sneakyfun.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "eu.ciechanowiec:conditional:${conditional.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "javax.servlet:javax.servlet-api:${javax.servlet-api.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "jakarta.ws.rs:jakarta.ws.rs-api:${jakarta.ws.rs-api.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "jakarta.json:jakarta.json-api:${jakarta.json-api.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "org.eclipse.parsson:parsson:${parsson.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "org.glassfish.hk2:osgi-resource-locator:${osgi-resource-locator.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "com.ibm.icu:icu4j:${icu4j.version}",
+      "start-order": "25"
+    }
+  ]
+}

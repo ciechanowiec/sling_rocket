@@ -1,0 +1,24 @@
+{
+  "bundles": [
+    {
+      "id": "org.apache.sling:org.apache.sling.models.validation-impl:${org.apache.sling.models.validation-impl.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.models.jacksonexporter:${org.apache.sling.models.jacksonexporter.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.models.api:${org.apache.sling.models.api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.models.caconfig:${org.apache.sling.models.caconfig.version}",
+      "start-order": "23"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.models.impl:${org.apache.sling.models.impl.version}",
+      "start-order": "23"
+    }
+  ]
+}
