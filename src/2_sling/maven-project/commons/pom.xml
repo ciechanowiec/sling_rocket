@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.0.0</version>
+        <version>13.1.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -27,6 +27,19 @@
             <!--  Must be loaded in the beginning. Otherwise, tests might not pass  -->
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.ciechanowiec</groupId>
+            <artifactId>sneakyfun</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.ciechanowiec</groupId>
+            <artifactId>conditional</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-annotation_1.3_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -73,29 +86,35 @@
             <!--  Basic JUnit library -->
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- Parameterized JUnit tests -->
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- JUnit extension for Mockito: @ExtendWith(MockitoExtension.class) -->
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.junit5</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock.core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!-- For enabling logging in tests -->
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.log</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -128,10 +147,14 @@ Bundle-DocURL: ${url}
 Bundle-Name: ${project.name}
 Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
 Bundle-Version: ${project.version}
-Import-Package: !lombok,*
+Import-Package: !lombok,!org.apache.sling.testing.*,!org.junit.*,!org.mockito.*,*
+Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
 
 # reproducible builds (https://github.com/bndtools/bnd/issues/3521)
 -noextraheaders: true
+
+# Plugins are inlined due to the plugins merge bug: https://github.com/adobe/aem-project-archetype/issues/971
+-plugin org.apache.sling.caconfig.bndplugin.ConfigurationClassScannerPlugin,org.apache.sling.bnd.models.ModelsScannerPlugin
                                 ]]></bnd>
                         </configuration>
                     </execution>

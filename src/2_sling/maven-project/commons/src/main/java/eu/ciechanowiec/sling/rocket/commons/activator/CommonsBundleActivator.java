@@ -10,12 +10,20 @@ import javax.management.MBeanServer;
 import java.lang.management.ManagementFactory;
 
 /**
- * Implementation of a {@link BundleActivator}
+ * Implementation of a {@link BundleActivator}.
  */
 @Slf4j
 @Header(name = Constants.BUNDLE_ACTIVATOR, value = "${@class}")
 @SuppressWarnings("PackageAccessibility")
 public class CommonsBundleActivator implements BundleActivator {
+
+    /**
+     * Constructs an instance of this class.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public CommonsBundleActivator() {
+        log.debug("Initialized {}", this);
+    }
 
     /*
      * Ensures that OSGi services that are also MBeans are additionally registered in the MBeans Server:

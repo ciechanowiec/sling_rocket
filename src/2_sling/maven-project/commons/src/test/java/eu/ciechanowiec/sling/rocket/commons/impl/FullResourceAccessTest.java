@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings({"resource", "MultipleStringLiterals"})
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})

@@ -1,5 +1,5 @@
 /**
- * Common utilities used by Sling Rocket
+ * Common utilities used by Sling Rocket.
  */
 @Export
 package eu.ciechanowiec.sling.rocket.commons;

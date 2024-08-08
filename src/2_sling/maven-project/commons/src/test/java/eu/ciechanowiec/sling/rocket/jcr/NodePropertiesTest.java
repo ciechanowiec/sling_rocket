@@ -1,0 +1,474 @@
+package eu.ciechanowiec.sling.rocket.jcr;
+
+import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.TimeZone;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals"})
+class NodePropertiesTest extends TestEnvironment {
+
+    private Calendar unix1980;
+    private Calendar unix1990;
+
+    NodePropertiesTest() {
+        super(ResourceResolverType.JCR_OAK);
+    }
+
+    @BeforeEach
+    void setup() {
+        unix1980 = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        unix1990 = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        unix1980.clear();
+        unix1990.clear();
+        unix1980.set(1980, Calendar.JANUARY, 1, 0, 0, 0);
+        unix1990.set(1990, Calendar.JANUARY, 1, 0, 0, 0);
+        unix1980.set(Calendar.MILLISECOND, 0);
+        unix1990.set(Calendar.MILLISECOND, 0);
+        unix1980.setLenient(false);
+        unix1990.setLenient(false);
+    }
+
+    @Test
+    void mustGetDefaultAndCustomUnaryValues() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    String actualString = nodeProperties.propertyValue(
+                            "stringus-namus", DefaultProperties.STRING_EMPTY
+                    );
+                    assertEquals("stringus-valus", actualString);
+                },
+                () -> {
+                    boolean actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", DefaultProperties.BOOLEAN_FALSE
+                    );
+                    assertTrue(actualBoolean);
+                },
+                () -> {
+                    Boolean actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", Boolean.FALSE
+                    );
+                    assertTrue(actualBoolean);
+                },
+                () -> {
+                    long actualLong = nodeProperties.propertyValue(
+                            "longus-namus", DefaultProperties.LONG_ZERO
+                    );
+                    assertEquals(123L, actualLong);
+                },
+                () -> {
+                    Long actualLong = nodeProperties.propertyValue(
+                            "longus-namus", NumberUtils.LONG_ZERO
+                    );
+                    assertEquals(123L, actualLong);
+                },
+                () -> {
+                    double actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", DefaultProperties.DOUBLE_ZERO
+                    );
+                    assertEquals(99.99, actualDouble);
+                },
+                () -> {
+                    Double actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", NumberUtils.DOUBLE_ZERO
+                    );
+                    assertEquals(99.99, actualDouble);
+                },
+                () -> {
+                    BigDecimal actualDecimal = nodeProperties.propertyValue(
+                            "decimalus-namus", DefaultProperties.DECIMAL_ZERO
+                    );
+                    assertEquals(new BigDecimal("999.99"), actualDecimal);
+                },
+                () -> {
+                    Calendar actualCalendar = nodeProperties.propertyValue(
+                            "calendarus-namus", DefaultProperties.DATE_UNIX_EPOCH
+                    );
+                    assertEquals(unix1980, actualCalendar);
+                }
+        );
+    }
+
+    @Test
+    void mustGetDefaultAndCustomMultiValues() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", new String[]{"stringus-valus-1", "stringus-valus-2"},
+                        "booleanus-namus", new boolean[]{true, true},
+                        "longus-namus", new long[]{123L, 124L},
+                        "doubleus-namus", new double[]{99.99, 199.99},
+                        "decimalus-namus", new BigDecimal[]{
+                                new BigDecimal("999.99"), new BigDecimal("1999.99")
+                        },
+                        "calendarus-namus", new Calendar[]{unix1980, unix1990}
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    String[] actualString = nodeProperties.propertyValue(
+                            "stringus-namus", new String[]{DefaultProperties.STRING_EMPTY}
+                    );
+                    assertArrayEquals(new String[]{"stringus-valus-1", "stringus-valus-2"}, actualString);
+                },
+                () -> {
+                    boolean[] actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", new boolean[]{DefaultProperties.BOOLEAN_FALSE}
+                    );
+                    assertArrayEquals(new boolean[]{true, true}, actualBoolean);
+                },
+                () -> {
+                    Boolean[] actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", new Boolean[]{DefaultProperties.BOOLEAN_FALSE}
+                    );
+                    assertArrayEquals(new Boolean[]{true, true}, actualBoolean);
+                },
+                () -> {
+                    long[] actualLong = nodeProperties.propertyValue(
+                            "longus-namus", new long[]{DefaultProperties.LONG_ZERO}
+                    );
+                    assertArrayEquals(new long[]{123L, 124L}, actualLong);
+                },
+                () -> {
+                    Long[] actualLong = nodeProperties.propertyValue(
+                            "longus-namus", new Long[]{DefaultProperties.LONG_ZERO}
+                    );
+                    assertArrayEquals(new Long[]{123L, 124L}, actualLong);
+                },
+                () -> {
+                    double[] actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", new double[]{DefaultProperties.DOUBLE_ZERO}
+                    );
+                    assertArrayEquals(new double[]{99.99, 199.99}, actualDouble);
+                },
+                () -> {
+                    Double[] actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", new Double[]{DefaultProperties.DOUBLE_ZERO}
+                    );
+                    assertArrayEquals(new Double[]{99.99, 199.99}, actualDouble);
+                },
+                () -> {
+                    BigDecimal[] actualDecimal = nodeProperties.propertyValue(
+                            "decimalus-namus", new BigDecimal[]{DefaultProperties.DECIMAL_ZERO}
+                    );
+                    assertArrayEquals(new BigDecimal[]{
+                            new BigDecimal("999.99"), new BigDecimal("1999.99")
+                    }, actualDecimal);
+                },
+                () -> {
+                    Calendar[] actualCalendar = nodeProperties.propertyValue(
+                            "calendarus-namus", new Calendar[]{DefaultProperties.DATE_UNIX_EPOCH}
+                    );
+                    assertArrayEquals(new Calendar[]{unix1980, unix1990}, actualCalendar);
+                }
+        );
+    }
+
+    @Test
+    void mustGetDefaultUnaryValues() {
+        context.build().resource("/content").commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    String actualString = nodeProperties.propertyValue(
+                            "stringus-namus", DefaultProperties.of("stringus-valus")
+                    );
+                    assertEquals("stringus-valus", actualString);
+                },
+                () -> {
+                    @SuppressWarnings("ConstantValue")
+                    boolean actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", DefaultProperties.of(true)
+                    );
+                    assertTrue(actualBoolean);
+                },
+                () -> {
+                    long actualLong = nodeProperties.propertyValue(
+                            "longus-namus", DefaultProperties.of(123L)
+                    );
+                    assertEquals(123L, actualLong);
+                },
+                () -> {
+                    double actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", DefaultProperties.of(99.99)
+                    );
+                    assertEquals(99.99, actualDouble);
+                },
+                () -> {
+                    BigDecimal actualDecimal = nodeProperties.propertyValue(
+                            "decimalus-namus", DefaultProperties.of(new BigDecimal("999.99"))
+                    );
+                    assertEquals(new BigDecimal("999.99"), actualDecimal);
+                },
+                () -> {
+                    Calendar actualCalendar = nodeProperties.propertyValue(
+                            "calendarus-namus", DefaultProperties.of(unix1980)
+                    );
+                    assertEquals(unix1980, actualCalendar);
+                }
+        );
+    }
+
+    @Test
+    void mustGetFromClassUnaryExistingValues() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    String actualString = nodeProperties.propertyValue(
+                            "stringus-namus", DefaultProperties.STRING_CLASS
+                    ).orElseThrow();
+                    assertEquals("stringus-valus", actualString);
+                },
+                () -> {
+                    boolean actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", DefaultProperties.BOOLEAN_CLASS
+                    ).orElseThrow();
+                    assertTrue(actualBoolean);
+                },
+                () -> {
+                    Boolean actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", Boolean.class
+                    ).orElseThrow();
+                    assertTrue(actualBoolean);
+                },
+                () -> {
+                    long actualLong = nodeProperties.propertyValue(
+                            "longus-namus", DefaultProperties.LONG_CLASS
+                    ).orElseThrow();
+                    assertEquals(123L, actualLong);
+                },
+                () -> {
+                    Long actualLong = nodeProperties.propertyValue(
+                            "longus-namus", Long.class
+                    ).orElseThrow();
+                    assertEquals(123L, actualLong);
+                },
+                () -> {
+                    double actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", DefaultProperties.DOUBLE_CLASS
+                    ).orElseThrow();
+                    assertEquals(99.99, actualDouble);
+                },
+                () -> {
+                    Double actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", Double.class
+                    ).orElseThrow();
+                    assertEquals(99.99, actualDouble);
+                },
+                () -> {
+                    BigDecimal actualDecimal = nodeProperties.propertyValue(
+                            "decimalus-namus", DefaultProperties.DECIMAL_CLASS
+                    ).orElseThrow();
+                    assertEquals(new BigDecimal("999.99"), actualDecimal);
+                },
+                () -> {
+                    Calendar actualCalendar = nodeProperties.propertyValue(
+                            "calendarus-namus", DefaultProperties.DATE_CLASS
+                    ).orElseThrow();
+                    assertEquals(unix1980, actualCalendar);
+                }
+        );
+    }
+
+    @Test
+    void mustGetFromClassUnaryNonExistingValues() {
+        context.build().resource("/content").commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "stringus-namus", DefaultProperties.STRING_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "booleanus-namus", DefaultProperties.BOOLEAN_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "booleanus-namus", Boolean.class
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "longus-namus", DefaultProperties.LONG_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "longus-namus", Long.class
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "doubleus-namus", DefaultProperties.DOUBLE_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "doubleus-namus", Double.class
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "decimalus-namus", DefaultProperties.DECIMAL_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                },
+                () -> {
+                    boolean isEmpty = nodeProperties.propertyValue(
+                            "calendarus-namus", DefaultProperties.DATE_CLASS
+                    ).isEmpty();
+                    assertTrue(isEmpty);
+                }
+        );
+    }
+
+    @Test
+    void mustGetFromClassMultiExistingValues() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", new String[]{"stringus-valus-1", "stringus-valus-2"},
+                        "booleanus-namus", new boolean[]{true, true},
+                        "longus-namus", new long[]{123L, 124L},
+                        "doubleus-namus", new double[]{99.99, 199.99},
+                        "decimalus-namus", new BigDecimal[]{
+                                new BigDecimal("999.99"), new BigDecimal("1999.99")
+                        },
+                        "calendarus-namus", new Calendar[]{unix1980, unix1990}
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> {
+                    String[] actualString = nodeProperties.propertyValue(
+                            "stringus-namus", DefaultProperties.STRING_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new String[]{"stringus-valus-1", "stringus-valus-2"}, actualString);
+                },
+                () -> {
+                    boolean[] actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", DefaultProperties.BOOLEAN_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new boolean[]{true, true}, actualBoolean);
+                },
+                () -> {
+                    Boolean[] actualBoolean = nodeProperties.propertyValue(
+                            "booleanus-namus", Boolean[].class
+                    ).orElseThrow();
+                    assertArrayEquals(new Boolean[]{true, true}, actualBoolean);
+                },
+                () -> {
+                    long[] actualLong = nodeProperties.propertyValue(
+                            "longus-namus", DefaultProperties.LONG_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new long[]{123L, 124L}, actualLong);
+                },
+                () -> {
+                    Long[] actualLong = nodeProperties.propertyValue(
+                            "longus-namus", Long[].class
+                    ).orElseThrow();
+                    assertArrayEquals(new Long[]{123L, 124L}, actualLong);
+                },
+                () -> {
+                    double[] actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", DefaultProperties.DOUBLE_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new double[]{99.99, 199.99}, actualDouble);
+                },
+                () -> {
+                    Double[] actualDouble = nodeProperties.propertyValue(
+                            "doubleus-namus", Double[].class
+                    ).orElseThrow();
+                    assertArrayEquals(new Double[]{99.99, 199.99}, actualDouble);
+                },
+                () -> {
+                    BigDecimal[] actualDecimal = nodeProperties.propertyValue(
+                            "decimalus-namus", DefaultProperties.DECIMAL_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new BigDecimal[]{
+                            new BigDecimal("999.99"), new BigDecimal("1999.99")
+                    }, actualDecimal);
+                },
+                () -> {
+                    Calendar[] actualCalendar = nodeProperties.propertyValue(
+                            "calendarus-namus", DefaultProperties.DATE_CLASS_ARRAY
+                    ).orElseThrow();
+                    assertArrayEquals(new Calendar[]{unix1980, unix1990}, actualCalendar);
+                }
+        );
+    }
+
+    @Test
+    void mustCheckPropertyExistence() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> assertTrue(nodeProperties.containsProperty("stringus-namus")),
+                () -> assertFalse(nodeProperties.containsProperty("non-existent"))
+        );
+    }
+
+    @Test
+    void mustThrowForBadType() {
+        context.build().resource("/content").commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        String primaryType = nodeProperties.primaryType();
+        assertAll(
+                () -> assertEquals(JcrConstants.NT_UNSTRUCTURED, primaryType),
+                () -> assertThrows(
+                        IllegalPrimaryTypeException.class,
+                        () -> nodeProperties.assertPrimaryType("invalid-prim-type")
+                )
+        );
+    }
+}

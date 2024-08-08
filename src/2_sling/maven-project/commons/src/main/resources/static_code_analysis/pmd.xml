@@ -29,9 +29,19 @@
             <property name="minimum" value="30"/>
         </properties>
     </rule>
+    <rule ref="category/java/codestyle.xml/MethodNamingConventions">
+        <properties>
+            <property name="methodPattern" value="[a-z][$_A-Za-z\d]*"/>
+        </properties>
+    </rule>
     <rule ref="category/java/codestyle.xml/ShortClassName">
         <properties>
             <property name="minimum" value="3"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/ShortMethodName">
+        <properties>
+            <property name="minimum" value="2"/>
         </properties>
     </rule>
     <rule ref="category/java/codestyle.xml/ShortVariable">
@@ -107,7 +117,8 @@
     -->
     <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
         <properties>
-            <property name="ignoreMagicNumbers" value="-0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-100,-1000,0,1,2,3,4,5,6,7,8,9,10,100,1000"/>
+            <property name="ignoreMagicNumbers"
+                      value="-0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-100,-1000,0,1,2,3,4,5,6,7,8,9,10,100,1000"/>
             <property name="ignoreExpressions" value="false"/>
         </properties>
     </rule>
@@ -116,6 +127,7 @@
         <exclude name="CallSuperLast"/>
         <exclude
                 name="MissingSerialVersionUID"/> <!-- Disablement justification: https://github.com/projectlombok/lombok/wiki/WHY-NOT:-serialVersionUID -->
+        <exclude name="NonSerializableClass"/>
         <exclude name="NonStaticInitializer"/>
         <exclude name="UseProperClassLoader"/>
     </rule>
@@ -123,7 +135,9 @@
     <!--
     MULTITHREADING
     -->
-    <rule ref="category/java/multithreading.xml"/>
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="DoNotUseThreads"/>
+    </rule>
 
     <!--
     PERFORMANCE

@@ -11,7 +11,8 @@ import org.osgi.framework.BundleContext;
 
 import javax.management.MBeanServer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SlingContextExtension.class)
 class CommonsBundleActivatorTest {

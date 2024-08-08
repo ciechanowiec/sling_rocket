@@ -11,7 +11,7 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/sling:13.0.0
+    image: ciechanowiec/sling:13.1.0
     container_name: sling
     volumes:
       - type: volume

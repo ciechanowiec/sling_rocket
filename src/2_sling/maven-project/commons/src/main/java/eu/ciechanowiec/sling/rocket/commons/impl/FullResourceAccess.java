@@ -12,11 +12,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 
+import javax.jcr.Repository;
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * Provides full and unlimited access to Apache Sling resources, including the underlying Java Content Repository.
+ * Provides full and unlimited access to Apache Sling resources, including the underlying {@link Repository}.
  */
 @Component(
         service = ResourceAccess.class,
@@ -24,7 +25,7 @@ import java.util.Map;
 )
 @Slf4j
 @ServiceDescription("Provides full and unlimited access to Apache Sling resources, "
-                  + "including the underlying Java Content Repository")
+                  + "including the underlying Repository")
 public class FullResourceAccess implements ResourceAccess {
 
     static final String SUBSERVICE_NAME = "sling-rocket-subservice";
