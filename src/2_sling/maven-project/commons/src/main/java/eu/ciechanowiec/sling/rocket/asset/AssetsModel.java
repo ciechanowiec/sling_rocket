@@ -51,13 +51,13 @@ class AssetsModel implements Assets {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .map(Resource::getChildren)
-                    .map(UnwrappedIteration::new)
-                    .map(UnwrappedIteration::stream)
-                    .orElseGet(Stream::empty)
-                    .map(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
-                    .flatMap(Optional::stream)
-                    .toList();
+                           .map(Resource::getChildren)
+                           .map(UnwrappedIteration::new)
+                           .map(UnwrappedIteration::stream)
+                           .orElseGet(Stream::empty)
+                           .map(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                           .flatMap(Optional::stream)
+                           .toList();
         }
     }
 
