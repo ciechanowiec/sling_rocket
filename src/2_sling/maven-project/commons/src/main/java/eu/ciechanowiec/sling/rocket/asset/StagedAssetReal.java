@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -26,15 +27,15 @@ import java.util.Optional;
  * as a {@link Node} of type {@link Asset#NT_ASSET_REAL}.
  *
  * @param assetFile      {@link AssetFile} to be saved in the {@link Repository}
- * @param simpleMetadata {@link SimpleMetadata} describing the {@link Asset} and to be saved along
+ * @param assetMetadata  {@link AssetMetadata} describing the {@link Asset} and to be saved along
  *                       with that {@link Asset} in the {@link Repository}
  * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
  *                       object to acquire access to resources
  */
 @Slf4j
 public record StagedAssetReal(
-        AssetFile assetFile, SimpleMetadata simpleMetadata, ResourceAccess resourceAccess
-) implements StagedAsset {
+        AssetFile assetFile, AssetMetadata assetMetadata, ResourceAccess resourceAccess
+) implements StagedResource<Asset> {
 
     @SneakyThrows
     @Override
@@ -48,8 +49,8 @@ public record StagedAssetReal(
                     Map.of(JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_REAL), null, false
             );
             log.trace("While saving {} to {}, this resource was staged: {}", this, targetJCRPath, assetRealResource);
-            attachFile(assetRealResource, assetFile, simpleMetadata);
-            attachMetadata(assetRealResource, simpleMetadata);
+            attachFile(assetRealResource, assetFile, assetMetadata);
+            attachMetadata(assetRealResource, assetMetadata);
             resourceResolver.commit();
             Asset savedAsset = Optional.ofNullable(assetRealResource.adaptTo(Asset.class)).orElseThrow();
             log.debug("Saved: {}", savedAsset);
@@ -58,10 +59,10 @@ public record StagedAssetReal(
     }
 
     @SneakyThrows
-    private void attachFile(Resource assetRealResource, AssetFile assetFile, SimpleMetadata simpleMetadata) {
+    private void attachFile(Resource assetRealResource, AssetFile assetFile, AssetMetadata assetMetadata) {
         log.trace("Attaching {} to {}", assetFile, assetRealResource);
         Node assetRealNode = Optional.ofNullable(assetRealResource.adaptTo(Node.class)).orElseThrow();
-        String mimeType = simpleMetadata.mimeType();
+        String mimeType = assetMetadata.mimeType();
         File assetFileUnwrapped = assetFile.retrieve().orElseThrow();
         Path pathToAssetFileUnwrapped = assetFileUnwrapped.toPath();
         try (InputStream assetFileIS = Files.newInputStream(pathToAssetFileUnwrapped)) {
@@ -71,23 +72,23 @@ public record StagedAssetReal(
     }
 
     @SneakyThrows
-    private void attachMetadata(Resource assetRealResource, SimpleMetadata simpleMetadata) {
-        log.trace("Attaching {} to {}", simpleMetadata, assetRealResource);
+    private void attachMetadata(Resource assetRealResource, AssetMetadata assetMetadata) {
+        log.trace("Attaching {} to {}", assetMetadata, assetRealResource);
         String assetRealJCRPathRaw = assetRealResource.getPath();
         JCRPath metadataJCRPath = new TargetJCRPath(new ParentJCRPath(
                 new TargetJCRPath(assetRealJCRPathRaw)), Asset.METADATA_NODE_NAME
         );
         String metadataJCRPathRaw = metadataJCRPath.get();
-        SimpleMetadata simpleMetadataWithNodeType = simpleMetadata.append(
+        AssetMetadata assetMetadataWithNodeType = assetMetadata.set(
                 JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_METADATA
         );
         @SuppressWarnings("PMD.LongVariable")
-        Map<String, Object> simpleMetadataWithNodeTypeUnwrapped = simpleMetadataWithNodeType.allButObjectValues();
+        Map<String, Object> assetMetadataWithNodeTypeUnwrapped = assetMetadataWithNodeType.allButObjectValues();
         @SuppressWarnings("PMD.CloseResource")
         ResourceResolver resourceResolver = assetRealResource.getResourceResolver();
         Resource metadataResource = ResourceUtil.getOrCreateResource(
                 resourceResolver, metadataJCRPathRaw,
-                simpleMetadataWithNodeTypeUnwrapped, null, false
+                assetMetadataWithNodeTypeUnwrapped, null, false
         );
         log.trace("Staged for saving {}", metadataResource);
     }

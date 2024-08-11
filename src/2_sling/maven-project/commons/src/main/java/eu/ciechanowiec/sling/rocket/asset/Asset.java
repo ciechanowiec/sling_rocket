@@ -11,15 +11,16 @@ import javax.jcr.PropertyType;
 /**
  * <p>
  * Represents {@link Node} instances of {@link Asset#NT_ASSET_REAL} and {@link Asset#NT_ASSET_LINK} types.
+ * That can be either a persisted or a hypothetically persisted {@link Node}.
  * </p>
  * <ol>
  *     <li>
  *        The exact type of the underlying {@link Node} is considered
- *        an implementation detail and  is hidden from the client.
+ *        an implementation detail and is hidden from the client.
  *        The client might choose a {@link Node} of any supported type as the base for this {@link Asset}.
  *     </li>
  *     <li>
- *        A {@link Resource} representing a {@link Node} of type {@link Asset#NT_ASSET_REAL}
+ *        A {@link Resource} representing a persisted {@link Node} of type {@link Asset#NT_ASSET_REAL}
  *        or {@link Asset#NT_ASSET_LINK} can be adapted to this {@link Asset}, e.g. this way:
  *        <pre>{@code
  *         Asset asset = resource.adaptTo(Asset.class);

@@ -2,8 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
-import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
+import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.SneakyThrows;
@@ -13,7 +12,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import java.util.Collection;
@@ -32,21 +30,12 @@ import java.util.UUID;
 @SuppressWarnings("WeakerAccess")
 @SuppressFBWarnings("EI_EXPOSE_REP")
 @Slf4j
-public record StagedAssets(Collection<StagedAsset> assetsToSave, ResourceAccess resourceAccess) {
+public record StagedAssets(
+        Collection<StagedResource<Asset>> assetsToSave, ResourceAccess resourceAccess
+) implements StagedResource<Assets> {
 
-    /**
-     * <p>
-     * Saves a new {@link Assets} instance in the {@link Repository} at the specified {@link TargetJCRPath}.
-     * </p>
-     * If the {@link StagedAssets#assetsToSave} is empty, the wrapping {@link Node} of type {@link Assets#NT_ASSETS}
-     * will still be created, but without any {@link Asset}-s saved within it.
-     * @param targetJCRPath {@link TargetJCRPath} where the new {@link Assets} instance should be saved
-     * @return an instance of the saved {@link Assets}
-     * @throws OccupiedJCRPathException if the {@code targetJCRPath} is occupied by some {@link Item}
-     *                                  at the moment when the {@link Assets} instance is attempted to be saved
-     *                                  at the same {@link JCRPath}
-     */
     @SneakyThrows
+    @Override
     public Assets save(TargetJCRPath targetJCRPath) {
         log.trace("Saving {} to {}", assetsToSave, targetJCRPath);
         targetJCRPath.assertThatJCRPathIsFree(resourceAccess);
