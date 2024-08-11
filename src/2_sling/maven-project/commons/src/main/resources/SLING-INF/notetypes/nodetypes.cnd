@@ -1,5 +1,11 @@
 <rocket = 'https://github.com/ciechanowiec/sling_rocket'>
 
+[rocket:Assets] > nt:base, mix:created, mix:lastModified, mix:referenceable
+orderable
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (rocket:AssetReal, rocket:AssetLink)
+
 [rocket:AssetReal] > nt:base, mix:created, mix:lastModified, mix:referenceable
 orderable
 + file (nt:file) = nt:file mandatory

@@ -155,6 +155,10 @@
     {
       "id": "com.ibm.icu:icu4j:${icu4j.version}",
       "start-order": "25"
+    },
+    {
+      "id": "eu.ciechanowiec:jimage.hash:${jimage.hash.version}",
+      "start-order": "25"
     }
   ]
 }
