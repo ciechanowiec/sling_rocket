@@ -6,7 +6,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 
 /**
- * Represents a {@link Node} of that has a {@link Property}
+ * Represents a {@link Node} that has a {@link Property}
  * named {@link JcrConstants#JCR_UUID} of type {@link String}.
  */
 @FunctionalInterface

@@ -21,7 +21,8 @@ public interface JCRPath {
     String get();
 
     /**
-     * Asserts that the path in the {@link Repository} represented by this object is free and has no {@link Item}.
+     * Asserts that the path in the {@link Repository} represented by this object is
+     * free and has no {@link Item} persisted.
      * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
      * @throws OccupiedJCRPathException if a path to an {@link Item} in the {@link Repository} represented by this
      *                                  object isn't free and has some {@link Item} persisted

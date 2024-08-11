@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.1.0</version>
+        <version>13.1.1</version>
     </parent>
 
     <artifactId>sling.rocket.feature</artifactId>
@@ -100,6 +100,7 @@
                         parsson.version,
                         osgi-resource-locator.version,
                         icu4j.version,
+                        jimage.hash.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

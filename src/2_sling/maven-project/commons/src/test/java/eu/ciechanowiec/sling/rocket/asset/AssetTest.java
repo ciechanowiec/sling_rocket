@@ -1,11 +1,11 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -17,16 +17,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MultipleStringLiterals")
+@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class AssetTest extends TestEnvironment {
 
-    private File file;
+    private File fileJPGOne;
+    private File fileJPGTwo;
+    private File fileMP3;
 
     AssetTest() {
         super(ResourceResolverType.JCR_OAK);
@@ -35,20 +36,28 @@ class AssetTest extends TestEnvironment {
     @SneakyThrows
     @BeforeEach
     void setup() {
-        file = File.createTempFile("jcr-binary_", ".tmp");
-        file.deleteOnExit();
-        Path tempFilePath = file.toPath();
+        fileJPGOne = loadResourceIntoFile("1.jpeg");
+        fileJPGTwo = loadResourceIntoFile("2.jpeg");
+        fileMP3 = loadResourceIntoFile("time-forward.mp3");
+    }
+
+    @SneakyThrows
+    private File loadResourceIntoFile(String resourceName) {
+        File createdFile = File.createTempFile("jcr-binary_", ".tmp");
+        createdFile.deleteOnExit();
+        Path tempFilePath = createdFile.toPath();
         Thread currentThread = Thread.currentThread();
         ClassLoader classLoader = currentThread.getContextClassLoader();
         try (
                 InputStream inputStream = Optional.ofNullable(
-                        classLoader.getResourceAsStream("1.jpeg")
+                        classLoader.getResourceAsStream(resourceName)
                 ).orElseThrow();
                 OutputStream outputStream = Files.newOutputStream(tempFilePath)
         ) {
             IOUtils.copy(inputStream, outputStream);
         }
-        assertTrue(file.exists());
+        assertTrue(createdFile.exists());
+        return createdFile;
     }
 
     @Test
@@ -63,7 +72,7 @@ class AssetTest extends TestEnvironment {
         TargetJCRPath secondLinkPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
         );
-        Asset realAsset = new StagedAssetReal(() -> Optional.of(file), new SimpleMetadata() {
+        Asset realAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -89,7 +98,7 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals("image/jpeg", mimeType)
         );
 
-        StagedAssetReal failingAsset = new StagedAssetReal(() -> Optional.of(file), new SimpleMetadata() {
+        StagedAssetReal failingAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -101,5 +110,67 @@ class AssetTest extends TestEnvironment {
             }
         }, resourceAccess);
         assertThrows(OccupiedJCRPathException.class, () -> failingAsset.save(realAssetPath));
+    }
+
+    @Test
+    @SuppressWarnings("MethodLength")
+    void mustSaveAssetsInBulk() {
+        Asset separateAssetReal = new StagedAssetReal(() -> Optional.of(fileMP3), new SimpleMetadata() {
+            @Override
+            public String mimeType() {
+                return "audio/mpeg";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "MP3OriginalName");
+            }
+        }, resourceAccess).save(new TargetJCRPath("/content/separate-asset"));
+        StagedAsset stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
+        StagedAsset stagedJPGOneReal = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
+            @Override
+            public String mimeType() {
+                return "image/jpeg";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "JPGOneOriginalName");
+            }
+        }, resourceAccess);
+        StagedAsset stagedJPGTwoReal = new StagedAssetReal(() -> Optional.of(fileJPGTwo), new SimpleMetadata() {
+            @Override
+            public String mimeType() {
+                return "image/jpeg";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "JPGTwoOriginalName");
+            }
+        }, resourceAccess);
+        TargetJCRPath assetsPath = new TargetJCRPath("/content/assets");
+        Assets assets = new StagedAssets(
+                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), resourceAccess
+        ).save(assetsPath);
+        Set<String> originalFileNames = assets.get()
+                .stream()
+                .map(Asset::assetMetadata)
+                .map(AssetMetadata::retrieve)
+                .map(nodeProperties -> nodeProperties.propertyValue("originalFileName", DefaultProperties.STRING_CLASS))
+                .flatMap(Optional::stream)
+                .collect(Collectors.toUnmodifiableSet());
+        int numOfAssets = assets.get().size();
+        assertAll(
+                () -> assertEquals(3, numOfAssets),
+                () -> assertTrue(originalFileNames.contains("MP3OriginalName")),
+                () -> assertTrue(originalFileNames.contains("JPGOneOriginalName")),
+                () -> assertTrue(originalFileNames.contains("JPGTwoOriginalName"))
+        );
+
+        StagedAssets failingAssets = new StagedAssets(
+                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), resourceAccess
+        );
+        assertThrows(OccupiedJCRPathException.class, () -> failingAssets.save(assetsPath));
     }
 }
