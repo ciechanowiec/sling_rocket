@@ -4,6 +4,7 @@ import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
 
@@ -246,6 +250,70 @@ public class NodeProperties {
                            .map(sneaky(Property::getValue))
                            .flatMap(this::asBinary)
                            .map(this::asFile);
+        }
+    }
+
+    /**
+     * Returns all {@link Property}-ies of the underlying {@link Node} as a {@link Map}
+     * of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}; if a
+     * given {@link Value} cannot be converted to {@link String}, it is omitted from the result.
+     * @return all {@link Property}-ies of the underlying {@link Node} as a {@link Map}
+     *         of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}; if a
+     *         given {@link Value} cannot be converted to {@link String}, it is omitted from the result
+     */
+    public Map<String, String> all() {
+        log.trace("Retrieving all properties of {}", this);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .map(Resource::getValueMap)
+                    .map(ValueMap::keySet)
+                    .orElse(Set.of())
+                    .stream()
+                    .map(propertyName -> Map.entry(
+                            propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
+                    )
+                    .filter(entry -> entry.getValue().isPresent())
+                    .map(entry -> Map.entry(entry.getKey(), entry.getValue().orElseThrow()))
+                    .collect(Collectors.toUnmodifiableMap(
+                            Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first)
+                    );
+        }
+    }
+
+    /**
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, String)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, String value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, String value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
         }
     }
 

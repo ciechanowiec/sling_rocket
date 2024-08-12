@@ -1,18 +1,16 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,6 +36,102 @@ class NodePropertiesTest extends TestEnvironment {
         unix1990.set(Calendar.MILLISECOND, 0);
         unix1980.setLenient(false);
         unix1990.setLenient(false);
+    }
+
+    @Test
+    void mustSetProperty() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        Map<String, String> initialMap = Map.of(
+                "stringus-namus", "stringus-valus",
+                "booleanus-namus", "true",
+                "longus-namus", "123",
+                "doubleus-namus", "99.99",
+                "decimalus-namus", "999.99",
+                "calendarus-namus", "1980-01-01T00:00:00.000Z",
+                "jcr:primaryType", "nt:unstructured"
+        );
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        Map<String, String> firstActualMap = nodeProperties.all();
+        assertEquals(initialMap, firstActualMap);
+        nodeProperties.setProperty("stringus-namus", "stringus-valus-2");
+        nodeProperties.setProperty("booleanus-namus", "false");
+        nodeProperties.setProperty("longus-namus", "321");
+        nodeProperties.setProperty("doubleus-namus", "88.88");
+        nodeProperties.setProperty("decimalus-namus", "888.88");
+        NodeProperties newNodeProperties = nodeProperties.setProperty("calendarus-namus", "1990-01-01T00:00:00.000Z")
+                                                         .orElseThrow();
+        Map<String, String> secondActualMap = newNodeProperties.all();
+        Map<String, String> finalMap = Map.of(
+                "stringus-namus", "stringus-valus-2",
+                "booleanus-namus", "false",
+                "longus-namus", "321",
+                "doubleus-namus", "88.88",
+                "decimalus-namus", "888.88",
+                "calendarus-namus", "1990-01-01T00:00:00.000Z",
+                "jcr:primaryType", "nt:unstructured"
+        );
+        assertEquals(finalMap, secondActualMap);
+    }
+
+    @Test
+    void mustNotSetPropertyWhenNoPath() {
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/non-existent"), resourceAccess);
+        Optional<NodeProperties> newNodeProperties = nodeProperties.setProperty("stringus-namus", "stringus-valus");
+        Map<String, String> allProps = nodeProperties.all();
+        assertAll(
+                () -> assertTrue(newNodeProperties.isEmpty()),
+                () -> assertTrue(allProps.isEmpty())
+        );
+    }
+
+    @Test
+    void mustNotSetIllegalProperty() {
+        context.build().resource("/content", Map.of()).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        Map<String, String> initialAll = nodeProperties.all();
+        Optional<NodeProperties> newNodeProperties = nodeProperties.setProperty(
+                JcrConstants.JCR_PRIMARYTYPE, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+        );
+        Map<String, String> finalAll = nodeProperties.all();
+        assertAll(
+                () -> assertTrue(newNodeProperties.isEmpty()),
+                () -> assertEquals(initialAll, finalAll)
+        );
+    }
+
+    @Test
+    void mustGetAll() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        Map<String, String> expectedMap = Map.of(
+                "stringus-namus", "stringus-valus",
+                "booleanus-namus", "true",
+                "longus-namus", "123",
+                "doubleus-namus", "99.99",
+                "decimalus-namus", "999.99",
+                "calendarus-namus", "1980-01-01T00:00:00.000Z",
+                "jcr:primaryType", "nt:unstructured"
+        );
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        Map<String, String> actualMap = nodeProperties.all();
+        assertEquals(expectedMap, actualMap);
     }
 
     @Test

@@ -5,6 +5,7 @@ import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
 import javax.inject.Inject;
+import java.util.Map;
+import java.util.Optional;
 
 @Model(
         adaptables = Resource.class,
@@ -46,7 +49,17 @@ class AssetMetadataModel implements AssetMetadata, WithJCRPath {
     }
 
     @Override
-    public NodeProperties retrieve() {
-        return new NodeProperties(this, resourceAccess);
+    public Optional<NodeProperties> properties() {
+        return Optional.of(new NodeProperties(this, resourceAccess));
+    }
+
+    @Override
+    public String mimeType() {
+        return properties().orElseThrow().propertyValue(PN_MIME_TYPE, MediaType.WILDCARD);
+    }
+
+    @Override
+    public Map<String, String> all() {
+        return properties().orElseThrow().all();
     }
 }

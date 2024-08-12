@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.1.1</version>
+        <version>13.2.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -40,6 +40,10 @@
         <dependency>
             <groupId>eu.ciechanowiec</groupId>
             <artifactId>jimage.hash</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -195,6 +199,7 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
                 <configuration>
                     <configLocation>${project.basedir}/src/main/resources/static_code_analysis/checkstyle.xml
                     </configLocation>
+                    <suppressionsLocation>${project.basedir}/src/main/resources/static_code_analysis/checkstyle-suppression.xml</suppressionsLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>${fail-build-on-static-code-analysis-errors}</failsOnError>
                     <linkXRef>false</linkXRef>

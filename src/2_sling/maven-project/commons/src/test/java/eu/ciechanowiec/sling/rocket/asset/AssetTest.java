@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
+import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount"})
 class AssetTest extends TestEnvironment {
 
     private File fileJPGOne;
@@ -62,6 +63,7 @@ class AssetTest extends TestEnvironment {
 
     @Test
     @SneakyThrows
+    @SuppressWarnings("MethodLength")
     void mustSaveAndRetrieveAssets() {
         TargetJCRPath realAssetPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
@@ -72,7 +74,7 @@ class AssetTest extends TestEnvironment {
         TargetJCRPath secondLinkPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
         );
-        Asset realAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
+        Asset realAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new AssetMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -82,12 +84,17 @@ class AssetTest extends TestEnvironment {
             public Map<String, String> all() {
                 return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "originalus");
             }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
         }, resourceAccess).save(realAssetPath);
         Asset firstLink = new StagedAssetLink(realAsset, resourceAccess).save(firstLinkPath);
         Asset secondLink = new StagedAssetLink(firstLink, resourceAccess).save(secondLinkPath);
-        NodeProperties nodeProperties = secondLink.assetMetadata().retrieve();
+        NodeProperties nodeProperties = secondLink.assetMetadata().properties().orElseThrow();
         String filePath = secondLink.assetFile().retrieve().orElseThrow().toPath().toString();
-        String mimeType = nodeProperties.propertyValue(SimpleMetadata.PN_MIME_TYPE, DefaultProperties.STRING_CLASS)
+        String mimeType = nodeProperties.propertyValue(AssetMetadata.PN_MIME_TYPE, DefaultProperties.STRING_CLASS)
                 .orElseThrow();
         String originalFileName = nodeProperties.propertyValue("originalFileName", DefaultProperties.STRING_CLASS)
                 .orElseThrow();
@@ -98,7 +105,7 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals("image/jpeg", mimeType)
         );
 
-        StagedAssetReal failingAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
+        StagedAssetReal failingAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new AssetMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -108,6 +115,11 @@ class AssetTest extends TestEnvironment {
             public Map<String, String> all() {
                 return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "originalus");
             }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
         }, resourceAccess);
         assertThrows(OccupiedJCRPathException.class, () -> failingAsset.save(realAssetPath));
     }
@@ -115,7 +127,7 @@ class AssetTest extends TestEnvironment {
     @Test
     @SuppressWarnings("MethodLength")
     void mustSaveAssetsInBulk() {
-        Asset separateAssetReal = new StagedAssetReal(() -> Optional.of(fileMP3), new SimpleMetadata() {
+        Asset separateAssetReal = new StagedAssetReal(() -> Optional.of(fileMP3), new AssetMetadata() {
             @Override
             public String mimeType() {
                 return "audio/mpeg";
@@ -125,9 +137,15 @@ class AssetTest extends TestEnvironment {
             public Map<String, String> all() {
                 return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "MP3OriginalName");
             }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
         }, resourceAccess).save(new TargetJCRPath("/content/separate-asset"));
-        StagedAsset stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
-        StagedAsset stagedJPGOneReal = new StagedAssetReal(() -> Optional.of(fileJPGOne), new SimpleMetadata() {
+        StagedResource<Asset> stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
+        StagedResource<Asset> stagedJPGOneReal = new StagedAssetReal(
+                () -> Optional.of(fileJPGOne), new AssetMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -137,8 +155,14 @@ class AssetTest extends TestEnvironment {
             public Map<String, String> all() {
                 return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "JPGOneOriginalName");
             }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
         }, resourceAccess);
-        StagedAsset stagedJPGTwoReal = new StagedAssetReal(() -> Optional.of(fileJPGTwo), new SimpleMetadata() {
+        StagedResource<Asset> stagedJPGTwoReal = new StagedAssetReal(
+                () -> Optional.of(fileJPGTwo), new AssetMetadata() {
             @Override
             public String mimeType() {
                 return "image/jpeg";
@@ -148,6 +172,11 @@ class AssetTest extends TestEnvironment {
             public Map<String, String> all() {
                 return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "JPGTwoOriginalName");
             }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
         }, resourceAccess);
         TargetJCRPath assetsPath = new TargetJCRPath("/content/assets");
         Assets assets = new StagedAssets(
@@ -156,7 +185,8 @@ class AssetTest extends TestEnvironment {
         Set<String> originalFileNames = assets.get()
                 .stream()
                 .map(Asset::assetMetadata)
-                .map(AssetMetadata::retrieve)
+                .map(AssetMetadata::properties)
+                .flatMap(Optional::stream)
                 .map(nodeProperties -> nodeProperties.propertyValue("originalFileName", DefaultProperties.STRING_CLASS))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toUnmodifiableSet());
