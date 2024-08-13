@@ -8,7 +8,8 @@ import javax.jcr.Repository;
 import java.util.Optional;
 
 /**
- * Represents a path to an {@link Item} in the {@link Repository}, either absolute or relative.
+ * Represents a path to the persisted or hypothetically persisted {@link Item}
+ * in the {@link Repository}, either absolute or relative.
  */
 @FunctionalInterface
 public interface JCRPath {

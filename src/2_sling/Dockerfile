@@ -4,7 +4,7 @@ WORKDIR /app
 COPY ../2_sling/maven-project .
 RUN mvn clean package -DskipAdvancedDependencyResolution
 
-FROM sling-base:13.2.0
+FROM sling-base:13.4.0
 
 ARG SLING_DIR
 ARG RUN_MODES

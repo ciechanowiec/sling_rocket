@@ -8,7 +8,8 @@ import javax.jcr.Item;
 import javax.jcr.Repository;
 
 /**
- * Represents a parent path of an {@link Item} in the {@link Repository}, upon which some action is to be performed.
+ * Represents a parent path of the persisted or hypothetically persisted {@link Item} in the {@link Repository},
+ * upon which some action is to be performed.
  */
 @ToString
 @Slf4j
