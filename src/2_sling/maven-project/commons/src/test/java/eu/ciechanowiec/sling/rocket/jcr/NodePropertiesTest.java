@@ -9,6 +9,7 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.jcr.PropertyType;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -39,7 +40,7 @@ class NodePropertiesTest extends TestEnvironment {
     }
 
     @Test
-    void mustSetProperty() {
+    void mustSetPropertyGeneral() {
         context.build().resource("/content",
                 Map.of(
                         "stringus-namus", "stringus-valus",
@@ -68,7 +69,7 @@ class NodePropertiesTest extends TestEnvironment {
         nodeProperties.setProperty("doubleus-namus", "88.88");
         nodeProperties.setProperty("decimalus-namus", "888.88");
         NodeProperties newNodeProperties = nodeProperties.setProperty("calendarus-namus", "1990-01-01T00:00:00.000Z")
-                                                         .orElseThrow();
+                .orElseThrow();
         Map<String, String> secondActualMap = newNodeProperties.all();
         Map<String, String> finalMap = Map.of(
                 "stringus-namus", "stringus-valus-2",
@@ -80,6 +81,79 @@ class NodePropertiesTest extends TestEnvironment {
                 "jcr:primaryType", "nt:unstructured"
         );
         assertEquals(finalMap, secondActualMap);
+    }
+
+    @Test
+    void mustSetPropertiesOfTypes() {
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("stringus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("booleanus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("longus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("doubleus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("decimalus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("calendarus-namus"))
+        );
+        context.build().resource("/content").commit();
+        nodeProperties.setProperty("stringus-namus", "stringus-valus").orElseThrow();
+        nodeProperties.setProperty("booleanus-namus", true).orElseThrow();
+        nodeProperties.setProperty("longus-namus", 123L).orElseThrow();
+        nodeProperties.setProperty("doubleus-namus", 99.99).orElseThrow();
+        nodeProperties.setProperty("decimalus-namus", new BigDecimal("999.99")).orElseThrow();
+        NodeProperties firstResult = nodeProperties.setProperty("calendarus-namus", unix1980).orElseThrow();
+        assertAll(
+                () -> assertEquals(PropertyType.STRING, firstResult.propertyType("stringus-namus")),
+                () -> assertEquals(PropertyType.BOOLEAN, firstResult.propertyType("booleanus-namus")),
+                () -> assertEquals(PropertyType.LONG, firstResult.propertyType("longus-namus")),
+                () -> assertEquals(PropertyType.DOUBLE, firstResult.propertyType("doubleus-namus")),
+                () -> assertEquals(PropertyType.DECIMAL, firstResult.propertyType("decimalus-namus")),
+                () -> assertEquals(PropertyType.DATE, firstResult.propertyType("calendarus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, firstResult.propertyType("unknown"))
+        );
+        firstResult.setProperty("stringus-namus", true).orElseThrow();
+        firstResult.setProperty("booleanus-namus", "true").orElseThrow();
+        firstResult.setProperty("longus-namus", "123").orElseThrow();
+        firstResult.setProperty("doubleus-namus", "99.99").orElseThrow();
+        firstResult.setProperty("decimalus-namus", "999.99").orElseThrow();
+        NodeProperties secondResult = nodeProperties.setProperty("calendarus-namus", "1980-01-01T00:00:00.000Z")
+                                                    .orElseThrow();
+        assertAll(
+                () -> assertEquals(PropertyType.BOOLEAN, secondResult.propertyType("stringus-namus")),
+                () -> assertEquals(PropertyType.STRING, secondResult.propertyType("booleanus-namus")),
+                () -> assertEquals(PropertyType.STRING, secondResult.propertyType("longus-namus")),
+                () -> assertEquals(PropertyType.STRING, secondResult.propertyType("doubleus-namus")),
+                () -> assertEquals(PropertyType.STRING, secondResult.propertyType("decimalus-namus")),
+                () -> assertEquals(PropertyType.STRING, secondResult.propertyType("calendarus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, secondResult.propertyType("unknown"))
+        );
+    }
+
+    @Test
+    void mustShowPropertyType() {
+        context.build().resource("/content",
+                Map.of(
+                        "stringus-namus", "stringus-valus",
+                        "booleanus-namus", true,
+                        "longus-namus", 123L,
+                        "doubleus-namus", 99.99,
+                        "decimalus-namus", new BigDecimal("999.99"),
+                        "calendarus-namus", unix1980
+                )
+        ).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        assertAll(
+                () -> assertEquals(PropertyType.STRING, nodeProperties.propertyType("stringus-namus")),
+                () -> assertEquals(PropertyType.BOOLEAN, nodeProperties.propertyType("booleanus-namus")),
+                () -> assertEquals(PropertyType.LONG, nodeProperties.propertyType("longus-namus")),
+                () -> assertEquals(PropertyType.DOUBLE, nodeProperties.propertyType("doubleus-namus")),
+                () -> assertEquals(PropertyType.DECIMAL, nodeProperties.propertyType("decimalus-namus")),
+                () -> assertEquals(PropertyType.DATE, nodeProperties.propertyType("calendarus-namus")),
+                () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("unknown"))
+        );
+        NodeProperties nonExistentNodeProperties = new NodeProperties(
+                new TargetJCRPath("/non-existent"), resourceAccess
+        );
+        assertEquals(PropertyType.UNDEFINED, nonExistentNodeProperties.propertyType("unknown"));
     }
 
     @Test

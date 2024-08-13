@@ -18,9 +18,11 @@ import javax.jcr.nodetype.NodeType;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +39,9 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
  * managed by {@link NodeProperties} itself in an encapsulated manner.
  * </p>
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({
+        "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"
+})
 @Slf4j
 @ToString
 public class NodeProperties {
@@ -215,6 +219,24 @@ public class NodeProperties {
     }
 
     /**
+     * Retrieves the {@link PropertyType} of the specified {@link Property}.
+     * @param propertyName name of the {@link Property} whose {@link PropertyType} should be retrieved
+     * @return {@link PropertyType} of the specified {@link Property}
+     */
+    public int propertyType(String propertyName) {
+        log.trace("Getting '{}' property type for {}", propertyName, this);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                           .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                           .map(sneaky(Property::getValue))
+                           .map(Value::getType)
+                           .orElse(PropertyType.UNDEFINED);
+        }
+    }
+
+    /**
      * Checks if the underlying {@link Node} contains a {@link Property} that has the specified name.
      * @param propertyName name of the hypothetically existent {@link Property}
      * @return {@code true} if the underlying {@link Node} contains a {@link Property} that has the specified name;
@@ -282,8 +304,13 @@ public class NodeProperties {
     }
 
     /**
+     * <p>
      * Sets the value of the specified {@link Property} according to the logic described in
      * {@link Node#setProperty(String, String)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, String)}.
      * @param name name of the {@link Property} to set
      * @param value value of the {@link Property} to set
      * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
@@ -302,8 +329,213 @@ public class NodeProperties {
         }
     }
 
+    /**
+     * <p>
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, boolean)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, boolean)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, boolean value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    /**
+     * <p>
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, long)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, long)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, long value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    /**
+     * <p>
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, double)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, double)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, double value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    /**
+     * <p>
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, BigDecimal)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, BigDecimal)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, BigDecimal value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    /**
+     * <p>
+     * Sets the value of the specified {@link Property} according to the logic described in
+     * {@link Node#setProperty(String, Calendar)}.
+     * </p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying {@link Node#setProperty(String, Calendar)}.
+     * @param name name of the {@link Property} to set
+     * @param value value of the {@link Property} to set
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
+     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public Optional<NodeProperties> setProperty(String name, Calendar value) {
+        log.trace("Setting property '{}' to '{}'", name, value);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperty(node, name, value));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
     @SuppressWarnings("PMD.LinguisticNaming")
     private Optional<NodeProperties> setProperty(Node node, String name, String value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, boolean value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, long value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, double value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, BigDecimal value) {
+        try {
+            node.setProperty(name, value);
+            log.trace("Property '{}' set to '{}' for {}", name, value, this);
+            return Optional.of(this);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+            String message = String.format(
+                    "Unable to set property '%s' to '%s' for %s", name, value, this
+            );
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("PMD.LinguisticNaming")
+    private Optional<NodeProperties> setProperty(Node node, String name, Calendar value) {
         try {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
