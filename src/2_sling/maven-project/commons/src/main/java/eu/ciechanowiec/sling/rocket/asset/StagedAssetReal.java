@@ -1,7 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
+import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -35,7 +35,7 @@ import java.util.Optional;
 @Slf4j
 public record StagedAssetReal(
         AssetFile assetFile, AssetMetadata assetMetadata, ResourceAccess resourceAccess
-) implements StagedResource<Asset> {
+) implements StagedNode<Asset> {
 
     @SneakyThrows
     @Override

@@ -10,7 +10,8 @@ import javax.jcr.Repository;
 import java.util.UUID;
 
 /**
- * Represents a path to an {@link Item} in the {@link Repository}, upon which some action is to be performed.
+ * Represents a path to the persisted or hypothetically persisted {@link Item} in the {@link Repository},
+ * upon which some action is to be performed.
  */
 @ToString
 @Slf4j

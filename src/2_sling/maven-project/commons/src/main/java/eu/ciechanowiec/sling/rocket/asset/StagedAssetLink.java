@@ -1,7 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
+import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import java.util.Optional;
  *                       object to acquire access to resources
  */
 @Slf4j
-public record StagedAssetLink(Asset linkedAsset, ResourceAccess resourceAccess) implements StagedResource<Asset> {
+public record StagedAssetLink(Asset linkedAsset, ResourceAccess resourceAccess) implements StagedNode<Asset> {
 
     @SneakyThrows
     @Override

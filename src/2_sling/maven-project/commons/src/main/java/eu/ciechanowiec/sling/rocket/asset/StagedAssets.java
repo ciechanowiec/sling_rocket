@@ -2,7 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
+import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.SneakyThrows;
@@ -31,8 +31,8 @@ import java.util.UUID;
 @SuppressFBWarnings("EI_EXPOSE_REP")
 @Slf4j
 public record StagedAssets(
-        Collection<StagedResource<Asset>> assetsToSave, ResourceAccess resourceAccess
-) implements StagedResource<Assets> {
+        Collection<StagedNode<Asset>> assetsToSave, ResourceAccess resourceAccess
+) implements StagedNode<Assets> {
 
     @SneakyThrows
     @Override

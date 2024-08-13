@@ -2,7 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.StagedResource;
+import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -143,8 +143,8 @@ class AssetTest extends TestEnvironment {
                 return Optional.empty();
             }
         }, resourceAccess).save(new TargetJCRPath("/content/separate-asset"));
-        StagedResource<Asset> stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
-        StagedResource<Asset> stagedJPGOneReal = new StagedAssetReal(
+        StagedNode<Asset> stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
+        StagedNode<Asset> stagedJPGOneReal = new StagedAssetReal(
                 () -> Optional.of(fileJPGOne), new AssetMetadata() {
             @Override
             public String mimeType() {
@@ -161,7 +161,7 @@ class AssetTest extends TestEnvironment {
                 return Optional.empty();
             }
         }, resourceAccess);
-        StagedResource<Asset> stagedJPGTwoReal = new StagedAssetReal(
+        StagedNode<Asset> stagedJPGTwoReal = new StagedAssetReal(
                 () -> Optional.of(fileJPGTwo), new AssetMetadata() {
             @Override
             public String mimeType() {
