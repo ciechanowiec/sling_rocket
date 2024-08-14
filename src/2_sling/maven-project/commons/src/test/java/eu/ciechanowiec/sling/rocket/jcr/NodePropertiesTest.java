@@ -1,7 +1,13 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
+import eu.ciechanowiec.sling.rocket.asset.Asset;
+import eu.ciechanowiec.sling.rocket.asset.AssetMetadata;
+import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
+import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -10,7 +16,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.jcr.PropertyType;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +31,7 @@ class NodePropertiesTest extends TestEnvironment {
 
     private Calendar unix1980;
     private Calendar unix1990;
+    private File file;
 
     NodePropertiesTest() {
         super(ResourceResolverType.JCR_OAK);
@@ -37,6 +49,26 @@ class NodePropertiesTest extends TestEnvironment {
         unix1990.set(Calendar.MILLISECOND, 0);
         unix1980.setLenient(false);
         unix1990.setLenient(false);
+        file = loadResourceIntoFile();
+    }
+
+    @SneakyThrows
+    private File loadResourceIntoFile() {
+        File createdFile = File.createTempFile("jcr-binary_", ".tmp");
+        createdFile.deleteOnExit();
+        Path tempFilePath = createdFile.toPath();
+        Thread currentThread = Thread.currentThread();
+        ClassLoader classLoader = currentThread.getContextClassLoader();
+        try (
+                InputStream inputStream = Optional.ofNullable(
+                        classLoader.getResourceAsStream("1.jpeg")
+                ).orElseThrow();
+                OutputStream outputStream = Files.newOutputStream(tempFilePath)
+        ) {
+            IOUtils.copy(inputStream, outputStream);
+        }
+        assertTrue(createdFile.exists());
+        return createdFile;
     }
 
     @Test
@@ -125,6 +157,36 @@ class NodePropertiesTest extends TestEnvironment {
                 () -> assertEquals(PropertyType.STRING, secondResult.propertyType("decimalus-namus")),
                 () -> assertEquals(PropertyType.STRING, secondResult.propertyType("calendarus-namus")),
                 () -> assertEquals(PropertyType.UNDEFINED, secondResult.propertyType("unknown"))
+        );
+    }
+
+    @Test
+    void mustExcludeBinariesFromAll() {
+        TargetJCRPath realAssetPath = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        new StagedAssetReal(() -> Optional.of(file), new AssetMetadata() {
+            @Override
+            public String mimeType() {
+                return "image/jpeg";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "originalus");
+            }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
+        }, resourceAccess).save(realAssetPath);
+        TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
+        TargetJCRPath nrResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
+        NodeProperties nodeProperties = new NodeProperties(nrResourcePath, resourceAccess);
+        assertAll(
+                () -> assertTrue(nodeProperties.isPrimaryType(JcrConstants.NT_RESOURCE)),
+                () -> assertEquals(5, nodeProperties.all().size())
         );
     }
 

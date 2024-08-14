@@ -10,6 +10,7 @@ import java.util.Collection;
 /**
  * <p>
  * Represents {@link Node} instances of type {@link Assets#NT_ASSETS}.
+ * That can be either a persisted or a hypothetically persisted {@link Node}.
  * </p>
  * A {@link Resource} representing a {@link Node} of type {@link Assets#NT_ASSETS}
  * can be adapted to this {@link Assets}, e.g. this way:

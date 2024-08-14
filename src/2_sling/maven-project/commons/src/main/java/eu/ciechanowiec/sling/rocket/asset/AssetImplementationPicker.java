@@ -5,6 +5,7 @@ import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.ImplementationPicker;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,9 @@ public class AssetImplementationPicker implements ImplementationPicker {
         this.resourceAccess = resourceAccess;
         this.nodeTypesToModelsMapping = Map.of(
                 Asset.NT_ASSET_REAL, AssetRealModel.class,
-                Asset.NT_ASSET_LINK, AssetLinkModel.class
+                Asset.NT_ASSET_LINK, AssetLinkModel.class,
+                JcrConstants.NT_FILE, NTFileModel.class,
+                JcrConstants.NT_RESOURCE, NTResourceModel.class
         );
         log.info("Initialized {}", this);
     }

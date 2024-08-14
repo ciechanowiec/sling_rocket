@@ -276,12 +276,17 @@ public class NodeProperties {
     }
 
     /**
+     * <p>
      * Returns all {@link Property}-ies of the underlying {@link Node} as a {@link Map}
-     * of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}; if a
-     * given {@link Value} cannot be converted to {@link String}, it is omitted from the result.
-     * @return all {@link Property}-ies of the underlying {@link Node} as a {@link Map}
-     *         of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}; if a
-     *         given {@link Value} cannot be converted to {@link String}, it is omitted from the result
+     * of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}.
+     * </p>
+     * The following {@link Property}-ies are omitted from the result:
+     * <ol>
+     *     <li>{@link Property}-ies with {@link Value}-s that cannot be converted to {@link String}</li>
+     *     <li>{@link Property}-ies of type {@link PropertyType#BINARY}</li>
+     * </ol>
+     * @return {@link Property}-ies of the underlying {@link Node} as a {@link Map}
+     *         of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}
      */
     public Map<String, String> all() {
         log.trace("Retrieving all properties of {}", this);
@@ -292,6 +297,7 @@ public class NodeProperties {
                     .map(ValueMap::keySet)
                     .orElse(Set.of())
                     .stream()
+                    .filter(propertyName -> propertyType(propertyName) != PropertyType.BINARY)
                     .map(propertyName -> Map.entry(
                             propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
                     )

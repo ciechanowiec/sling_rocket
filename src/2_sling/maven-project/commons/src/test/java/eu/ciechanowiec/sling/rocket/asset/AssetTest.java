@@ -9,6 +9,9 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -122,6 +125,92 @@ class AssetTest extends TestEnvironment {
             }
         }, resourceAccess);
         assertThrows(OccupiedJCRPathException.class, () -> failingAsset.save(realAssetPath));
+    }
+
+    @Test
+    @SneakyThrows
+    @SuppressWarnings("MethodLength")
+    void mustRetrieveFromNTFile() {
+        TargetJCRPath realAssetPath = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        new StagedAssetReal(() -> Optional.of(fileJPGOne), new AssetMetadata() {
+            @Override
+            public String mimeType() {
+                return "image/jpeg";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of(PN_MIME_TYPE, mimeType(), "originalFileName", "originalus");
+            }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
+        }, resourceAccess).save(realAssetPath);
+        TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
+        new NodeProperties(ntFilePath, resourceAccess).assertPrimaryType(JcrConstants.NT_FILE);
+        TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
+        new NodeProperties(ntResourcePath, resourceAccess).assertPrimaryType(JcrConstants.NT_RESOURCE);
+        Asset ntFileAsset;
+        Asset ntResourceAsset;
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            ntFileAsset = Optional.ofNullable(resourceResolver.getResource(ntFilePath.get()))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                    .orElseThrow();
+            ntResourceAsset = Optional.ofNullable(resourceResolver.getResource(ntResourcePath.get()))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                    .orElseThrow();
+        }
+        TargetJCRPath ntFileLinkPathOne = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        TargetJCRPath ntFileLinkPathTwo = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        TargetJCRPath ntResourceLinkPathOne = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        TargetJCRPath ntResourceLinkPathTwo = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        Asset ntFileLinkOne = new StagedAssetLink(ntFileAsset, resourceAccess).save(ntFileLinkPathOne);
+        Asset ntFileLinkTwo = new StagedAssetLink(ntFileLinkOne, resourceAccess).save(ntFileLinkPathTwo);
+        Asset ntResourceLinkOne = new StagedAssetLink(ntResourceAsset, resourceAccess).save(ntResourceLinkPathOne);
+        Asset ntResourceLinkTwo = new StagedAssetLink(ntResourceLinkOne, resourceAccess).save(ntResourceLinkPathTwo);
+        assertAll(
+                () -> assertEquals(
+                        JcrConstants.NT_RESOURCE,
+                        ntFileAsset.assetMetadata().properties().orElseThrow().primaryType()
+                ),
+                () -> assertEquals(
+                        JcrConstants.NT_RESOURCE,
+                        ntResourceAsset.assetMetadata().properties().orElseThrow().primaryType()
+                ),
+                () -> assertEquals(
+                        ntFileAsset.assetMetadata().properties().orElseThrow().all(),
+                        ntResourceAsset.assetMetadata().properties().orElseThrow().all()
+                ),
+                () -> assertEquals(
+                        ntFileAsset.assetMetadata().all(),
+                        ntResourceAsset.assetMetadata().all()
+                ),
+                () -> assertEquals(
+                        ntFileAsset.jcrPath(),
+                        ntResourceAsset.jcrPath()
+                )
+        );
+        Set<Map<String, String>> all = Set.copyOf(List.of(
+                ntFileAsset.assetMetadata().all(),
+                ntResourceAsset.assetMetadata().all(),
+                ntFileLinkOne.assetMetadata().all(),
+                ntFileLinkTwo.assetMetadata().all(),
+                ntResourceLinkOne.assetMetadata().all(),
+                ntResourceLinkTwo.assetMetadata().all()
+        ));
+        assertEquals(NumberUtils.INTEGER_ONE, all.size());
     }
 
     @Test

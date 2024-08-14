@@ -1,4 +1,4 @@
-package eu.ciechanowiec.sling.rocket.jcr;
+package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import org.apache.sling.api.resource.Resource;
@@ -17,13 +17,12 @@ class NTFileModelTest extends TestEnvironment {
     }
 
     @Test
-    void mustReturnEmptyOnInvalidType() {
+    void mustNotInitOnInvalidType() {
         context.build().resource("/content").commit();
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             Resource content = Optional.ofNullable(resourceResolver.getResource("/content")).orElseThrow();
-            NTFileModel ntFileModel = Optional.ofNullable(content.adaptTo(NTFileModel.class)).orElseThrow();
-            boolean noFile = ntFileModel.retrieve().isEmpty();
-            assertTrue(noFile);
+            boolean wasntInitialized = Optional.ofNullable(content.adaptTo(NTFileModel.class)).isEmpty();
+            assertTrue(wasntInitialized);
         }
     }
 }

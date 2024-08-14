@@ -12,7 +12,7 @@ public interface AssetFile {
     /**
      * Returns an {@link Optional} containing the unary binary file of an {@link Asset}.
      * @return {@link Optional} containing the unary binary file of an {@link Asset};
-     *         an empty {@link Optional} is returned if due to some reason file retrieve fails
+     *         an empty {@link Optional} is returned if due to any reason file retrieve fails
      */
     Optional<File> retrieve();
 }

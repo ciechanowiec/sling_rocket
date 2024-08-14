@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.6.0</version>
+        <version>13.8.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -18,7 +18,7 @@
 
     <properties>
         <fail-build-on-static-code-analysis-errors>true</fail-build-on-static-code-analysis-errors>
-        <enforce-tests-coverage>false</enforce-tests-coverage>
+        <enforce-tests-coverage>true</enforce-tests-coverage>
         <jacoco-maven-plugin.coverage.minimum>0.8</jacoco-maven-plugin.coverage.minimum>
     </properties>
 

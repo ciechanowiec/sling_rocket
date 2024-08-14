@@ -6,16 +6,17 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 
 /**
- * Represents a {@link Node} that has a {@link Property}
- * named {@link JcrConstants#JCR_UUID} of type {@link String}.
+ * Represents a {@link Node} that has an associated {@link Property} named {@link JcrConstants#JCR_UUID}
+ * of type {@link String}. The associated {@link Property} can belong to the {@link Node} represented by
+ * this {@link Referencable} itself or to one of its descendants.
  */
 @FunctionalInterface
 public interface Referencable {
 
     /**
-     * Returns the value of the {@link Property} named {@link JcrConstants#JCR_UUID} of type {@link String}.
-     * @return value of the {@link Property} named {@link JcrConstants#JCR_UUID} of type {@link String}
-     * @throws NotReferencableException if the underlying {@link Node} doesn't contain the {@link Property}
+     * Returns the value of the associated {@link Property} named {@link JcrConstants#JCR_UUID} of type {@link String}.
+     * @return value of the associated {@link Property} named {@link JcrConstants#JCR_UUID} of type {@link String}
+     * @throws NotReferencableException if the underlying {@link Node} doesn't have the associated {@link Property}
      *         named {@link JcrConstants#JCR_UUID}
      */
     String jcrUUID();
