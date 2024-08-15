@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.8.0</version>
+        <version>13.10.0</version>
     </parent>
 
     <artifactId>sling.rocket.feature</artifactId>
@@ -96,9 +96,6 @@
                         conditional.version,
                         javax.servlet-api.version,
                         jakarta.ws.rs-api.version,
-                        jakarta.json-api.version,
-                        parsson.version,
-                        osgi-resource-locator.version,
                         icu4j.version,
                         jimage.hash.version,
 

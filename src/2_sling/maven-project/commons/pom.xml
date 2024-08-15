@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.8.0</version>
+        <version>13.10.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -84,11 +84,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <!--  Required by jakarta.json:jakarta.json-api, although not listed in Import-Package  -->
-            <groupId>org.eclipse.parsson</groupId>
-            <artifactId>parsson</artifactId>
         </dependency>
         <dependency>
             <!--  Basic JUnit library -->

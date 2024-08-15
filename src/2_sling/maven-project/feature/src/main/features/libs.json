@@ -141,18 +141,6 @@
       "start-order": "25"
     },
     {
-      "id": "jakarta.json:jakarta.json-api:${jakarta.json-api.version}",
-      "start-order": "25"
-    },
-    {
-      "id": "org.eclipse.parsson:parsson:${parsson.version}",
-      "start-order": "25"
-    },
-    {
-      "id": "org.glassfish.hk2:osgi-resource-locator:${osgi-resource-locator.version}",
-      "start-order": "25"
-    },
-    {
       "id": "com.ibm.icu:icu4j:${icu4j.version}",
       "start-order": "25"
     },

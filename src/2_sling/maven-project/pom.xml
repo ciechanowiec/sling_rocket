@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.8.0</version>
+    <version>13.10.0</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -170,15 +170,12 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>13.8.0</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>13.8.0</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>13.10.0</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>13.10.0</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <jakarta.json-api.version>2.1.3</jakarta.json-api.version>
-        <parsson.version>1.1.7</parsson.version>
-        <osgi-resource-locator.version>2.4.0</osgi-resource-locator.version>
         <icu4j.version>75.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <!-- ====================================================================== -->
@@ -259,7 +256,7 @@
         <org.apache.sling.engine.version>2.15.16</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.2.0</org.apache.sling.fsresource.version>
         <org.apache.sling.i18n.version>2.6.2</org.apache.sling.i18n.version>
-        <org.apache.sling.resourceresolver.version>1.11.6</org.apache.sling.resourceresolver.version>
+        <org.apache.sling.resourceresolver.version>1.12.0</org.apache.sling.resourceresolver.version>
         <org.apache.sling.servlets.get.version>2.2.0</org.apache.sling.servlets.get.version>
         <org.apache.sling.xss.version>2.4.0</org.apache.sling.xss.version>
         <org.apache.sling.resource.filter.version>1.0.0</org.apache.sling.resource.filter.version>
@@ -341,7 +338,7 @@
         </org.apache.sling.scripting.sightly.compiler.java.version>
         <org.apache.sling.scripting.sightly.compiler.version>1.2.14-1.4.0
         </org.apache.sling.scripting.sightly.compiler.version>
-        <org.apache.sling.scripting.sightly.js.provider.version>1.2.8
+        <org.apache.sling.scripting.sightly.js.provider.version>1.2.10
         </org.apache.sling.scripting.sightly.js.provider.version>
         <org.apache.sling.scripting.sightly.runtime.version>1.2.6-1.4.0
         </org.apache.sling.scripting.sightly.runtime.version>
@@ -1021,26 +1018,6 @@
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jakarta.ws.rs-api.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.json</groupId>
-                <artifactId>jakarta.json-api</artifactId>
-                <version>${jakarta.json-api.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <!--  Required by jakarta.json:jakarta.json-api, although not listed in Import-Package  -->
-                <groupId>org.eclipse.parsson</groupId>
-                <artifactId>parsson</artifactId>
-                <version>${parsson.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <!--  Required by jakarta.json:jakarta.json-api, although not listed in Import-Package  -->
-                <groupId>org.glassfish.hk2</groupId>
-                <artifactId>osgi-resource-locator</artifactId>
-                <version>${osgi-resource-locator.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
