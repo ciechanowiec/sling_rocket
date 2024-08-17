@@ -11,12 +11,14 @@ import java.util.function.UnaryOperator;
 /**
  * Default implementation of {@link ChatMessage}.
  */
+@SuppressWarnings("WeakerAccess")
 @ToString
 @Slf4j
 public class ChatMessageDefault implements ChatMessage {
 
     @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
-    private final Role role;
+    @ToString.Exclude
+    private final Supplier<Role> roleSupplier;
     @ToString.Exclude
     private final Supplier<String> contentSupplier;
 
@@ -27,9 +29,20 @@ public class ChatMessageDefault implements ChatMessage {
      */
     @JsonCreator
     public ChatMessageDefault(@JsonProperty("role") Role role, @JsonProperty("content") String content) {
-        this.role = role;
+        this.roleSupplier = () -> role;
         this.contentSupplier = () -> content;
         log.trace("Initialized {} with content: '{}'", this, content);
+    }
+
+    /**
+     * Constructs an instance of this class.
+     * @param roleSupplier {@link Supplier} that produces the type of the author of this {@link ChatMessage}
+     * @param contentSupplier {@link Supplier} that produces the content of this {@link ChatMessage}
+     */
+    public ChatMessageDefault(Supplier<Role> roleSupplier, Supplier<String> contentSupplier) {
+        this.roleSupplier = roleSupplier;
+        this.contentSupplier = contentSupplier;
+        log.trace("Initialized {}", this);
     }
 
     /**
@@ -39,9 +52,8 @@ public class ChatMessageDefault implements ChatMessage {
      * @param contentTransformer function that will be applied to the content of the {@code sourceMessage}
      *                           and to produce the content of the newly constructed {@link ChatMessage}
      */
-    @SuppressWarnings("WeakerAccess")
     public ChatMessageDefault(ChatMessage sourceMessage, UnaryOperator<String> contentTransformer) {
-        this.role = sourceMessage.role();
+        this.roleSupplier = sourceMessage::role;
         String initialContent = sourceMessage.content();
         this.contentSupplier = () -> contentTransformer.apply(initialContent);
         log.trace("Initialized {}. Initial content: '{}'", this, initialContent);
@@ -62,6 +74,6 @@ public class ChatMessageDefault implements ChatMessage {
     @Override
     @JsonProperty("role")
     public Role role() {
-        return role;
+        return roleSupplier.get();
     }
 }

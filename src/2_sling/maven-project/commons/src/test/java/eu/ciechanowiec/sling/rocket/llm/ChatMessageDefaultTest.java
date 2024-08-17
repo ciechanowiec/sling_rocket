@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Supplier;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MultipleStringLiterals")
+@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class ChatMessageDefaultTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -67,5 +69,30 @@ class ChatMessageDefaultTest {
         ChatMessage sourceMessage = new ChatMessageDefault(Role.USER, "Original content");
         ChatMessage transformedMessage = new ChatMessageDefault(sourceMessage, String::toUpperCase);
         assertEquals("ORIGINAL CONTENT", transformedMessage.content());
+    }
+
+    @Test
+    void roleSupplierProvidesCorrectRoleFromSupplier() {
+        Supplier<Role> roleSupplier = () -> Role.ASSISTANT;
+        Supplier<String> contentSupplier = () -> "Test content";
+        ChatMessage message = new ChatMessageDefault(roleSupplier, contentSupplier);
+        assertEquals(Role.ASSISTANT, message.role());
+    }
+
+    @Test
+    void contentSupplierProvidesCorrectContentFromSupplier() {
+        Supplier<Role> roleSupplier = () -> Role.USER;
+        Supplier<String> contentSupplier = () -> "Test content";
+        ChatMessage message = new ChatMessageDefault(roleSupplier, contentSupplier);
+        assertEquals("Test content", message.content());
+    }
+
+    @Test
+    void roleAndContentSuppliersProvideCorrectValuesFromSupplier() {
+        Supplier<Role> roleSupplier = () -> Role.SYSTEM;
+        Supplier<String> contentSupplier = () -> "System content";
+        ChatMessage message = new ChatMessageDefault(roleSupplier, contentSupplier);
+        assertEquals(Role.SYSTEM, message.role());
+        assertEquals("System content", message.content());
     }
 }
