@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.commons;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -59,5 +60,15 @@ public class UnwrappedIteration<T> {
     public Stream<T> stream() {
         Collection<T> collection = unwrappedCollection.join();
         return collection.stream();
+    }
+
+    /**
+     * Returns an unmodifiable {@link List} of elements from the wrapped data structure.
+     * A new object is returned each time this method is called.
+     *
+     * @return unmodifiable {@link List} of elements from the wrapped data structure
+     */
+    public List<T> list() {
+        return stream().toList();
     }
 }

@@ -86,4 +86,69 @@ class UnwrappedIterationTest {
         assertNotEquals(sampleList.size(), result.size());
         assertEquals(List.of(1, 2, 3, 4, 5), sampleList);
     }
+
+    @Test
+    void testListWithIterator() {
+        Iterator<Integer> iterator = sampleList.iterator();
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(iterator);
+        List<Integer> result = unwrappedIteration.list();
+        assertEquals(sampleList, result);
+    }
+
+    @Test
+    void testListWithIterable() {
+        Iterable<Integer> iterable = sampleList;
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(iterable);
+        List<Integer> result = unwrappedIteration.list();
+        assertEquals(sampleList, result);
+    }
+
+    @Test
+    void testListWithEmptyIterator() {
+        Iterator<Integer> iterator = Collections.emptyIterator();
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(iterator);
+        List<Integer> result = unwrappedIteration.list();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testListWithEmptyIterable() {
+        Iterable<Integer> iterable = List.of();
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(iterable);
+        List<Integer> result = unwrappedIteration.list();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testListWithSingleElementIterator() {
+        List<Integer> singleElementList = List.of(42);
+        Iterator<Integer> iterator = singleElementList.iterator();
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(iterator);
+        List<Integer> result = unwrappedIteration.list();
+        assertEquals(singleElementList, result);
+    }
+
+    @Test
+    void testListWithSingleElementIterable() {
+        List<Integer> singleElementList = List.of(42);
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(singleElementList);
+        List<Integer> result = unwrappedIteration.list();
+        assertEquals(singleElementList, result);
+    }
+
+    @Test
+    void testListReturnsNewListEachTime() {
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(sampleList);
+        List<Integer> list1 = unwrappedIteration.list();
+        List<Integer> list2 = unwrappedIteration.list();
+        assertNotSame(list1, list2);
+    }
+
+    @Test
+    void testListDoesNotModifyOriginalCollection() {
+        UnwrappedIteration<Integer> unwrappedIteration = new UnwrappedIteration<>(sampleList);
+        List<Integer> result = unwrappedIteration.list();
+        assertEquals(sampleList, result);
+        assertThrows(UnsupportedOperationException.class, () -> result.add(6));
+    }
 }
