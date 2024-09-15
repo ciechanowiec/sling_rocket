@@ -83,7 +83,7 @@ image::sling-rocket-architecture-diagram.svg[]
 
 == Usage
 
-The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `13.14.0`, the version of the SR Instance must also be `13.14.0`.
+The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `13.16.0`, the version of the SR Instance must also be `13.16.0`.
 
 === SR Parent POM
 
@@ -93,7 +93,7 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 <parent>
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.14.0</version>
+    <version>13.16.0</version>
 </parent>
 ....
 
@@ -107,12 +107,24 @@ curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-com
 docker compose up -d
 ....
 
-=== Persistence
+=== Persistence and Application Files
 
+Static files related to an SR instance reside in `/opt/sling`. These files are of two types: _persistence files_ and _application files_.
+
+==== Persistence Files
+
+As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
 [upperalpha]
-. Static files related to an SR Instance reside in `/opt/sling/launcher`. This includes the directory `/opt/sling/launcher/repository`, where JCR static files are located. The directory with JCR static files, i.e. `/opt/sling/launcher/repository`, is a complete and independent set of files for a standalone JCR, and no other files are required for the correct operation of the JCR itself. However, the rest of the static files from `/opt/sling/launcher` maintain an inseparable relationship with the specific state of JCR static files from `/opt/sling/launcher/repository`. This means that mounting a new set of files to `/opt/sling/launcher/repository` that were not previously associated with the rest of the static files from `/opt/sling/launcher` might cause problems in the SR Instance, although the JCR itself might work correctly. Therefore, all static files from `/opt/sling/launcher` should be treated as an indivisible persistence layer of a given SR Instance. This means that the entire `/opt/sling/launcher` (not only `/opt/sling/launcher/repository`) should be mounted as a persistent Docker volume of a given SR instance.
-. Due to the persistence specifics described above and the fact that every new version of _Sling Rocket_ delivers a new and unique set of static files from `/opt/sling/launcher`, a new version of _Sling Rocket_ cannot replace the previous one in such a way that the new version will just start working as a new shell for the previous JCR. Every new version of _Sling Rocket_ is permanently associated with a new clean JCR. Therefore, _Sling Rocket_ version updates must be performed via content migration from the previous SR Instance to the new one.
-. To ease JCR data management, it is strongly recommended that all unique and runtime-generated business application data is stored under the `/content` path of JCR. Data stored under other JCR paths should be disposable and reproducible via code deployments.
+. should be mounted as a persistent Docker volume for a given SR instance,
+. should be retained and reused between _Sling Rocket_ updates for a given SR instance.
+
+==== Application Files
+
+Static files related to an SR instance that reside in `/opt/sling` but aren't _persistence files_ are classified as _application files_. These files:
+[upperalpha]
+. are managed by _Sling Rocket_, meaning that _Sling Rocket_ provides new application files upon every container (re)creation,
+. are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR instance,
+. do not persistently store any business data.
 
 == Miscellaneous
 
@@ -138,7 +150,7 @@ mvn clean deploy -P release
 ....
 cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
-docker push ciechanowiec/sling:13.14.0
+docker push ciechanowiec/sling:13.16.0
 ....
 
 === Access Password

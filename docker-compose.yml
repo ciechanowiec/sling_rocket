@@ -11,12 +11,12 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/sling:13.14.0
+    image: ciechanowiec/sling:13.16.0
     container_name: sling
     volumes:
       - type: volume
         source: sling-data
-        target: /opt/sling/launcher
+        target: /opt/sling/launcher/repository/segmentstore
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: sling
