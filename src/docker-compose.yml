@@ -39,7 +39,7 @@ services:
     volumes:
       - type: volume
         source: sling-data
-        target: /opt/sling/launcher
+        target: /opt/sling/launcher/repository/segmentstore
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: sling
