@@ -159,7 +159,7 @@
         <tika-parsers.version>1.28.5</tika-parsers.version>
         <httpclient-osgi.version>4.5.14</httpclient-osgi.version>
         <httpcore-osgi.version>4.4.16</httpcore-osgi.version>
-        <antlr4-runtime.version>4.13.2</antlr4-runtime.version>
+        <antlr4-runtime.version>4.9.3</antlr4-runtime.version>
         <org.apache.servicemix.bundles.rhino.version>1.7.15_1</org.apache.servicemix.bundles.rhino.version>
         <freemarker.version>2.3.33</freemarker.version>
         <org.apache.servicemix.bundles.thymeleaf.version>3.0.15.RELEASE_1
@@ -2483,6 +2483,15 @@
                                 <!-- We need ognl.DefaultMemberAccess (https://stackoverflow.com/questions/54928412/defaultmemberaccess-not-found-in-ognl-3-2-10) -->
                                 <groupId>org.apache.servicemix.bundles</groupId>
                                 <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
+                                <ignoreVersion>
+                                    <type>regex</type>
+                                    <version>.*</version>
+                                </ignoreVersion>
+                            </rule>
+                            <rule>
+                                <!-- We need legacy version for HTL (https://github.com/antlr/antlr4/issues/4568) -->
+                                <groupId>org.antlr</groupId>
+                                <artifactId>antlr4-runtime</artifactId>
                                 <ignoreVersion>
                                     <type>regex</type>
                                     <version>.*</version>

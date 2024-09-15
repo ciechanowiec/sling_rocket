@@ -66,6 +66,11 @@
       "org.apache.sling.scripting.cache.additional_extensions": [
         "js"
       ]
+    },
+    "org.apache.sling.scripting.core.impl.jsr223.SlingScriptEngineManager": {
+      "excludes": [
+        "thymeleaf"
+      ]
     }
   }
 }
