@@ -3,7 +3,9 @@ package eu.ciechanowiec.sling.rocket.test;
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.asset.AssetImplementationPicker;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
@@ -16,14 +18,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import java.io.InputStream;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,6 +38,7 @@ import java.util.Optional;
         "VisibilityModifier", "PMD.AvoidAccessibilityAlteration", "PMD.AbstractClassWithoutAbstractMethod",
         "squid:S1694", "TestInProductSource"})
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
+@Slf4j
 public abstract class TestEnvironment {
 
     /**
@@ -52,10 +57,24 @@ public abstract class TestEnvironment {
      */
     @SuppressWarnings({"resource", "squid:S5993"})
     public TestEnvironment(ResourceResolverType resourceResolverType) {
+        log.debug("Initializing {} with {}", TestEnvironment.class.getSimpleName(), resourceResolverType);
         context = new SlingContext(resourceResolverType);
         context.resourceResolver(); // trigger RR initialization
-        resourceAccess = this::getFreshAdminRR;
-        context.registerService(ResourceAccess.class, resourceAccess);
+        ResourceAccess resourceAccessToRegister = new ResourceAccess() {
+            @Override
+            public String toString() {
+                return String.format("{TEST-PURPOSE %s}", ResourceAccess.class.getName());
+            }
+
+            @Override
+            public ResourceResolver acquireAccess() {
+                return getFreshAdminRR();
+            }
+        };
+        resourceAccess = context.registerService(
+                ResourceAccess.class, resourceAccessToRegister
+        );
+        log.debug("Registered {}", resourceAccess);
         context.registerInjectActivateService(AssetImplementationPicker.class);
         boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
@@ -64,6 +83,7 @@ public abstract class TestEnvironment {
     @SneakyThrows
     @SuppressWarnings("squid:S3011")
     private ResourceResolver getFreshAdminRR() {
+        log.trace("Getting fresh admin resource resolver");
         Class<SlingContextImpl> slingContextClass = SlingContextImpl.class;
         Field resourceResolverFactoryField = slingContextClass.getDeclaredField("resourceResolverFactory");
         resourceResolverFactoryField.setAccessible(true);
@@ -75,28 +95,40 @@ public abstract class TestEnvironment {
     }
 
     /**
-     * Dumps the underlying {@link Repository} into a file.
+     * Dumps the underlying {@link Repository} into a file named "repo.xml".
+     * If the file already exists, it will be overwritten.
      */
     @SneakyThrows
-    @SuppressWarnings({"resource", "PMD.CloseResource", "unused"})
+    @SuppressWarnings({"PMD.CloseResource", "unused"})
     protected void exportJCRtoXML() {
-        ResourceResolver resolver = resourceAccess.acquireAccess();
-        Session session = Optional.ofNullable(resolver.adaptTo(Session.class)).orElseThrow();
-        Path path = Paths.get("repo.xml");
-        OutputStream out = Files.newOutputStream(path);
-        session.exportDocumentView("/", out, true, false);
+        try (ResourceResolver resolver = resourceAccess.acquireAccess()) {
+            Session session = Optional.ofNullable(resolver.adaptTo(Session.class)).orElseThrow();
+            Path path = Paths.get("repo.xml");
+            OutputStream out = Files.newOutputStream(path);
+            session.exportDocumentView("/", out, true, false);
+        }
     }
 
     @SneakyThrows
+    @SuppressWarnings({"squid:S1905", "unchecked", "rawtypes"})
     private void registerNodeTypes() {
-        ClassLoader classLoader = TestEnvironment.class.getClassLoader();
-        InputStream cndIS = Optional.ofNullable(
-                classLoader.getResourceAsStream("SLING-INF/notetypes/nodetypes.cnd")
-        ).orElseThrow();
-        try (InputStreamReader cndISR = new InputStreamReader(cndIS, StandardCharsets.UTF_8);
+        CNDSource cndSource = new CNDSource();
+        try (InputStreamReader cndISR = cndSource.get();
              ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             Session session = Optional.ofNullable(resourceResolver.adaptTo(Session.class)).orElseThrow();
             CndImporter.registerNodeTypes(cndISR, session);
+            session.save();
+        }
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            NodeTypeManager nodeTypeManager = Optional.ofNullable(resourceResolver.adaptTo(Session.class))
+                    .orElseThrow()
+                    .getWorkspace()
+                    .getNodeTypeManager();
+            NodeTypeIterator nodeTypesIterator = nodeTypeManager.getAllNodeTypes();
+            List<NodeType> nodeTypesList = (List<NodeType>) new UnwrappedIteration<>(
+                    nodeTypesIterator
+            ).list();
+            log.debug("Registered node types: {}", nodeTypesList);
         }
     }
 }
