@@ -102,6 +102,7 @@ public abstract class TestEnvironment {
     @SuppressWarnings({"PMD.CloseResource", "unused"})
     protected void exportJCRtoXML() {
         try (ResourceResolver resolver = resourceAccess.acquireAccess()) {
+            log.debug("Exporting JCR to XML");
             Session session = Optional.ofNullable(resolver.adaptTo(Session.class)).orElseThrow();
             Path path = Paths.get("repo.xml");
             OutputStream out = Files.newOutputStream(path);
