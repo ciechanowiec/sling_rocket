@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.16.0</version>
+    <version>13.18.0</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -170,8 +170,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>13.16.0</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>13.16.0</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>13.18.0</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>13.18.0</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -189,7 +189,7 @@
         <!-- ====================================================================== -->
         <!-- LIBS_ASM                                                               -->
         <!-- ====================================================================== -->
-        <asm.version>9.7</asm.version>
+        <asm.version>9.7.1</asm.version>
         <!-- ====================================================================== -->
         <!-- LIBS_COMMONS                                                           -->
         <!-- ====================================================================== -->
@@ -197,7 +197,7 @@
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <commons-fileupload.version>1.5</commons-fileupload.version>
-        <commons-io.version>2.16.1</commons-io.version>
+        <commons-io.version>2.17.0</commons-io.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-math3.version>3.6.1</commons-math3.version>
@@ -205,7 +205,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.0.0</woodstox-core.version>
-        <jackson.version>2.17.2</jackson.version>
+        <jackson.version>2.18.0</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -217,7 +217,7 @@
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.0</jackrabbit.version>
         <jackrabbit-oak-db.version>1.60.0</jackrabbit-oak-db.version>
-        <org.apache.jackrabbit.vault.version>3.8.0</org.apache.jackrabbit.vault.version>
+        <org.apache.jackrabbit.vault.version>3.8.2</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
         <!-- OSGI                                                                   -->
@@ -256,7 +256,7 @@
         <org.apache.sling.engine.version>2.15.16</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.2.0</org.apache.sling.fsresource.version>
         <org.apache.sling.i18n.version>2.6.4</org.apache.sling.i18n.version>
-        <org.apache.sling.resourceresolver.version>1.12.0</org.apache.sling.resourceresolver.version>
+        <org.apache.sling.resourceresolver.version>1.12.2</org.apache.sling.resourceresolver.version>
         <org.apache.sling.servlets.get.version>2.2.0</org.apache.sling.servlets.get.version>
         <org.apache.sling.xss.version>2.4.2</org.apache.sling.xss.version>
         <org.apache.sling.resource.filter.version>1.0.0</org.apache.sling.resource.filter.version>
@@ -354,10 +354,10 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>5.11.0</junit-jupiter-api.version>
-        <junit-jupiter-params.version>5.11.0</junit-jupiter-params.version>
-        <mockito-core.version>5.13.0</mockito-core.version>
-        <mockito-junit-jupiter.version>5.13.0</mockito-junit-jupiter.version>
+        <junit-jupiter-api.version>5.11.2</junit-jupiter-api.version>
+        <junit-jupiter-params.version>5.11.2</junit-jupiter-params.version>
+        <mockito-core.version>5.14.1</mockito-core.version>
+        <mockito-junit-jupiter.version>5.14.1</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <org.apache.sling.testing.sling-mock.junit5.version>3.5.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>

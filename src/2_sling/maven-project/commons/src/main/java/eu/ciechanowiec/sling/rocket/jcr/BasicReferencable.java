@@ -1,29 +1,40 @@
-package eu.ciechanowiec.sling.rocket.asset;
+package eu.ciechanowiec.sling.rocket.jcr;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
-import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.NotReferencableException;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 
+import javax.jcr.Node;
+
+/**
+ * Basic implementation of {@link Referencable}.
+ */
 @ToString
 @Slf4j
-class BasicReferencable implements Referencable {
+public class BasicReferencable implements Referencable {
 
     private final WithJCRPath withJCRPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    BasicReferencable(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
+    /**
+     * Constructs an instance of this class.
+     * @param withJCRPath object that contains a {@link JCRPath} to the underlying {@link Node}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
+     *                       object to acquire access to resources
+     */
+    public BasicReferencable(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
         this.withJCRPath = withJCRPath;
         this.resourceAccess = resourceAccess;
         log.trace("Initialized {}", this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String jcrUUID() {
         NodeProperties nodeProperties = new NodeProperties(withJCRPath, resourceAccess);

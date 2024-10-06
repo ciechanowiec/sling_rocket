@@ -10,32 +10,20 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
-import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.Optional;
 
-@Model(
-        adaptables = Resource.class,
-        adapters = AssetMetadata.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.REQUIRED
-)
 @Slf4j
 @ToString
-@SuppressWarnings("pR")
-class AssetMetadataModel implements AssetMetadata, WithJCRPath {
+class AssetMetadataBasic implements AssetMetadata, WithJCRPath {
 
     @Getter
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    @Inject
-    AssetMetadataModel(@Self Resource resource, @OSGiService ResourceAccess resourceAccess) {
+    AssetMetadataBasic(Resource resource, ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
         this.jcrPath = new TargetJCRPath(resource.getPath());
         assertPrimaryType();

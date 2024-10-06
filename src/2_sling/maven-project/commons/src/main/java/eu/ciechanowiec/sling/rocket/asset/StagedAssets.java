@@ -53,7 +53,7 @@ public record StagedAssets(
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String targetJCRPathRaw = targetJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(targetJCRPathRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Assets.class)))
+                           .map(resource -> new Assets(resource, resourceAccess))
                            .orElseThrow();
         }
     }

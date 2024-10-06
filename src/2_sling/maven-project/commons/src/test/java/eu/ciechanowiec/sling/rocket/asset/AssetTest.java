@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount"})
+@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount", "resource"})
 class AssetTest extends TestEnvironment {
 
     private File fileJPGOne;
@@ -158,10 +159,10 @@ class AssetTest extends TestEnvironment {
         Asset ntResourceAsset;
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             ntFileAsset = Optional.ofNullable(resourceResolver.getResource(ntFilePath.get()))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                    .map(resource -> new UniversalAsset(resource, resourceAccess))
                     .orElseThrow();
             ntResourceAsset = Optional.ofNullable(resourceResolver.getResource(ntResourcePath.get()))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                    .map(resource -> new UniversalAsset(resource, resourceAccess))
                     .orElseThrow();
         }
         TargetJCRPath ntFileLinkPathOne = new TargetJCRPath(
@@ -291,5 +292,15 @@ class AssetTest extends TestEnvironment {
                 List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), resourceAccess
         );
         assertThrows(OccupiedJCRPathException.class, () -> failingAssets.save(assetsPath));
+    }
+
+    @Test
+    void mustThrowWithIllegalNT() {
+        context.build()
+               .resource("/content/illegal-nt", JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED)
+                .commit();
+        Resource resource = Optional.ofNullable(context.resourceResolver().getResource("/content/illegal-nt"))
+                                    .orElseThrow();
+        assertThrows(IllegalArgumentException.class, () -> new UniversalAsset(resource, resourceAccess));
     }
 }

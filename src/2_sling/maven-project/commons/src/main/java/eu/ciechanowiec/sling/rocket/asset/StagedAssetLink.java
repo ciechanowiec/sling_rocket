@@ -13,7 +13,6 @@ import org.apache.sling.api.resource.ResourceUtil;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Represents a request to save a new {@link Asset} in the {@link Repository}
@@ -42,7 +41,7 @@ public record StagedAssetLink(Asset linkedAsset, ResourceAccess resourceAccess) 
                     ), null, false
             );
             resourceResolver.commit();
-            Asset savedAsset = Optional.ofNullable(assetLinkResource.adaptTo(Asset.class)).orElseThrow();
+            Asset savedAsset = new UniversalAsset(assetLinkResource, resourceAccess);
             log.debug("Saved: {}", savedAsset);
             return savedAsset;
         }

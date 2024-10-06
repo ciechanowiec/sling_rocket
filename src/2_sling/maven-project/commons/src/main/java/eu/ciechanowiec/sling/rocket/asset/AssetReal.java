@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
 import eu.ciechanowiec.sling.rocket.jcr.NTFile;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
@@ -12,31 +13,19 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
-import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
-@Model(
-        adaptables = Resource.class,
-        adapters = Asset.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.REQUIRED
-)
 @Slf4j
 @ToString
-@SuppressWarnings("pR")
-class AssetRealModel implements Asset {
+class AssetReal implements Asset {
 
     @Getter
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    @Inject
-    AssetRealModel(@Self Resource resource, @OSGiService ResourceAccess resourceAccess) {
+    AssetReal(Resource resource, ResourceAccess resourceAccess) {
         String resourcePath = resource.getPath();
         this.jcrPath = new TargetJCRPath(resourcePath);
         this.resourceAccess = resourceAccess;
@@ -56,7 +45,7 @@ class AssetRealModel implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String metadataJCRPathRaw = metadataJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(metadataJCRPathRaw))
-                    .flatMap(metadataResource -> Optional.ofNullable(metadataResource.adaptTo(AssetMetadata.class)))
+                    .map(metadataResource -> new AssetMetadataBasic(metadataResource, resourceAccess))
                     .orElseThrow();
         }
     }
@@ -67,7 +56,7 @@ class AssetRealModel implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String fileJCRPathRaw = fileJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(fileJCRPathRaw))
-                           .flatMap(fileResource -> Optional.ofNullable(fileResource.adaptTo(NTFile.class)))
+                           .map(fileResource -> new NTFile(fileResource, resourceAccess))
                            .orElseThrow();
         }
     }

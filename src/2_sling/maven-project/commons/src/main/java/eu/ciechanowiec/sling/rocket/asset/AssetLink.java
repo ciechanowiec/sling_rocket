@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.ReferenceProperty;
@@ -11,31 +12,19 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
-import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
-@Model(
-        adaptables = Resource.class,
-        adapters = Asset.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.REQUIRED
-)
 @Slf4j
 @ToString
-@SuppressWarnings("pR")
-class AssetLinkModel implements Asset {
+class AssetLink implements Asset {
 
     @Getter
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    @Inject
-    AssetLinkModel(@Self Resource resource, @OSGiService ResourceAccess resourceAccess) {
+    AssetLink(Resource resource, ResourceAccess resourceAccess) {
         String resourcePath = resource.getPath();
         this.jcrPath = new TargetJCRPath(resourcePath);
         this.resourceAccess = resourceAccess;
@@ -66,7 +55,7 @@ class AssetLinkModel implements Asset {
                     String referencedNodeJCRPathRaw = referencedNodeJCRPath.get();
                     try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
                         return Optional.ofNullable(resourceResolver.getResource(referencedNodeJCRPathRaw))
-                                       .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)));
+                                       .map(resource -> new UniversalAsset(resource, resourceAccess));
                     }
                 }
         ).orElseThrow();

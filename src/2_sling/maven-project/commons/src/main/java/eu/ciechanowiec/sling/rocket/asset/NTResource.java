@@ -11,46 +11,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.OSGiService;
-import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import javax.inject.Inject;
-import java.io.File;
 import java.util.Optional;
 
-@Model(
-        adaptables = Resource.class,
-        adapters = Asset.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.REQUIRED
-)
 @Slf4j
 @ToString
-@SuppressWarnings("pR")
-class NTResourceModel implements NTFile, Asset {
+class NTResource implements Asset {
 
     @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    @Inject
-    NTResourceModel(@Self Resource resource, @OSGiService ResourceAccess resourceAccess) {
+    NTResource(Resource resource, ResourceAccess resourceAccess) {
         String resourcePath = resource.getPath();
         this.jcrPath = new TargetJCRPath(resourcePath);
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         assertParentNodeType();
         log.trace("Initialized {}", this);
-    }
-
-    @Override
-    public Optional<File> retrieve() {
-        log.trace("Retrieving a file from {}", this);
-        JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
-        NodeProperties jcrContentChildNP = new NodeProperties(jcrContentChildJCRPath, resourceAccess);
-        return jcrContentChildNP.retrieveFile(JcrConstants.JCR_DATA);
     }
 
     private void assertPrimaryType() {
@@ -76,7 +55,7 @@ class NTResourceModel implements NTFile, Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String parentJCRPathRaw = parentJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(parentJCRPathRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Asset.class)))
+                           .map(resource -> new NTFile(resource, resourceAccess))
                            .orElseThrow();
         }
     }

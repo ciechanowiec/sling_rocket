@@ -3,7 +3,6 @@ package eu.ciechanowiec.sling.rocket.asset;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.api.resource.Resource;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -22,11 +21,7 @@ import javax.jcr.PropertyType;
  *        The client might choose a {@link Node} of any supported type as the base for this {@link Asset}.
  *     </li>
  *     <li>
- *        A {@link Resource} representing a persisted {@link Node} of any supported type can
- *        be adapted to this {@link Asset}, e.g. this way:
- *        <pre>{@code
- *         Asset asset = resource.adaptTo(Asset.class);
- *        }</pre>
+ *        The basic implementation of this interface is {@link UniversalAsset}.
  *     </li>
  * </ol>
  */

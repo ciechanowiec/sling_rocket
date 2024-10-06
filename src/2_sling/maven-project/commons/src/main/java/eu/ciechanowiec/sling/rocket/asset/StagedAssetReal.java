@@ -52,7 +52,7 @@ public record StagedAssetReal(
             attachFile(assetRealResource, assetFile, assetMetadata);
             attachMetadata(assetRealResource, assetMetadata);
             resourceResolver.commit();
-            Asset savedAsset = Optional.ofNullable(assetRealResource.adaptTo(Asset.class)).orElseThrow();
+            Asset savedAsset = new UniversalAsset(assetRealResource, resourceAccess);
             log.debug("Saved: {}", savedAsset);
             return savedAsset;
         }

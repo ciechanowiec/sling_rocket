@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.conditional.Conditional;
-import eu.ciechanowiec.sling.rocket.asset.AssetImplementationPicker;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import lombok.SneakyThrows;
@@ -75,7 +74,6 @@ public abstract class TestEnvironment {
                 ResourceAccess.class, resourceAccessToRegister
         );
         log.debug("Registered {}", resourceAccess);
-        context.registerInjectActivateService(AssetImplementationPicker.class);
         boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
     }

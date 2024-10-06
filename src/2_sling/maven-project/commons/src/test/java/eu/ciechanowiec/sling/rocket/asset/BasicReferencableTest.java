@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
+import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
 import eu.ciechanowiec.sling.rocket.jcr.NotReferencableException;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
