@@ -1,8 +1,5 @@
-package eu.ciechanowiec.sling.rocket.asset;
+package eu.ciechanowiec.sling.rocket.jcr;
 
-import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
-import eu.ciechanowiec.sling.rocket.jcr.NotReferencableException;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import org.apache.sling.api.resource.Resource;

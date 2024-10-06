@@ -19,7 +19,7 @@ public interface StagedNode<T> {
      * Saves a new {@link Node} in the {@link Repository} at the specified {@link TargetJCRPath}.
      * </p>
      * Lacking intermediate {@link Node}s are created automatically.
-     * @param targetJCRPath {@link TargetJCRPath} where the new {@link Node} should be saved
+     * @param targetJCRPath non-occupied {@link TargetJCRPath} where the new {@link Node} should be saved
      * @return an object representing the saved {@link Node}
      * @throws OccupiedJCRPathException if the {@code targetJCRPath} is occupied by some {@link Node}
      *                                  at the moment when the new {@link Node} is attempted to be saved

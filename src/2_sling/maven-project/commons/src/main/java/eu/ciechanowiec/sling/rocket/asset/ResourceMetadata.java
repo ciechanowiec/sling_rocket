@@ -16,14 +16,14 @@ import java.util.Optional;
 
 @Slf4j
 @ToString
-class AssetMetadataBasic implements AssetMetadata, WithJCRPath {
+class ResourceMetadata implements AssetMetadata, WithJCRPath {
 
     @Getter
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    AssetMetadataBasic(Resource resource, ResourceAccess resourceAccess) {
+    ResourceMetadata(Resource resource, ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
         this.jcrPath = new TargetJCRPath(resource.getPath());
         assertPrimaryType();

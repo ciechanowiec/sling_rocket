@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.18.0</version>
+        <version>13.20.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -28,6 +28,10 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.ciechanowiec</groupId>

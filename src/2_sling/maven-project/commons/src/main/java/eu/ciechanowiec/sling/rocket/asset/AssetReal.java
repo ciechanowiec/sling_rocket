@@ -45,7 +45,7 @@ class AssetReal implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String metadataJCRPathRaw = metadataJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(metadataJCRPathRaw))
-                    .map(metadataResource -> new AssetMetadataBasic(metadataResource, resourceAccess))
+                    .map(metadataResource -> new ResourceMetadata(metadataResource, resourceAccess))
                     .orElseThrow();
         }
     }

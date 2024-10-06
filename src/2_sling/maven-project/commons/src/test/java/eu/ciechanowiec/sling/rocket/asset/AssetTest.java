@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount", "resource"})
+@SuppressWarnings({
+        "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount", "resource"
+})
 class AssetTest extends TestEnvironment {
 
     private File fileJPGOne;
@@ -302,5 +304,33 @@ class AssetTest extends TestEnvironment {
         Resource resource = Optional.ofNullable(context.resourceResolver().getResource("/content/illegal-nt"))
                                     .orElseThrow();
         assertThrows(IllegalArgumentException.class, () -> new UniversalAsset(resource, resourceAccess));
+    }
+
+    @Test
+    void testMetadataFromFile() {
+        FileMetadata mp3FM = new FileMetadata(fileMP3);
+        FileMetadata jpgFM = new FileMetadata(fileJPGOne);
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+                new TargetJCRPath("/content/mp3")
+        );
+        Asset assetJPG = new StagedAssetReal(() -> Optional.of(this.fileMP3), jpgFM, resourceAccess).save(
+                new TargetJCRPath("/content/jpg")
+        );
+        assertAll(
+                () -> assertEquals("audio/mpeg", mp3FM.mimeType()),
+                () -> assertEquals("image/jpeg", jpgFM.mimeType()),
+                () -> assertEquals(NumberUtils.INTEGER_ONE, mp3FM.all().size()),
+                () -> assertEquals(NumberUtils.INTEGER_ONE, jpgFM.all().size()),
+                () -> assertTrue(mp3FM.properties().isEmpty()),
+                () -> assertTrue(jpgFM.properties().isEmpty()),
+                () -> assertEquals("audio/mpeg", assetMP3.assetMetadata().mimeType()),
+                () -> assertEquals("image/jpeg", assetJPG.assetMetadata().mimeType()),
+                () -> assertEquals(
+                        Asset.NT_ASSET_METADATA, assetMP3.assetMetadata().all().get(JcrConstants.JCR_PRIMARYTYPE)
+                ),
+                () -> assertEquals(
+                        Asset.NT_ASSET_METADATA, assetJPG.assetMetadata().all().get(JcrConstants.JCR_PRIMARYTYPE)
+                )
+        );
     }
 }
