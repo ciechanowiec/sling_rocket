@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,7 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
- * Represents default properties of a {@link Node}.
+ * Represents default {@link Property}-ies of a {@link Node}.
  */
 @SuppressWarnings({"MagicNumber", "WeakerAccess", "ClassWithTooManyFields"})
 public final class DefaultProperties {
