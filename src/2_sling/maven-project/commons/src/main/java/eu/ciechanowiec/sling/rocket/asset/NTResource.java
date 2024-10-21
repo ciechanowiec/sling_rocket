@@ -5,11 +5,9 @@ import eu.ciechanowiec.sling.rocket.jcr.NTFile;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
-import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import java.util.Optional;
@@ -23,9 +21,8 @@ class NTResource implements Asset {
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    NTResource(Resource resource, ResourceAccess resourceAccess) {
-        String resourcePath = resource.getPath();
-        this.jcrPath = new TargetJCRPath(resourcePath);
+    NTResource(JCRPath jcrPath, ResourceAccess resourceAccess) {
+        this.jcrPath = jcrPath;
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         assertParentNodeType();

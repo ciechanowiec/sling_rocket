@@ -1,12 +1,16 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
 import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.PathUtils;
+import org.apache.sling.api.resource.Resource;
 
 import javax.jcr.Item;
+import javax.jcr.Node;
 import javax.jcr.Repository;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -16,7 +20,7 @@ import java.util.UUID;
 @ToString
 @Slf4j
 @EqualsAndHashCode
-@SuppressWarnings({"squid:S1192", "MultipleStringLiterals"})
+@SuppressWarnings({"squid:S1192", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 public class TargetJCRPath implements JCRPath {
 
     private final String rawPath;
@@ -27,6 +31,23 @@ public class TargetJCRPath implements JCRPath {
      */
     public TargetJCRPath(String rawPath) {
         this.rawPath = rawPath;
+        log.trace("Initialized {}", this);
+    }
+
+    /**
+     * Constructs an instance of this class that will represent a JCR path to the specified {@link Resource}.
+     * The specified {@link Resource} must be adaptable to an existing {@link Node} when the instance is
+     * constructed.
+     * @param resource {@link Resource} adaptable to a {@link Node} whose JCR path will be represented by
+     *        the constructed object
+     */
+    @SneakyThrows
+    public TargetJCRPath(Resource resource) {
+        Node node = Optional.ofNullable(resource.adaptTo(Node.class)).orElseThrow(() -> {
+            String message = String.format("%s does not adapt to Node", resource);
+            return new IllegalArgumentException(message);
+        });
+        this.rawPath = node.getPath();
         log.trace("Initialized {}", this);
     }
 

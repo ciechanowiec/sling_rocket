@@ -6,11 +6,9 @@ import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.ReferenceProperty;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
-import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import java.util.Optional;
@@ -24,9 +22,8 @@ class AssetLink implements Asset {
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    AssetLink(Resource resource, ResourceAccess resourceAccess) {
-        String resourcePath = resource.getPath();
-        this.jcrPath = new TargetJCRPath(resourcePath);
+    AssetLink(JCRPath jcrPath, ResourceAccess resourceAccess) {
+        this.jcrPath = jcrPath;
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         log.trace("Initialized {}", this);

@@ -11,7 +11,6 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import java.util.Optional;
@@ -25,9 +24,8 @@ class AssetReal implements Asset {
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    AssetReal(Resource resource, ResourceAccess resourceAccess) {
-        String resourcePath = resource.getPath();
-        this.jcrPath = new TargetJCRPath(resourcePath);
+    AssetReal(JCRPath jcrPath, ResourceAccess resourceAccess) {
+        this.jcrPath = jcrPath;
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         log.trace("Initialized {}", this);

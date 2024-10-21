@@ -39,8 +39,18 @@ public class NTFile implements Asset {
      *                       object to acquire access to resources
      */
     public NTFile(Resource resource, ResourceAccess resourceAccess) {
-        String resourcePath = resource.getPath();
-        this.jcrPath = new TargetJCRPath(resourcePath);
+        this(new TargetJCRPath(resource), resourceAccess);
+    }
+
+    /**
+     * Constructs an instance of this class.
+     * @param jcrPath the {@link JCRPath} to the {@link Node} that will back the constructed object;
+     *                the type of the {@link Node} must be one of the types supported by the {@link NTFile}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
+     *                       object to acquire access to resources
+     */
+    public NTFile(JCRPath jcrPath, ResourceAccess resourceAccess) {
+        this.jcrPath = jcrPath;
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         assertContentChildNodeType();
