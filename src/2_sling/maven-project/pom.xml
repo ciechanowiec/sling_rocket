@@ -176,7 +176,7 @@
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <icu4j.version>75.1</icu4j.version>
+        <icu4j.version>76.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
@@ -204,7 +204,7 @@
         <!-- ====================================================================== -->
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
-        <woodstox-core.version>7.0.0</woodstox-core.version>
+        <woodstox-core.version>7.1.0</woodstox-core.version>
         <jackson.version>2.18.0</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
@@ -216,7 +216,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.0</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.60.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.70.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>3.8.2</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
@@ -255,7 +255,7 @@
         <org.apache.sling.bundleresource.impl.version>2.3.4</org.apache.sling.bundleresource.impl.version>
         <org.apache.sling.engine.version>2.15.16</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.2.0</org.apache.sling.fsresource.version>
-        <org.apache.sling.i18n.version>2.6.4</org.apache.sling.i18n.version>
+        <org.apache.sling.i18n.version>2.6.6</org.apache.sling.i18n.version>
         <org.apache.sling.resourceresolver.version>1.12.2</org.apache.sling.resourceresolver.version>
         <org.apache.sling.servlets.get.version>2.2.0</org.apache.sling.servlets.get.version>
         <org.apache.sling.xss.version>2.4.2</org.apache.sling.xss.version>
@@ -306,7 +306,7 @@
         <org.apache.sling.jcr.jcr-wrapper.version>2.0.0</org.apache.sling.jcr.jcr-wrapper.version>
         <org.apache.sling.jcr.registration.version>1.0.6</org.apache.sling.jcr.registration.version>
         <org.apache.sling.jcr.webdav.version>2.3.8</org.apache.sling.jcr.webdav.version>
-        <org.apache.sling.jcr.oak.server.version>1.4.0</org.apache.sling.jcr.oak.server.version>
+        <org.apache.sling.jcr.oak.server.version>1.4.2</org.apache.sling.jcr.oak.server.version>
         <org.apache.sling.jcr.jackrabbit.usermanager.version>2.2.30
         </org.apache.sling.jcr.jackrabbit.usermanager.version>
         <org.apache.sling.jcr.resource.version>3.3.2</org.apache.sling.jcr.resource.version>
@@ -354,8 +354,8 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>5.11.2</junit-jupiter-api.version>
-        <junit-jupiter-params.version>5.11.2</junit-jupiter-params.version>
+        <junit-jupiter-api.version>5.11.3</junit-jupiter-api.version>
+        <junit-jupiter-params.version>5.11.3</junit-jupiter-params.version>
         <mockito-core.version>5.14.2</mockito-core.version>
         <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
