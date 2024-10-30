@@ -313,7 +313,7 @@ class AssetTest extends TestEnvironment {
         Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
                 new TargetJCRPath("/content/mp3")
         );
-        Asset assetJPG = new StagedAssetReal(() -> Optional.of(this.fileMP3), jpgFM, resourceAccess).save(
+        Asset assetJPG = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
                 new TargetJCRPath("/content/jpg")
         );
         assertAll(
@@ -331,6 +331,35 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals(
                         Asset.NT_ASSET_METADATA, assetJPG.assetMetadata().all().get(JcrConstants.JCR_PRIMARYTYPE)
                 )
+        );
+    }
+
+    @Test
+    void testAssetsRepository() {
+        FileMetadata mp3FM = new FileMetadata(fileMP3);
+        FileMetadata jpgFM = new FileMetadata(fileJPGOne);
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+                new TargetJCRPath("/content/mp3")
+        );
+        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
+                new TargetJCRPath("/content/jpgOneReal")
+        );
+        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, resourceAccess).save(
+                new TargetJCRPath("/content/jpgOneLink")
+        );
+        AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
+                                                    .orElseThrow();
+        assertAll(
+                () -> assertEquals(
+                        "/content/mp3", assetsRepository.find(assetMP3).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(
+                        "/content/jpgOneReal", assetsRepository.find(assetJPGReal).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(
+                        "/content/jpgOneLink", assetsRepository.find(assetJPGLink).orElseThrow().jcrPath().get()
+                ),
+                () -> assertTrue(assetsRepository.find(() -> "non-existent-uuid").isEmpty())
         );
     }
 }
