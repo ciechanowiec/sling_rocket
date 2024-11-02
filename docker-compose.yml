@@ -1,6 +1,6 @@
 services:
 
-  sling:
+  rocket-instance:
     environment:
       SLING_DIR: /opt/sling
       # comma-separated, like: basic,sling
@@ -11,17 +11,17 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/sling:13.24.0
-    container_name: sling
+    image: ciechanowiec/rocket-instance:13.24.0
+    container_name: rocket-instance
     volumes:
       - type: volume
-        source: sling-data
+        source: rocket-data
         target: /opt/sling/launcher/repository/segmentstore
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
-    hostname: sling
+    hostname: rocket-instance
     networks:
-      - sling-network
+      - rocket-network
     ports:
       - target: 8080
         published: 8080
@@ -45,8 +45,8 @@ services:
     container_name: backup
     volumes:
       - type: volume
-        source: sling-data
-        target: /backup/sling
+        source: rocket-data
+        target: /backup/rocket
         read_only: true
       - type: bind
         source: /var/run/docker.sock
@@ -60,16 +60,36 @@ services:
     stop_grace_period: 300s
     hostname: backup
     networks:
-      - sling-network
+      - rocket-network
     depends_on:
-      - sling
+      - rocket-instance
+
+  rocket-nginx:
+    environment:
+      DOMAIN: ciechanowiec.hopto.org
+      EMAIL: herman@ciechanowiec.eu
+      IS_STAGING_ENV: true
+    image: ciechanowiec/rocket-nginx:13.24.0
+    container_name: rocket-nginx
+    hostname: rocket-nginx
+    networks:
+      - rocket-network
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
 
 volumes:
-  sling-data:
-    name: "sling-data"
+  rocket-data:
+    name: "rocket-data"
 
 networks:
-  sling-network:
+  rocket-network:
     driver: bridge
     # This name is required to avoid name prefixing by Docker:
-    name: sling-network
+    name: rocket-network

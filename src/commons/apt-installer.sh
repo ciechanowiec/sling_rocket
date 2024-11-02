@@ -23,4 +23,7 @@ apt install less -y && \
     apt install icdiff -y && \
     apt install ffmpeg -y && \
     apt install exiftool -y && \
-    apt install imagemagick -y
+    apt install imagemagick -y && \
+    apt install certbot -y && \
+    apt install python3-certbot-nginx -y && \
+    apt install cron -y

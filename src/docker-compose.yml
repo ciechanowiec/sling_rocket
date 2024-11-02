@@ -1,18 +1,18 @@
 services:
-  sling-base:
+  rocket-base:
     build:
       context: .
-      dockerfile: 1_base/Dockerfile
-    image: sling-base:${ROCKET_FEATURE_ARTIFACT_VERSION}
-    container_name: sling-base
-    hostname: sling-base
+      dockerfile: 1_rocket-base/Dockerfile
+    image: rocket-base:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: rocket-base
+    hostname: rocket-base
     networks:
-      - sling-network
+      - rocket-network
 
-  sling:
+  rocket-instance:
     build:
       context: .
-      dockerfile: 2_sling/Dockerfile
+      dockerfile: 2_rocket-instance/Dockerfile
       args:
         SLING_DIR: /opt/sling
         # comma-separated, like: basic,sling
@@ -34,17 +34,17 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/sling:${ROCKET_FEATURE_ARTIFACT_VERSION}
-    container_name: sling
+    image: ciechanowiec/rocket-instance:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: rocket-instance
     volumes:
       - type: volume
-        source: sling-data
+        source: rocket-data
         target: /opt/sling/launcher/repository/segmentstore
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
-    hostname: sling
+    hostname: rocket-instance
     networks:
-      - sling-network
+      - rocket-network
     ports:
       - target: 8080
         published: 8080
@@ -57,14 +57,39 @@ services:
     labels:
       - "docker-volume-backup.stop-during-backup=false"
     depends_on:
-      - sling-base
+      - rocket-base
+
+  rocket-nginx:
+    build:
+      context: .
+      dockerfile: 3_rocket-nginx/Dockerfile
+    environment:
+      DOMAIN: ciechanowiec.hopto.org
+      EMAIL: herman@ciechanowiec.eu
+      IS_STAGING_ENV: true
+    image: ciechanowiec/rocket-nginx:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: rocket-nginx
+    hostname: rocket-nginx
+    networks:
+      - rocket-network
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    depends_on:
+      - rocket-base
 
 volumes:
-  sling-data:
-    name: "sling-data"
+  rocket-data:
+    name: "rocket-data"
 
 networks:
-  sling-network:
+  rocket-network:
     driver: bridge
     # This name is required to avoid name prefixing by Docker:
-    name: sling-network
+    name: rocket-network

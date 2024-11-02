@@ -24,7 +24,9 @@ _Sling Rocket_ is a framework for building dynamic web applications.
 
 == Architecture
 
-_Sling Rocket_ consists of two basic parts:
+=== Sling Rocket Components
+
+_Sling Rocket_ consists of three basic parts:
 [upperalpha]
 . Sling Rocket Parent POM ("*SR Parent POM*")
 +
@@ -36,7 +38,13 @@ A Maven project object model that declaratively describes basic and universal ap
 .. Serves as the environment inside which business applications are running. Among others, it means that the SR Instance contains default dependencies and configurations that can be used by embedded business applications. The SR Instance itself is responsible for all non-business-related logic.
 .. Defined by the SR Parent POM.
 .. Has an embedded NoSQL database - Apache Jackrabbit Oak (Java Content Repository, JCR). It can be simultaneously connected to other databases.
++
+. Sling Rocket Nginx ("*SR Nginx*")
++
+Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It is responsible for all incoming and outgoing HTTP(S) traffic.
 
+
+=== Business Applications Development Flow
 The development of business applications for _Sling Rocket_ has this flow:
 
 [upperalpha]
@@ -99,7 +107,7 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 
 === SR Instance
 
-The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/sling`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository:
+The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository:
 
 [source,bash]
 ....
@@ -107,18 +115,18 @@ curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-com
 docker compose up -d
 ....
 
-=== Persistence and Application Files
+==== Persistence and Application Files
 
 Static files related to an SR instance reside in `/opt/sling`. These files are of two types: _persistence files_ and _application files_.
 
-==== Persistence Files
+===== Persistence Files
 
 As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
 [upperalpha]
 . should be mounted as a persistent Docker volume for a given SR instance,
 . should be retained and reused between _Sling Rocket_ updates for a given SR instance.
 
-==== Application Files
+===== Application Files
 
 Static files related to an SR instance that reside in `/opt/sling` but aren't _persistence files_ are classified as _application files_. These files:
 [upperalpha]
@@ -126,31 +134,40 @@ Static files related to an SR instance that reside in `/opt/sling` but aren't _p
 . are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR instance,
 . do not persistently store any business data.
 
+=== SR Nginx
+In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`. Just like in case of an SR Instance, it is recommended to run and manage the SR Nginx using a `docker-compose.yml` file located in the root of this repository:
+
+[source,bash]
+....
+curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
+docker compose up -d
+....
+
 == Miscellaneous
 
 === Apache Sling
 
 _Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling] framework. As a starting point for the build, the 13th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter] was used.
 
-=== Deployment
+=== Publishing
 
-Deployment of new versions of _Sling Rocket_ consists of the following steps:
+Publication of new versions of _Sling Rocket_ consists of the following steps:
 [upperalpha]
-. Build and deploy the SR Parent POM and subordinate artifacts to the Maven Central Repository:
+. Build and publish the SR Parent POM and subordinate artifacts in the Maven Central Repository:
 +
 [source,bash]
 ....
-cd "$PROJECT_REPO_ROOT"/src/2_sling/maven-project
+cd "$PROJECT_REPO_ROOT"/src/2_rocket-instance/maven-project
 mvn clean deploy -P release
 ....
 +
-. Build and deploy the SR Instance image to Docker Hub:
+. Build and publish the SR Instance image and SR Nginx image in Docker Hub:
 +
 [source,bash]
 ....
 cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
-docker push ciechanowiec/sling:13.24.0
+docker push ciechanowiec/rocket-instance:13.24.0 && docker push ciechanowiec/rocket-nginx:13.24.0
 ....
 
 === Access Password

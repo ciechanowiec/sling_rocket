@@ -28,7 +28,7 @@ downloadLauncher() {
 startSlingInBackground () {
   echo ""
   echo "Sling will be started in the background..."
-  ./sling-starter.sh &
+  ./rocket-instance-starter.sh &
 }
 
 updateActualBundlesStatus () {
@@ -76,7 +76,7 @@ killSling () {
 
 echo "ROCKET_FEATURE_ARTIFACT_FINAL_NAME=$ROCKET_FEATURE_ARTIFACT_FINAL_NAME"
 echo "Setting the static name of the main feature artifact..."
-sed -i "s/{{ROCKET_FEATURE_ARTIFACT_FINAL_NAME}}/$ROCKET_FEATURE_ARTIFACT_FINAL_NAME/g" sling-starter.sh
+sed -i "s/{{ROCKET_FEATURE_ARTIFACT_FINAL_NAME}}/$ROCKET_FEATURE_ARTIFACT_FINAL_NAME/g" rocket-instance-starter.sh
 downloadLauncher
 startSlingInBackground # warmup and initialize
 waitUntilBundlesStatusMatch
