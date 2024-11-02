@@ -105,8 +105,7 @@ class AssetTest extends TestEnvironment {
         String originalFileName = nodeProperties.propertyValue("originalFileName", DefaultProperties.STRING_CLASS)
                 .orElseThrow();
         assertAll(
-                () -> assertTrue(filePath.contains("jcr-binary_")),
-                () -> assertTrue(filePath.contains(".tmp")),
+                () -> assertTrue(filePath.endsWith(".jpg")),
                 () -> assertEquals("originalus", originalFileName),
                 () -> assertEquals("image/jpeg", mimeType)
         );

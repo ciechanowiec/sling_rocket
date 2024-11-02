@@ -33,7 +33,9 @@ class AssetReal implements Asset {
 
     @Override
     public AssetFile assetFile() {
-        return () -> file().retrieve();
+        String mimeTypeName = assetMetadata().mimeType();
+        return () -> file().retrieve()
+                .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
     }
 
     @Override
