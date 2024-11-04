@@ -26,6 +26,30 @@ if [ ! -z "${ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE}" ]; then
     ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE=",$ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE"
 fi
 
+echo "[INFO] Removing OSGi Installer cache, since it causes conflicts among installation artifacts, i.a. OSGi configurations..."
+BUNDLES_DIR="$SLING_DIR/launcher/framework"
+# Iterate over all direct subdirectories
+for BUNDLE_DIR in "$BUNDLES_DIR"/*; do
+  # Check if it is a directory:
+  if [[ -d "$BUNDLE_DIR" ]]; then
+    # Check if the file bundle.info exists in this BUNDLES_DIR:
+    if [[ -f "$BUNDLE_DIR/bundle.info" ]]; then
+      # Use grep to find the specific line in the file
+      # If the line exists, grep will return 0 (success)
+      if grep -q "org.apache.sling.installer.core" "$BUNDLE_DIR/bundle.info"; then
+        # If the line was found, set the path to the BUNDLES_DIR in the variable
+        PATH_TO_INSTALLER_BUNDLE="$BUNDLE_DIR"
+        echo "[INFO] This path to OSGi Installer bundle was determined: $PATH_TO_INSTALLER_BUNDLE"
+        PATH_TO_OSGI_INSTALLER_CACHE="$PATH_TO_INSTALLER_BUNDLE/data/installer"
+        echo "[INFO] Removing OSGi Installer cache at: $PATH_TO_OSGI_INSTALLER_CACHE..."
+        rm -rf "$PATH_TO_OSGI_INSTALLER_CACHE"
+        # Stop the loop
+        break
+      fi
+    fi
+  fi
+done
+
 cd "$SLING_DIR" || exec 1
 # exec is required in order to set the Java process as PID 1 inside the container, since Docker sends
 # termination signals only to PID 1, and we need those signals to be handled by the java process:
