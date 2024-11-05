@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: 1_rocket-base/Dockerfile
-    image: rocket-base:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    image: ciechanowiec/rocket-base:${ROCKET_FEATURE_ARTIFACT_VERSION}
     container_name: rocket-base
     hostname: rocket-base
     networks:
