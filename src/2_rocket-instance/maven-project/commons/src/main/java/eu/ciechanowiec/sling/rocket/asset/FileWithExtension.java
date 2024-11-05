@@ -9,31 +9,15 @@ import org.apache.tika.mime.MimeTypes;
 import java.io.File;
 import java.util.Optional;
 
-/**
- * Represents a {@link File} with an extension in its name.
- */
 @Slf4j
-public class FileWithExtension {
+class FileWithExtension {
 
     private final File file;
 
-    /**
-     * Constructs an instance of this class.
-     * @param file the {@link File} to be wrapped by the constructed instance
-     */
-    public FileWithExtension(File file) {
+    FileWithExtension(File file) {
         this.file = file;
     }
 
-    /**
-     * Renames the wrapped {@link File} to have the file name extension specific for the
-     * specified MIME type. The new name will be composed of the specified basic name and the extension
-     * separated by a dot ([new-basic-name].[extension]). For instance, for the new basic name "my-photo"
-     * and the MIME type "image/jpeg", the resulting file will have the name "my-photo.jpg".
-     * @param newBasicName the new basic name for the {@link File}
-     * @param mimeTypeName the name of the MIME type
-     * @return the renamed {@link File}
-     */
     File rename(String newBasicName, String mimeTypeName) {
         log.trace("Renaming '{}' to have the extension for MIME type '{}'", file, mimeTypeName);
         MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();

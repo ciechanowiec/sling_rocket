@@ -7,6 +7,7 @@ import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -359,6 +360,69 @@ class AssetTest extends TestEnvironment {
                         "/content/jpgOneLink", assetsRepository.find(assetJPGLink).orElseThrow().jcrPath().get()
                 ),
                 () -> assertTrue(assetsRepository.find(() -> "non-existent-uuid").isEmpty())
+        );
+    }
+
+    @Test
+    @SuppressWarnings("MethodLength")
+    void testFileNameExtension() {
+        FileMetadata mp3FM = new FileMetadata(fileMP3);
+        FileMetadata jpgFM = new FileMetadata(fileJPGOne);
+        File compiledJavaToSave = loadResourceIntoFile("compiled-java-file");
+        FileMetadata compiledJavaToSaveFM = new FileMetadata(compiledJavaToSave);
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+                new TargetJCRPath("/content/mp3")
+        );
+        Asset compiledJava = new StagedAssetReal(
+                () -> Optional.of(compiledJavaToSave), compiledJavaToSaveFM, resourceAccess
+        ).save(new TargetJCRPath("/content/compiledJava"));
+        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
+                new TargetJCRPath("/content/jpgOneReal")
+        );
+        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, resourceAccess).save(
+                new TargetJCRPath("/content/jpgOneLink")
+        );
+        AssetMetadata nonExistentMimeType = new AssetMetadata() {
+
+            @Override
+            public String mimeType() {
+                return "non-existent-mime-type";
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of();
+            }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
+        };
+        AssetMetadata wildCardMimeType = new AssetMetadata() {
+
+            @Override
+            public String mimeType() {
+                return MediaType.WILDCARD;
+            }
+
+            @Override
+            public Map<String, String> all() {
+                return Map.of();
+            }
+
+            @Override
+            public Optional<NodeProperties> properties() {
+                return Optional.empty();
+            }
+        };
+        assertAll(
+                () -> assertEquals(".mpga", assetMP3.assetMetadata().filenameExtension().orElseThrow()),
+                () -> assertEquals(".jpg", assetJPGReal.assetMetadata().filenameExtension().orElseThrow()),
+                () -> assertEquals(".jpg", assetJPGLink.assetMetadata().filenameExtension().orElseThrow()),
+                () -> assertEquals(".class", compiledJava.assetMetadata().filenameExtension().orElseThrow()),
+                () -> assertTrue(nonExistentMimeType.filenameExtension().isEmpty()),
+                () -> assertTrue(wildCardMimeType.filenameExtension().isEmpty())
         );
     }
 }

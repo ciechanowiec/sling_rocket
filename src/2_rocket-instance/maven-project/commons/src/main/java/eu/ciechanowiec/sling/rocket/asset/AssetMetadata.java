@@ -1,6 +1,10 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
+import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 
 import javax.jcr.Node;
 import java.util.Collections;
@@ -47,6 +51,30 @@ public interface AssetMetadata {
     @SuppressWarnings("unchecked")
     default Map<String, Object> allButObjectValues() {
         return (Map<String, Object>) (Map<?, ?>) all();
+    }
+
+    /**
+     * Returns an {@link Optional} containing the filename extension of the associated {@link Asset}
+     * and prepended with a dot, e.g. {@code '.txt'}, {@code '.jpg'}, {@code '.pdf'};
+     * if the filename extension cannot be determined, an empty {@link Optional} is returned.
+     * @return {@link Optional} containing the filename extension of the associated {@link Asset}
+     *         and prepended with a dot, e.g. {@code '.txt'}, {@code '.jpg'}, {@code '.pdf'};
+     *         if the filename extension cannot be determined, an empty {@link Optional} is returned
+     */
+    @SuppressWarnings({"unchecked", "squid:S1612", "squid:S1166", "PMD.LambdaCanBeMethodReference"})
+    default Optional<String> filenameExtension() {
+        MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
+        try {
+            MimeType mimeType = defaultMimeTypes.forName(mimeType());
+            String extension = mimeType.getExtension();
+            boolean isValidExtension = extension.isBlank();
+            return Conditional.conditional(isValidExtension)
+                    .onTrue(() -> Optional.empty())
+                    .onFalse(() -> Optional.of(extension))
+                    .get(Optional.class);
+        } catch (MimeTypeException exception) {
+            return Optional.empty();
+        }
     }
 
     /**

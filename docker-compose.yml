@@ -11,7 +11,7 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/rocket-instance:13.24.0
+    image: ciechanowiec/rocket-instance:13.26.0
     container_name: rocket-instance
     volumes:
       - type: volume
@@ -69,7 +69,7 @@ services:
       DOMAIN: ciechanowiec.hopto.org
       EMAIL: herman@ciechanowiec.eu
       IS_STAGING_ENV: true
-    image: ciechanowiec/rocket-nginx:13.24.0
+    image: ciechanowiec/rocket-nginx:13.26.0
     container_name: rocket-nginx
     hostname: rocket-nginx
     networks:
