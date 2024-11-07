@@ -107,7 +107,7 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 
 === SR Instance
 
-The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository:
+The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository, which can be adjusted according to the specific needs of a given deployment:
 
 [source,bash]
 ....
@@ -135,12 +135,23 @@ Static files related to an SR instance that reside in `/opt/sling` but aren't _p
 . do not persistently store any business data.
 
 === SR Nginx
-In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`. Just like in case of an SR Instance, it is recommended to run and manage the SR Nginx using a `docker-compose.yml` file located in the root of this repository:
+In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`. Just like in case of an SR Instance, it is recommended to run and manage the SR Nginx using a `docker-compose.yml` file located in the root of this repository, which can be adjusted according to the specific needs of a given deployment:
 
 [source,bash]
 ....
 curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
 docker compose up -d
+....
+
+The image of an SR Nginx includes a default configuration file at `/etc/nginx/nginx.conf`. This file is a template that can be customized according to the specific needs of a given deployment. Among others, it can be done via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
+
+[source,yml]
+....
+volumes:
+  - type: bind
+    source: infra/nginx.conf
+    target: /etc/nginx/nginx.conf
+    read_only: true
 ....
 
 == Miscellaneous
