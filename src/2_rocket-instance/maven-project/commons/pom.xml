@@ -224,7 +224,9 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
                 <configuration>
                     <configLocation>${project.basedir}/src/main/resources/static_code_analysis/checkstyle.xml
                     </configLocation>
-                    <suppressionsLocation>${project.basedir}/src/main/resources/static_code_analysis/checkstyle-suppression.xml</suppressionsLocation>
+                    <suppressionsLocation>
+                        ${project.basedir}/src/main/resources/static_code_analysis/checkstyle-suppression.xml
+                    </suppressionsLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>${fail-build-on-static-code-analysis-errors}</failsOnError>
                     <linkXRef>false</linkXRef>
