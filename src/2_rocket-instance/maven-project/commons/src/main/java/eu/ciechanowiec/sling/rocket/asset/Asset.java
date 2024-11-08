@@ -7,11 +7,11 @@ import org.apache.jackrabbit.JcrConstants;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
+import java.util.List;
 
 /**
  * <p>
- * Represents {@link Node} instances of {@link Asset#NT_ASSET_REAL}, {@link Asset#NT_ASSET_LINK},
- * {@link JcrConstants#NT_FILE} or {@link JcrConstants#NT_RESOURCE} types.
+ * Represents {@link Node} instances of primary types specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}.
  * That can be either a persisted or a hypothetically persisted {@link Node}.
  * </p>
  * <ol>
@@ -61,6 +61,13 @@ public interface Asset extends WithJCRPath, Referencable {
      * Name of a {@link Node} with metadata, which is a child of a {@link Node} of type {@link Asset#NT_ASSET_REAL}.
      */
     String METADATA_NODE_NAME = "metadata";
+
+    /**
+     * List of {@link Node} primary types supported by {@link Asset}.
+     */
+    List<String> SUPPORTED_PRIMARY_TYPES = List.of(
+            NT_ASSET_REAL, NT_ASSET_LINK, JcrConstants.NT_RESOURCE, JcrConstants.NT_FILE
+    );
 
     /**
      * Returns the {@link AssetFile} associated with this {@link Asset}.

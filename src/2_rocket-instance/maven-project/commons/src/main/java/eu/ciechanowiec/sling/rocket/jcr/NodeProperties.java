@@ -21,10 +21,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
@@ -89,14 +86,25 @@ public class NodeProperties {
     }
 
     /**
-     * Checks if the underlying {@link Node} is of the specified primary type.
-     * @param expectedPrimaryType name of the primary type against which the check is performed
-     * @return {@code true} if the underlying {@link Node} is of the specified primary type; {@code false} otherwise
+     * Checks if the underlying {@link Node} is of one of the specified primary types.
+     * @param acceptablePrimaryTypes names of the primary types against which the check is performed
+     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types;
+     *         {@code false} otherwise
      */
-    public boolean isPrimaryType(String expectedPrimaryType) {
-        log.trace("Checking if {} is of this primary type: '{}'", this, expectedPrimaryType);
+    public boolean isPrimaryType(String... acceptablePrimaryTypes) {
+        return isPrimaryType(List.of(acceptablePrimaryTypes));
+    }
+
+    /**
+     * Checks if the underlying {@link Node} is of one of the specified primary types.
+     * @param acceptablePrimaryTypes names of the primary types against which the check is performed
+     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types;
+     *         {@code false} otherwise
+     */
+    public boolean isPrimaryType(Collection<String> acceptablePrimaryTypes) {
+        log.trace("Checking if {} is of this primary type: '{}'", this, acceptablePrimaryTypes);
         String actualPrimaryType = primaryType();
-        return actualPrimaryType.equals(expectedPrimaryType);
+        return acceptablePrimaryTypes.stream().anyMatch(actualPrimaryType::equals);
     }
 
     /**

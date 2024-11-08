@@ -136,7 +136,7 @@
         <!-- ====================================================================== -->
         <!-- GROOVY                                                                -->
         <!-- ====================================================================== -->
-        <groovy.version>4.0.23</groovy.version>
+        <groovy.version>4.0.24</groovy.version>
         <!-- ====================================================================== -->
         <!-- LIBS                                                                   -->
         <!-- ====================================================================== -->
@@ -205,7 +205,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.0</woodstox-core.version>
-        <jackson.version>2.18.0</jackson.version>
+        <jackson.version>2.18.1</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -253,7 +253,7 @@
         <org.apache.sling.adapter.version>2.2.0</org.apache.sling.adapter.version>
         <org.apache.sling.auth.form.version>1.0.24</org.apache.sling.auth.form.version>
         <org.apache.sling.bundleresource.impl.version>2.3.4</org.apache.sling.bundleresource.impl.version>
-        <org.apache.sling.engine.version>2.15.16</org.apache.sling.engine.version>
+        <org.apache.sling.engine.version>2.15.18</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.2.0</org.apache.sling.fsresource.version>
         <org.apache.sling.i18n.version>2.6.6</org.apache.sling.i18n.version>
         <org.apache.sling.resourceresolver.version>1.12.2</org.apache.sling.resourceresolver.version>
@@ -263,7 +263,7 @@
         <org.apache.sling.provisioning.model.version>1.8.6</org.apache.sling.provisioning.model.version>
         <org.apache.sling.event.dea.version>1.1.4</org.apache.sling.event.dea.version>
         <org.apache.sling.event.version>4.3.14</org.apache.sling.event.version>
-        <org.apache.sling.servlets.resolver.version>2.11.2</org.apache.sling.servlets.resolver.version>
+        <org.apache.sling.servlets.resolver.version>2.11.4</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.6.0</org.apache.sling.caconfig.impl.version>
         <!-- ====================================================================== -->
         <!-- SLING_COMMONS                                                          -->
@@ -320,7 +320,7 @@
         <org.apache.sling.models.jacksonexporter.version>1.1.4</org.apache.sling.models.jacksonexporter.version>
         <org.apache.sling.models.api.version>1.5.4</org.apache.sling.models.api.version>
         <org.apache.sling.models.caconfig.version>1.0.2</org.apache.sling.models.caconfig.version>
-        <org.apache.sling.models.impl.version>1.7.0</org.apache.sling.models.impl.version>
+        <org.apache.sling.models.impl.version>1.7.2</org.apache.sling.models.impl.version>
         <!-- ====================================================================== -->
         <!-- SLING_SCRIPTING                                                        -->
         <!-- ====================================================================== -->
