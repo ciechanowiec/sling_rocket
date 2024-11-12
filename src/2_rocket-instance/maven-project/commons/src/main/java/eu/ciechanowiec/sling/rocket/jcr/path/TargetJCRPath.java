@@ -1,6 +1,5 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
-import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import java.util.UUID;
  */
 @ToString
 @Slf4j
-@EqualsAndHashCode
 @SuppressWarnings({"squid:S1192", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 public class TargetJCRPath implements JCRPath {
 
@@ -86,5 +84,23 @@ public class TargetJCRPath implements JCRPath {
             throw new InvalidJCRPathException(message);
         }
         return rawPath;
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        if (this == comparedObject) {
+            return true;
+        }
+        if (comparedObject instanceof JCRPath comparedJCRPath) {
+            String thatRawJCRPath = comparedJCRPath.get();
+            return rawPath.equals(thatRawJCRPath);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return rawPath.hashCode() * 31;
     }
 }

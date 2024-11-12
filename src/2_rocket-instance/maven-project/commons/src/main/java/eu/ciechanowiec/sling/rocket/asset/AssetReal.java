@@ -2,17 +2,19 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
-import eu.ciechanowiec.sling.rocket.jcr.NTFile;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import java.io.File;
 import java.util.Optional;
 
 @Slf4j
@@ -31,11 +33,26 @@ class AssetReal implements Asset {
         log.trace("Initialized {}", this);
     }
 
+    AssetReal(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
+        this(withJCRPath.jcrPath(), resourceAccess);
+    }
+
     @Override
     public AssetFile assetFile() {
         String mimeTypeName = assetMetadata().mimeType();
-        return () -> file().retrieve()
-                .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
+        return new AssetFile() {
+            @Override
+            public Optional<File> retrieve() {
+                return ntFile().assetFile()
+                             .retrieve()
+                             .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
+            }
+
+            @Override
+            public DataSize size() {
+                return ntFile().assetFile().size();
+            }
+        };
     }
 
     @Override
@@ -50,7 +67,7 @@ class AssetReal implements Asset {
         }
     }
 
-    private NTFile file() {
+    private NTFile ntFile() {
         log.trace("Retrieving file for {}", this);
         JCRPath fileJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), FILE_NODE_NAME);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
@@ -71,5 +88,23 @@ class AssetReal implements Asset {
     public String jcrUUID() {
         Referencable referencable = new BasicReferencable(this, resourceAccess);
         return referencable.jcrUUID();
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        if (this == comparedObject) {
+            return true;
+        }
+        if (comparedObject instanceof Asset) {
+            Referencable comparedAsset = (Referencable) comparedObject;
+            return jcrUUID().equals(comparedAsset.jcrUUID());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return jcrUUID().hashCode() * 31;
     }
 }

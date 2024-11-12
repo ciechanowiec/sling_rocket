@@ -2,10 +2,13 @@ package eu.ciechanowiec.sling.rocket.jcr;
 
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetMetadata;
+import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
 import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -182,8 +185,8 @@ class NodePropertiesTest extends TestEnvironment {
             }
         }, resourceAccess).save(realAssetPath);
         TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
-        TargetJCRPath nrResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
-        NodeProperties nodeProperties = new NodeProperties(nrResourcePath, resourceAccess);
+        TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
+        NodeProperties nodeProperties = new NodeProperties(ntResourcePath, resourceAccess);
         assertAll(
                 () -> assertTrue(nodeProperties.isPrimaryType(JcrConstants.NT_RESOURCE)),
                 () -> assertEquals(5, nodeProperties.all().size())
@@ -413,6 +416,28 @@ class NodePropertiesTest extends TestEnvironment {
                     );
                     assertArrayEquals(new Calendar[]{unix1980, unix1990}, actualCalendar);
                 }
+        );
+    }
+
+    @Test
+    void mustGetBinarySize() {
+        TargetJCRPath realAssetPath = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
+        );
+        new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), resourceAccess).save(realAssetPath);
+        TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
+        TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
+        NodeProperties ntFileNodeProperties = new NodeProperties(ntFilePath, resourceAccess);
+        NodeProperties ntResourceNodeProperties = new NodeProperties(ntResourcePath, resourceAccess);
+        assertAll(
+                () -> assertEquals(
+                        new DataSize(609_994, DataUnit.BYTES),
+                        ntResourceNodeProperties.binarySize(JcrConstants.JCR_DATA)
+                ),
+                () -> assertEquals(
+                        new DataSize(0, DataUnit.BYTES),
+                        ntFileNodeProperties.binarySize(JcrConstants.JCR_DATA)
+                )
         );
     }
 

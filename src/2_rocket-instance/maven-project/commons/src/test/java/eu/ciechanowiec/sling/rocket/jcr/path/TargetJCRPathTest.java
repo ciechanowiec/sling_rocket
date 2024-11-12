@@ -41,4 +41,21 @@ class TargetJCRPathTest extends TestEnvironment {
             );
         }
     }
+
+    @SuppressWarnings("EqualsWithItself")
+    @Test
+    void testEquals() {
+        JCRPath targetJCRPath = new TargetJCRPath("/content");
+        JCRPath parentJCRPath = new ParentJCRPath(targetJCRPath);
+        assertAll(
+                () -> assertEquals(targetJCRPath, parentJCRPath),
+                () -> assertEquals(targetJCRPath.hashCode(), parentJCRPath.hashCode()),
+                () -> assertEquals(targetJCRPath, targetJCRPath),
+                () -> assertEquals(parentJCRPath, parentJCRPath),
+                () -> assertNotEquals(new Object(), targetJCRPath),
+                () -> assertNotEquals(null, targetJCRPath),
+                () -> assertNotEquals(new Object(), parentJCRPath),
+                () -> assertNotEquals(null, parentJCRPath)
+        );
+    }
 }

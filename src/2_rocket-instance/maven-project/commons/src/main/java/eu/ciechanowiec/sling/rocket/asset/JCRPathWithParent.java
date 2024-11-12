@@ -4,6 +4,7 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 @ToString
 @Slf4j
-class JCRPathWithParent {
+class JCRPathWithParent implements JCRPath {
 
     private final JCRPath jcrPath;
     @ToString.Exclude
@@ -25,6 +26,10 @@ class JCRPathWithParent {
         log.trace("Initialized {}", this);
     }
 
+    JCRPathWithParent(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
+        this(withJCRPath.jcrPath(), resourceAccess);
+    }
+
     Optional<ParentJCRPath> parent() {
         log.trace("Retrieving parent JCR path for {}", this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
@@ -34,5 +39,10 @@ class JCRPathWithParent {
                            .map(Resource::getPath)
                            .map(parentPath -> new ParentJCRPath(new TargetJCRPath(parentPath)));
         }
+    }
+
+    @Override
+    public String get() {
+        return jcrPath.get();
     }
 }

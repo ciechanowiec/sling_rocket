@@ -72,7 +72,6 @@ public enum DataUnit {
      */
     TERABYTES(terabytes -> Math.multiplyExact(terabytes, DataUnitMultiplications.BYTES_PER_TB));
 
-    @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
     private final UnaryOperator<Long> toBytes;
 
     DataUnit(UnaryOperator<Long> toBytes) {

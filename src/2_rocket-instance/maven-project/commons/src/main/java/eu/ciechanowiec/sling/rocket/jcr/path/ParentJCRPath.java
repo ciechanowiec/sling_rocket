@@ -1,6 +1,5 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +12,6 @@ import javax.jcr.Repository;
  */
 @ToString
 @Slf4j
-@EqualsAndHashCode
 public class ParentJCRPath implements JCRPath {
 
     private final JCRPath source;
@@ -30,5 +28,24 @@ public class ParentJCRPath implements JCRPath {
     @Override
     public String get() {
         return source.get();
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        if (this == comparedObject) {
+            return true;
+        }
+        if (comparedObject instanceof JCRPath comparedJCRPath) {
+            String thisRawJCRPath = source.get();
+            String thatRawJCRPath = comparedJCRPath.get();
+            return thisRawJCRPath.equals(thatRawJCRPath);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return source.get().hashCode() * 31;
     }
 }

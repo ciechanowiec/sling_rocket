@@ -1,12 +1,12 @@
 package eu.ciechanowiec.sling.rocket.unit;
 
 import eu.ciechanowiec.conditional.Conditional;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
  * Size of digital information.
@@ -51,7 +51,6 @@ import java.util.concurrent.CompletableFuture;
  *   </tr>
  * </table>
  */
-@ToString
 @SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "WeakerAccess"})
 @Slf4j
 public final class DataSize implements Comparable<DataSize> {
@@ -77,8 +76,18 @@ public final class DataSize implements Comparable<DataSize> {
      * @param file {@link File} whose size is represented by this {@link DataSize}
      */
     public DataSize(File file) {
-        this.bytesFuture = CompletableFuture.supplyAsync(file::length);
-        Conditional.onFalseExecute(file.exists(), () -> log.warn("This file doesn't exist: '{}'", file));
+        this(() -> file);
+    }
+
+    /**
+     * Constructs an instance of this class.
+     * @param fileSupplier {@link Supplier} with a {@link File} whose size is represented by this {@link DataSize}
+     */
+    public DataSize(Supplier<File> fileSupplier) {
+        this.bytesFuture = CompletableFuture.supplyAsync(() -> fileSupplier.get().length());
+        Conditional.onFalseExecute(
+                fileSupplier.get().exists(), () -> log.warn("This file doesn't exist: '{}'", fileSupplier)
+        );
     }
 
     /**
@@ -146,6 +155,18 @@ public final class DataSize implements Comparable<DataSize> {
         return Long.compare(bytesFuture.join(), comparedDataSize.bytesFuture.join());
     }
 
+    /**
+     * Adds the specified {@link DataSize} to this {@link DataSize}.
+     * The sum result is returned and this {@link DataSize} remains unchanged.
+     * @param dataSizeToAdd {@link DataSize} to add to this {@link DataSize}
+     * @return new {@link DataSize} that is the sum of this {@link DataSize} and the passed {@link DataSize}
+     */
+    public DataSize add(DataSize dataSizeToAdd) {
+        long thisBytes = this.bytes();
+        long bytesToAdd = dataSizeToAdd.bytes();
+        return new DataSize(thisBytes + bytesToAdd);
+    }
+
     @Override
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {
@@ -188,5 +209,10 @@ public final class DataSize implements Comparable<DataSize> {
         return String.format(
                 "[%d TB, %d GB, %d MB, %d KB, %d B]", hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes
         );
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DataSize{%s}", toHumanReadableRepresentation());
     }
 }

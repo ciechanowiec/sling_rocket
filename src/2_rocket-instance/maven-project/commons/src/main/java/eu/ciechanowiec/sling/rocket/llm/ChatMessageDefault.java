@@ -16,7 +16,6 @@ import java.util.function.UnaryOperator;
 @Slf4j
 public class ChatMessageDefault implements ChatMessage {
 
-    @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
     @ToString.Exclude
     private final Supplier<Role> roleSupplier;
     @ToString.Exclude

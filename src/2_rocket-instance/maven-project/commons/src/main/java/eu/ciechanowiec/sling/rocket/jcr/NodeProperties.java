@@ -4,6 +4,8 @@ import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -37,11 +39,12 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
  * </p>
  */
 @SuppressWarnings({
-        "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"
+        "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
+        "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"
 })
 @Slf4j
 @ToString
-public class NodeProperties {
+public class NodeProperties implements WithJCRPath {
 
     private final JCRPath jcrPath;
     @ToString.Exclude
@@ -263,7 +266,6 @@ public class NodeProperties {
 
     /**
      * Retrieves the {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File}.
-     *
      * @param propertyName name of the {@link Property} from which the {@link Value} of type {@link PropertyType#BINARY}
      *                     should be retrieved
      * @return {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File};
@@ -280,6 +282,29 @@ public class NodeProperties {
                            .map(sneaky(Property::getValue))
                            .flatMap(this::asBinary)
                            .map(this::asFile);
+        }
+    }
+
+    /**
+     * Retrieves the {@link DataSize} of a {@link Value} of a {@link Property} of type {@link PropertyType#BINARY}.
+     * @param propertyName name of the {@link Property} of type {@link PropertyType#BINARY}
+     *                     that contains a {@link Value} whose {@link DataSize} should be retrieved
+     * @return {@link DataSize} of a {@link Value} of a {@link Property} of type {@link PropertyType#BINARY};
+     *         zero-sized {@link DataSize} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY}
+     *         or doesn't exist
+     */
+    public DataSize binarySize(String propertyName) {
+        log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                    .map(sneaky(Property::getValue))
+                    .flatMap(this::asBinary)
+                    .map(sneaky(Binary::getSize))
+                    .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
+                    .orElse(new DataSize(0, DataUnit.BYTES));
         }
     }
 
@@ -588,5 +613,10 @@ public class NodeProperties {
         }
         log.trace("Converted binary to a file: {}", tempFile);
         return tempFile;
+    }
+
+    @Override
+    public JCRPath jcrPath() {
+        return jcrPath;
     }
 }

@@ -2,7 +2,6 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.NTFile;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -59,8 +58,13 @@ public class UniversalAsset implements Asset {
         Map<String, Supplier<? extends Asset>> implementationMappings = Map.of(
                 NT_ASSET_REAL, () -> new AssetReal(jcrPath, resourceAccess),
                 NT_ASSET_LINK, () -> new AssetLink(jcrPath, resourceAccess),
-                JcrConstants.NT_FILE, () -> new NTFile(jcrPath, resourceAccess),
-                JcrConstants.NT_RESOURCE, () -> new NTResource(jcrPath, resourceAccess)
+                JcrConstants.NT_FILE, () -> new AssetRealCape(new NTFile(jcrPath, resourceAccess), resourceAccess),
+                JcrConstants.NT_RESOURCE, () -> new AssetRealCape(
+                        new NTFile(
+                                new JCRPathWithParent(jcrPath, resourceAccess
+                                ).parent().orElseThrow(), resourceAccess
+                        ), resourceAccess
+                )
         );
         String primaryType = nodeProperties.primaryType();
         source = Optional.ofNullable(implementationMappings.get(primaryType))
@@ -92,5 +96,15 @@ public class UniversalAsset implements Asset {
     @Override
     public JCRPath jcrPath() {
         return source.jcrPath();
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        return source.equals(comparedObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return jcrUUID().hashCode() * 31;
     }
 }

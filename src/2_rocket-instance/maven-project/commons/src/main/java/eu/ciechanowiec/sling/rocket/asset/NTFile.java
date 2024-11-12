@@ -1,72 +1,42 @@
-package eu.ciechanowiec.sling.rocket.jcr;
+package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.asset.Asset;
-import eu.ciechanowiec.sling.rocket.asset.AssetFile;
-import eu.ciechanowiec.sling.rocket.asset.AssetMetadata;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
+import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
+import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
+import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import jakarta.ws.rs.core.MediaType;
-import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 
-import javax.jcr.Node;
 import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Represents {@link Node} instances of type {@link JcrConstants#NT_FILE}.
- */
 @Slf4j
 @ToString
-public class NTFile implements Asset {
+class NTFile implements Asset {
 
-    @Getter
     private final JCRPath jcrPath;
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
 
-    /**
-     * Constructs an instance of this class.
-     * @param resource the {@link Resource} that will back the constructed object; the type of a {@link Node}
-     *                 behind the {@link Resource} must be one of the types supported by the {@link NTFile}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
-     */
-    public NTFile(Resource resource, ResourceAccess resourceAccess) {
+    NTFile(Resource resource, ResourceAccess resourceAccess) {
         this(new TargetJCRPath(resource), resourceAccess);
     }
 
-    /**
-     * Constructs an instance of this class.
-     * @param jcrPath the {@link JCRPath} to the {@link Node} that will back the constructed object;
-     *                the type of the {@link Node} must be one of the types supported by the {@link NTFile}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
-     */
-    public NTFile(JCRPath jcrPath, ResourceAccess resourceAccess) {
+    NTFile(JCRPath jcrPath, ResourceAccess resourceAccess) {
         this.jcrPath = jcrPath;
         this.resourceAccess = resourceAccess;
         assertPrimaryType();
         assertContentChildNodeType();
         log.trace("Initialized {}", this);
-    }
-
-    /**
-     * Returns an {@link Optional} containing the binary file stored in the underlying {@link Node}.
-     * @return {@link Optional} containing the binary file stored in the underlying {@link Node};
-     *         empty {@link Optional} is returned if the file cannot be retrieved
-     */
-    public Optional<File> retrieve() {
-        log.trace("Retrieving a file from {}", this);
-        JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
-        NodeProperties jcrContentChildNP = new NodeProperties(jcrContentChildJCRPath, resourceAccess);
-        return jcrContentChildNP.retrieveFile(JcrConstants.JCR_DATA);
     }
 
     private void assertPrimaryType() {
@@ -84,7 +54,19 @@ public class NTFile implements Asset {
 
     @Override
     public AssetFile assetFile() {
-        return this::retrieve;
+        JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
+        NodeProperties jcrContentChildNP = new NodeProperties(jcrContentChildJCRPath, resourceAccess);
+        return new AssetFile() {
+            @Override
+            public Optional<File> retrieve() {
+                return jcrContentChildNP.retrieveFile(JcrConstants.JCR_DATA);
+            }
+
+            @Override
+            public DataSize size() {
+                return jcrContentChildNP.binarySize(JcrConstants.JCR_DATA);
+            }
+        };
     }
 
     @Override
@@ -116,7 +98,30 @@ public class NTFile implements Asset {
     @Override
     public String jcrUUID() {
         JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
-        Referencable referencable = new BasicReferencable(() -> jcrContentChildJCRPath, resourceAccess);
-        return referencable.jcrUUID();
+        Referencable jcrContentChildReferencable = new BasicReferencable(() -> jcrContentChildJCRPath, resourceAccess);
+        return jcrContentChildReferencable.jcrUUID();
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        if (this == comparedObject) {
+            return true;
+        }
+        if (comparedObject instanceof Asset) {
+            Referencable comparedAsset = (Referencable) comparedObject;
+            return jcrUUID().equals(comparedAsset.jcrUUID());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return jcrUUID().hashCode() * 31;
+    }
+
+    @Override
+    public JCRPath jcrPath() {
+        return jcrPath;
     }
 }

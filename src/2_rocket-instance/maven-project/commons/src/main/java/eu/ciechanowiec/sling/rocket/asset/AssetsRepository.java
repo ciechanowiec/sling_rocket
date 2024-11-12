@@ -4,9 +4,13 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Activate;
@@ -15,7 +19,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 
+import javax.jcr.Repository;
 import javax.jcr.query.Query;
+import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -79,6 +85,77 @@ public class AssetsRepository {
             );
             return assetNullable;
         }
+    }
+
+    /**
+     * Finds all {@link Asset}s that are located at the specified {@link JCRPath}. All and exclusively {@link Asset}s
+     * that are located exactly at the specified {@link JCRPath} and its descendants are returned.
+     * @param searchedPath {@link JCRPath} where the {@link Asset}s are searched
+     * @return all {@link Asset}s that are located at the specified {@link JCRPath}
+     */
+    @SuppressWarnings("WeakerAccess")
+    public List<Asset> find(JCRPath searchedPath) {
+        log.debug("Searching for Assets at {}", searchedPath);
+        StringJoiner nodeTypesQueryPart = new StringJoiner(" OR ");
+        Asset.SUPPORTED_PRIMARY_TYPES.forEach(
+                primaryType -> nodeTypesQueryPart.add(
+                        String.format("node.[%s] = '%s'", JcrConstants.JCR_PRIMARYTYPE, primaryType)
+                )
+        );
+        String query = String.format(
+                "SELECT * FROM [%s] AS node WHERE (%s) AND ISDESCENDANTNODE(node, '%s')",
+                JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
+        );
+        log.trace("This query was built to retrieve Assets: {}", query);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            List<Asset> allAssets = new UnwrappedIteration<>(
+                    resourceResolver.findResources(query, Query.JCR_SQL2)
+            ).stream()
+                    .filter(resource -> new NodeProperties(
+                            new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
+                    )
+                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), resourceAccess))
+                    .distinct()
+                    .toList();
+            log.debug("Found {} Assets with this query: {}", allAssets.size(), query);
+            return allAssets;
+        }
+    }
+
+    /**
+     * Calculates the {@link DataSize} of binaries for all {@link Asset}s stored in the {@link Repository} and located
+     * at the specified {@link JCRPath}. All and exclusively {@link Asset}s that are located exactly at the specified
+     * {@link JCRPath} and its descendants are considered.
+     * @return size of binaries for all {@link Asset}s stored in the {@link Repository} and located
+     *         at the specified {@link JCRPath}
+     */
+    public DataSize size(JCRPath searchedPath) {
+        log.debug("Calculating size of Assets at {}", searchedPath);
+        DataSize dataSize = find(searchedPath).stream()
+                .map(Asset::assetFile)
+                .map(AssetFile::size)
+                .reduce(DataSize::add)
+                .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
+        log.debug("Size of Assets at {} is {}", searchedPath, dataSize);
+        return dataSize;
+    }
+
+    /**
+     * Calculates the {@link DataSize} of binaries for all {@link Asset}s stored in the {@link Repository}.
+     * @return size of binaries for all {@link Asset}s stored in the {@link Repository}
+     */
+    public DataSize size() {
+        log.debug("Calculating size of all Assets");
+        return size(new TargetJCRPath("/"));
+    }
+
+    /**
+     * Retrieves all {@link Asset}s stored in the {@link Repository}.
+     * @return all {@link Asset}s stored in the {@link Repository}
+     */
+    public List<Asset> all() {
+        log.debug("Retrieving all Assets");
+        return find(new TargetJCRPath("/"));
     }
 
     private String buildQuery(Referencable referencable) {

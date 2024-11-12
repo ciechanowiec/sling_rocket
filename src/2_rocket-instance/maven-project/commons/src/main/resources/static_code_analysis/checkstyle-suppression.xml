@@ -9,4 +9,7 @@
     <suppress checks="FileLength"
               files="NodeProperties.java"
               lines="1"/>
+    <suppress checks="FileLength"
+              files="AssetTest.java"
+              lines="1"/>
 </suppressions>

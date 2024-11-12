@@ -2,11 +2,14 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
+import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
@@ -183,13 +186,18 @@ class AssetTest extends TestEnvironment {
         Asset ntFileLinkTwo = new StagedAssetLink(ntFileLinkOne, resourceAccess).save(ntFileLinkPathTwo);
         Asset ntResourceLinkOne = new StagedAssetLink(ntResourceAsset, resourceAccess).save(ntResourceLinkPathOne);
         Asset ntResourceLinkTwo = new StagedAssetLink(ntResourceLinkOne, resourceAccess).save(ntResourceLinkPathTwo);
+        Asset ntFile = new NTFile(ntFilePath, resourceAccess);
         assertAll(
                 () -> assertEquals(
                         JcrConstants.NT_RESOURCE,
+                        ntFile.assetMetadata().properties().orElseThrow().primaryType()
+                ),
+                () -> assertEquals(
+                        Asset.NT_ASSET_METADATA,
                         ntFileAsset.assetMetadata().properties().orElseThrow().primaryType()
                 ),
                 () -> assertEquals(
-                        JcrConstants.NT_RESOURCE,
+                        Asset.NT_ASSET_METADATA,
                         ntResourceAsset.assetMetadata().properties().orElseThrow().primaryType()
                 ),
                 () -> assertEquals(
@@ -335,6 +343,7 @@ class AssetTest extends TestEnvironment {
     }
 
     @Test
+    @SuppressWarnings("MethodLength")
     void testAssetsRepository() {
         FileMetadata mp3FM = new FileMetadata(fileMP3);
         FileMetadata jpgFM = new FileMetadata(fileJPGOne);
@@ -346,6 +355,22 @@ class AssetTest extends TestEnvironment {
         );
         Asset assetJPGLink = new StagedAssetLink(assetJPGReal, resourceAccess).save(
                 new TargetJCRPath("/content/jpgOneLink")
+        );
+        Asset assetSeparatePathOne = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+                new TargetJCRPath("/content/separate-path/mp3One")
+        );
+        Asset assetSeparatePathTwo = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+                new TargetJCRPath("/content/separate-path/mp3Two")
+        );
+        Asset assetSeparateSubPathOne = new StagedAssetReal(
+                () -> Optional.of(this.fileMP3), mp3FM, resourceAccess
+        ).save(
+                new TargetJCRPath("/content/separate-path/sub-path/mp3One")
+        );
+        Asset assetSeparateSubPathTwo = new StagedAssetReal(
+                () -> Optional.of(this.fileMP3), mp3FM, resourceAccess
+        ).save(
+                new TargetJCRPath("/content/separate-path/sub-path/mp3Two")
         );
         AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
                                                     .orElseThrow();
@@ -359,8 +384,56 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals(
                         "/content/jpgOneLink", assetsRepository.find(assetJPGLink).orElseThrow().jcrPath().get()
                 ),
-                () -> assertTrue(assetsRepository.find(() -> "non-existent-uuid").isEmpty())
+                () -> assertEquals(
+                        "/content/separate-path/mp3One",
+                        assetsRepository.find(assetSeparatePathOne).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(
+                        "/content/separate-path/mp3Two",
+                        assetsRepository.find(assetSeparatePathTwo).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(
+                        "/content/separate-path/sub-path/mp3One",
+                        assetsRepository.find(assetSeparateSubPathOne).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(
+                        "/content/separate-path/sub-path/mp3Two",
+                        assetsRepository.find(assetSeparateSubPathTwo).orElseThrow().jcrPath().get()
+                ),
+                () -> assertEquals(7, assetsRepository.all().size()),
+                () -> assertEquals(7, assetsRepository.find(new TargetJCRPath("/")).size()),
+                () -> assertEquals(4, assetsRepository.find(new TargetJCRPath("/content/separate-path")).size()),
+                () -> assertTrue(assetsRepository.find((Referencable) () -> "non-existent-uuid").isEmpty())
         );
+    }
+
+    @SuppressWarnings("MagicNumber")
+    @SneakyThrows
+    @Test
+    void testSizeFromRepository() {
+        // Create temporary files with known size
+        File tempFileOne = File.createTempFile("testFileOne", ".tmp");
+        File tempFileTwo = File.createTempFile("testFileOne", ".tmp");
+        tempFileOne.deleteOnExit();
+        tempFileTwo.deleteOnExit();
+
+        byte[] data = new byte[1024]; // 1 KB
+        try (
+                OutputStream fosOne = Files.newOutputStream(tempFileOne.toPath());
+                OutputStream fosTwo = Files.newOutputStream(tempFileTwo.toPath());
+        ) {
+            IOUtils.write(data, fosOne);
+            IOUtils.write(data, fosTwo);
+        }
+        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), resourceAccess).save(
+                new TargetJCRPath("/content/tempFileOne")
+        );
+        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), resourceAccess).save(
+                new TargetJCRPath("/content/tempFileTwo")
+        );
+        AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
+                .orElseThrow();
+        assertEquals(new DataSize(2, DataUnit.KILOBYTES), assetsRepository.size());
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,5 +105,29 @@ class DataSizeTest {
 
         DataSize dataSize = new DataSize(tempFile);
         assertEquals(1024L, dataSize.bytes(), "File size should be 1024 bytes");
+    }
+
+    @Test
+    void testToString() {
+        DataSize dataSize = new DataSize(345_448_245, DataUnit.BYTES);
+        assertEquals("DataSize{[0 TB, 0 GB, 329 MB, 455 KB, 821 B]}", dataSize.toString());
+    }
+
+    @Test
+    void testAddition() {
+        List<DataSize> dataSizesOne = List.of(
+                new DataSize(2, DataUnit.MEGABYTES),
+                new DataSize(0, DataUnit.MEGABYTES),
+                new DataSize(4, DataUnit.MEGABYTES),
+                new DataSize(5, DataUnit.MEGABYTES)
+        );
+        DataSize nonZeroResult = dataSizesOne.stream().reduce(DataSize::add).orElse(new DataSize(0, DataUnit.BYTES));
+        List<DataSize> dataSizesTwo = List.of();
+        @SuppressWarnings("RedundantOperationOnEmptyContainer")
+        DataSize zeroResult = dataSizesTwo.stream().reduce(DataSize::add).orElse(new DataSize(0, DataUnit.BYTES));
+        assertAll(
+                () -> assertEquals(new DataSize(11, DataUnit.MEGABYTES), nonZeroResult),
+                () -> assertEquals(new DataSize(0, DataUnit.BYTES), zeroResult)
+        );
     }
 }
