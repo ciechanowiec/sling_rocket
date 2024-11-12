@@ -4,7 +4,7 @@ WORKDIR /app
 COPY ../2_rocket-instance/maven-project .
 RUN mvn clean package -DskipAdvancedDependencyResolution
 
-FROM ciechanowiec/rocket-base:13.26.0
+FROM ciechanowiec/rocket-base:13.28.0
 
 ARG SLING_DIR
 ARG RUN_MODES

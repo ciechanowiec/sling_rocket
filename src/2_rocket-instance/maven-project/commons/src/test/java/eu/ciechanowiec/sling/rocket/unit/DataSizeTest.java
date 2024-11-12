@@ -77,20 +77,6 @@ class DataSizeTest {
         assertEquals(dataSize1.hashCode(), dataSize2.hashCode(), "Hash codes should be equal");
     }
 
-    @Test
-    void testToHumanReadableRepresentation() {
-        @SuppressWarnings("PointlessArithmeticExpression")
-        long bytes = 1L * DataUnitMultiplications.BYTES_PER_TB
-                + 2L * DataUnitMultiplications.BYTES_PER_GB
-                + 3L * DataUnitMultiplications.BYTES_PER_MB
-                + 4L * DataUnitMultiplications.BYTES_PER_KB
-                + 5L;
-
-        DataSize dataSize = new DataSize(bytes, DataUnit.BYTES);
-        String expected = "[1 TB, 2 GB, 3 MB, 4 KB, 5 B]";
-        assertEquals(expected, dataSize.toHumanReadableRepresentation(), "Human-readable representation should match");
-    }
-
     @SneakyThrows
     @Test
     void testFileConstructor() {
@@ -110,7 +96,7 @@ class DataSizeTest {
     @Test
     void testToString() {
         DataSize dataSize = new DataSize(345_448_245, DataUnit.BYTES);
-        assertEquals("DataSize{[0 TB, 0 GB, 329 MB, 455 KB, 821 B]}", dataSize.toString());
+        assertEquals("[0 TB, 0 GB, 329 MB, 455 KB, 821 B (total: 345448245 bytes)]", dataSize.toString());
     }
 
     @Test

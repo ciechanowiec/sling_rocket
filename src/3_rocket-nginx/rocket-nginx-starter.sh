@@ -3,6 +3,8 @@
 DOMAIN=${DOMAIN:-example.com}
 EMAIL=${EMAIL:-name@example.com}
 IS_STAGING_ENV=${IS_STAGING_ENV:-false}
+echo ""
+echo "### STARTED ON $(date)"
 echo "### DOMAIN: $DOMAIN"
 echo "### EMAIL: $EMAIL"
 echo "### IS_STAGING_ENV: $IS_STAGING_ENV"

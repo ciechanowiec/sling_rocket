@@ -184,12 +184,9 @@ public final class DataSize implements Comparable<DataSize> {
         return Long.hashCode(bytesFuture.join());
     }
 
-    /**
-     * Returns a human-readable representation of this {@link DataSize}.
-     * @return human-readable representation of this {@link DataSize}
-     */
+    @Override
     @SuppressWarnings("VariableDeclarationUsageDistance")
-    public String toHumanReadableRepresentation() {
+    public String toString() {
         long remainingBytes = bytesFuture.join();
 
         long hrTerabytes = remainingBytes / DataUnitMultiplications.BYTES_PER_TB;
@@ -207,12 +204,8 @@ public final class DataSize implements Comparable<DataSize> {
         long hrBytes = remainingBytes;
 
         return String.format(
-                "[%d TB, %d GB, %d MB, %d KB, %d B]", hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes
+                "[%d TB, %d GB, %d MB, %d KB, %d B (total: %d bytes)]",
+                hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes, bytesFuture.join()
         );
-    }
-
-    @Override
-    public String toString() {
-        return String.format("DataSize{%s}", toHumanReadableRepresentation());
     }
 }
