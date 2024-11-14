@@ -22,17 +22,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({
-        "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount", "resource"
+        "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals",
+        "PMD.NcssCount", "resource", "OverlyCoupledClass"
 })
 class AssetTest extends TestEnvironment {
 
@@ -50,25 +49,6 @@ class AssetTest extends TestEnvironment {
         fileJPGOne = loadResourceIntoFile("1.jpeg");
         fileJPGTwo = loadResourceIntoFile("2.jpeg");
         fileMP3 = loadResourceIntoFile("time-forward.mp3");
-    }
-
-    @SneakyThrows
-    private File loadResourceIntoFile(String resourceName) {
-        File createdFile = File.createTempFile("jcr-binary_", ".tmp");
-        createdFile.deleteOnExit();
-        Path tempFilePath = createdFile.toPath();
-        Thread currentThread = Thread.currentThread();
-        ClassLoader classLoader = currentThread.getContextClassLoader();
-        try (
-                InputStream inputStream = Optional.ofNullable(
-                        classLoader.getResourceAsStream(resourceName)
-                ).orElseThrow();
-                OutputStream outputStream = Files.newOutputStream(tempFilePath)
-        ) {
-            IOUtils.copy(inputStream, outputStream);
-        }
-        assertTrue(createdFile.exists());
-        return createdFile;
     }
 
     @Test
@@ -420,7 +400,7 @@ class AssetTest extends TestEnvironment {
         byte[] data = new byte[1024]; // 1 KB
         try (
                 OutputStream fosOne = Files.newOutputStream(tempFileOne.toPath());
-                OutputStream fosTwo = Files.newOutputStream(tempFileTwo.toPath());
+                OutputStream fosTwo = Files.newOutputStream(tempFileTwo.toPath())
         ) {
             IOUtils.write(data, fosOne);
             IOUtils.write(data, fosTwo);

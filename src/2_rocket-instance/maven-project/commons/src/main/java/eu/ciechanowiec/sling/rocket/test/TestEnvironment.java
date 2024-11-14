@@ -6,6 +6,7 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
@@ -21,6 +22,8 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -30,13 +33,16 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test environment for Sling Rocket applications. It is supposed to be used as a superclass for other test classes.
  */
 @SuppressWarnings({
         "NewClassNamingConvention", "ProtectedField", "WeakerAccess", "AbstractClassName", "squid:S118",
         "VisibilityModifier", "PMD.AvoidAccessibilityAlteration", "PMD.AbstractClassWithoutAbstractMethod",
-        "squid:S1694", "TestInProductSource"})
+        "squid:S1694", "TestInProductSource", "PMD.ExcessiveImports"
+})
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 @Slf4j
 public abstract class TestEnvironment {
@@ -92,6 +98,30 @@ public abstract class TestEnvironment {
         @SuppressWarnings("deprecation")
         ResourceResolver resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null);
         return resourceResolver;
+    }
+
+    /**
+     * Loads a resource from the classpath and saves it to a new temporary {@link File} on the disk.
+     * @param resourceName name of the resource to be loaded
+     * @return {@link File} that was created
+     */
+    @SneakyThrows
+    protected File loadResourceIntoFile(String resourceName) {
+        File createdFile = File.createTempFile("jcr-binary_", ".tmp");
+        createdFile.deleteOnExit();
+        Path tempFilePath = createdFile.toPath();
+        Thread currentThread = Thread.currentThread();
+        ClassLoader classLoader = currentThread.getContextClassLoader();
+        try (
+                InputStream inputStream = Optional.ofNullable(
+                        classLoader.getResourceAsStream(resourceName)
+                ).orElseThrow();
+                OutputStream outputStream = Files.newOutputStream(tempFilePath)
+        ) {
+            IOUtils.copy(inputStream, outputStream);
+        }
+        assertTrue(createdFile.exists());
+        return createdFile;
     }
 
     /**
