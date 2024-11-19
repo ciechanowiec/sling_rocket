@@ -95,7 +95,7 @@ class NodePropertiesTest extends TestEnvironment {
                 "calendarus-namus", "1980-01-01T00:00:00.000Z",
                 "jcr:primaryType", "nt:unstructured"
         );
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         Map<String, String> firstActualMap = nodeProperties.all();
         assertEquals(initialMap, firstActualMap);
         nodeProperties.setProperty("stringus-namus", "stringus-valus-2");
@@ -120,7 +120,7 @@ class NodePropertiesTest extends TestEnvironment {
 
     @Test
     void mustSetPropertiesOfTypes() {
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("stringus-namus")),
                 () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("booleanus-namus")),
@@ -183,10 +183,10 @@ class NodePropertiesTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess).save(realAssetPath);
+        }, fullResourceAccess).save(realAssetPath);
         TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
         TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
-        NodeProperties nodeProperties = new NodeProperties(ntResourcePath, resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(ntResourcePath, fullResourceAccess);
         assertAll(
                 () -> assertTrue(nodeProperties.isPrimaryType(JcrConstants.NT_RESOURCE)),
                 () -> assertEquals(5, nodeProperties.all().size())
@@ -205,7 +205,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", unix1980
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> assertEquals(PropertyType.STRING, nodeProperties.propertyType("stringus-namus")),
                 () -> assertEquals(PropertyType.BOOLEAN, nodeProperties.propertyType("booleanus-namus")),
@@ -216,14 +216,14 @@ class NodePropertiesTest extends TestEnvironment {
                 () -> assertEquals(PropertyType.UNDEFINED, nodeProperties.propertyType("unknown"))
         );
         NodeProperties nonExistentNodeProperties = new NodeProperties(
-                new TargetJCRPath("/non-existent"), resourceAccess
+                new TargetJCRPath("/non-existent"), fullResourceAccess
         );
         assertEquals(PropertyType.UNDEFINED, nonExistentNodeProperties.propertyType("unknown"));
     }
 
     @Test
     void mustNotSetPropertyWhenNoPath() {
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/non-existent"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/non-existent"), fullResourceAccess);
         Optional<NodeProperties> newNodeProperties = nodeProperties.setProperty("stringus-namus", "stringus-valus");
         Map<String, String> allProps = nodeProperties.all();
         assertAll(
@@ -235,7 +235,7 @@ class NodePropertiesTest extends TestEnvironment {
     @Test
     void mustNotSetIllegalProperty() {
         context.build().resource("/content", Map.of()).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         Map<String, String> initialAll = nodeProperties.all();
         Optional<NodeProperties> newNodeProperties = nodeProperties.setProperty(
                 JcrConstants.JCR_PRIMARYTYPE, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
@@ -268,7 +268,7 @@ class NodePropertiesTest extends TestEnvironment {
                 "calendarus-namus", "1980-01-01T00:00:00.000Z",
                 "jcr:primaryType", "nt:unstructured"
         );
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         Map<String, String> actualMap = nodeProperties.all();
         assertEquals(expectedMap, actualMap);
     }
@@ -285,7 +285,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", unix1980
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     String actualString = nodeProperties.propertyValue(
@@ -358,7 +358,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", new Calendar[]{unix1980, unix1990}
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     String[] actualString = nodeProperties.propertyValue(
@@ -424,11 +424,11 @@ class NodePropertiesTest extends TestEnvironment {
         TargetJCRPath realAssetPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
         );
-        new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), resourceAccess).save(realAssetPath);
+        new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), fullResourceAccess).save(realAssetPath);
         TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
         TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
-        NodeProperties ntFileNodeProperties = new NodeProperties(ntFilePath, resourceAccess);
-        NodeProperties ntResourceNodeProperties = new NodeProperties(ntResourcePath, resourceAccess);
+        NodeProperties ntFileNodeProperties = new NodeProperties(ntFilePath, fullResourceAccess);
+        NodeProperties ntResourceNodeProperties = new NodeProperties(ntResourcePath, fullResourceAccess);
         assertAll(
                 () -> assertEquals(
                         new DataSize(609_994, DataUnit.BYTES),
@@ -444,7 +444,7 @@ class NodePropertiesTest extends TestEnvironment {
     @Test
     void mustGetDefaultUnaryValues() {
         context.build().resource("/content").commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     String actualString = nodeProperties.propertyValue(
@@ -498,7 +498,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", unix1980
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     String actualString = nodeProperties.propertyValue(
@@ -560,7 +560,7 @@ class NodePropertiesTest extends TestEnvironment {
     @Test
     void mustGetFromClassUnaryNonExistingValues() {
         context.build().resource("/content").commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     boolean isEmpty = nodeProperties.propertyValue(
@@ -633,7 +633,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", new Calendar[]{unix1980, unix1990}
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> {
                     String[] actualString = nodeProperties.propertyValue(
@@ -706,7 +706,7 @@ class NodePropertiesTest extends TestEnvironment {
                         "calendarus-namus", unix1980
                 )
         ).commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         assertAll(
                 () -> assertTrue(nodeProperties.containsProperty("stringus-namus")),
                 () -> assertFalse(nodeProperties.containsProperty("non-existent"))
@@ -716,7 +716,7 @@ class NodePropertiesTest extends TestEnvironment {
     @Test
     void mustThrowForBadType() {
         context.build().resource("/content").commit();
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), resourceAccess);
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         String primaryType = nodeProperties.primaryType();
         assertAll(
                 () -> assertEquals(JcrConstants.NT_UNSTRUCTURED, primaryType),

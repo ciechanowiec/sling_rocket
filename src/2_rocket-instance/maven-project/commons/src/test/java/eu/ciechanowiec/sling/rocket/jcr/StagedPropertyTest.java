@@ -19,7 +19,7 @@ class StagedPropertyTest extends TestEnvironment {
         context.build().resource("/content/rocket").commit();
         ParentJCRPath targetJCRPath = new ParentJCRPath(new TargetJCRPath("/content/rocket"));
         StagedProperty<String> stagedNode = nodeJCRPath -> {
-            NodeProperties nodeProperties = new NodeProperties(nodeJCRPath, resourceAccess);
+            NodeProperties nodeProperties = new NodeProperties(nodeJCRPath, fullResourceAccess);
             nodeProperties.setProperty("namus", "valus");
             return nodeProperties.propertyValue("namus", "unknown");
         };

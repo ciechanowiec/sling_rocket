@@ -35,8 +35,8 @@ public class DeletableResource {
 
     /**
      * Constructs an instance of this class.
-     * @param withJCRPath object that contains a {@link JCRPath} to the {@link Resource} to be deleted
-     *        from the {@link Repository}
+     * @param withJCRPath object that contains a {@link JCRPath} to the {@link Resource}
+     *                    to be deleted from the {@link Repository}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
      *                       object to acquire access to resources
      */

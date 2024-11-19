@@ -26,7 +26,7 @@ class DeletableResourceTest extends TestEnvironment {
     @Test
     void mustDelete() {
         File file = loadResourceIntoFile("1.jpeg");
-        Asset asset = new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), resourceAccess)
+        Asset asset = new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), fullResourceAccess)
                 .save(new TargetJCRPath("/content/jpg"));
         String jcrUUID = asset.jcrUUID();
         AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
@@ -34,22 +34,22 @@ class DeletableResourceTest extends TestEnvironment {
         assertAll(
                 () -> assertEquals(1, assetsRepository.all().size()),
                 () -> assertTrue(() -> {
-                    try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                    try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
                         return Optional.ofNullable(resourceResolver.getResource("/content/jpg")).isPresent();
                     }
                 }),
                 () -> assertTrue(assetsRepository.find(asset).isPresent()),
                 () -> assertTrue(assetsRepository.find((Referencable) () -> jcrUUID).isPresent())
         );
-        Optional<JCRPath> firstDeletedJCR = new DeletableResource(asset, resourceAccess).delete();
-        Optional<JCRPath> notDeletedJCROne = new DeletableResource(asset, resourceAccess).delete();
+        Optional<JCRPath> firstDeletedJCR = new DeletableResource(asset, fullResourceAccess).delete();
+        Optional<JCRPath> notDeletedJCROne = new DeletableResource(asset, fullResourceAccess).delete();
         Optional<JCRPath> notDeletedJCRTwo = new DeletableResource(
-                new TargetJCRPath("/non-existent-path"), resourceAccess
+                new TargetJCRPath("/non-existent-path"), fullResourceAccess
         ).delete();
         assertAll(
                 () -> assertTrue(assetsRepository.all().isEmpty()),
                 () -> assertTrue(() -> {
-                    try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                    try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
                         return Optional.ofNullable(resourceResolver.getResource("/content/jpg")).isEmpty();
                     }
                 }),

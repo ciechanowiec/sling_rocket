@@ -4,7 +4,6 @@ import eu.ciechanowiec.conditional.Conditional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -168,15 +167,13 @@ public final class DataSize implements Comparable<DataSize> {
     }
 
     @Override
+    @SuppressWarnings({"SimplifiableIfStatement", "PMD.SimplifyBooleanReturns"})
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {
             return true;
         }
-        if (Objects.isNull(comparedObject) || getClass() != comparedObject.getClass()) {
-            return false;
-        }
-        DataSize comparedDataSize = (DataSize) comparedObject;
-        return Objects.equals(bytesFuture.join(), comparedDataSize.bytesFuture.join());
+        return comparedObject instanceof DataSize comparedDataSize
+            && bytesFuture.join().equals(comparedDataSize.bytesFuture.join());
     }
 
     @Override
