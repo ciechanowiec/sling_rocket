@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
+import lombok.ToString;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.api.resource.ResourceResolver;
 
@@ -10,9 +11,11 @@ import javax.jcr.Repository;
  * Provides access to Apache Sling resources, including the underlying {@link Repository}, for a specific {@link User}.
  * The scope of the provided access is equal to the scope of the access configured for that {@link User}.
  */
+@ToString
 public class UserResourceAccess implements ResourceAccess {
 
     private final AuthIDUser authIDUser;
+    @ToString.Exclude
     private final FullResourceAccess fullResourceAccess;
 
     /**

@@ -29,8 +29,7 @@ class DeletableResourceTest extends TestEnvironment {
         Asset asset = new StagedAssetReal(() -> Optional.of(file), new FileMetadata(file), fullResourceAccess)
                 .save(new TargetJCRPath("/content/jpg"));
         String jcrUUID = asset.jcrUUID();
-        AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
-                .orElseThrow();
+        AssetsRepository assetsRepository = new AssetsRepository(fullResourceAccess);
         assertAll(
                 () -> assertEquals(1, assetsRepository.all().size()),
                 () -> assertTrue(() -> {

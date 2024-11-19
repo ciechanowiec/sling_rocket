@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.conditional.Conditional;
-import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.identity.AuthID;
@@ -97,7 +96,6 @@ public abstract class TestEnvironment {
             AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
             return getRRForUser(passedAuthIDUser);
         }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
-        context.registerInjectActivateService(AssetsRepository.class);
         log.debug("Registered {}", fullResourceAccess);
         boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);

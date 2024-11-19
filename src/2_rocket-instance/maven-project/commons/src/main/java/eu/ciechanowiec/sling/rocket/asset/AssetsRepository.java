@@ -1,6 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
+import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
@@ -13,11 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.propertytypes.ServiceDescription;
 
 import javax.jcr.Repository;
 import javax.jcr.query.Query;
@@ -28,27 +23,18 @@ import java.util.StringJoiner;
 /**
  * Repository for {@link Asset}s.
  */
-@Component(
-        service = AssetsRepository.class,
-        immediate = true
-)
 @Slf4j
 @ToString
-@ServiceDescription("Repository for Assets")
 public class AssetsRepository {
 
-    private final FullResourceAccess fullResourceAccess;
+    private final ResourceAccess resourceAccess;
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used to acquire access to resources
+     * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
      */
-    @Activate
-    public AssetsRepository(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess
-    ) {
-        this.fullResourceAccess = fullResourceAccess;
+    public AssetsRepository(ResourceAccess resourceAccess) {
+        this.resourceAccess = resourceAccess;
         log.info("Initialized {}", this);
     }
 
@@ -62,15 +48,15 @@ public class AssetsRepository {
     public Optional<Asset> find(Referencable referencable) {
         String query = buildQuery(referencable);
         log.trace("Searching for Asset for {}. UUID: '{}'. Query: {}", referencable, referencable.jcrUUID(), query);
-        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             Optional<Asset> assetNullable = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
             .findFirst()
             .filter(resource -> new NodeProperties(
-                    new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
+                    new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
             )
-            .map(resource -> new UniversalAsset(resource, fullResourceAccess))
+            .map(resource -> new UniversalAsset(resource, resourceAccess))
             .map(
                     asset -> {
                         log.trace("Found Asset for {}. UUID: '{}': {}", referencable, referencable.jcrUUID(), asset);
@@ -107,16 +93,16 @@ public class AssetsRepository {
                 JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
         );
         log.trace("This query was built to retrieve Assets: {}", query);
-        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             List<Asset> allAssets = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
                     .filter(resource -> new NodeProperties(
-                            new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(
+                            new TargetJCRPath(resource), resourceAccess).isPrimaryType(
                                     Asset.SUPPORTED_PRIMARY_TYPES
                             )
                     )
-                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), fullResourceAccess))
+                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), resourceAccess))
                     .distinct()
                     .toList();
             log.debug("Found {} Assets with this query: {}", allAssets.size(), query);
