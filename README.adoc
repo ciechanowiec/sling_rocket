@@ -91,7 +91,7 @@ image::sling-rocket-architecture-diagram.svg[]
 
 == Usage
 
-The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `13.28.0`, the version of the SR Instance must also be `13.28.0`.
+The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `13.28.0-SNAPSHOT`, the version of the SR Instance must also be `13.28.0-SNAPSHOT`.
 
 === SR Parent POM
 
@@ -178,7 +178,7 @@ mvn clean deploy -P release
 ....
 cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
-docker push ciechanowiec/rocket-instance:13.28.0 && docker push ciechanowiec/rocket-nginx:13.28.0
+docker push ciechanowiec/rocket-instance:13.28.0-SNAPSHOT && docker push ciechanowiec/rocket-nginx:13.28.0-SNAPSHOT
 ....
 
 === Access Password
