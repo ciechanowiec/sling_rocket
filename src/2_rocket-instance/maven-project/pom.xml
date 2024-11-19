@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.28.0</version>
+    <version>13.28.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -78,7 +78,7 @@
         <!-- NON_OSGI_DEPENDENCIES                                                  -->
         <!-- ====================================================================== -->
         <org.apache.sling.servlets.annotations.version>1.2.6</org.apache.sling.servlets.annotations.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <javax.inject.version>1</javax.inject.version>
         <spotbugs-annotations.version>4.8.6</spotbugs-annotations.version>
         <!-- ====================================================================== -->
@@ -216,7 +216,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.0</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.70.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.72.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>3.8.2</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
@@ -320,7 +320,7 @@
         <org.apache.sling.models.jacksonexporter.version>1.1.4</org.apache.sling.models.jacksonexporter.version>
         <org.apache.sling.models.api.version>1.5.4</org.apache.sling.models.api.version>
         <org.apache.sling.models.caconfig.version>1.0.2</org.apache.sling.models.caconfig.version>
-        <org.apache.sling.models.impl.version>1.7.2</org.apache.sling.models.impl.version>
+        <org.apache.sling.models.impl.version>1.7.4</org.apache.sling.models.impl.version>
         <!-- ====================================================================== -->
         <!-- SLING_SCRIPTING                                                        -->
         <!-- ====================================================================== -->
@@ -394,7 +394,7 @@
         <slingfeature-maven-plugin.version>1.9.0</slingfeature-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
-        <spotbugs-maven-plugin.version>4.8.6.5</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>

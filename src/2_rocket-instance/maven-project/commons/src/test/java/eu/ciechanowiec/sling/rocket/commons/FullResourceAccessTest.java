@@ -1,6 +1,5 @@
-package eu.ciechanowiec.sling.rocket.commons.impl;
+package eu.ciechanowiec.sling.rocket.commons;
 
-import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import lombok.SneakyThrows;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;

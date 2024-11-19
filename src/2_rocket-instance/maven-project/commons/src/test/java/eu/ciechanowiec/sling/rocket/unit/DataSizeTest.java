@@ -116,4 +116,11 @@ class DataSizeTest {
                 () -> assertEquals(new DataSize(0, DataUnit.BYTES), zeroResult)
         );
     }
+
+    @Test
+    @SuppressWarnings("EqualsWithItself")
+    void testSameObjectEquality() {
+        DataSize dataSize = new DataSize(1, DataUnit.GIGABYTES);
+        assertEquals(dataSize, dataSize);
+    }
 }

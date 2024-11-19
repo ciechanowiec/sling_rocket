@@ -20,7 +20,7 @@ class ConditionalPropertyTest extends TestEnvironment {
     @Test
     void mustThrowNotReferencableException() {
         context.build().resource("/content").commit();
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource content = Optional.ofNullable(resourceResolver.getResource("/content")).orElseThrow();
             Node node = Optional.ofNullable(content.adaptTo(Node.class)).orElseThrow();
             ConditionalProperty conditionalProperty = new ConditionalProperty("non-existent");

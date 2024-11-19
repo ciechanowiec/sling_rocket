@@ -39,7 +39,7 @@ public record ComparableImages(Collection<ComparableImage> source) {
      */
     public ComparableImages excludeSimilarImages() {
         List<ComparableImage> withoutSimilarImages = source.stream()
-                .collect(Collectors.toMap(
+                .collect(Collectors.toUnmodifiableMap(
                         Function.identity(),
                         comparableImage -> extractSimilarImages(comparableImage, source))
                 )

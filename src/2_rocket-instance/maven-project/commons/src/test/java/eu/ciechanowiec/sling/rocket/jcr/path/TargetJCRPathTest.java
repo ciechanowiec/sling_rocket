@@ -26,7 +26,7 @@ class TargetJCRPathTest extends TestEnvironment {
 
     @Test
     void mustCreateOfResource() {
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             SyntheticResource syntheticResource = new SyntheticResource(
                     resourceResolver, "/content", "rocket/resource/new"
             );

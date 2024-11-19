@@ -1,6 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
@@ -37,18 +37,18 @@ import java.util.StringJoiner;
 @ServiceDescription("Repository for Assets")
 public class AssetsRepository {
 
-    private final ResourceAccess resourceAccess;
+    private final FullResourceAccess fullResourceAccess;
 
     /**
      * Constructs an instance of this class.
-     * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used to acquire access to resources
      */
     @Activate
     public AssetsRepository(
             @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            ResourceAccess resourceAccess
+            FullResourceAccess fullResourceAccess
     ) {
-        this.resourceAccess = resourceAccess;
+        this.fullResourceAccess = fullResourceAccess;
         log.info("Initialized {}", this);
     }
 
@@ -62,15 +62,15 @@ public class AssetsRepository {
     public Optional<Asset> find(Referencable referencable) {
         String query = buildQuery(referencable);
         log.trace("Searching for Asset for {}. UUID: '{}'. Query: {}", referencable, referencable.jcrUUID(), query);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Optional<Asset> assetNullable = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
             .findFirst()
             .filter(resource -> new NodeProperties(
-                    new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
+                    new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
             )
-            .map(resource -> new UniversalAsset(resource, resourceAccess))
+            .map(resource -> new UniversalAsset(resource, fullResourceAccess))
             .map(
                     asset -> {
                         log.trace("Found Asset for {}. UUID: '{}': {}", referencable, referencable.jcrUUID(), asset);
@@ -107,14 +107,16 @@ public class AssetsRepository {
                 JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
         );
         log.trace("This query was built to retrieve Assets: {}", query);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             List<Asset> allAssets = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
                     .filter(resource -> new NodeProperties(
-                            new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
+                            new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(
+                                    Asset.SUPPORTED_PRIMARY_TYPES
+                            )
                     )
-                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), resourceAccess))
+                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), fullResourceAccess))
                     .distinct()
                     .toList();
             log.debug("Found {} Assets with this query: {}", allAssets.size(), query);
@@ -126,6 +128,7 @@ public class AssetsRepository {
      * Calculates the {@link DataSize} of binaries for all {@link Asset}s stored in the {@link Repository} and located
      * at the specified {@link JCRPath}. All and exclusively {@link Asset}s that are located exactly at the specified
      * {@link JCRPath} and its descendants are considered.
+     * @param searchedPath {@link JCRPath} where the {@link Asset}s are searched
      * @return size of binaries for all {@link Asset}s stored in the {@link Repository} and located
      *         at the specified {@link JCRPath}
      */

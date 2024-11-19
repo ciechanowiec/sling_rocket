@@ -22,17 +22,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({
-        "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.NcssCount", "resource"
+        "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals",
+        "PMD.NcssCount", "resource", "OverlyCoupledClass"
 })
 class AssetTest extends TestEnvironment {
 
@@ -50,25 +49,6 @@ class AssetTest extends TestEnvironment {
         fileJPGOne = loadResourceIntoFile("1.jpeg");
         fileJPGTwo = loadResourceIntoFile("2.jpeg");
         fileMP3 = loadResourceIntoFile("time-forward.mp3");
-    }
-
-    @SneakyThrows
-    private File loadResourceIntoFile(String resourceName) {
-        File createdFile = File.createTempFile("jcr-binary_", ".tmp");
-        createdFile.deleteOnExit();
-        Path tempFilePath = createdFile.toPath();
-        Thread currentThread = Thread.currentThread();
-        ClassLoader classLoader = currentThread.getContextClassLoader();
-        try (
-                InputStream inputStream = Optional.ofNullable(
-                        classLoader.getResourceAsStream(resourceName)
-                ).orElseThrow();
-                OutputStream outputStream = Files.newOutputStream(tempFilePath)
-        ) {
-            IOUtils.copy(inputStream, outputStream);
-        }
-        assertTrue(createdFile.exists());
-        return createdFile;
     }
 
     @Test
@@ -99,9 +79,9 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess).save(realAssetPath);
-        Asset firstLink = new StagedAssetLink(realAsset, resourceAccess).save(firstLinkPath);
-        Asset secondLink = new StagedAssetLink(firstLink, resourceAccess).save(secondLinkPath);
+        }, fullResourceAccess).save(realAssetPath);
+        Asset firstLink = new StagedAssetLink(realAsset, fullResourceAccess).save(firstLinkPath);
+        Asset secondLink = new StagedAssetLink(firstLink, fullResourceAccess).save(secondLinkPath);
         NodeProperties nodeProperties = secondLink.assetMetadata().properties().orElseThrow();
         String filePath = secondLink.assetFile().retrieve().orElseThrow().toPath().toString();
         String mimeType = nodeProperties.propertyValue(AssetMetadata.PN_MIME_TYPE, DefaultProperties.STRING_CLASS)
@@ -129,13 +109,13 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess);
+        }, fullResourceAccess);
         assertThrows(OccupiedJCRPathException.class, () -> failingAsset.save(realAssetPath));
     }
 
     @Test
     @SneakyThrows
-    @SuppressWarnings("MethodLength")
+    @SuppressWarnings({"MethodLength", "EqualsWithItself", "squid:S5863"})
     void mustRetrieveFromNTFile() {
         TargetJCRPath realAssetPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
@@ -155,19 +135,19 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess).save(realAssetPath);
+        }, fullResourceAccess).save(realAssetPath);
         TargetJCRPath ntFilePath = new TargetJCRPath(new ParentJCRPath(realAssetPath), Asset.FILE_NODE_NAME);
-        new NodeProperties(ntFilePath, resourceAccess).assertPrimaryType(JcrConstants.NT_FILE);
+        new NodeProperties(ntFilePath, fullResourceAccess).assertPrimaryType(JcrConstants.NT_FILE);
         TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
-        new NodeProperties(ntResourcePath, resourceAccess).assertPrimaryType(JcrConstants.NT_RESOURCE);
+        new NodeProperties(ntResourcePath, fullResourceAccess).assertPrimaryType(JcrConstants.NT_RESOURCE);
         Asset ntFileAsset;
         Asset ntResourceAsset;
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             ntFileAsset = Optional.ofNullable(resourceResolver.getResource(ntFilePath.get()))
-                    .map(resource -> new UniversalAsset(resource, resourceAccess))
+                    .map(resource -> new UniversalAsset(resource, fullResourceAccess))
                     .orElseThrow();
             ntResourceAsset = Optional.ofNullable(resourceResolver.getResource(ntResourcePath.get()))
-                    .map(resource -> new UniversalAsset(resource, resourceAccess))
+                    .map(resource -> new UniversalAsset(resource, fullResourceAccess))
                     .orElseThrow();
         }
         TargetJCRPath ntFileLinkPathOne = new TargetJCRPath(
@@ -182,11 +162,13 @@ class AssetTest extends TestEnvironment {
         TargetJCRPath ntResourceLinkPathTwo = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
         );
-        Asset ntFileLinkOne = new StagedAssetLink(ntFileAsset, resourceAccess).save(ntFileLinkPathOne);
-        Asset ntFileLinkTwo = new StagedAssetLink(ntFileLinkOne, resourceAccess).save(ntFileLinkPathTwo);
-        Asset ntResourceLinkOne = new StagedAssetLink(ntResourceAsset, resourceAccess).save(ntResourceLinkPathOne);
-        Asset ntResourceLinkTwo = new StagedAssetLink(ntResourceLinkOne, resourceAccess).save(ntResourceLinkPathTwo);
-        Asset ntFile = new NTFile(ntFilePath, resourceAccess);
+        Asset ntFileLinkOne = new StagedAssetLink(ntFileAsset, fullResourceAccess).save(ntFileLinkPathOne);
+        Asset ntFileLinkTwo = new StagedAssetLink(ntFileLinkOne, fullResourceAccess).save(ntFileLinkPathTwo);
+        Asset ntResourceLinkOne = new StagedAssetLink(ntResourceAsset, fullResourceAccess).save(ntResourceLinkPathOne);
+        Asset ntResourceLinkTwo = new StagedAssetLink(ntResourceLinkOne, fullResourceAccess).save(
+                ntResourceLinkPathTwo
+        );
+        Asset ntFile = new NTFile(ntFilePath, fullResourceAccess);
         assertAll(
                 () -> assertEquals(
                         JcrConstants.NT_RESOURCE,
@@ -211,7 +193,10 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals(
                         ntFileAsset.jcrPath(),
                         ntResourceAsset.jcrPath()
-                )
+                ),
+                () -> assertEquals(ntFile, ntFile),
+                () -> assertEquals("image/jpeg", ntFile.assetMetadata().mimeType()),
+                () -> assertEquals(5, ntFile.assetMetadata().all().size())
         );
         Set<Map<String, String>> all = Set.copyOf(List.of(
                 ntFileAsset.assetMetadata().all(),
@@ -242,8 +227,8 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess).save(new TargetJCRPath("/content/separate-asset"));
-        StagedNode<Asset> stagedMP3Link = new StagedAssetLink(separateAssetReal, resourceAccess);
+        }, fullResourceAccess).save(new TargetJCRPath("/content/separate-asset"));
+        StagedNode<Asset> stagedMP3Link = new StagedAssetLink(separateAssetReal, fullResourceAccess);
         StagedNode<Asset> stagedJPGOneReal = new StagedAssetReal(
                 () -> Optional.of(fileJPGOne), new AssetMetadata() {
             @Override
@@ -260,7 +245,7 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess);
+        }, fullResourceAccess);
         StagedNode<Asset> stagedJPGTwoReal = new StagedAssetReal(
                 () -> Optional.of(fileJPGTwo), new AssetMetadata() {
             @Override
@@ -277,10 +262,10 @@ class AssetTest extends TestEnvironment {
             public Optional<NodeProperties> properties() {
                 return Optional.empty();
             }
-        }, resourceAccess);
+        }, fullResourceAccess);
         TargetJCRPath assetsPath = new TargetJCRPath("/content/assets");
         Assets assets = new StagedAssets(
-                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), resourceAccess
+                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), fullResourceAccess
         ).save(assetsPath);
         Set<String> originalFileNames = assets.get()
                 .stream()
@@ -299,7 +284,7 @@ class AssetTest extends TestEnvironment {
         );
 
         StagedAssets failingAssets = new StagedAssets(
-                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), resourceAccess
+                List.of(stagedMP3Link, stagedJPGOneReal, stagedJPGTwoReal), fullResourceAccess
         );
         assertThrows(OccupiedJCRPathException.class, () -> failingAssets.save(assetsPath));
     }
@@ -311,17 +296,17 @@ class AssetTest extends TestEnvironment {
                 .commit();
         Resource resource = Optional.ofNullable(context.resourceResolver().getResource("/content/illegal-nt"))
                                     .orElseThrow();
-        assertThrows(IllegalArgumentException.class, () -> new UniversalAsset(resource, resourceAccess));
+        assertThrows(IllegalArgumentException.class, () -> new UniversalAsset(resource, fullResourceAccess));
     }
 
     @Test
     void testMetadataFromFile() {
         FileMetadata mp3FM = new FileMetadata(fileMP3);
         FileMetadata jpgFM = new FileMetadata(fileJPGOne);
-        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess).save(
                 new TargetJCRPath("/content/mp3")
         );
-        Asset assetJPG = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
+        Asset assetJPG = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, fullResourceAccess).save(
                 new TargetJCRPath("/content/jpg")
         );
         assertAll(
@@ -347,28 +332,26 @@ class AssetTest extends TestEnvironment {
     void testAssetsRepository() {
         FileMetadata mp3FM = new FileMetadata(fileMP3);
         FileMetadata jpgFM = new FileMetadata(fileJPGOne);
-        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess).save(
                 new TargetJCRPath("/content/mp3")
         );
-        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
+        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, fullResourceAccess).save(
                 new TargetJCRPath("/content/jpgOneReal")
         );
-        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, resourceAccess).save(
+        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, fullResourceAccess).save(
                 new TargetJCRPath("/content/jpgOneLink")
         );
-        Asset assetSeparatePathOne = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
-                new TargetJCRPath("/content/separate-path/mp3One")
-        );
-        Asset assetSeparatePathTwo = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
-                new TargetJCRPath("/content/separate-path/mp3Two")
-        );
+        Asset assetSeparatePathOne = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess)
+                .save(new TargetJCRPath("/content/separate-path/mp3One"));
+        Asset assetSeparatePathTwo = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess)
+                .save(new TargetJCRPath("/content/separate-path/mp3Two"));
         Asset assetSeparateSubPathOne = new StagedAssetReal(
-                () -> Optional.of(this.fileMP3), mp3FM, resourceAccess
+                () -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess
         ).save(
                 new TargetJCRPath("/content/separate-path/sub-path/mp3One")
         );
         Asset assetSeparateSubPathTwo = new StagedAssetReal(
-                () -> Optional.of(this.fileMP3), mp3FM, resourceAccess
+                () -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess
         ).save(
                 new TargetJCRPath("/content/separate-path/sub-path/mp3Two")
         );
@@ -420,15 +403,15 @@ class AssetTest extends TestEnvironment {
         byte[] data = new byte[1024]; // 1 KB
         try (
                 OutputStream fosOne = Files.newOutputStream(tempFileOne.toPath());
-                OutputStream fosTwo = Files.newOutputStream(tempFileTwo.toPath());
+                OutputStream fosTwo = Files.newOutputStream(tempFileTwo.toPath())
         ) {
             IOUtils.write(data, fosOne);
             IOUtils.write(data, fosTwo);
         }
-        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), resourceAccess).save(
+        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), fullResourceAccess).save(
                 new TargetJCRPath("/content/tempFileOne")
         );
-        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), resourceAccess).save(
+        new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), fullResourceAccess).save(
                 new TargetJCRPath("/content/tempFileTwo")
         );
         AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
@@ -443,16 +426,16 @@ class AssetTest extends TestEnvironment {
         FileMetadata jpgFM = new FileMetadata(fileJPGOne);
         File compiledJavaToSave = loadResourceIntoFile("compiled-java-file");
         FileMetadata compiledJavaToSaveFM = new FileMetadata(compiledJavaToSave);
-        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, resourceAccess).save(
+        Asset assetMP3 = new StagedAssetReal(() -> Optional.of(this.fileMP3), mp3FM, fullResourceAccess).save(
                 new TargetJCRPath("/content/mp3")
         );
         Asset compiledJava = new StagedAssetReal(
-                () -> Optional.of(compiledJavaToSave), compiledJavaToSaveFM, resourceAccess
+                () -> Optional.of(compiledJavaToSave), compiledJavaToSaveFM, fullResourceAccess
         ).save(new TargetJCRPath("/content/compiledJava"));
-        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, resourceAccess).save(
+        Asset assetJPGReal = new StagedAssetReal(() -> Optional.of(this.fileJPGOne), jpgFM, fullResourceAccess).save(
                 new TargetJCRPath("/content/jpgOneReal")
         );
-        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, resourceAccess).save(
+        Asset assetJPGLink = new StagedAssetLink(assetJPGReal, fullResourceAccess).save(
                 new TargetJCRPath("/content/jpgOneLink")
         );
         AssetMetadata nonExistentMimeType = new AssetMetadata() {

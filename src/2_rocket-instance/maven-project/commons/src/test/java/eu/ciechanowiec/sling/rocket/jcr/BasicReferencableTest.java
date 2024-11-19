@@ -20,10 +20,10 @@ class BasicReferencableTest extends TestEnvironment {
     @Test
     void mustThrowNotReferencableException() {
         context.build().resource("/content").commit();
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource content = Optional.ofNullable(resourceResolver.getResource("/content")).orElseThrow();
             String contentPath = content.getPath();
-            Referencable referencable = new BasicReferencable(() -> new TargetJCRPath(contentPath), resourceAccess);
+            Referencable referencable = new BasicReferencable(() -> new TargetJCRPath(contentPath), fullResourceAccess);
             assertThrows(NotReferencableException.class, referencable::jcrUUID);
         }
     }
