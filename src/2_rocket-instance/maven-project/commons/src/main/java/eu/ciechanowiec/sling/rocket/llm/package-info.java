@@ -1,5 +1,5 @@
 /**
- * Utilities related to the usage of large language models.
+ * Large language models utilities.
  */
 @Export
 package eu.ciechanowiec.sling.rocket.llm;

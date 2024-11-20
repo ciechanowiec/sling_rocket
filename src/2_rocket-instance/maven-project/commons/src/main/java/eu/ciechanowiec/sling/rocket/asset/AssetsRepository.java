@@ -1,6 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
+import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
@@ -13,11 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.propertytypes.ServiceDescription;
 
 import javax.jcr.Repository;
 import javax.jcr.query.Query;
@@ -28,27 +23,18 @@ import java.util.StringJoiner;
 /**
  * Repository for {@link Asset}s.
  */
-@Component(
-        service = AssetsRepository.class,
-        immediate = true
-)
 @Slf4j
 @ToString
-@ServiceDescription("Repository for Assets")
 public class AssetsRepository {
 
-    private final FullResourceAccess fullResourceAccess;
+    private final ResourceAccess resourceAccess;
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used to acquire access to resources
+     * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
      */
-    @Activate
-    public AssetsRepository(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess
-    ) {
-        this.fullResourceAccess = fullResourceAccess;
+    public AssetsRepository(ResourceAccess resourceAccess) {
+        this.resourceAccess = resourceAccess;
         log.info("Initialized {}", this);
     }
 
@@ -61,27 +47,36 @@ public class AssetsRepository {
     @SuppressWarnings("WeakerAccess")
     public Optional<Asset> find(Referencable referencable) {
         String query = buildQuery(referencable);
-        log.trace("Searching for Asset for {}. UUID: '{}'. Query: {}", referencable, referencable.jcrUUID(), query);
-        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
+        log.trace(
+                "{} searching for Asset for {}. UUID: '{}'. Query: {}",
+                this, referencable, referencable.jcrUUID(), query
+        );
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             Optional<Asset> assetNullable = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
             .findFirst()
             .filter(resource -> new NodeProperties(
-                    new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
+                    new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
             )
-            .map(resource -> new UniversalAsset(resource, fullResourceAccess))
+            .map(resource -> new UniversalAsset(resource, resourceAccess))
             .map(
                     asset -> {
-                        log.trace("Found Asset for {}. UUID: '{}': {}", referencable, referencable.jcrUUID(), asset);
+                        log.trace(
+                                "{} found Asset for {}. UUID: '{}': {}",
+                                this, referencable, referencable.jcrUUID(), asset
+                        );
                         return asset;
                     }
             );
             assetNullable.ifPresentOrElse(
                     asset -> log.debug(
-                            "For {} (UUID: '{}') this Asset was found: {}", referencable, referencable.jcrUUID(), asset
+                            "For {} (UUID: '{}') this Asset was found: {} by {}",
+                            referencable, referencable.jcrUUID(), asset, this
                     ),
-                    () -> log.debug("No Asset found for {}. UUID: '{}'", referencable, referencable.jcrUUID())
+                    () -> log.debug(
+                            "No Asset found for {} by {}. UUID: '{}'", referencable, this, referencable.jcrUUID()
+                    )
             );
             return assetNullable;
         }
@@ -95,7 +90,7 @@ public class AssetsRepository {
      */
     @SuppressWarnings("WeakerAccess")
     public List<Asset> find(JCRPath searchedPath) {
-        log.debug("Searching for Assets at {}", searchedPath);
+        log.debug("{} searching for Assets at {}", this, searchedPath);
         StringJoiner nodeTypesQueryPart = new StringJoiner(" OR ");
         Asset.SUPPORTED_PRIMARY_TYPES.forEach(
                 primaryType -> nodeTypesQueryPart.add(
@@ -106,20 +101,20 @@ public class AssetsRepository {
                 "SELECT * FROM [%s] AS node WHERE (%s) AND ISDESCENDANTNODE(node, '%s')",
                 JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
         );
-        log.trace("This query was built to retrieve Assets: {}", query);
-        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
+        log.trace("This query was built by {} to retrieve Assets: {}", this, query);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             List<Asset> allAssets = new UnwrappedIteration<>(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
             ).stream()
                     .filter(resource -> new NodeProperties(
-                            new TargetJCRPath(resource), fullResourceAccess).isPrimaryType(
+                            new TargetJCRPath(resource), resourceAccess).isPrimaryType(
                                     Asset.SUPPORTED_PRIMARY_TYPES
                             )
                     )
-                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), fullResourceAccess))
+                    .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), resourceAccess))
                     .distinct()
                     .toList();
-            log.debug("Found {} Assets with this query: {}", allAssets.size(), query);
+            log.debug("{} found {} Assets with this query: {}", this, allAssets.size(), query);
             return allAssets;
         }
     }
@@ -133,13 +128,13 @@ public class AssetsRepository {
      *         at the specified {@link JCRPath}
      */
     public DataSize size(JCRPath searchedPath) {
-        log.debug("Calculating size of Assets at {}", searchedPath);
+        log.debug("{} calculating size of Assets at {}", this, searchedPath);
         DataSize dataSize = find(searchedPath).stream()
                 .map(Asset::assetFile)
                 .map(AssetFile::size)
                 .reduce(DataSize::add)
                 .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
-        log.debug("Size of Assets at {} is {}", searchedPath, dataSize);
+        log.debug("Size of Assets at {} is {}. Calculated by {}", searchedPath, dataSize, this);
         return dataSize;
     }
 
@@ -148,7 +143,7 @@ public class AssetsRepository {
      * @return size of binaries for all {@link Asset}s stored in the {@link Repository}
      */
     public DataSize size() {
-        log.debug("Calculating size of all Assets");
+        log.debug("{} calculating size of all Assets", this);
         return size(new TargetJCRPath("/"));
     }
 
@@ -157,7 +152,7 @@ public class AssetsRepository {
      * @return all {@link Asset}s stored in the {@link Repository}
      */
     public List<Asset> all() {
-        log.debug("Retrieving all Assets");
+        log.debug("{} retrieving all Assets", this);
         return find(new TargetJCRPath("/"));
     }
 
@@ -176,7 +171,7 @@ public class AssetsRepository {
                 JcrConstants.JCR_UUID, referencable.jcrUUID(),
                 nodeTypesQueryPart
         );
-        log.trace("For {} this query was built: {}", referencable, query);
+        log.trace("For {} this query was built by {}: {}", referencable, this, query);
         return query;
     }
 }

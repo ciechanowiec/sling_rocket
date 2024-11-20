@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.conditional.Conditional;
-import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.identity.AuthID;
@@ -93,13 +92,16 @@ public abstract class TestEnvironment {
         Map<String, Object> props = Map.of(ServiceUserMapped.SUBSERVICENAME, FullResourceAccess.SUBSERVICE_NAME);
         context.registerService(ServiceUserMapped.class, serviceUserMapped, props);
         fullResourceAccess = spy(context.registerInjectActivateService(FullResourceAccess.class));
-        doAnswer(invocation -> {
-            AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
-            return getRRForUser(passedAuthIDUser);
-        }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
-        context.registerInjectActivateService(AssetsRepository.class);
-        log.debug("Registered {}", fullResourceAccess);
         boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
+        doAnswer(invocation -> {
+            if (isRealOak) {
+                AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
+                return getRRForUser(passedAuthIDUser);
+            } else {
+                return getFreshAdminRR();
+            }
+        }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
+        log.debug("Registered {}", fullResourceAccess);
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
     }
 

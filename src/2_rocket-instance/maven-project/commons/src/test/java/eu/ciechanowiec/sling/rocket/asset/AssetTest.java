@@ -355,8 +355,7 @@ class AssetTest extends TestEnvironment {
         ).save(
                 new TargetJCRPath("/content/separate-path/sub-path/mp3Two")
         );
-        AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
-                                                    .orElseThrow();
+        AssetsRepository assetsRepository = new AssetsRepository(fullResourceAccess);
         assertAll(
                 () -> assertEquals(
                         "/content/mp3", assetsRepository.find(assetMP3).orElseThrow().jcrPath().get()
@@ -414,8 +413,7 @@ class AssetTest extends TestEnvironment {
         new StagedAssetReal(() -> Optional.of(tempFileOne), new FileMetadata(tempFileOne), fullResourceAccess).save(
                 new TargetJCRPath("/content/tempFileTwo")
         );
-        AssetsRepository assetsRepository = Optional.ofNullable(context.getService(AssetsRepository.class))
-                .orElseThrow();
+        AssetsRepository assetsRepository = new AssetsRepository(fullResourceAccess);
         assertEquals(new DataSize(2, DataUnit.KILOBYTES), assetsRepository.size());
     }
 

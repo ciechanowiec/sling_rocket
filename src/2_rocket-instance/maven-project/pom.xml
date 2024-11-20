@@ -170,8 +170,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>13.28.0</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>13.28.0</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>13.28.0-SNAPSHOT</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>13.28.0-SNAPSHOT</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -197,7 +197,7 @@
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <commons-fileupload.version>1.5</commons-fileupload.version>
-        <commons-io.version>2.17.0</commons-io.version>
+        <commons-io.version>2.18.0</commons-io.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-math3.version>3.6.1</commons-math3.version>
