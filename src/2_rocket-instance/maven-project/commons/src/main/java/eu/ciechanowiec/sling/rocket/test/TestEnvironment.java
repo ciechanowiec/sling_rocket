@@ -92,12 +92,16 @@ public abstract class TestEnvironment {
         Map<String, Object> props = Map.of(ServiceUserMapped.SUBSERVICENAME, FullResourceAccess.SUBSERVICE_NAME);
         context.registerService(ServiceUserMapped.class, serviceUserMapped, props);
         fullResourceAccess = spy(context.registerInjectActivateService(FullResourceAccess.class));
+        boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         doAnswer(invocation -> {
-            AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
-            return getRRForUser(passedAuthIDUser);
+            if (isRealOak) {
+                AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
+                return getRRForUser(passedAuthIDUser);
+            } else {
+                return getFreshAdminRR();
+            }
         }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
         log.debug("Registered {}", fullResourceAccess);
-        boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
     }
 
