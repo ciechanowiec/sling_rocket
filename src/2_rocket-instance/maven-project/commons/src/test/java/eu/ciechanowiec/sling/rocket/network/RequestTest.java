@@ -55,6 +55,7 @@ class RequestTest extends TestEnvironment {
                 () -> assertEquals("/content", request.contentPath()),
                 () -> assertEquals("delete", request.firstSelector().orElseThrow()),
                 () -> assertEquals("file-id-00313", request.secondSelector().orElseThrow()),
+                () -> assertTrue(request.thirdSelector().isEmpty()),
                 () -> assertEquals("delete.file-id-00313", request.selectorString().orElseThrow()),
                 () -> assertEquals(2, request.numOfSelectors()),
                 () -> assertEquals("mp4", request.extension().orElseThrow()),

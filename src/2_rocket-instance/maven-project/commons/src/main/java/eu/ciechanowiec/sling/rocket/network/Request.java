@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
@@ -26,7 +25,7 @@ import java.util.stream.Stream;
 @SuppressWarnings({
         "WeakerAccess", "MethodCount", "ClassWithTooManyMethods", "PMD.ExcessivePublicCount", "PMD.TooManyMethods"
 })
-public class Request {
+public class Request implements RequestWithDecomposition {
 
     private final SlingHttpServletRequest wrappedRequest;
     private final StackTraceElement[] creationStackTrace;
@@ -60,37 +59,18 @@ public class Request {
         this(wrappedRequest, new StackTraceElement[]{}, userResourceAccess);
     }
 
-    /**
-     * Returns the value returned by {@link RequestPathInfo#getResourcePath()}
-     * for the wrapped {@link SlingHttpServletRequest}.
-     * @return value returned by {@link RequestPathInfo#getResourcePath()}
-     *         for the wrapped {@link SlingHttpServletRequest}
-     */
+    @Override
     public String contentPath() {
         return wrappedRequest.getRequestPathInfo().getResourcePath();
     }
 
-    /**
-     * Returns an {@link Optional} containing the first selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}.
-     * If there are no selectors, an empty {@link Optional} is returned.
-     * @return {@link Optional} containing the first selector among selectors returned by
-     *         {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest};
-     *         if there are no selectors, an empty {@link Optional} is returned
-     */
+    @Override
     public Optional<String> firstSelector() {
         List<String> selectors = List.of(wrappedRequest.getRequestPathInfo().getSelectors());
         return selectors.stream().findFirst();
     }
 
-    /**
-     * Returns an {@link Optional} containing the second selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}.
-     * If there is no such selector, an empty {@link Optional} is returned.
-     * @return {@link Optional} containing the second selector among selectors returned by
-     *         {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest};
-     *         if there is no such selector, an empty {@link Optional} is returned
-     */
+    @Override
     @SuppressWarnings({"unchecked", "squid:S1612", "PMD.LambdaCanBeMethodReference"})
     public Optional<String> secondSelector() {
         List<String> selectors = List.of(wrappedRequest.getRequestPathInfo().getSelectors());
@@ -100,36 +80,27 @@ public class Request {
                 .get(Optional.class);
     }
 
-    /**
-     * Returns an {@link Optional} containing a selector {@link String} returned by
-     * {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingHttpServletRequest}.
-     * If there is no such selector {@link String}, an empty {@link Optional} is returned.
-     * @return {@link Optional} containing a selector {@link String} returned by
-     *         {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingHttpServletRequest};
-     *         if there is no such selector {@link String}, an empty {@link Optional} is returned
-     */
+    @Override
+    @SuppressWarnings({"unchecked", "squid:S1612", "PMD.LambdaCanBeMethodReference"})
+    public Optional<String> thirdSelector() {
+        List<String> selectors = List.of(wrappedRequest.getRequestPathInfo().getSelectors());
+        return Conditional.conditional(selectors.size() >= 3)
+                .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_TWO)))
+                .onFalse(() -> Optional.empty())
+                .get(Optional.class);
+    }
+
+    @Override
     public Optional<String> selectorString() {
         return Optional.ofNullable(wrappedRequest.getRequestPathInfo().getSelectorString());
     }
 
-    /**
-     * Returns the number of selectors returned by {@link RequestPathInfo#getSelectors()}
-     * for the wrapped {@link SlingHttpServletRequest}. If there are no selectors, {@code 0} is returned.
-     * @return number of selectors returned by {@link RequestPathInfo#getSelectors()} for the wrapped
-     *         {@link SlingHttpServletRequest}. If there are no selectors, {@code 0} is returned.
-     */
+    @Override
     public int numOfSelectors() {
         return wrappedRequest.getRequestPathInfo().getSelectors().length;
     }
 
-    /**
-     * Returns an {@link Optional} containing the extension returned by
-     * {@link RequestPathInfo#getExtension()} for the wrapped {@link SlingHttpServletRequest}.
-     * If there is no such extension, an empty {@link Optional} is returned.
-     * @return {@link Optional} containing the extension returned by
-     *         {@link RequestPathInfo#getExtension()} for the wrapped {@link SlingHttpServletRequest};
-     *         if there is no such extension, an empty {@link Optional} is returned
-     */
+    @Override
     public Optional<String> extension() {
         return Optional.ofNullable(wrappedRequest.getRequestPathInfo().getExtension());
     }
