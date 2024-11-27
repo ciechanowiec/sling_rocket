@@ -3,6 +3,8 @@ package eu.ciechanowiec.sling.rocket.network;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.ws.rs.core.MediaType;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.nio.file.Files;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +27,10 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(SlingContextExtension.class)
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP"})
+@SuppressWarnings({
+        "MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP",
+        "PMD.LinguisticNaming", "PMD.AvoidAccessibilityAlteration"
+})
 class RequestTest extends TestEnvironment {
 
     private Resource currentResource;
@@ -69,10 +75,58 @@ class RequestTest extends TestEnvironment {
                 () -> assertEquals(3, request.httpFields().size()),
                 () -> assertEquals(MockSlingHttpServletRequest.class, request.wrappedRequestClass()),
                 () -> assertTrue(request.creationStackTrace().size() > NumberUtils.INTEGER_ZERO),
-                () -> assertEquals(currentResource, request.resource()),
+                () -> assertEquals(currentResource.getPath(), request.resource().getPath()),
                 () -> assertNotNull(request.userResourceAccess().acquireAccess().getResource("/content")),
                 () -> assertTrue(stringRepresentation.contains("gorgus")),
                 () -> assertTrue(stringRepresentation.contains("valus"))
+        );
+    }
+
+    @Test
+    void testRequestWithNoFiles() {
+        MockSlingHttpServletRequest slingRequest = context.request();
+        RequestWithFiles request = new Request(
+                slingRequest, new UserResourceAccess(
+                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+            )
+        );
+        assertTrue(request.uploadedFiles().isEmpty());
+    }
+
+    @Test
+    void testRequestWithNonFilesFields() {
+        MockSlingHttpServletRequest slingRequest = context.request();
+        slingRequest.addRequestParameter("namus-paremetrus", "valus-parametrus");
+        RequestWithFiles request = new Request(
+                slingRequest, new UserResourceAccess(
+                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+            )
+        );
+        assertAll(
+                () -> assertTrue(request.uploadedFiles().isEmpty()),
+                () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
+        );
+    }
+
+    @SneakyThrows
+    @Test
+    void testRequestWithFileFields() {
+        MockSlingHttpServletRequest slingRequest = context.request();
+        slingRequest.addRequestParameter("namus-paremetrus", "valus-parametrus");
+        slingRequest.addRequestParameter(
+                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+        );
+        slingRequest.addRequestParameter(
+                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+        );
+        RequestWithFiles request = new Request(
+                slingRequest, new UserResourceAccess(
+                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+            )
+        );
+        assertAll(
+                () -> assertEquals(2, request.uploadedFiles().size()),
+                () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
         );
     }
 

@@ -1,13 +1,18 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.conditional.Conditional;
+import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
-import org.apache.commons.lang3.StringUtils;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
@@ -15,17 +20,23 @@ import org.eclipse.jetty.http.HttpURI;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object.
  */
 @SuppressWarnings({
-        "WeakerAccess", "MethodCount", "ClassWithTooManyMethods", "PMD.ExcessivePublicCount", "PMD.TooManyMethods"
+        "WeakerAccess", "MethodCount", "ClassWithTooManyMethods", "PMD.ExcessivePublicCount", "PMD.TooManyMethods",
+        "PMD.CouplingBetweenObjects"
 })
-public class Request implements RequestWithDecomposition {
+@Slf4j
+public class Request implements RequestWithDecomposition, RequestWithFiles, JSON {
 
     private final SlingHttpServletRequest wrappedRequest;
     private final StackTraceElement[] creationStackTrace;
@@ -110,6 +121,7 @@ public class Request implements RequestWithDecomposition {
      * for the wrapped {@link SlingHttpServletRequest}.
      * @return value returned by {@link ServletRequest#getRemoteAddr()} for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("remoteAddress")
     public String remoteAddress() {
         return wrappedRequest.getRemoteAddr();
     }
@@ -119,6 +131,7 @@ public class Request implements RequestWithDecomposition {
      * for the wrapped {@link SlingHttpServletRequest}.
      * @return value returned by {@link ServletRequest#getRemoteHost()} for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("remoteHost")
     public String remoteHost() {
         return wrappedRequest.getRemoteHost();
     }
@@ -128,6 +141,7 @@ public class Request implements RequestWithDecomposition {
      * for the wrapped {@link SlingHttpServletRequest}.
      * @return value returned by {@link ServletRequest#getRemoteHost()} for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("remotePort")
     public int remotePort() {
         return wrappedRequest.getRemotePort();
     }
@@ -138,6 +152,7 @@ public class Request implements RequestWithDecomposition {
      * @return value returned by {@link SlingHttpServletRequest#getRemoteUser()}
      *         for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("remoteUser")
     public String remoteUser() {
         return wrappedRequest.getRemoteUser();
     }
@@ -147,6 +162,7 @@ public class Request implements RequestWithDecomposition {
      * for the wrapped {@link SlingHttpServletRequest}.
      * @return value returned by {@link HttpServletRequest#getMethod()} for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("method")
     public String method() {
         return wrappedRequest.getMethod();
     }
@@ -157,6 +173,7 @@ public class Request implements RequestWithDecomposition {
      * @return value returned by {@link HttpServletRequest#getRequestURI()}
      *         for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("uri")
     public HttpURI uri() {
         String uri = wrappedRequest.getRequestURI();
         return HttpURI.build(uri);
@@ -168,8 +185,14 @@ public class Request implements RequestWithDecomposition {
      * @return value returned by {@link ServletRequest#getContentLength()}
      *         for the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("contentLength")
     public int contentLength() {
         return wrappedRequest.getContentLength();
+    }
+
+    @JsonProperty("httpFields")
+    Collection<HttpFieldJSON> httpFieldsJson() {
+        return httpFields().stream().map(HttpFieldJSON::new).toList();
     }
 
     /**
@@ -197,6 +220,7 @@ public class Request implements RequestWithDecomposition {
      * Returns the {@link Class} of the wrapped {@link SlingHttpServletRequest}.
      * @return {@link Class} of the wrapped {@link SlingHttpServletRequest}
      */
+    @JsonProperty("wrappedRequestClass")
     public Class<?> wrappedRequestClass() {
         return wrappedRequest.getClass();
     }
@@ -217,8 +241,9 @@ public class Request implements RequestWithDecomposition {
      * Returns the {@link Resource} returned by the wrapped {@link SlingHttpServletRequest#getResource()}.
      * @return {@link Resource} returned by the wrapped {@link SlingHttpServletRequest#getResource()}
      */
+    @JsonProperty("resource")
     public Resource resource() {
-        return wrappedRequest.getResource();
+        return new ResourceJSON(wrappedRequest.getResource());
     }
 
     /**
@@ -246,40 +271,57 @@ public class Request implements RequestWithDecomposition {
     @Override
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE")
     public String toString() {
-        return """
-               vvvvvvv HTTP REQUEST START vvvvvvv
-               > REQUEST CLASS: %s
-               > REMOTE ADDRESS: %s
-               > REMOTE HOST: %s
-               > REMOTE PORT: %d
-               > REMOTE USER: %s
-               > METHOD: %s
-               > URI: %s
-               > CONTENT LENGTH: %s
-               > SLING RESOURCE: %s
-               > HTTP FIELDS: %n%s
-               > CREATION STACK TRACE: %n%s
-               ^^^^^^^ HTTP REQUEST END ^^^^^^^""".formatted(
-                wrappedRequestClass(),
-                remoteAddress(),
-                remoteHost(),
-                remotePort(),
-                remoteUser(),
-                method(),
-                uri(),
-                contentLength(),
-                resource(),
-                toString(httpFields()),
-                toString(creationStackTrace().stream())
-        );
+        return asJSON();
     }
 
-    private String toString(HttpFields httpFields) {
-        return toString(httpFields.stream());
+    @Override
+    @SneakyThrows
+    public List<File> uploadedFiles() {
+        log.trace("Extracting files from: {}", this);
+        Map<String, RequestParameter[]> requestParams = wrappedRequest.getRequestParameterMap();
+        log.trace("Request params from {} are {}. Number of params: {}", this, requestParams, requestParams.size());
+        return requestParams.values()
+                .stream()
+                .flatMap(Stream::of)
+                .map(this::asTempFile)
+                .flatMap(Optional::stream)
+                .toList();
     }
 
-    private String toString(Stream<?> stream) {
-        return stream.map(streamElement -> String.format("---> %s", streamElement))
-                .collect(Collectors.joining(StringUtils.LF));
+    @SneakyThrows
+    @SuppressWarnings("squid:S1905")
+    private Optional<File> asTempFile(RequestParameter requestParameter) {
+        log.trace("Attempting to convert a request parameter '{}' to a file", requestParameter.getName());
+        if (requestParameter.isFormField()) {
+            log.trace(
+                    "Request parameter '{}' is a simple form field and will not be converted to a file",
+                    requestParameter.getName()
+            );
+            return Optional.empty();
+        }
+        try (InputStream inputStreamNullable = requestParameter.getInputStream()) {
+            return Optional.ofNullable(inputStreamNullable)
+                    .filter(inputStream -> Objects.nonNull(requestParameter.getFileName()))
+                    .map(inputStream -> {
+                        String fileName = Objects.requireNonNull(requestParameter.getFileName());
+                        return asTempFile(inputStream, fileName);
+                    });
+        }
+    }
+
+    @SneakyThrows
+    private File asTempFile(InputStream inputStream, String fileNamePrefix) {
+        File tempFile = File.createTempFile(fileNamePrefix, ".tmp");
+        Path tempFilePath = tempFile.toPath();
+        Files.copy(inputStream, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+        log.trace("Created {}", tempFile);
+        return tempFile;
+    }
+
+    @SneakyThrows
+    @Override
+    public String asJSON() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
     }
 }

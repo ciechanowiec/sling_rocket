@@ -2,10 +2,12 @@ package eu.ciechanowiec.sling.rocket.network;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Status of processing of an HTTP request.
  */
+@ToString
 public class Status {
 
     @JsonProperty("code")
