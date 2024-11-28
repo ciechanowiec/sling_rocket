@@ -3,21 +3,21 @@ package eu.ciechanowiec.sling.rocket.identity;
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
+import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.jackrabbit.api.security.user.Authorizable;
-import org.apache.jackrabbit.api.security.user.Impersonation;
-import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.api.security.user.*;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Session;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -189,6 +189,67 @@ public class SimpleAuthorizable {
         return !definitionResults.contains(false);
     }
 
+    /**
+     * Add the {@link Authorizable} represented by this {@link SimpleAuthorizable} to a {@link Group}
+     * identified by the specified {@link AuthIDGroup}.
+     * @param authIDGroup {@link AuthIDGroup} identifying a {@link Group} to which the {@link Authorizable}
+     *                    represented by this {@link SimpleAuthorizable} should be added to
+     * @return {@code true} if in the end of the adding operation the {@link Authorizable} represented by this
+     *         {@link SimpleAuthorizable} is a direct (declared) member of the {@link Group} identified by the
+     *         specified {@link AuthIDGroup}; {@code false} otherwise
+     */
+    public boolean addToGroup(AuthIDGroup authIDGroup) {
+        log.trace("Adding '{}' to '{}'", this, authIDGroup);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            toGroup(authIDGroup, resourceResolver).ifPresentOrElse(
+                    SneakyConsumer.sneaky(group -> {
+                        group.addMembers(authID.get());
+                        resourceResolver.commit();
+                    }),
+                    () -> log.warn("'{}' not found. {} will not be added to that group", authIDGroup, this)
+            );
+        }
+        return groups(true).contains(authIDGroup);
+    }
+
+    /**
+     * Returns a {@link Collection} of {@link AuthIDGroup} identifying all {@link Group}s to which
+     * the {@link Authorizable} represented by this {@link SimpleAuthorizable} belongs to.
+     * @param onlyDeclared {@code true} to consider only direct {@link Group} membership;
+     *                     {@code false} to consider both direct and indirect
+     * @return {@link Collection} of {@link AuthIDGroup} identifying all {@link Group}s to which
+     *         the {@link Authorizable} represented by this {@link SimpleAuthorizable} belongs to
+     */
+    public Collection<AuthIDGroup> groups(boolean onlyDeclared) {
+        log.trace("Extracting Groups of {}. Only declared: {}", this, onlyDeclared);
+        Function<Authorizable, Iterator<Group>> onlyDeclaredExtractor = SneakyFunction.sneaky(
+                Authorizable::declaredMemberOf
+        );
+        Function<Authorizable, Iterator<Group>> allExtractor = SneakyFunction.sneaky(Authorizable::memberOf);
+        return groups(onlyDeclared ? onlyDeclaredExtractor : allExtractor);
+    }
+
+    @SneakyThrows
+    private Collection<AuthIDGroup> groups(Function<Authorizable, Iterator<Group>> groupsExtractor) {
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            UserManager userManager = new WithUserManager(resourceResolver).get();
+            return Optional.ofNullable(userManager.getAuthorizable(authID.get()))
+                    .map(groupsExtractor)
+                    .map(UnwrappedIteration::new)
+                    .map(UnwrappedIteration::list)
+                    .orElseGet(
+                            () -> {
+                                log.warn("Unable to extract Groups of '{}'", this);
+                                return List.of();
+                            }
+                    )
+                    .stream()
+                    .map(SneakyFunction.sneaky(Authorizable::getID))
+                    .map(AuthIDGroup::new)
+                    .toList();
+        }
+    }
+
     private Collection<Principal> toPrincipals(
             Collection<AuthIDUser> authorizableIDs, ResourceResolver resourceResolver
     ) {
@@ -220,10 +281,40 @@ public class SimpleAuthorizable {
     private Optional<User> toUser(AuthID userID, ResourceResolver resourceResolver) {
         log.trace("Converting {} to a User", userID);
         UserManager userManager = new WithUserManager(resourceResolver).get();
-        return Optional.ofNullable(userManager.getAuthorizable(authID.get()))
+        return Optional.ofNullable(userManager.getAuthorizable(userID.get()))
                 .flatMap(this::toUser)
                 .or(() -> {
-                    log.debug("An Authorizable with ID '{}' wasn't found", userID);
+                    log.debug(
+                            "An Authorizable with ID '{}' wasn't found when trying to convert it to User", userID
+                    );
+                    return Optional.empty();
+                });
+    }
+
+    @SuppressWarnings({"squid:S1905", "unchecked"})
+    private Optional<Group> toGroup(Authorizable authorizable) {
+        log.trace("Converting {} to a Group", authorizable);
+        return (Optional<Group>) Conditional.conditional(authorizable.isGroup())
+                .onFalse(() -> {
+                    log.debug("{} is not a Group and will not be converted to Group", authorizable);
+                    return Optional.empty();
+                })
+                .onTrue(() -> Optional.of((Group) authorizable))
+                .get(Optional.class);
+    }
+
+    @SneakyThrows
+    private Optional<Group> toGroup(
+            @SuppressWarnings("TypeMayBeWeakened") AuthIDGroup authIDGroup, ResourceResolver resourceResolver
+    ) {
+        log.trace("Converting {} to a Group", authIDGroup);
+        UserManager userManager = new WithUserManager(resourceResolver).get();
+        return Optional.ofNullable(userManager.getAuthorizable(authIDGroup.get()))
+                .flatMap(this::toGroup)
+                .or(() -> {
+                    log.debug(
+                            "An Authorizable with ID '{}' wasn't found when trying to convert it to Group", authIDGroup
+                    );
                     return Optional.empty();
                 });
     }

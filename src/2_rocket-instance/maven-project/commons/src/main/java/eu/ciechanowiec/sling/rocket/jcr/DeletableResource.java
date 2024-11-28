@@ -2,13 +2,17 @@ package eu.ciechanowiec.sling.rocket.jcr;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import eu.ciechanowiec.sneakyfun.SneakyFunction;
+import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Repository;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,7 +20,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("WeakerAccess")
 @Slf4j
-public class DeletableResource {
+public class DeletableResource implements RequiresPrivilege {
 
     private final JCRPath jcrPath;
     private final ResourceAccess resourceAccess;
@@ -47,26 +51,42 @@ public class DeletableResource {
     /**
      * Deletes the wrapped {@link Resource} from the {@link Repository}.
      * @return {@link Optional} containing the {@link JCRPath} of the deleted {@link Resource};
-     *         empty {@link Optional} is returned if the {@link Resource} was not found
+     *         empty {@link Optional} is returned if the deletion operation didn't succeed
+     *         due to {@link PersistenceException} or if the {@link Resource} was not found
      */
     public Optional<JCRPath> delete() {
         log.trace("Deleting {}", jcrPath);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             return Optional.ofNullable(resourceResolver.getResource(jcrPath.get()))
-                    .map(
-                            SneakyFunction.sneaky(
-                                    resource -> {
-                                        log.trace("Deleting {}", resource);
-                                        resourceResolver.delete(resource);
-                                        resourceResolver.commit();
-                                        log.trace("Deleted {}", jcrPath);
-                                        return jcrPath;
-                                    }
-                            )
-                    ).or(() -> {
+                    .flatMap(resource -> delete(resource, resourceResolver))
+                    .or(() -> {
                         log.trace("Resource at {} not found and won't be deleted", jcrPath);
                         return Optional.empty();
                     });
         }
+    }
+
+    private Optional<JCRPath> delete(Resource resourceToBeDeleted, ResourceResolver resourceResolver) {
+        log.trace("Deleting {}", resourceToBeDeleted);
+        TargetJCRPath jcrPathToDelete = new TargetJCRPath(resourceToBeDeleted);
+        try {
+            resourceResolver.delete(resourceToBeDeleted);
+            resourceResolver.commit();
+            log.trace("Deleted {}", jcrPath);
+            return Optional.of(jcrPathToDelete);
+        } catch (PersistenceException exception) {
+            String message = "Unable to delete %s".formatted(jcrPathToDelete);
+            log.error(message, exception);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<String> requiredPrivileges() {
+        return List.of(
+                PrivilegeConstants.JCR_READ,
+                PrivilegeConstants.JCR_REMOVE_CHILD_NODES,
+                PrivilegeConstants.JCR_REMOVE_NODE
+        );
     }
 }

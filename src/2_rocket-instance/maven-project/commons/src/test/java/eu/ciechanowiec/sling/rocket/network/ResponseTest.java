@@ -61,12 +61,12 @@ class ResponseTest extends TestEnvironment {
     }
 
     @SuppressWarnings("unused")
-        private record AffectedResource(@JsonProperty("path") String path,
-                                        @JsonProperty("id") String id) implements Affected {
+    private record AffectedResource(@JsonProperty("path") String path,
+                                    @JsonProperty("id") String id) implements Affected {
 
-            private AffectedResource(String path, String id) {
-                this.path = path;
-                this.id = id;
-            }
+        private AffectedResource(String path, String id) {
+            this.path = path;
+            this.id = id;
         }
+    }
 }

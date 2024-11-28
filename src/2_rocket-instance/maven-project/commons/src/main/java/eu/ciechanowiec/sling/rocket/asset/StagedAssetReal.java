@@ -50,7 +50,7 @@ public record StagedAssetReal(
             );
             log.trace("While saving {} to {}, this resource was staged: {}", this, targetJCRPath, assetRealResource);
             attachFile(assetRealResource, assetFile, assetMetadata);
-            attachMetadata(assetRealResource, assetMetadata);
+            attachMetadata(assetRealResource, assetFile, assetMetadata);
             resourceResolver.commit();
             Asset savedAsset = new UniversalAsset(assetRealResource, resourceAccess);
             log.debug("Saved: {}", savedAsset);
@@ -72,18 +72,18 @@ public record StagedAssetReal(
     }
 
     @SneakyThrows
-    private void attachMetadata(Resource assetRealResource, AssetMetadata assetMetadata) {
+    private void attachMetadata(Resource assetRealResource, AssetFile assetFile, AssetMetadata assetMetadata) {
         log.trace("Attaching {} to {}", assetMetadata, assetRealResource);
         String assetRealJCRPathRaw = assetRealResource.getPath();
-        JCRPath metadataJCRPath = new TargetJCRPath(new ParentJCRPath(
-                new TargetJCRPath(assetRealJCRPathRaw)), Asset.METADATA_NODE_NAME
+        JCRPath metadataJCRPath = new TargetJCRPath(
+                new ParentJCRPath(new TargetJCRPath(assetRealJCRPathRaw)), Asset.METADATA_NODE_NAME
         );
         String metadataJCRPathRaw = metadataJCRPath.get();
-        AssetMetadata assetMetadataWithNodeType = assetMetadata.set(
+        AssetMetadata supplementedAssetMetadata = assetMetadata.set(
                 JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_METADATA
-        );
+        ).set("assetSizeUponSaving", assetFile.size().toString());
         @SuppressWarnings("PMD.LongVariable")
-        Map<String, Object> assetMetadataWithNodeTypeUnwrapped = assetMetadataWithNodeType.allButObjectValues();
+        Map<String, Object> assetMetadataWithNodeTypeUnwrapped = supplementedAssetMetadata.allButObjectValues();
         @SuppressWarnings("PMD.CloseResource")
         ResourceResolver resourceResolver = assetRealResource.getResourceResolver();
         Resource metadataResource = ResourceUtil.getOrCreateResource(

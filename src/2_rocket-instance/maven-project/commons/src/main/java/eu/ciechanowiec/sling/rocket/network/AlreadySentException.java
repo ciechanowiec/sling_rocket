@@ -9,4 +9,8 @@ class AlreadySentException extends RuntimeException {
     AlreadySentException(ResponseWithAsset response) {
         super("Response has already been sent: " + response);
     }
+
+    AlreadySentException(ResponseWithHTML response) {
+        super("Response has already been sent: " + response);
+    }
 }

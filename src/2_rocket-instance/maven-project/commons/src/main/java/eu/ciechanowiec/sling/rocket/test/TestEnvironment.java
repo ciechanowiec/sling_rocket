@@ -24,6 +24,7 @@ import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.serviceusermapping.ServiceUserMapped;
+import org.apache.sling.testing.mock.jcr.MockJcr;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.context.SlingContextImpl;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
@@ -91,28 +92,39 @@ public abstract class TestEnvironment {
         ServiceUserMapped serviceUserMapped = new ServiceUserMapped() { };
         Map<String, Object> props = Map.of(ServiceUserMapped.SUBSERVICENAME, FullResourceAccess.SUBSERVICE_NAME);
         context.registerService(ServiceUserMapped.class, serviceUserMapped, props);
-        fullResourceAccess = spy(context.registerInjectActivateService(FullResourceAccess.class));
+        fullResourceAccess = mock(FullResourceAccess.class);
         boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
         doAnswer(invocation -> {
-            if (isRealOak) {
-                AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
+            AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
+            if (isRealOak && !passedAuthIDUser.get().equals(MockJcr.DEFAULT_USER_ID)) {
                 return getRRForUser(passedAuthIDUser);
             } else {
                 return getFreshAdminRR();
             }
         }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
+        doAnswer(invocation -> getFreshAdminRR()).when(fullResourceAccess).acquireAccess();
+        context.registerInjectActivateService(fullResourceAccess);
         log.debug("Registered {}", fullResourceAccess);
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
     }
 
+    /**
+     * Retrieves a {@link ResourceResolver} for a {@link User} represented by the specified {@link AuthIDUser}.
+     * <p>
+     * The {@link User} for which the {@link ResourceResolver} is returned must be loggable with
+     * {@link SimpleCredentials} and {@link DataSourceConfig#PASSWORD} as the password.
+     * @param authIDUser {@link AuthIDUser} for which a {@link ResourceResolver} should be returned.
+     * @return {@link ResourceResolver} for a {@link User} represented by the specified {@link AuthIDUser}
+     */
     @SneakyThrows
-    private ResourceResolver getRRForUser(AuthIDUser userID) {
+    protected ResourceResolver getRRForUser(AuthIDUser authIDUser) {
+        log.trace("Getting resource resolver for this user: {}", authIDUser);
         Optional<ResourceResolverFactory> rrFactoryNullable =
                 Optional.ofNullable(context.getService(ResourceResolverFactory.class));
         Optional<Repository> repositoryNullable = Optional.ofNullable(context.getService(SlingRepository.class));
         ResourceResolverFactory resourceResolverFactory = rrFactoryNullable.orElseThrow();
         Repository repository = repositoryNullable.orElseThrow();
-        Credentials credentials = new SimpleCredentials(userID.get(), DataSourceConfig.PASSWORD.toCharArray());
+        Credentials credentials = new SimpleCredentials(authIDUser.get(), DataSourceConfig.PASSWORD.toCharArray());
         Session userSession = repository.login(credentials);
         Map<String, Object> authInfo =
                 Collections.singletonMap(JcrResourceConstants.AUTHENTICATION_INFO_SESSION, userSession);

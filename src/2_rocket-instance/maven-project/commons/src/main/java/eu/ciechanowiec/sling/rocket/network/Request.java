@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.conditional.Conditional;
+import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
@@ -276,7 +277,7 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
 
     @Override
     @SneakyThrows
-    public List<File> uploadedFiles() {
+    public List<FileWithOriginalName> uploadedFiles() {
         log.trace("Extracting files from: {}", this);
         Map<String, RequestParameter[]> requestParams = wrappedRequest.getRequestParameterMap();
         log.trace("Request params from {} are {}. Number of params: {}", this, requestParams, requestParams.size());
@@ -290,7 +291,7 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
 
     @SneakyThrows
     @SuppressWarnings("squid:S1905")
-    private Optional<File> asTempFile(RequestParameter requestParameter) {
+    private Optional<FileWithOriginalName> asTempFile(RequestParameter requestParameter) {
         log.trace("Attempting to convert a request parameter '{}' to a file", requestParameter.getName());
         if (requestParameter.isFormField()) {
             log.trace(
@@ -304,7 +305,8 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
                     .filter(inputStream -> Objects.nonNull(requestParameter.getFileName()))
                     .map(inputStream -> {
                         String fileName = Objects.requireNonNull(requestParameter.getFileName());
-                        return asTempFile(inputStream, fileName);
+                        File tempFile = asTempFile(inputStream, fileName);
+                        return new FileWithOriginalName(tempFile, fileName);
                     });
         }
     }

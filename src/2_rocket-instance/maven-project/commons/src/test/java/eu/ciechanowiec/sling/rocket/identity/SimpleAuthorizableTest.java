@@ -52,4 +52,31 @@ class SimpleAuthorizableTest extends TestEnvironment {
                 () -> assertEquals(Set.of(userTwo), simpleAuthorizable.impersonators())
         );
     }
+
+    @Test
+    void testGroups() {
+        AuthIDUser userOne = createOrGetUser(new AuthIDUser("userOne"));
+        AuthIDGroup groupOne = createOrGetGroup(new AuthIDGroup("groupOne"));
+        AuthIDGroup groupTwo = createOrGetGroup(new AuthIDGroup("groupTwo"));
+        SimpleAuthorizable nonExistentAuth = new SimpleAuthorizable(
+                new AuthIDUser(UUID.randomUUID().toString()), fullResourceAccess
+        );
+        SimpleAuthorizable userOneAuth = new SimpleAuthorizable(userOne, fullResourceAccess);
+        SimpleAuthorizable groupTwoAuth = new SimpleAuthorizable(groupTwo, fullResourceAccess);
+        groupTwoAuth.addToGroup(groupOne);
+        assertAll(
+                () -> assertTrue(userOneAuth.groups(true).isEmpty()),
+                () -> assertTrue(userOneAuth.groups(false).isEmpty()),
+                () -> assertTrue(nonExistentAuth.groups(true).isEmpty()),
+                () -> assertTrue(nonExistentAuth.groups(false).isEmpty())
+        );
+        userOneAuth.addToGroup(groupTwo);
+        assertAll(
+                () -> assertTrue(userOneAuth.addToGroup(groupTwo)),
+                () -> assertTrue(userOneAuth.addToGroup(groupTwo)),
+                () -> assertEquals(1, userOneAuth.groups(true).size()),
+                () -> assertEquals(2, userOneAuth.groups(false).size()),
+                () -> assertEquals(1, groupTwoAuth.groups(false).size())
+        );
+    }
 }

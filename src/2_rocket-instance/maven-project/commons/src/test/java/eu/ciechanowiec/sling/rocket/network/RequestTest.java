@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.lenient;
@@ -126,6 +129,13 @@ class RequestTest extends TestEnvironment {
         );
         assertAll(
                 () -> assertEquals(2, request.uploadedFiles().size()),
+                () -> assertEquals(
+                        Set.of("1.jpeg", "2.jpeg"),
+                        request.uploadedFiles()
+                               .stream()
+                               .map(FileWithOriginalName::originalName)
+                               .collect(Collectors.toUnmodifiableSet())
+                ),
                 () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
         );
     }
@@ -171,7 +181,7 @@ class RequestTest extends TestEnvironment {
         request.setRemoteAddr("127.0.0.1");
         request.setRemoteHost("127.0.0.1");
         request.setRemotePort(50_261);
-        request.setRemoteUser("admin");
+        request.setRemoteUser(MockJcr.DEFAULT_USER_ID);
         request.setMethod(HttpConstants.METHOD_GET);
         request.setContent(new byte[]{});
         request.addHeader("namus", "valus");

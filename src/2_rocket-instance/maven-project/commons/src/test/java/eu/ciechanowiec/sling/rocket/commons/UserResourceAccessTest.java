@@ -7,6 +7,7 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,12 +18,15 @@ class UserResourceAccessTest extends TestEnvironment {
     }
 
     @Test
-    void musBeRRWithUser() {
+    void mustBeRRWithUser() {
         AuthIDUser someUser = createOrGetUser(new AuthIDUser("some-user"));
-        ResourceAccess userResourceAccess = new UserResourceAccess(someUser, fullResourceAccess);
+        FullResourceAccess registeredFullResourceAccess = Objects.requireNonNull(
+                context.getService(FullResourceAccess.class)
+        );
+        ResourceAccess userResourceAccess = new UserResourceAccess(someUser, registeredFullResourceAccess);
         String contentPath = "/content";
         context.build().resource(contentPath, Map.of()).commit();
-        try (ResourceResolver adminRR = fullResourceAccess.acquireAccess();
+        try (ResourceResolver adminRR = registeredFullResourceAccess.acquireAccess();
                 ResourceResolver userRR = userResourceAccess.acquireAccess()) {
             assertAll(
                     () -> assertEquals("admin", adminRR.getUserID()),

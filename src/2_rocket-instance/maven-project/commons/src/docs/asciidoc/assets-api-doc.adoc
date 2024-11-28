@@ -1,0 +1,48 @@
+[.text-justify]
+= Assets API
+:reproducible:
+:doctype: article
+:author: Herman Ciechanowiec
+:email: herman@ciechanowiec.eu
+:chapter-signifier:
+:sectnums:
+:sectnumlevels: 5
+:sectanchors:
+:toc: left
+:toclevels: 5
+:icons: font
+// Docinfo is used for foldable TOC.
+// -> For full usage example see https://github.com/remkop/picocli
+:docinfo: shared,private
+:linkcss:
+:stylesdir: https://www.ciechanowiec.eu/linux_mantra/
+:stylesheet: adoc-css-style.css
+
+== Definitions
+[upperalpha]
+. _Asset_ - digital binary file, e.g. image, video, audio, spreadsheet.
+. _Assets API_ - REST API to manage Assets.
+
+== Overview
+
+_Sling Rocket_ provides generic Assets API, which allows to upload, download and delete Assets. The API setup can be substantially adjusted by the accompanying applications.
+
+== API Requests Structure
+[cols="^.^1,^.^1,^.^1,^.^1"]
+|===
+|API Prefix |API Operation |Asset UUID | Asset Extension
+
+.3+|`/api/assets`
+
+|`upload`
+|<none>
+|<none>
+
+|`download`
+|<asset-uuid>
+|<asset-extension>
+
+|`delete`
+|<asset-uuid>
+|<asset-extension>
+|===

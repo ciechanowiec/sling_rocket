@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.30.0-SNAPSHOT</version>
+    <version>13.30.0</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -170,8 +170,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>13.30.0-SNAPSHOT</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>13.30.0-SNAPSHOT</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>13.30.0</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>13.30.0</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -205,7 +205,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.0</woodstox-core.version>
-        <jackson.version>2.18.1</jackson.version>
+        <jackson.version>2.18.2</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -342,7 +342,7 @@
         </org.apache.sling.scripting.sightly.js.provider.version>
         <org.apache.sling.scripting.sightly.runtime.version>1.2.6-1.4.0
         </org.apache.sling.scripting.sightly.runtime.version>
-        <org.apache.sling.scripting.sightly.version>1.4.24-1.4.0</org.apache.sling.scripting.sightly.version>
+        <org.apache.sling.scripting.sightly.version>1.4.26-1.4.0</org.apache.sling.scripting.sightly.version>
         <!-- ====================================================================== -->
         <!-- SLING_WEBCONSOLE                                                       -->
         <!-- ====================================================================== -->
@@ -383,8 +383,8 @@
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
-        <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
-        <bnd-maven-plugin.version>7.0.0</bnd-maven-plugin.version>
+        <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
+        <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
@@ -399,6 +399,10 @@
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+        <asciidoctor-maven-plugin.version>3.1.1</asciidoctor-maven-plugin.version>
+        <jruby.version>9.4.9.0</jruby.version>
+        <asciidoctorj.version>3.0.0</asciidoctorj.version>
+        <asciidoctorj.diagram.version>2.3.1</asciidoctorj.diagram.version>
     </properties>
 
     <dependencyManagement>
@@ -2305,6 +2309,28 @@
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>${nexus-staging-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>${asciidoctor-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jruby</groupId>
+                            <artifactId>jruby</artifactId>
+                            <version>${jruby.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctorj</artifactId>
+                            <version>${asciidoctorj.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctorj-diagram</artifactId>
+                            <version>${asciidoctorj.diagram.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

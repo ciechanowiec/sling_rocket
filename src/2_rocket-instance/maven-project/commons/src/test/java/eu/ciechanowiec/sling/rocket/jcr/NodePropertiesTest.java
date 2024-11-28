@@ -151,7 +151,7 @@ class NodePropertiesTest extends TestEnvironment {
         firstResult.setProperty("doubleus-namus", "99.99").orElseThrow();
         firstResult.setProperty("decimalus-namus", "999.99").orElseThrow();
         NodeProperties secondResult = nodeProperties.setProperty("calendarus-namus", "1980-01-01T00:00:00.000Z")
-                                                    .orElseThrow();
+                .orElseThrow();
         assertAll(
                 () -> assertEquals(PropertyType.BOOLEAN, secondResult.propertyType("stringus-namus")),
                 () -> assertEquals(PropertyType.STRING, secondResult.propertyType("booleanus-namus")),
@@ -691,6 +691,24 @@ class NodePropertiesTest extends TestEnvironment {
                     ).orElseThrow();
                     assertArrayEquals(new Calendar[]{unix1980, unix1990}, actualCalendar);
                 }
+        );
+    }
+
+    @Test
+    void mustShowTypeForMultiValuedProps() {
+        String path = "/content/rocketus";
+        context.build().resource(
+                path, Map.of("stringus-namus", new String[]{"stringus-valus-1", "stringus-valus-2"})
+        ).commit();
+        context.build().resource(path).commit();
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath(path), fullResourceAccess);
+        assertAll(
+                () -> assertEquals(PropertyType.STRING, nodeProperties.propertyType("stringus-namus")),
+                () -> assertEquals(
+                        2, nodeProperties.propertyValue(
+                                "stringus-namus", DefaultProperties.STRING_CLASS_ARRAY
+                        ).orElseThrow().length
+                )
         );
     }
 

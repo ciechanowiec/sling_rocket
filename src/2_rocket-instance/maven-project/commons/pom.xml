@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.30.0-SNAPSHOT</version>
+        <version>13.30.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -62,6 +62,10 @@
             <artifactId>org.apache.felix.framework</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.inventory</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.annotation</artifactId>
         </dependency>
@@ -96,6 +100,10 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.servlets.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.engine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -181,6 +189,29 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-assets-api-docs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>${basedir}/src/docs/asciidoc</sourceDirectory>
+                    <sourceDocumentName>assets-api-doc.adoc</sourceDocumentName>
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                    <outputFile>assets-api-doc.html</outputFile>
+                    <enableVerbose>true</enableVerbose>
+                    <requires>
+                        <require>asciidoctor-diagram</require>
+                    </requires>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>

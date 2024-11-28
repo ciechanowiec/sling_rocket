@@ -1,12 +1,12 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
-import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
-import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
+import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
+import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
+import eu.ciechanowiec.sling.rocket.jcr.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
@@ -15,6 +15,8 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -31,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({
         "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals",
-        "PMD.NcssCount", "resource", "OverlyCoupledClass"
+        "PMD.NcssCount", "resource", "OverlyCoupledClass", "ClassDataAbstractionCoupling",
+        "PMD.CouplingBetweenObjects"
 })
 class AssetTest extends TestEnvironment {
 
@@ -88,10 +91,13 @@ class AssetTest extends TestEnvironment {
                 .orElseThrow();
         String originalFileName = nodeProperties.propertyValue("originalFileName", DefaultProperties.STRING_CLASS)
                 .orElseThrow();
+        String assetSizeUponSaving = nodeProperties.propertyValue("assetSizeUponSaving", DefaultProperties.STRING_CLASS)
+                                                   .orElseThrow();
         assertAll(
                 () -> assertTrue(filePath.endsWith(".jpg")),
                 () -> assertEquals("originalus", originalFileName),
-                () -> assertEquals("image/jpeg", mimeType)
+                () -> assertEquals("image/jpeg", mimeType),
+                () -> assertEquals("[0 TB, 0 GB, 0 MB, 595 KB, 714 B (total: 609994 bytes)]", assetSizeUponSaving)
         );
 
         StagedAssetReal failingAsset = new StagedAssetReal(() -> Optional.of(fileJPGOne), new AssetMetadata() {
@@ -477,6 +483,41 @@ class AssetTest extends TestEnvironment {
                 () -> assertEquals(".class", compiledJava.assetMetadata().filenameExtension().orElseThrow()),
                 () -> assertTrue(nonExistentMimeType.filenameExtension().isEmpty()),
                 () -> assertTrue(wildCardMimeType.filenameExtension().isEmpty())
+        );
+    }
+
+    @Test
+    void mustSaveWithUserRR() {
+        AuthIDUser someUser = createOrGetUser(new AuthIDUser("someUser"));
+        UserResourceAccess userResourceAccess = new UserResourceAccess(someUser, fullResourceAccess);
+        StagedAssetReal stagedAssetReal = new StagedAssetReal(
+                () -> Optional.of(this.fileMP3), new FileMetadata(this.fileMP3), userResourceAccess
+        );
+        TargetJCRPath targetJCRPath = new TargetJCRPath("/content/mp3");
+        assertThrows(IllegalArgumentException.class, () -> stagedAssetReal.save(targetJCRPath));
+        PrivilegeAdmin privilegeAdmin = new PrivilegeAdmin(fullResourceAccess);
+        privilegeAdmin.allow(new TargetJCRPath("/"), someUser, PrivilegeConstants.JCR_READ);
+        assertThrows(PersistenceException.class, () -> stagedAssetReal.save(targetJCRPath));
+        privilegeAdmin.allow(new TargetJCRPath("/"), someUser, PrivilegeConstants.REP_WRITE);
+        assertTrue(stagedAssetReal.save(targetJCRPath).assetFile().retrieve().isPresent());
+    }
+
+    @Test
+    void mustHandleRemovedAsset() {
+        String path = "/content/song";
+        Asset asset = new StagedAssetReal(
+                () -> Optional.of(this.fileMP3), new FileMetadata(this.fileMP3), fullResourceAccess
+        ).save(new TargetJCRPath(path));
+        assertAll(
+                () -> assertTrue(asset.assetFile().size().biggerThan(new DataSize(0, DataUnit.BYTES))),
+                () -> assertEquals(
+                        new TargetJCRPath(path),
+                        new DeletableResource(asset.jcrPath(), fullResourceAccess).delete().orElseThrow()
+                ),
+                () -> assertEquals(new DataSize(0, DataUnit.BYTES), asset.assetFile().size()),
+                () -> assertEquals(MediaType.WILDCARD, asset.assetMetadata().mimeType()),
+                () -> assertTrue(asset.assetMetadata().properties().isEmpty()),
+                () -> assertTrue(asset.assetMetadata().all().isEmpty())
         );
     }
 }

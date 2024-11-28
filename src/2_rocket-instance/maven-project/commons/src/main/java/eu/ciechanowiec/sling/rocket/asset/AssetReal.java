@@ -9,9 +9,11 @@ import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import java.io.File;
@@ -43,14 +45,16 @@ class AssetReal implements Asset {
         return new AssetFile() {
             @Override
             public Optional<File> retrieve() {
-                return ntFile().assetFile()
-                             .retrieve()
-                             .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
+                return ntFile().map(NTFile::assetFile)
+                               .flatMap(AssetFile::retrieve)
+                               .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
             }
 
             @Override
             public DataSize size() {
-                return ntFile().assetFile().size();
+                return ntFile().map(NTFile::assetFile)
+                               .map(AssetFile::size)
+                               .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
             }
         };
     }
@@ -62,19 +66,18 @@ class AssetReal implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String metadataJCRPathRaw = metadataJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(metadataJCRPathRaw))
-                    .map(metadataResource -> new ResourceMetadata(metadataResource, resourceAccess))
-                    .orElseThrow();
+                    .<AssetMetadata>map(metadataResource -> new ResourceMetadata(metadataResource, resourceAccess))
+                    .orElse(new EmptyMetadata());
         }
     }
 
-    private NTFile ntFile() {
+    private Optional<NTFile> ntFile() {
         log.trace("Retrieving file for {}", this);
         JCRPath fileJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), FILE_NODE_NAME);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String fileJCRPathRaw = fileJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(fileJCRPathRaw))
-                           .map(fileResource -> new NTFile(fileResource, resourceAccess))
-                           .orElseThrow();
+                           .map(fileResource -> new NTFile(fileResource, resourceAccess));
         }
     }
 

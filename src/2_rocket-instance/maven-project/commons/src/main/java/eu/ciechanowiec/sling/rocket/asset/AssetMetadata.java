@@ -7,13 +7,16 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents metadata of an {@link Asset}, either existing or a future one. Might be of two types:
+ * Represents metadata of an {@link Asset}, either actually persisted and existing in the {@link Repository}
+ * or a hypothetical one. Might be of two types:
  * <ol>
  *     <li>Backed by a persistent {@link Node} of type {@link Asset#NT_ASSET_METADATA}.</li>
  *     <li>Backed by an in-memory data structure.</li>
@@ -67,8 +70,8 @@ public interface AssetMetadata {
         try {
             MimeType mimeType = defaultMimeTypes.forName(mimeType());
             String extension = mimeType.getExtension();
-            boolean isValidExtension = extension.isBlank();
-            return Conditional.conditional(isValidExtension)
+            boolean isInvalidExtension = extension.isBlank();
+            return Conditional.conditional(isInvalidExtension)
                     .onTrue(() -> Optional.empty())
                     .onFalse(() -> Optional.of(extension))
                     .get(Optional.class);
@@ -86,26 +89,33 @@ public interface AssetMetadata {
      *         associated {@link Asset} specified by the passed parameters set
      */
     default AssetMetadata set(String key, String value) {
-        Map<String, String> newValues = new ConcurrentHashMap<>(all());
-        newValues.put(key, value);
-        String mimeType = mimeType();
-        Optional<NodeProperties> properties = properties().flatMap(
-                nodeProperties -> nodeProperties.setProperty(key, value)
+        CompletableFuture<Map<String, String>> newValuesSupplier = CompletableFuture.supplyAsync(
+                () -> {
+                    Map<String, String> newValues = new ConcurrentHashMap<>(all());
+                    newValues.put(key, value);
+                    return Collections.unmodifiableMap(newValues);
+                }
+        );
+        CompletableFuture<String> mimeTypeSupplier = CompletableFuture.supplyAsync(this::mimeType);
+        CompletableFuture<Optional<NodeProperties>> properties = CompletableFuture.supplyAsync(
+                () -> properties().flatMap(
+                        nodeProperties -> nodeProperties.setProperty(key, value)
+                )
         );
         return new AssetMetadata() {
             @Override
             public String mimeType() {
-                return mimeType;
+                return mimeTypeSupplier.join();
             }
 
             @Override
             public Map<String, String> all() {
-                return Collections.unmodifiableMap(newValues);
+                return properties().map(NodeProperties::all).orElseGet(newValuesSupplier::join);
             }
 
             @Override
             public Optional<NodeProperties> properties() {
-                return properties;
+                return properties.join();
             }
         };
     }

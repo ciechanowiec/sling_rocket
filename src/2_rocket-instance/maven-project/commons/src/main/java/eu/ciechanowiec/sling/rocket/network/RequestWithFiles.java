@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import jakarta.ws.rs.core.MediaType;
 import org.apache.sling.api.SlingHttpServletRequest;
 
@@ -21,5 +22,5 @@ public interface RequestWithFiles {
      *         (i.e. files uploaded with the request) as {@link File}s temporarily written on the disk; an empty
      *         {@link List} is returned if there are no such form fields for the wrapped {@link SlingHttpServletRequest}
      */
-    List<File> uploadedFiles();
+    List<FileWithOriginalName> uploadedFiles();
 }

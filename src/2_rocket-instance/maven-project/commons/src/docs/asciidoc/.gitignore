@@ -1,0 +1,3 @@
+*.html
+!*-docinfo.html
+!*-docinfo-footer.html

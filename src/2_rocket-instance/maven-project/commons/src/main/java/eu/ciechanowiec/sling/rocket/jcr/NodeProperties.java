@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
@@ -241,10 +242,18 @@ public class NodeProperties implements WithJCRPath {
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
                            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
                            .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                           .map(sneaky(Property::getValue))
+                           .map(this::firstValue)
                            .map(Value::getType)
                            .orElse(PropertyType.UNDEFINED);
         }
+    }
+
+    @SneakyThrows
+    private Value firstValue(Property property) {
+        return Conditional.conditional(property.isMultiple())
+                .onTrue(() -> property.getValues()[NumberUtils.INTEGER_ZERO])
+                .onFalse(property::getValue)
+                .get(Value.class);
     }
 
     /**
@@ -300,7 +309,7 @@ public class NodeProperties implements WithJCRPath {
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
                     .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
                     .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                    .map(sneaky(Property::getValue))
+                    .map(this::firstValue)
                     .flatMap(this::asBinary)
                     .map(sneaky(Binary::getSize))
                     .map(bytes -> new DataSize(bytes, DataUnit.BYTES))

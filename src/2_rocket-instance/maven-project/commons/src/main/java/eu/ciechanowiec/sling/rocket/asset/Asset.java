@@ -7,12 +7,14 @@ import org.apache.jackrabbit.JcrConstants;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
+import javax.jcr.Repository;
 import java.util.List;
 
 /**
  * <p>
  * Represents {@link Node} instances of primary types specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}.
- * That can be either a persisted or a hypothetically persisted {@link Node}.
+ * Only {@link Node}s actually persisted and existing in the {@link Repository} can be represented by this
+ * {@link Asset}.
  * </p>
  * <ol>
  *     <li>
