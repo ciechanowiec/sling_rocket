@@ -117,6 +117,10 @@
     {
       "id": "org.apache.sling:org.apache.sling.caconfig.impl:${org.apache.sling.caconfig.impl.version}",
       "start-order": "23"
+    },
+    {
+      "id": "org.apache.sling.servlet-helpers:${org.apache.sling.servlet-helpers.version}",
+      "start-order": "23"
     }
   ],
   "configurations": {

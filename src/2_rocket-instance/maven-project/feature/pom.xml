@@ -168,6 +168,7 @@
                         org.apache.sling.event.version,
                         org.apache.sling.servlets.resolver.version,
                         org.apache.sling.caconfig.impl.version,
+                        org.apache.sling.servlet-helpers.version,
 
                         org.apache.sling.commons.johnzon.version,
                         org.apache.sling.commons.osgi.version,
