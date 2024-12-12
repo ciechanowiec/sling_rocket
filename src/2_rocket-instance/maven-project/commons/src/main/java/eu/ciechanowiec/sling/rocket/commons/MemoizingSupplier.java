@@ -22,17 +22,17 @@ public class MemoizingSupplier<T> implements Supplier<T> {
     private final Supplier<T> delegate;
 
     /**
-     * An atomic flag indicating whether the value has already been initialized.
+     * An atomic flag indicating whether the value has already been computed.
      */
-    private final AtomicBoolean wasInitialized;
+    private final AtomicBoolean wasComputed;
 
     /**
-     * A reference to hold the computed value once initialized.
+     * A reference to hold the computed value once computed.
      */
     private final AtomicReference<T> computedValue;
 
     /**
-     * A lock to ensure thread-safe initialization of the value.
+     * A lock to ensure thread-safe computation of the value.
      */
     private final Lock lock;
 
@@ -43,7 +43,7 @@ public class MemoizingSupplier<T> implements Supplier<T> {
      */
     public MemoizingSupplier(Supplier<T> delegate) {
         this.delegate = delegate;
-        this.wasInitialized = new AtomicBoolean(false);
+        this.wasComputed = new AtomicBoolean(false);
         this.computedValue = new AtomicReference<>();
         this.lock = new ReentrantLock();
     }
@@ -71,12 +71,12 @@ public class MemoizingSupplier<T> implements Supplier<T> {
      */
     @Override
     public T get() {
-        if (wasInitialized.get()) {
+        if (wasComputed.get()) {
             return computedValue.get();
         }
         lock.lock();
         try {
-            if (!wasInitialized.getAndSet(true)) {
+            if (!wasComputed.getAndSet(true)) {
                 T valueFromDelegate = delegate.get();
                 this.computedValue.set(valueFromDelegate);
             }
@@ -84,5 +84,27 @@ public class MemoizingSupplier<T> implements Supplier<T> {
             lock.unlock();
         }
         return computedValue.get();
+    }
+
+    /**
+     * Indicates whether the value has already been computed by the {@link MemoizingSupplier}.
+     * <p>
+     * This method returns {@code true} if the delegate {@link Supplier} has been invoked and the
+     * result has been cached, otherwise {@code false}.
+     * <p>
+     * Example usage:
+     * <pre>
+     *     Supplier&lt;String&gt; expensiveComputation = () -&gt; "Computed Value";
+     *     MemoizingSupplier&lt;String&gt; memoizingSupplier = new MemoizingSupplier&lt;&gt;(expensiveComputation);
+     *
+     *     boolean beforeComputation = memoizingSupplier.wasComputed(); // false
+     *     memoizingSupplier.get(); // Triggers computation
+     *     boolean afterComputation = memoizingSupplier.wasComputed(); // true
+     * </pre>
+     * @return {@code true} if the value has been computed and cached; {@code false} otherwise
+     */
+    @SuppressWarnings("WeakerAccess")
+    public boolean wasComputed() {
+        return wasComputed.get();
     }
 }
