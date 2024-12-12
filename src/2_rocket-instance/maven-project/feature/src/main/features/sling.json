@@ -119,7 +119,7 @@
       "start-order": "23"
     },
     {
-      "id": "org.apache.sling.servlet-helpers:${org.apache.sling.servlet-helpers.version}",
+      "id": "org.apache.sling:org.apache.sling.servlet-helpers:${org.apache.sling.servlet-helpers.version}",
       "start-order": "23"
     }
   ],
