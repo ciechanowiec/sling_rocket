@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.conditional.Conditional;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
@@ -11,8 +12,8 @@ import javax.jcr.Repository;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Represents metadata of an {@link Asset}, either actually persisted and existing in the {@link Repository}
@@ -89,15 +90,15 @@ public interface AssetMetadata {
      *         associated {@link Asset} specified by the passed parameters set
      */
     default AssetMetadata set(String key, String value) {
-        CompletableFuture<Map<String, String>> newValuesSupplier = CompletableFuture.supplyAsync(
+        Supplier<Map<String, String>> newValuesSupplier = new MemoizingSupplier<>(
                 () -> {
                     Map<String, String> newValues = new ConcurrentHashMap<>(all());
                     newValues.put(key, value);
                     return Collections.unmodifiableMap(newValues);
                 }
         );
-        CompletableFuture<String> mimeTypeSupplier = CompletableFuture.supplyAsync(this::mimeType);
-        CompletableFuture<Optional<NodeProperties>> properties = CompletableFuture.supplyAsync(
+        MemoizingSupplier<String> mimeTypeSupplier = new MemoizingSupplier<>(this::mimeType);
+        MemoizingSupplier<Optional<NodeProperties>> propertiesSupplier = new MemoizingSupplier<>(
                 () -> properties().flatMap(
                         nodeProperties -> nodeProperties.setProperty(key, value)
                 )
@@ -105,17 +106,17 @@ public interface AssetMetadata {
         return new AssetMetadata() {
             @Override
             public String mimeType() {
-                return mimeTypeSupplier.join();
+                return mimeTypeSupplier.get();
             }
 
             @Override
             public Map<String, String> all() {
-                return properties().map(NodeProperties::all).orElseGet(newValuesSupplier::join);
+                return properties().map(NodeProperties::all).orElseGet(newValuesSupplier);
             }
 
             @Override
             public Optional<NodeProperties> properties() {
-                return properties.join();
+                return propertiesSupplier.get();
             }
         };
     }

@@ -1,6 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.network.Request;
@@ -20,7 +21,6 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Servlet for handling DEFAULT requests to Assets API.
@@ -46,7 +46,7 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
     /**
      * HTML content to send in response to all requests that hit this {@link ServletDefault}.
      */
-    private final CompletableFuture<String> htmlToSend;
+    private final MemoizingSupplier<String> htmlToSend;
 
     /**
      * Constructs an instance of this class.
@@ -67,7 +67,7 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
             AssetsAPIDocumentation assetsAPIDocumentation
     ) {
         this.fullResourceAccess = fullResourceAccess;
-        this.htmlToSend = CompletableFuture.supplyAsync(assetsAPIDocumentation::html);
+        this.htmlToSend = new MemoizingSupplier<>(assetsAPIDocumentation::html);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
         Request slingRequest = new Request(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         ResponseWithHTML responseWithHTML = new ResponseWithHTML(
-                response, htmlToSend.join(), HttpServletResponse.SC_OK
+                response, htmlToSend.get(), HttpServletResponse.SC_OK
         );
         responseWithHTML.send();
     }

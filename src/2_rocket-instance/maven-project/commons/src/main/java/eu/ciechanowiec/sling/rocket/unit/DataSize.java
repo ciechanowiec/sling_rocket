@@ -1,10 +1,10 @@
 package eu.ciechanowiec.sling.rocket.unit;
 
 import eu.ciechanowiec.conditional.Conditional;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
@@ -54,10 +54,10 @@ import java.util.function.Supplier;
 @Slf4j
 public final class DataSize implements Comparable<DataSize> {
 
-    private final CompletableFuture<Long> bytesFuture;
+    private final MemoizingSupplier<Long> bytesSupplier;
 
     private DataSize(long bytes) {
-        this.bytesFuture = CompletableFuture.supplyAsync(() -> bytes);
+        this.bytesSupplier = new MemoizingSupplier<>(() -> bytes);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @param fileSupplier {@link Supplier} with a {@link File} whose size is represented by this {@link DataSize}
      */
     public DataSize(Supplier<File> fileSupplier) {
-        this.bytesFuture = CompletableFuture.supplyAsync(() -> fileSupplier.get().length());
+        this.bytesSupplier = new MemoizingSupplier<>(() -> fileSupplier.get().length());
         Conditional.onFalseExecute(
                 fileSupplier.get().exists(), () -> log.warn("This file doesn't exist: '{}'", fileSupplier)
         );
@@ -94,7 +94,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @return the number of bytes
      */
     public long bytes() {
-        return bytesFuture.join();
+        return bytesSupplier.get();
     }
 
     /**
@@ -102,7 +102,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @return number of {@link DataUnit#KILOBYTES} in this {@link DataSize}
      */
     public double kilobytes() {
-        return (double) bytesFuture.join() / DataUnitMultiplications.BYTES_PER_KB;
+        return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_KB;
     }
 
     /**
@@ -110,7 +110,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @return the number of bytes
      */
     public double megabytes() {
-        return (double) bytesFuture.join() / DataUnitMultiplications.BYTES_PER_MB;
+        return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_MB;
     }
 
     /**
@@ -118,7 +118,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @return the number of bytes
      */
     public double gigabytes() {
-        return (double) bytesFuture.join() / DataUnitMultiplications.BYTES_PER_GB;
+        return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_GB;
     }
 
     /**
@@ -126,7 +126,7 @@ public final class DataSize implements Comparable<DataSize> {
      * @return the number of bytes
      */
     public double terabytes() {
-        return (double) bytesFuture.join() / DataUnitMultiplications.BYTES_PER_TB;
+        return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_TB;
     }
 
     /**
@@ -136,7 +136,7 @@ public final class DataSize implements Comparable<DataSize> {
      *         {@code false} otherwise
      */
     public boolean biggerThan(DataSize comparedDataSize) {
-        return bytesFuture.join() > comparedDataSize.bytesFuture.join();
+        return bytesSupplier.get() > comparedDataSize.bytesSupplier.get();
     }
 
     /**
@@ -146,12 +146,12 @@ public final class DataSize implements Comparable<DataSize> {
      *         {@code false} otherwise
      */
     public boolean smallerThan(DataSize comparedDataSize) {
-        return bytesFuture.join() < comparedDataSize.bytesFuture.join();
+        return bytesSupplier.get() < comparedDataSize.bytesSupplier.get();
     }
 
     @Override
     public int compareTo(DataSize comparedDataSize) {
-        return Long.compare(bytesFuture.join(), comparedDataSize.bytesFuture.join());
+        return Long.compare(bytesSupplier.get(), comparedDataSize.bytesSupplier.get());
     }
 
     /**
@@ -173,18 +173,18 @@ public final class DataSize implements Comparable<DataSize> {
             return true;
         }
         return comparedObject instanceof DataSize comparedDataSize
-            && bytesFuture.join().equals(comparedDataSize.bytesFuture.join());
+            && bytesSupplier.get().equals(comparedDataSize.bytesSupplier.get());
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(bytesFuture.join());
+        return Long.hashCode(bytesSupplier.get());
     }
 
     @Override
     @SuppressWarnings("VariableDeclarationUsageDistance")
     public String toString() {
-        long remainingBytes = bytesFuture.join();
+        long remainingBytes = bytesSupplier.get();
 
         long hrTerabytes = remainingBytes / DataUnitMultiplications.BYTES_PER_TB;
         remainingBytes %= DataUnitMultiplications.BYTES_PER_TB;
@@ -202,7 +202,7 @@ public final class DataSize implements Comparable<DataSize> {
 
         return String.format(
                 "[%d TB, %d GB, %d MB, %d KB, %d B (total: %d bytes)]",
-                hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes, bytesFuture.join()
+                hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes, bytesSupplier.get()
         );
     }
 }

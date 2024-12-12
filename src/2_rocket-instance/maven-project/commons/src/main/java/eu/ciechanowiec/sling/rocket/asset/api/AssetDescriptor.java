@@ -4,41 +4,40 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetFile;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.network.Affected;
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.concurrent.CompletableFuture;
-
 @Slf4j
 class AssetDescriptor implements Affected {
 
-    private final CompletableFuture<String> source;
-    private final CompletableFuture<String> originalFileName;
-    private final CompletableFuture<String> downloadLink;
+    private final MemoizingSupplier<String> source;
+    private final MemoizingSupplier<String> originalFileName;
+    private final MemoizingSupplier<String> downloadLink;
 
     AssetDescriptor(Asset asset) {
         this(asset, StringUtils.EMPTY);
     }
 
     AssetDescriptor(Asset asset, String downloadLink) {
-        this.source = CompletableFuture.supplyAsync(() -> {
+        this.source = new MemoizingSupplier<>(() -> {
             String assetDescriptorFromAsset = String.format(
                     "%s%s", asset.jcrUUID(), asset.assetMetadata().filenameExtension().orElse(".file")
             );
             log.trace("For {} this descriptor was generated: '{}'", asset, assetDescriptorFromAsset);
             return assetDescriptorFromAsset;
         });
-        this.originalFileName = CompletableFuture.supplyAsync(
+        this.originalFileName = new MemoizingSupplier<>(
                 () -> asset.assetMetadata()
                         .properties()
                         .map(nodeProperties -> nodeProperties.propertyValue(
                                 AssetFile.PN_ORIGINAL_NAME, DefaultProperties.STRING_EMPTY)
                         ).orElse(StringUtils.EMPTY)
         );
-        this.downloadLink = CompletableFuture.supplyAsync(() -> downloadLink);
+        this.downloadLink = new MemoizingSupplier<>(() -> downloadLink);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")
@@ -52,7 +51,7 @@ class AssetDescriptor implements Affected {
     }
 
     private AssetDescriptor(RequestWithDecomposition request, String originalFileName, String downloadLink) {
-        this.source = CompletableFuture.supplyAsync(() -> {
+        this.source = new MemoizingSupplier<>(() -> {
             String assetDescriptorFromRequest = String.format(
                     "%s.%s",
                     request.secondSelector().orElse(StringUtils.EMPTY),
@@ -61,26 +60,26 @@ class AssetDescriptor implements Affected {
             log.trace("For {} this descriptor was generated: '{}'", request, assetDescriptorFromRequest);
             return assetDescriptorFromRequest;
         });
-        this.originalFileName = CompletableFuture.supplyAsync(() -> originalFileName);
-        this.downloadLink = CompletableFuture.supplyAsync(() -> downloadLink);
+        this.originalFileName = new MemoizingSupplier<>(() -> originalFileName);
+        this.downloadLink = new MemoizingSupplier<>(() -> downloadLink);
     }
 
     @Override
     @JsonProperty("assetDescriptor")
     public String toString() {
-        return source.join();
+        return source.get();
     }
 
     @JsonProperty(AssetFile.PN_ORIGINAL_NAME)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String originalFileName() {
-        return originalFileName.join();
+        return originalFileName.get();
     }
 
     @JsonProperty("assetDownloadLink")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String downloadLink() {
-        return downloadLink.join();
+        return downloadLink.get();
     }
 
     @Override
@@ -92,11 +91,11 @@ class AssetDescriptor implements Affected {
             return true;
         }
         return comparedObject instanceof AssetDescriptor comparedAssetDescriptor
-                && source.join().equals(comparedAssetDescriptor.source.join());
+                && source.get().equals(comparedAssetDescriptor.source.get());
     }
 
     @Override
     public int hashCode() {
-        return source.join().hashCode() * 31;
+        return source.get().hashCode() * 31;
     }
 }

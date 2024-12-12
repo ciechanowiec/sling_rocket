@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -16,14 +15,14 @@ import java.util.stream.StreamSupport;
 @SuppressWarnings("WeakerAccess")
 public class UnwrappedIteration<T> {
 
-    private final CompletableFuture<Collection<T>> unwrappedCollection;
+    private final MemoizingSupplier<Collection<T>> unwrappedCollection;
 
     /**
      * Constructs an instance of this class.
      * @param iterator {@link Iterator} to be unwrapped
      */
     public UnwrappedIteration(Iterator<T> iterator) {
-        unwrappedCollection = CompletableFuture.supplyAsync(() -> asCollection(iterator));
+        unwrappedCollection = new MemoizingSupplier<>(() -> asCollection(iterator));
     }
 
     /**
@@ -31,7 +30,7 @@ public class UnwrappedIteration<T> {
      * @param iterable {@link Iterable} to be unwrapped
      */
     public UnwrappedIteration(Iterable<T> iterable) {
-        unwrappedCollection = CompletableFuture.supplyAsync(() -> asCollection(iterable));
+        unwrappedCollection = new MemoizingSupplier<>(() -> asCollection(iterable));
     }
 
     private Collection<T> asCollection(Iterator<T> iterator) {
@@ -58,7 +57,7 @@ public class UnwrappedIteration<T> {
      * @return {@link Stream} of elements from the wrapped data structure
      */
     public Stream<T> stream() {
-        Collection<T> collection = unwrappedCollection.join();
+        Collection<T> collection = unwrappedCollection.get();
         return collection.stream();
     }
 

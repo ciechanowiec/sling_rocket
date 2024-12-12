@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset.api;
 
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
@@ -9,7 +10,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @ToString
@@ -17,11 +17,11 @@ class RequestDownload implements RequestWithDecomposition {
 
     private final Request request;
     @ToString.Exclude
-    private final CompletableFuture<Optional<Asset>> matchingAsset;
+    private final MemoizingSupplier<Optional<Asset>> matchingAsset;
 
     RequestDownload(Request request) {
         this.request = request;
-        matchingAsset = CompletableFuture.supplyAsync(
+        matchingAsset = new MemoizingSupplier<>(
                 () -> request.secondSelector()
                         .flatMap(
                                 jcrUUID -> new AssetsRepository(
@@ -53,7 +53,7 @@ class RequestDownload implements RequestWithDecomposition {
     }
 
     Optional<Asset> targetAsset() {
-        return matchingAsset.join();
+        return matchingAsset.get();
     }
 
     @Override

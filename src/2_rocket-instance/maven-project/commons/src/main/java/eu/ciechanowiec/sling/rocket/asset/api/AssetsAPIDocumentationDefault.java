@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -13,7 +14,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Default implementation of {@link AssetsAPIDocumentation}.
@@ -30,13 +30,13 @@ public class AssetsAPIDocumentationDefault implements AssetsAPIDocumentation {
     /**
      * Source of {@link AssetsAPIDocumentation#html()}.
      */
-    private final CompletableFuture<String> htmlToSend;
+    private final MemoizingSupplier<String> htmlToSend;
 
     /**
      * Constructs an instance of this class.
      */
     public AssetsAPIDocumentationDefault() {
-        htmlToSend = CompletableFuture.supplyAsync(this::readHTMLFromFile);
+        htmlToSend = new MemoizingSupplier<>(this::readHTMLFromFile);
     }
 
     @SneakyThrows
@@ -59,6 +59,6 @@ public class AssetsAPIDocumentationDefault implements AssetsAPIDocumentation {
     @Override
     @SneakyThrows
     public String html() {
-        return htmlToSend.join();
+        return htmlToSend.get();
     }
 }

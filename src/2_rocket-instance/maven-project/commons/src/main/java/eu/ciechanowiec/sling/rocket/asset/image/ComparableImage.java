@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.asset.image;
 import dev.brachtendorf.jimagehash.hash.Hash;
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
+import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents an image that can be compared with other images.
@@ -29,7 +29,7 @@ public class ComparableImage {
     private final File fileWithImage;
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final CompletableFuture<Optional<Hash>> futureHash;
+    private final MemoizingSupplier<Optional<Hash>> memorizedHash;
 
     /**
      * Constructs an instance of this class.
@@ -39,7 +39,7 @@ public class ComparableImage {
      */
     public ComparableImage(File fileWithImage) {
         this.fileWithImage = fileWithImage;
-        futureHash = CompletableFuture.supplyAsync(() -> computeHash(fileWithImage));
+        memorizedHash = new MemoizingSupplier<>(() -> computeHash(fileWithImage));
     }
 
     private Optional<Hash> computeHash(File file) {
@@ -58,7 +58,7 @@ public class ComparableImage {
     }
 
     private Optional<Hash> lastComputedHash() {
-        return futureHash.join();
+        return memorizedHash.get();
     }
 
     ComparableImage biggerOrSame(ComparableImage comparedImage) {
