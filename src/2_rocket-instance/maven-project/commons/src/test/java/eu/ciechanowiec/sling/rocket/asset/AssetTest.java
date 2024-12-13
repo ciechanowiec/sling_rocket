@@ -520,4 +520,21 @@ class AssetTest extends TestEnvironment {
                 () -> assertTrue(asset.assetMetadata().all().isEmpty())
         );
     }
+
+    @Test
+    void conditionalAsset() {
+        String nonAssetPath = "/content/non-asset";
+        TargetJCRPath assetJCRPath = new TargetJCRPath("/content/song");
+        new StagedAssetReal(
+                () -> Optional.of(this.fileMP3), new FileMetadata(this.fileMP3), fullResourceAccess
+        ).save(assetJCRPath);
+        context.build().resource(nonAssetPath).commit();
+        ConditionalAsset existingAsset = new ConditionalAsset(assetJCRPath, fullResourceAccess);
+        ConditionalAsset nonExistingAsset = new ConditionalAsset(new TargetJCRPath(nonAssetPath), fullResourceAccess);
+        assertAll(
+                () -> assertTrue(existingAsset.get().isPresent()),
+                () -> assertTrue(nonExistingAsset.get().isEmpty()),
+                () -> assertNotNull(fullResourceAccess.acquireAccess().getResource(nonAssetPath))
+        );
+    }
 }
