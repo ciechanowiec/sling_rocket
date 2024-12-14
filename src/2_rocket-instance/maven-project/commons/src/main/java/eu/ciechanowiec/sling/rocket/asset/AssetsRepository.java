@@ -35,7 +35,7 @@ public class AssetsRepository {
      */
     public AssetsRepository(ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
-        log.info("Initialized {}", this);
+        log.trace("Initialized {}", this);
     }
 
     /**
