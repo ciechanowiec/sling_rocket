@@ -79,7 +79,10 @@ class RequestUpload implements RequestWithDecomposition {
                     String originalName = fileWithOriginalName.originalName();
                     return new StagedAssetReal(
                             () -> Optional.of(file),
-                            new FileMetadata(file).set("originalName", originalName),
+                            new FileMetadata(file)
+                                    .set("originalName", originalName)
+                                    .set("remoteAddress", request.remoteAddress())
+                                    .set("remoteHost", request.remoteHost()),
                             userResourceAccess
                     );
                 })

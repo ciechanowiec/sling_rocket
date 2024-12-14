@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.AvoidUsingHardCodedIP"})
 class ServletUploadTest extends TestEnvironment {
 
     private ServletUpload servletUpload;
@@ -57,6 +57,8 @@ class ServletUploadTest extends TestEnvironment {
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
         mockRequestPathInfo.setExtension(ServletUpload.EXTENSION);
         lenient().when(request.getRequestPathInfo()).thenReturn(mockRequestPathInfo);
+        request.setRemoteAddr("127.0.0.1");
+        request.setRemoteHost("127.0.0.1");
         request.setPathInfo(currentResource.getPath());
         request.setRemoteUser(MockJcr.DEFAULT_USER_ID);
         request.setMethod(HttpConstants.METHOD_POST);
@@ -146,6 +148,8 @@ class ServletUploadTest extends TestEnvironment {
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
         mockRequestPathInfo.setExtension(ServletUpload.EXTENSION);
         lenient().when(request.getRequestPathInfo()).thenReturn(mockRequestPathInfo);
+        request.setRemoteAddr("127.0.0.1");
+        request.setRemoteHost("127.0.0.1");
         request.setPathInfo(currentResource.getPath());
         request.setRemoteUser(testUser.get());
         request.setMethod(HttpConstants.METHOD_POST);
