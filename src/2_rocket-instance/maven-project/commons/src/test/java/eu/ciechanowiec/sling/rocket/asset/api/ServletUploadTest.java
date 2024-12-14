@@ -65,7 +65,7 @@ class ServletUploadTest extends TestEnvironment {
         servletUpload.doPost(request, response);
         assertTrue(
                 response.getOutputAsString().matches(
-                        "\\{\"status\":\\{\"code\":201,\"message\":\"Files uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
+                        "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
                 )
         );
     }
@@ -156,7 +156,7 @@ class ServletUploadTest extends TestEnvironment {
         servletUpload.doPost(request, response);
         assertTrue(
                 response.getOutputAsString().matches(
-                        "\\{\"status\":\\{\"code\":201,\"message\":\"Files uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
+                        "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
                 )
         );
     }

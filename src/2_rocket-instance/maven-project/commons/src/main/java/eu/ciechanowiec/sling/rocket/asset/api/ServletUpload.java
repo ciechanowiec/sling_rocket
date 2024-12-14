@@ -126,7 +126,7 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
             );
             Status status = Conditional.conditional(savedAssets.isEmpty())
                     .onTrue(() -> new Status(HttpServletResponse.SC_BAD_REQUEST, "No files uploaded"))
-                    .onFalse(() -> new Status(HttpServletResponse.SC_CREATED, "Files uploaded"))
+                    .onFalse(() -> new Status(HttpServletResponse.SC_CREATED, "File(s) uploaded"))
                     .get(Status.class);
             Response slingResponse = new Response(response, status, savedAssets);
             slingResponse.send();
