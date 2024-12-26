@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  */
 @SuppressWarnings("ClassReferencesSubclass")
 @JsonDeserialize(as = ChatMessageDefault.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface ChatMessage {
 
     /**
