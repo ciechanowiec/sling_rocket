@@ -11,6 +11,16 @@ import java.util.Locale;
 public enum Role {
 
     /**
+     * {@code developer} type of the author of a {@link ChatMessage}.
+     */
+    DEVELOPER,
+
+    /**
+     * {@code tool} type of the author of a {@link ChatMessage}.
+     */
+    TOOL,
+
+    /**
      * {@code system} type of the author of a {@link ChatMessage}.
      */
     SYSTEM,
