@@ -147,6 +147,10 @@
     {
       "id": "eu.ciechanowiec:jimage.hash:${jimage.hash.version}",
       "start-order": "25"
+    },
+    {
+      "id": "org.json:json:${json.version}",
+      "start-order": "25"
     }
   ]
 }

@@ -178,6 +178,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>76.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
+        <json.version>20240303</json.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -263,7 +264,7 @@
         <org.apache.sling.provisioning.model.version>1.8.6</org.apache.sling.provisioning.model.version>
         <org.apache.sling.event.dea.version>1.1.6</org.apache.sling.event.dea.version>
         <org.apache.sling.event.version>4.3.14</org.apache.sling.event.version>
-        <org.apache.sling.servlets.resolver.version>2.11.6</org.apache.sling.servlets.resolver.version>
+        <org.apache.sling.servlets.resolver.version>2.11.8</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.6.0</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>1.4.6</org.apache.sling.servlet-helpers.version>
         <!-- ====================================================================== -->
@@ -1037,6 +1038,12 @@
                 <version>${jimage.hash.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- ====================================================================== -->
             <!-- LIBS_ARIES                                                             -->
             <!-- ====================================================================== -->
@@ -1184,6 +1191,18 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
                 <scope>provided</scope>
             </dependency>

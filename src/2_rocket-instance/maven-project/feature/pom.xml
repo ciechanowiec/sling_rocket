@@ -98,6 +98,7 @@
                         jakarta.ws.rs-api.version,
                         icu4j.version,
                         jimage.hash.version,
+                        json.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * Represents a single message in a conversation with an AI-based chatbot.
+ * Represents a single message in a {@link Chat}.
  */
 @SuppressWarnings("ClassReferencesSubclass")
 @JsonDeserialize(as = ChatMessageDefault.class)

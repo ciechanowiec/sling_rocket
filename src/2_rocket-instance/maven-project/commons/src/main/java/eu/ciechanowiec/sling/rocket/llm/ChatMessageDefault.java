@@ -2,23 +2,19 @@ package eu.ciechanowiec.sling.rocket.llm;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Default implementation of {@link ChatMessage}.
+ * Default implementation of a {@link ChatMessage}.
  */
 @SuppressWarnings("WeakerAccess")
-@ToString
 @Slf4j
 public class ChatMessageDefault implements ChatMessage {
 
-    @ToString.Exclude
     private final Supplier<Role> roleSupplier;
-    @ToString.Exclude
     private final Supplier<String> contentSupplier;
 
     /**
@@ -30,7 +26,7 @@ public class ChatMessageDefault implements ChatMessage {
     public ChatMessageDefault(@JsonProperty("role") Role role, @JsonProperty("content") String content) {
         this.roleSupplier = () -> role;
         this.contentSupplier = () -> content;
-        log.trace("Initialized {} with content: '{}'", this, content);
+        log.trace("Initialized {} with content: '{}'. Role: {}", this, content, role);
     }
 
     /**
@@ -58,18 +54,12 @@ public class ChatMessageDefault implements ChatMessage {
         log.trace("Initialized {}. Initial content: '{}'", this, initialContent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @JsonProperty("content")
     public String content() {
         return contentSupplier.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @JsonProperty("role")
     public Role role() {
