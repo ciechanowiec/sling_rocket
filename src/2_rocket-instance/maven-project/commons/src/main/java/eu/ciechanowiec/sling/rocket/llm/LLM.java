@@ -1,14 +1,17 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.SimpleNode;
+import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,17 +28,28 @@ import java.util.concurrent.atomic.AtomicReference;
 @Designate(ocd = LLMConfig.class, factory = true)
 @SuppressWarnings({"unused", "WeakerAccess"})
 @ToString
-public class LLM {
+public class LLM implements WithJCRPath {
 
     private final AtomicReference<LLMConfigObfuscated> config;
+    private final LLMStats llmStats;
+    private final FullResourceAccess fullResourceAccess;
 
     /**
      * Constructs an instance of this class.
      * @param config {@link LLMConfig} to configure this {@link LLM}
      */
     @Activate
-    public LLM(LLMConfig config) {
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_INFERRED")
+    public LLM(
+            LLMConfig config,
+            @Reference(cardinality = ReferenceCardinality.MANDATORY) FullResourceAccess fullResourceAccess
+    ) {
         this.config = new AtomicReference<>(new LLMConfigObfuscated(config));
+        this.fullResourceAccess = fullResourceAccess;
+        this.llmStats = new LLMStats(this, fullResourceAccess);
+        new SimpleNode(
+                this, fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+        ).ensureNodeExists();
         log.info("Initialized {}", this);
     }
 
@@ -44,16 +58,19 @@ public class LLM {
      * @param config {@link LLMConfig} to configure this {@link LLM}
      */
     @Modified
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_INFERRED")
     void configure(LLMConfig config) {
         log.info("Configuring {}", config);
         this.config.set(new LLMConfigObfuscated(config));
+        new SimpleNode(
+                this.config.get().jcrHome(), fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+        ).ensureNodeExists();
         log.info("Configured {}", config);
     }
 
     /**
      * Generates a {@link ChatCompletion} for a given {@link Chat} out of the passed {@link ChatMessage}-s
      * from that {@link Chat}.
-     *
      * @param chatMessages list of consecutive {@link ChatMessage}-s from a single {@link Chat}
      *                     out of which a {@link ChatCompletion} should be generated
      * @return {@link ChatCompletion} generated out of the passed {@link ChatMessage}-s
@@ -71,12 +88,22 @@ public class LLM {
                 () -> Optional.of(llmConfigObfuscated.llmTopP())
         );
         ChatCompletionRequest chatCompletionRequest = new CCRequestDefault(
-                URI.create(llmConfigObfuscated.llmAPIurl()),
+                llmConfigObfuscated.llmAPIurl(),
                 llmConfigObfuscated.llmAPIBearerToken(),
                 chatCompletionRequestBody
         );
         ChatCompletion chatCompletion = chatCompletionRequest.execute();
         log.trace("{} completed chat for {} with {}", this, chatMessages, chatCompletion);
+        llmStats.register(chatCompletion);
         return chatCompletion;
+    }
+
+    public LLMStats llmStats() {
+        return llmStats;
+    }
+
+    @Override
+    public JCRPath jcrPath() {
+        return config.get().jcrHome();
     }
 }

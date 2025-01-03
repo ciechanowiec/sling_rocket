@@ -25,6 +25,15 @@ public class ParentJCRPath implements JCRPath {
         log.trace("Initialized {}", this);
     }
 
+    /**
+     * Constructs an instance of this class using a source JCR path.
+     * @param withJCRPath object that contains a {@link JCRPath} to be represented by the constructed object
+     */
+    public ParentJCRPath(WithJCRPath withJCRPath) {
+        this.source = withJCRPath.jcrPath();
+        log.trace("Initialized {}", this);
+    }
+
     @Override
     public String get() {
         return source.get();

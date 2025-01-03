@@ -10,7 +10,6 @@ import java.net.URI;
 /**
  * Configuration that describes how the associated {@link LLM} should be used.
  */
-@SuppressWarnings("MagicNumber")
 @ObjectClassDefinition
 public @interface LLMConfig {
 
@@ -160,4 +159,12 @@ public @interface LLMConfig {
             max = "1"
     )
     float llm_top__p() default 1;
+
+    @AttributeDefinition(
+            name = "JCR Home",
+            description = "JCR path where persistent data related to this LLM is stored",
+            defaultValue = "/content/rocket/llm/common",
+            type = AttributeType.STRING
+    )
+    String jcr_home() default "/content/rocket/llm/common";
 }

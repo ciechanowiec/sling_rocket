@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -58,7 +59,8 @@ class LLMTest extends TestEnvironment {
                 "llm.max_completion_tokens", 320,
                 "llm.frequency_penalty", 0.8,
                 "llm.temperature", 0.8,
-                "llm.top_p", 0.8
+                "llm.top_p", 0.8,
+                "jcr.home", "/content/rocket/llm/openai"
         ));
     }
 
@@ -77,7 +79,7 @@ class LLMTest extends TestEnvironment {
     }
 
     @Test
-    @SuppressWarnings("LineLength")
+    @SuppressWarnings({"LineLength", "MagicNumber"})
     void testCompletion() {
         List<ChatMessage> messages = List.of(
                 new ChatMessageDefault(Role.SYSTEM, "Answer like you are HAL 9000."),
@@ -85,9 +87,18 @@ class LLMTest extends TestEnvironment {
         );
         ChatCompletion chatCompletion = llm.complete(messages);
         String chatCompletionJSON = chatCompletion.asJSON();
+        assertAll(
+                () -> assertEquals(48, llm.llmStats().numOfGeneratedCharacters()),
+                () -> assertEquals(16, llm.llmStats().numOfGeneratedTokens())
+        );
         assertEquals(
                 "{\"id\":\"chatcmpl-AjpkS3315YWRC4AZJJ3gEYbqRISDx\",\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\"My name is HAL 9000. How can I assist you today?\"}}],\"created\":\"2024-12-29T15:44:04\",\"model\":\"gpt-4o-2024-08-06\",\"usage\":{\"prompt_tokens\":25,\"completion_tokens\":16,\"total_tokens\":41}}",
                 chatCompletionJSON
+        );
+        llm.complete(messages);
+        assertAll(
+                () -> assertEquals(48 * 2, llm.llmStats().numOfGeneratedCharacters()),
+                () -> assertEquals(16 * 2, llm.llmStats().numOfGeneratedTokens())
         );
     }
 

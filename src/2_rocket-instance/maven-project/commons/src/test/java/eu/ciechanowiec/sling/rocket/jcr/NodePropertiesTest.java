@@ -164,6 +164,51 @@ class NodePropertiesTest extends TestEnvironment {
     }
 
     @Test
+    void mustSetPropertiesWithMap() {
+        AbstractMap.SimpleEntry<String, String> stringEntry = new AbstractMap.SimpleEntry<>(
+                "stringus-namus", "stringus-valus"
+        );
+        AbstractMap.SimpleEntry<String, Boolean> booleanEntry = new AbstractMap.SimpleEntry<>(
+                "booleanus-namus", true
+        );
+        AbstractMap.SimpleEntry<String, Long> longEntry = new AbstractMap.SimpleEntry<>(
+                "longus-namus", 123L
+        );
+        AbstractMap.SimpleEntry<String, Double> doubleEntry = new AbstractMap.SimpleEntry<>(
+                "doubleus-namus", 99.99
+        );
+        AbstractMap.SimpleEntry<String, BigDecimal> decimalEntry = new AbstractMap.SimpleEntry<>(
+                "decimalus-namus", new BigDecimal("999.99")
+        );
+        AbstractMap.SimpleEntry<String, Calendar> calendarEntry = new AbstractMap.SimpleEntry<>(
+                "calendarus-namus", unix1980
+        );
+        AbstractMap.SimpleEntry<String, StringBuilder> invalidEntry = new AbstractMap.SimpleEntry<>(
+                "invalidus-namus", new StringBuilder("invalidus-valus")
+        );
+        Map<String, Object> badMap = Map.ofEntries(
+                stringEntry, booleanEntry, longEntry, doubleEntry, decimalEntry, calendarEntry, invalidEntry
+        );
+        Map<String, Object> goodMap = Map.ofEntries(
+                stringEntry, booleanEntry, longEntry, doubleEntry, decimalEntry, calendarEntry
+        );
+        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
+        context.build().resource("/content").commit();
+        int initNumOfProps = nodeProperties.all().size();
+        Optional<NodeProperties> propsAfterFirstSet = nodeProperties.setProperties(badMap);
+        int numOfPropsAfterFirstSet = nodeProperties.all().size();
+        Optional<NodeProperties> propsAfterSecondSet = nodeProperties.setProperties(goodMap);
+        int numOfPropsAfterSecondSet = nodeProperties.all().size();
+        assertAll(
+                () -> assertEquals(1, initNumOfProps),
+                () -> assertTrue(propsAfterFirstSet.isEmpty()),
+                () -> assertEquals(1, numOfPropsAfterFirstSet),
+                () -> assertTrue(propsAfterSecondSet.isPresent()),
+                () -> assertEquals(7, numOfPropsAfterSecondSet)
+        );
+    }
+
+    @Test
     void mustExcludeBinariesFromAll() {
         TargetJCRPath realAssetPath = new TargetJCRPath(
                 new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()

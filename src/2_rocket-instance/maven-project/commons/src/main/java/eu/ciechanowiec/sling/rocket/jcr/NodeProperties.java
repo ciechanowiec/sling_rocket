@@ -31,7 +31,7 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
 
 /**
  * <p>
- * Represents {@link Property}-ies of a {@link Node}.
+ * Represents {@link Property}-ies of an existing {@link Node}.
  * </p>
  * <p>
  * The class provides API operations on {@link Property}-ies
@@ -41,7 +41,8 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
  */
 @SuppressWarnings({
         "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
-        "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"
+        "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount",
+        "PMD.TooManyMethods", "PMD.LinguisticNaming"
 })
 @Slf4j
 @ToString
@@ -53,7 +54,7 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Constructs an instance of this class.
-     * @param jcrNodePath {@link JCRPath} to the underlying {@link Node}
+     * @param jcrNodePath {@link JCRPath} to the underlying existing {@link Node}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
      *                        object to acquire access to resources
      */
@@ -352,6 +353,85 @@ public class NodeProperties implements WithJCRPath {
     }
 
     /**
+     * Sets the specified {@link Property}-ies for the underlying {@link Node} according to the logic described in
+     * the respective method for a given type of {@link Value}:
+     * <ol>
+     *     <li>{@link Node#setProperty(String, String)}</li>
+     *     <li>{@link Node#setProperty(String, boolean)}</li>
+     *     <li>{@link Node#setProperty(String, long)}</li>
+     *     <li>{@link Node#setProperty(String, double)}</li>
+     *     <li>{@link Node#setProperty(String, BigDecimal)}</li>
+     *     <li>{@link Node#setProperty(String, Calendar)}</li>
+     * </ol>
+     * All properties are set transactionally and atomically, i.e. all the properties are set at the same time
+     * or none of them is set.
+     * <p>
+     * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
+     * it is supported by the underlying and respective {@link Node#setProperty(String, String)},
+     * {@link Node#setProperty(String, boolean)}, {@link Node#setProperty(String, boolean)},
+     * {@link Node#setProperty(String, long)}, {@link Node#setProperty(String, double)},
+     * {@link Node#setProperty(String, BigDecimal)} or {@link Node#setProperty(String, Calendar)}.
+     * @param properties {@link Map} of {@link Property}-ies to set, where every key is the name of the {@link Property}
+     *                   to set and every value is the value of that {@link Property}; the {@link Class} of the value
+     *                   can be only one of the following (if this condition isn't met, the whole operation will fail):
+     *                              <ol>
+     *                              <li>{@link DefaultProperties#STRING_CLASS}</li>
+     *                              <li>{@link DefaultProperties#BOOLEAN_CLASS}</li>
+     *                              <li>{@link DefaultProperties#LONG_CLASS}</li>
+     *                              <li>{@link DefaultProperties#DOUBLE_CLASS}</li>
+     *                              <li>{@link DefaultProperties#DECIMAL_CLASS}</li>
+     *                              <li>{@link DefaultProperties#DATE_CLASS}</li>
+     *                              </ol>
+     * @return {@link Optional} containing this {@link NodeProperties} if all the passed {@link Property}-ies were
+     *         set successfully; an empty {@link Optional} is returned if any of the {@link Property}-ies wasn't
+     *         set due to any reason
+     */
+    public Optional<NodeProperties> setProperties(Map<String, Object> properties) {
+        log.trace("Setting properties '{}' for {}", properties, this);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            String jcrPathRaw = jcrPath.get();
+            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                    .flatMap(node -> setProperties(node, properties));
+            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+            return result;
+        }
+    }
+
+    private Optional<NodeProperties> setProperties(Node node, Map<String, Object> properties) {
+        int expectedNumOfProps = properties.size();
+        List<NodeProperties> propsSet = properties.entrySet().stream().map(
+                        entry -> {
+                            String name = entry.getKey();
+                            Object value = entry.getValue();
+                            return setProperty(node, name, value);
+                        }
+                ).filter(Optional::isPresent)
+                .flatMap(Optional::stream)
+                .toList();
+        int actualNumOfProps = propsSet.size();
+        return expectedNumOfProps == actualNumOfProps && actualNumOfProps > NumberUtils.INTEGER_ZERO
+                ? Optional.of(propsSet.getFirst())
+                : Optional.empty();
+    }
+
+    private Optional<NodeProperties> setProperty(Node node, String name, Object value) {
+        return switch (value) {
+            case String valueString -> setProperty(node, name, valueString);
+            case Boolean valueBoolean -> setProperty(node, name, (boolean) valueBoolean);
+            case Long valueLong -> setProperty(node, name, (long) valueLong);
+            case Double valueDouble -> setProperty(node, name, (double) valueDouble);
+            case BigDecimal valueBigDecimal -> setProperty(node, name, valueBigDecimal);
+            case Calendar calendar -> setProperty(node, name, calendar);
+            default -> {
+                log.warn("Unsupported type '{}' for property '{}' for {}", value.getClass(), name, this);
+                yield Optional.empty();
+            }
+        };
+    }
+
+    /**
      * <p>
      * Sets the value of the specified {@link Property} according to the logic described in
      * {@link Node#setProperty(String, String)}.
@@ -366,7 +446,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, String value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -392,7 +472,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, boolean value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -418,7 +498,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, long value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -444,7 +524,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, double value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -470,7 +550,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, BigDecimal value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -496,7 +576,7 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, Calendar value) {
-        log.trace("Setting property '{}' to '{}'", name, value);
+        log.trace("Setting property '{}' to '{}' for {}", name, value, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -514,9 +594,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }
@@ -529,9 +607,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }
@@ -544,9 +620,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }
@@ -559,9 +633,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }
@@ -574,9 +646,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }
@@ -589,9 +659,7 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
         } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
-            String message = String.format(
-                    "Unable to set property '%s' to '%s' for %s", name, value, this
-            );
+            String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
         }

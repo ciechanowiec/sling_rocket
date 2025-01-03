@@ -178,7 +178,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>76.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <json.version>20240303</json.version>
+        <json.version>20241224</json.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -358,8 +358,8 @@
         <!-- ====================================================================== -->
         <junit-jupiter-api.version>5.11.4</junit-jupiter-api.version>
         <junit-jupiter-params.version>5.11.4</junit-jupiter-params.version>
-        <mockito-core.version>5.14.2</mockito-core.version>
-        <mockito-junit-jupiter.version>5.14.2</mockito-junit-jupiter.version>
+        <mockito-core.version>5.15.2</mockito-core.version>
+        <mockito-junit-jupiter.version>5.15.2</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <org.apache.sling.testing.sling-mock.junit5.version>3.5.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>
