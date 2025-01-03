@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
+import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.AttributeType;
@@ -160,6 +161,23 @@ public @interface LLMConfig {
     )
     float llm_top__p() default 1;
 
+    /**
+     * Size of the {@link LLM} context window expressed in tokens.
+     * @return size of the {@link LLM} context window expressed in tokens
+     */
+    @SuppressWarnings("MagicNumber") @AttributeDefinition(
+            name = "Context Window Size",
+            description = "Size of the LLM context window expressed in tokens.",
+            defaultValue = "100000",
+            type = AttributeType.INTEGER,
+            min = "1"
+    )
+    int llm_context$_$window_size() default 100_000;
+
+    /**
+     * {@link JCRPath} where persistent data related to this LLM is stored.
+     * @return {@link JCRPath} where persistent data related to this LLM is stored
+     */
     @AttributeDefinition(
             name = "JCR Home",
             description = "JCR path where persistent data related to this LLM is stored",

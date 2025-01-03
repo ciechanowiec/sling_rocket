@@ -37,6 +37,8 @@ public class LLM implements WithJCRPath {
     /**
      * Constructs an instance of this class.
      * @param config {@link LLMConfig} to configure this {@link LLM}
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
+     *                           object to acquire access to resources
      */
     @Activate
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_INFERRED")
@@ -98,10 +100,26 @@ public class LLM implements WithJCRPath {
         return chatCompletion;
     }
 
+    /**
+     * Returns {@link LLMStats} of this {@link LLM}.
+     * @return {@link LLMStats} of this {@link LLM}
+     */
     public LLMStats llmStats() {
         return llmStats;
     }
 
+    /**
+     * Same as {@link LLMConfig#llm_context$_$window_size()}.
+     * @return same as {@link LLMConfig#llm_context$_$window_size()}
+     */
+    public int contextWindowSize() {
+        return config.get().contextWindowSize();
+    }
+
+    /**
+     * Same as {@link LLMConfig#jcr_home()}.
+     * @return same as {@link LLMConfig#jcr_home()}
+     */
     @Override
     public JCRPath jcrPath() {
         return config.get().jcrHome();

@@ -60,6 +60,7 @@ class LLMTest extends TestEnvironment {
                 "llm.frequency_penalty", 0.8,
                 "llm.temperature", 0.8,
                 "llm.top_p", 0.8,
+                "llm.context-window.size", 10_000,
                 "jcr.home", "/content/rocket/llm/openai"
         ));
     }
@@ -100,6 +101,12 @@ class LLMTest extends TestEnvironment {
                 () -> assertEquals(48 * 2, llm.llmStats().numOfGeneratedCharacters()),
                 () -> assertEquals(16 * 2, llm.llmStats().numOfGeneratedTokens())
         );
+    }
+
+    @Test
+    @SuppressWarnings("MagicNumber")
+    void testContentWindowSize() {
+        assertEquals(10_000, llm.contextWindowSize());
     }
 
     private static final class LLMAPI extends HttpServlet {

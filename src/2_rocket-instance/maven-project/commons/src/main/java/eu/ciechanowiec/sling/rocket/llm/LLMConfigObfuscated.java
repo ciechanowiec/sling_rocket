@@ -29,6 +29,7 @@ class LLMConfigObfuscated {
     private final float llmTemperature;
     private final float llmFrequencyPenalty;
     private final float llmTopP;
+    private final int contextWindowSize;
     private final JCRPath jcrHome;
 
     LLMConfigObfuscated(LLMConfig llmConfig) {
@@ -41,6 +42,7 @@ class LLMConfigObfuscated {
         this.llmFrequencyPenalty = llmConfig.llm_frequency__penalty();
         this.llmTopP = llmConfig.llm_top__p();
         this.jcrHome = new TargetJCRPath(llmConfig.jcr_home());
+        this.contextWindowSize = llmConfig.llm_context$_$window_size();
         log.info("Initialized {}", this);
     }
 
