@@ -32,9 +32,6 @@ public class BasicReferencable implements Referencable {
         log.trace("Initialized {}", this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String jcrUUID() {
         NodeProperties nodeProperties = new NodeProperties(withJCRPath, resourceAccess);
