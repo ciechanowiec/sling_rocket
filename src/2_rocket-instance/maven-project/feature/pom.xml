@@ -31,7 +31,6 @@
                         org.apache.felix.framework.version,
                         org.apache.felix.configadmin.version,
                         org.apache.felix.configadmin.plugin.interpolation.version,
-                        org.apache.felix.converter.version,
                         org.apache.felix.eventadmin.version,
                         org.apache.felix.cm.json.version,
                         org.apache.felix.log.version,
@@ -129,6 +128,7 @@
                         org.apache.jackrabbit.vault.version,
                         jcr.version,
 
+                        org.osgi.util.converter.version,
                         org.osgi.service.component.annotations.version,
                         org.osgi.compendium.version,
                         org.osgi.service.log.version,

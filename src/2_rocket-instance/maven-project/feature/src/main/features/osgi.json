@@ -1,6 +1,10 @@
 {
   "bundles": [
     {
+      "id":"org.osgi:org.osgi.util.converter:${org.osgi.util.converter.version}",
+      "start-order":"1"
+    },
+    {
       "id": "org.osgi:org.osgi.service.component.annotations:${org.osgi.service.component.annotations.version}",
       "start-order": "1"
     },

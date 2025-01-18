@@ -158,7 +158,7 @@ volumes:
 
 === Apache Sling
 
-_Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling] framework. As a starting point for the build, the 13th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter] was used.
+_Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling] framework. As a starting point for the build, the 14th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter] was used.
 
 === Publishing
 
