@@ -19,6 +19,10 @@
     {
       "id": "org.apache.aries.jmx:org.apache.aries.jmx.whiteboard:${org.apache.aries.jmx.whiteboard.version}",
       "start-order": "5"
+    },
+    {
+      "id": "org.apache.aries.jmx:org.apache.aries.jmx.mbeanserver-platform:${org.apache.aries.jmx.mbeanserver-platform.version}",
+      "start-order": "5"
     }
   ]
 }

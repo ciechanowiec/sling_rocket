@@ -104,6 +104,7 @@
                         org.apache.aries.jmx.api.version,
                         org.apache.aries.jmx.core.version,
                         org.apache.aries.jmx.whiteboard.version,
+                        org.apache.aries.jmx.mbeanserver-platform.version,
 
                         asm.version,
 
