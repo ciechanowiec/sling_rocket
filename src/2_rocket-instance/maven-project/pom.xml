@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>13.34.0-SNAPSHOT</version>
+    <version>14.0.0</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -80,12 +80,12 @@
         <org.apache.sling.servlets.annotations.version>1.2.6</org.apache.sling.servlets.annotations.version>
         <lombok.version>1.18.36</lombok.version>
         <javax.inject.version>1</javax.inject.version>
-        <spotbugs-annotations.version>4.9.1</spotbugs-annotations.version>
+        <spotbugs-annotations.version>4.9.2</spotbugs-annotations.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
-        <org.apache.sling.repoinit.parser.version>1.9.0</org.apache.sling.repoinit.parser.version>
-        <org.apache.sling.jcr.repoinit.version>1.1.52</org.apache.sling.jcr.repoinit.version>
+        <org.apache.sling.repoinit.parser.version>1.9.2</org.apache.sling.repoinit.parser.version>
+        <org.apache.sling.jcr.repoinit.version>1.1.54</org.apache.sling.jcr.repoinit.version>
         <!-- ====================================================================== -->
         <!-- COMPOSUM                                                               -->
         <!-- ====================================================================== -->
@@ -135,7 +135,7 @@
         <!-- ====================================================================== -->
         <!-- GROOVY                                                                -->
         <!-- ====================================================================== -->
-        <groovy.version>4.0.25</groovy.version>
+        <groovy.version>4.0.26</groovy.version>
         <!-- ====================================================================== -->
         <!-- LIBS                                                                   -->
         <!-- ====================================================================== -->
@@ -169,8 +169,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>13.34.0-SNAPSHOT</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>13.34.0-SNAPSHOT</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>14.0.0</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>14.0.0</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -206,7 +206,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.0</woodstox-core.version>
-        <jackson.version>2.18.2</jackson.version>
+        <jackson.version>2.18.3</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -217,7 +217,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.0</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.74.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.76.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>3.8.2</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
@@ -357,10 +357,10 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>5.11.4</junit-jupiter-api.version>
-        <junit-jupiter-params.version>5.11.4</junit-jupiter-params.version>
-        <mockito-core.version>5.15.2</mockito-core.version>
-        <mockito-junit-jupiter.version>5.15.2</mockito-junit-jupiter.version>
+        <junit-jupiter-api.version>5.12.0</junit-jupiter-api.version>
+        <junit-jupiter-params.version>5.12.0</junit-jupiter-params.version>
+        <mockito-core.version>5.16.0</mockito-core.version>
+        <mockito-junit-jupiter.version>5.16.0</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <org.apache.sling.testing.sling-mock.junit5.version>3.5.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>
@@ -375,14 +375,14 @@
         <org.apache.sling.repoinit.filevault.validator.version>1.0.0
         </org.apache.sling.repoinit.filevault.validator.version>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
-        <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
-        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
-        <maven-install-plugin.version>3.1.3</maven-install-plugin.version>
+        <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
-        <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
@@ -397,13 +397,13 @@
         <slingfeature-maven-plugin.version>1.9.0</slingfeature-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
-        <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.2.0</spotbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.1.1</asciidoctor-maven-plugin.version>
-        <jruby.version>9.4.11.0</jruby.version>
+        <jruby.version>9.4.12.0</jruby.version>
         <asciidoctorj.version>3.0.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>2.3.1</asciidoctorj.diagram.version>
     </properties>
@@ -2255,6 +2255,20 @@
                             <version>${org.apache.sling.bnd.models.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-baseline-maven-plugin</artifactId>
+                    <version>${bnd-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <id>baseline</id>
+                            <goals>
+                                <goal>baseline</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

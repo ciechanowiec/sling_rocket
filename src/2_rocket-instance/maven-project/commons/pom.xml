@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>13.34.0-SNAPSHOT</version>
+        <version>14.0.0</version>
     </parent>
 
     <artifactId>sling.rocket.commons</artifactId>
@@ -255,6 +255,10 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
                 </executions>
             </plugin>
             <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-baseline-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -399,6 +403,9 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnWarnings>true</failOnWarnings>
+                </configuration>
                 <executions>
                     <execution>
                         <id>put-javadoc-in-jar-archive</id>

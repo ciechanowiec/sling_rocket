@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
@@ -161,6 +162,7 @@ class RequestTest extends TestEnvironment {
             "IllegalCatch", "ThrowCaughtLocally", "PMD.AvoidThrowingRawExceptionTypes", "PMD.ExceptionAsFlowControl",
             "PMD.AvoidCatchingGenericException"
     })
+    @SuppressFBWarnings("THROWS_METHOD_THROWS_RUNTIMEEXCEPTION")
     private StackTraceElement[] stackTrace() {
         try {
             throw new RuntimeException("For stack trace");

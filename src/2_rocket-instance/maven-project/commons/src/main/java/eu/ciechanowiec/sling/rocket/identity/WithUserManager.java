@@ -11,6 +11,7 @@ import java.util.Optional;
 /**
  * {@link ResourceResolver} with a wrapped access to {@link UserManager}.
  */
+@SuppressWarnings("TypeName")
 public class WithUserManager {
 
     private final ResourceResolver resourceResolver;
