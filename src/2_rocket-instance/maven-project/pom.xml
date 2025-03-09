@@ -2338,6 +2338,9 @@
                         <publishingServerId>central</publishingServerId>
                         <autoPublish>true</autoPublish>
                         <waitUntil>published</waitUntil>
+                        <excludeArtifacts>
+                            <excludeArtifact>sling.rocket.feature</excludeArtifact>
+                        </excludeArtifacts>
                     </configuration>
                 </plugin>
                 <plugin>
