@@ -117,22 +117,73 @@ docker compose up -d
 
 ==== Persistence and Application Files
 
-Static files related to an SR instance reside in `/opt/sling`. These files are of two types: _persistence files_ and _application files_.
+Static files related to an SR Instance reside in `/opt/sling`. These files are of two types: _persistence files_ and _application files_.
 
 ===== Persistence Files
 
 As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
 [upperalpha]
-. should be mounted as a persistent Docker volume for a given SR instance,
-. should be retained and reused between _Sling Rocket_ updates for a given SR instance.
+. should be mounted as a persistent Docker volume for a given SR Instance,
+. should be retained and reused between _Sling Rocket_ updates for a given SR Instance.
 
 ===== Application Files
 
-Static files related to an SR instance that reside in `/opt/sling` but aren't _persistence files_ are classified as _application files_. These files:
+Static files related to an SR Instance that reside in `/opt/sling` but aren't _persistence files_ are classified as _application files_. These files:
 [upperalpha]
 . are managed by _Sling Rocket_, meaning that _Sling Rocket_ provides new application files upon every container (re)creation,
-. are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR instance,
+. are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
 . do not persistently store any business data.
+
+==== Backups Restoration
+
+The mechanism for performing a full backup restoration of the SR Instance is as follows:
+
+[upperalpha]
+. Remove all SR Instance Docker artifacts, i.e., the `rocket-instance` container and the `rocket-data` volume:
++
+[source,bash]
+....
+docker container rm -f rocket-instance
+docker volume rm rocket-data
+....
+
+. Restore the backup archive that contains the persistence files into a new `rocket-data` volume before running a new `rocket-instance` container.
++
+Assuming that backups are stored in the `$HOME/backups` directory and the backup archive is named `backup-2025-03-05T01-00-00.tar.gz`, you can use a command structure like the following:
++
+[source,bash]
+....
+docker run \
+  --interactive \
+  --tty \
+  --rm \
+  --volume rocket-data:/restore \
+  --volume "$HOME/backups:/archive:ro" \
+  alpine \
+  tar --extract --verbose --gzip \
+      --file /archive/backup-2025-03-05T01-00-00.tar.gz \
+      --directory /restore \
+      --strip-components=2
+....
++
+In the example above:
+[upperroman]
+.. The volume `rocket-data` (where the restored persistent files will be located) is mounted at `/restore` inside the temporary container.
+.. The local backups directory (`$HOME/backups`) is mounted in read-only mode at `/archive` inside the temporary container.
+.. The `tar` command expands the backup archive that contains the persistent files into `/restore`, thereby placing all persistent files from the archive there.
+.. The `--strip-components=2` parameter removes the first two path components from the extracted files (due to the default structure of the backups).
+
+. In the `volumes` section of the `docker-compose.yml` file, adjust the `rocket-data` configuration by adding the `external: true` parameter:
++
+[source,yml]
+....
+volumes:
+    rocket-data:
+        name: "rocket-data"
+        external: true
+....
+
+. Run a new `rocket-instance` container. It will automatically attach to the newly created `rocket-data` volume, ensuring that the restored SR Instance state (i.e., persistent files) is accurately reflected in the running application.
 
 === SR Nginx
 In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`. Just like in case of an SR Instance, it is recommended to run and manage the SR Nginx using a `docker-compose.yml` file located in the root of this repository, which can be adjusted according to the specific needs of a given deployment:
