@@ -26,12 +26,13 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build Docker images
+      - name: Deploy Docker images
         run: |
           cd src
-          docker compose --progress=plain build
-      - name: Push Docker images
-        run: |
           PROJECT_VERSION=$(mvn -f src/2_rocket-instance/maven-project/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+          docker compose --progress=plain build rocket-base
+          docker push "ciechanowiec/rocket-base:$PROJECT_VERSION"
+          docker compose --progress=plain build rocket-instance
           docker push "ciechanowiec/rocket-instance:$PROJECT_VERSION"
+          docker compose --progress=plain build rocket-nginx
           docker push "ciechanowiec/rocket-nginx:$PROJECT_VERSION"
