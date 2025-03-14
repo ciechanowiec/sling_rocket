@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>14.0.0</version>
+    <version>14.0.2</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -93,7 +93,7 @@
         <org.apache.felix.scr.version>2.2.12</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
-        <org.apache.felix.http.jetty.version>5.1.28</org.apache.felix.http.jetty.version>
+        <org.apache.felix.http.jetty.version>5.1.30</org.apache.felix.http.jetty.version>
         <org.apache.felix.http.whiteboard.version>4.0.0</org.apache.felix.http.whiteboard.version>
         <org.apache.felix.inventory.version>2.0.0</org.apache.felix.inventory.version>
         <org.apache.felix.prefs.version>1.1.0</org.apache.felix.prefs.version>
@@ -119,7 +119,7 @@
         </org.apache.felix.webconsole.plugins.packageadmin.version>
         <org.apache.felix.healthcheck.webconsoleplugin.version>2.2.0
         </org.apache.felix.healthcheck.webconsoleplugin.version>
-        <org.apache.felix.http.webconsoleplugin.version>1.2.0</org.apache.felix.http.webconsoleplugin.version>
+        <org.apache.felix.http.webconsoleplugin.version>1.2.2</org.apache.felix.http.webconsoleplugin.version>
         <org.apache.felix.http.inventoryprinter.version>1.0.2</org.apache.felix.http.inventoryprinter.version>
         <!-- ====================================================================== -->
         <!-- GROOVY                                                                -->
@@ -158,13 +158,13 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>14.0.0</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>14.0.0</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>14.0.2</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>14.0.2</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <icu4j.version>76.1</icu4j.version>
+        <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250107</json.version>
         <!-- ====================================================================== -->
@@ -241,11 +241,11 @@
         <org.apache.sling.caconfig.spi.version>1.4.0</org.apache.sling.caconfig.spi.version>
         <org.apache.sling.hc.api.version>1.0.4</org.apache.sling.hc.api.version>
         <org.apache.sling.hc.support.version>1.0.10</org.apache.sling.hc.support.version>
-        <org.apache.sling.adapter.version>2.2.0</org.apache.sling.adapter.version>
+        <org.apache.sling.adapter.version>2.3.0</org.apache.sling.adapter.version>
         <org.apache.sling.auth.form.version>1.0.24</org.apache.sling.auth.form.version>
-        <org.apache.sling.bundleresource.impl.version>2.3.4</org.apache.sling.bundleresource.impl.version>
+        <org.apache.sling.bundleresource.impl.version>2.4.0</org.apache.sling.bundleresource.impl.version>
         <org.apache.sling.engine.version>2.16.0</org.apache.sling.engine.version>
-        <org.apache.sling.fsresource.version>2.2.0</org.apache.sling.fsresource.version>
+        <org.apache.sling.fsresource.version>2.3.0</org.apache.sling.fsresource.version>
         <org.apache.sling.i18n.version>2.6.6</org.apache.sling.i18n.version>
         <org.apache.sling.resourceresolver.version>1.12.4</org.apache.sling.resourceresolver.version>
         <org.apache.sling.servlets.get.version>2.2.0</org.apache.sling.servlets.get.version>
@@ -2659,7 +2659,7 @@
         <settings>
           <servers>
             <server>
-              <id>ossrh</id>
+              <id>central</id>
               <username>your-dynamic-nexus-id</username>
               <password>your-nexus-token</password>
             </server>

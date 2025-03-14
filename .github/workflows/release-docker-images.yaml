@@ -29,10 +29,9 @@ jobs:
       - name: Deploy Docker images
         run: |
           cd src
-          PROJECT_VERSION=$(mvn -f 2_rocket-instance/maven-project/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
-          docker compose --progress=plain build rocket-base
-          docker push "ciechanowiec/rocket-base:$PROJECT_VERSION"
-          docker compose --progress=plain build rocket-instance
-          docker push "ciechanowiec/rocket-instance:$PROJECT_VERSION"
-          docker compose --progress=plain build rocket-nginx
-          docker push "ciechanowiec/rocket-nginx:$PROJECT_VERSION"
+          docker buildx create --use
+          docker buildx bake \
+            --file docker-compose.yml \
+            --set rocket-base.platform=linux/amd64,linux/arm64 \
+            --push \
+            rocket-base
