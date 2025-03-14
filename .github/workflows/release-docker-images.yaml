@@ -26,12 +26,30 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Deploy Docker images
+      - name: Deploy `rocket-base` image
         run: |
           cd src
           docker buildx create --use
           docker buildx bake \
             --file docker-compose.yml \
             --set '*.platform=linux/amd64,linux/arm64' \
-            --set '*.max-parallel=1' \
-            --push
+            --push \
+            rocket-base
+      - name: Deploy `rocket-instance` image
+        run: |
+          cd src
+          docker buildx create --use
+          docker buildx bake \
+            --file docker-compose.yml \
+            --set '*.platform=linux/amd64,linux/arm64' \
+            --push \
+            rocket-instance
+      - name: Deploy `rocket-nginx` image
+        run: |
+          cd src
+          docker buildx create --use
+          docker buildx bake \
+            --file docker-compose.yml \
+            --set '*.platform=linux/amd64,linux/arm64' \
+            --push \
+            rocket-nginx
