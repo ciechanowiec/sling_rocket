@@ -167,6 +167,15 @@
         <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250107</json.version>
+        <oauth2-oidc-sdk.version>11.23.1</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.0.2</nimbus-jose-jwt.version>
+        <content-type.version>2.3</content-type.version>
+        <lang-tag.version>1.7</lang-tag.version>
+        <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
+        </org.apache.servicemix.bundles.jcip-annotations.version>
+        <json-smart.version>2.5.2</json-smart.version>
+        <accessors-smart.version>2.5.2</accessors-smart.version>
+        <org.apache.servicemix.bundles.jasypt.version>1.9.3_1</org.apache.servicemix.bundles.jasypt.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -257,6 +266,7 @@
         <org.apache.sling.servlets.resolver.version>2.11.8</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.6.0</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>1.4.6</org.apache.sling.servlet-helpers.version>
+        <org.apache.sling.auth.oauth-client.version>0.1.0</org.apache.sling.auth.oauth-client.version>
         <!-- ====================================================================== -->
         <!-- SLING_COMMONS                                                          -->
         <!-- ====================================================================== -->
@@ -270,6 +280,7 @@
         <org.apache.sling.commons.scheduler.version>2.7.14</org.apache.sling.commons.scheduler.version>
         <org.apache.sling.commons.threads.version>3.3.0</org.apache.sling.commons.threads.version>
         <org.apache.sling.commons.json.version>2.0.28</org.apache.sling.commons.json.version>
+        <org.apache.sling.commons.crypto.version>1.1.0</org.apache.sling.commons.crypto.version>
         <!-- ====================================================================== -->
         <!-- SLING_DISCOVERY                                                        -->
         <!-- ====================================================================== -->
@@ -1021,6 +1032,54 @@
                 <version>${json.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>oauth2-oidc-sdk</artifactId>
+                <version>${oauth2-oidc-sdk.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${nimbus-jose-jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>content-type</artifactId>
+                <version>${content-type.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>lang-tag</artifactId>
+                <version>${lang-tag.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.jcip-annotations</artifactId>
+                <version>${org.apache.servicemix.bundles.jcip-annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>${json-smart.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>accessors-smart</artifactId>
+                <version>${accessors-smart.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
+                <version>${org.apache.servicemix.bundles.jasypt.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- ====================================================================== -->
             <!-- LIBS_ARIES                                                             -->
             <!-- ====================================================================== -->
@@ -1668,6 +1727,12 @@
                 <version>${org.apache.sling.servlet-helpers.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.auth.oauth-client</artifactId>
+                <version>${org.apache.sling.auth.oauth-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- ====================================================================== -->
             <!-- SLING_COMMONS                                                          -->
             <!-- ====================================================================== -->
@@ -1729,6 +1794,12 @@
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.commons.json</artifactId>
                 <version>${org.apache.sling.commons.json.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.commons.crypto</artifactId>
+                <version>${org.apache.sling.commons.crypto.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

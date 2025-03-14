@@ -151,6 +151,38 @@
     {
       "id": "org.json:json:${json.version}",
       "start-order": "25"
+    },
+    {
+      "id": "com.nimbusds:oauth2-oidc-sdk:${oauth2-oidc-sdk.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "com.nimbusds:nimbus-jose-jwt:${nimbus-jose-jwt.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "com.nimbusds:content-type:${content-type.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "com.nimbusds:lang-tag:${lang-tag.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.jcip-annotations:${org.apache.servicemix.bundles.jcip-annotations.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "net.minidev:json-smart:${json-smart.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "net.minidev:accessors-smart:${accessors-smart.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.jasypt:${org.apache.servicemix.bundles.jasypt.version}",
+      "start-order": "25"
     }
   ]
 }

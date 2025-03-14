@@ -43,6 +43,10 @@
     {
       "id": "org.apache.sling:org.apache.sling.commons.json:${org.apache.sling.commons.json.version}",
       "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.crypto:${org.apache.sling.commons.crypto.version}",
+      "start-order": "15"
     }
   ]
 }

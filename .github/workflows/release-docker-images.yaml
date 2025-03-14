@@ -33,5 +33,4 @@ jobs:
           docker buildx bake \
             --file docker-compose.yml \
             --set rocket-base.platform=linux/amd64,linux/arm64 \
-            --push \
-            rocket-base
+            --push
