@@ -33,4 +33,5 @@ jobs:
           docker buildx bake \
             --file docker-compose.yml \
             --set '*.platform=linux/amd64,linux/arm64' \
+            --set '*.max-parallel=1' \
             --push
