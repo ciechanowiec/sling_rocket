@@ -246,6 +246,7 @@ curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -Fn
 . Implementing an https://jackrabbit.apache.org/filevault/installhooks.html[installation hook] for index deployments, similar to https://github.com/code-distillery/filevault-oak-reindex-hook, but should reside in the OSGi container so that it can be referenced by packages.
 . Integration tests for the running SR Instance, including additional Apache Felix Health Checks, write-read operations on the JCR repository and Composum console verification. The https://github.com/apache/sling-org-apache-sling-starter/tree/master/src/test/java/org/apache/sling/launchpad[Apache Sling Starter integration tests] can serve as an example.
 . JMX plugin for the Apache Felix Web Console.
+. i18n support.
 
 == License
 The program is subject to MIT No Attribution License
