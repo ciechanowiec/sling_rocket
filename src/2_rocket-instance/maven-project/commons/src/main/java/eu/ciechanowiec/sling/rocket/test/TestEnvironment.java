@@ -29,6 +29,7 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.context.SlingContextImpl;
 import org.apache.sling.testing.mock.sling.junit5.SlingContext;
 import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -76,33 +77,39 @@ public abstract class TestEnvironment {
     /**
      * {@link FullResourceAccess} that can be used in the test environment to acquire access to resources.
      */
-    protected final FullResourceAccess fullResourceAccess;
+    protected FullResourceAccess fullResourceAccess;
 
     /**
      * Constructs an instance of this class.
+     *
      * @param resourceResolverType the type of {@link ResourceResolver} to be used for the persistence layer
      */
     @SneakyThrows
-    @SuppressWarnings({"resource", "squid:S5993", "squid:S2440"})
-    public TestEnvironment(ResourceResolverType resourceResolverType) {
+    protected TestEnvironment(ResourceResolverType resourceResolverType) {
         log.debug("Initializing {} with {}", TestEnvironment.class.getSimpleName(), resourceResolverType);
         context = new SlingContext(resourceResolverType);
+    }
+
+    @BeforeEach
+    @SuppressWarnings({"resource", "squid:S5993", "squid:S2440"})
+    void sharedSetup() {
         log.debug("Triggering RR initialization");
         context.resourceResolver(); // trigger RR initialization
-        ServiceUserMapped serviceUserMapped = new ServiceUserMapped() { };
         Map<String, Object> props = Map.of(ServiceUserMapped.SUBSERVICENAME, FullResourceAccess.SUBSERVICE_NAME);
-        context.registerService(ServiceUserMapped.class, serviceUserMapped, props);
+        context.registerService(ServiceUserMapped.class, new ServiceUserMapped() { }, props);
         fullResourceAccess = mock(FullResourceAccess.class);
-        boolean isRealOak = resourceResolverType == ResourceResolverType.JCR_OAK;
-        doAnswer(invocation -> {
-            AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
-            if (isRealOak && !passedAuthIDUser.get().equals(MockJcr.DEFAULT_USER_ID)) {
-                return getRRForUser(passedAuthIDUser);
-            } else {
-                return getFreshAdminRR();
-            }
-        }).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
-        doAnswer(invocation -> getFreshAdminRR()).when(fullResourceAccess).acquireAccess();
+        boolean isRealOak = context.resourceResolverType() == ResourceResolverType.JCR_OAK;
+        lenient().doAnswer(
+                invocation -> {
+                    AuthIDUser passedAuthIDUser = invocation.getArgument(NumberUtils.INTEGER_ZERO);
+                    if (isRealOak && !passedAuthIDUser.get().equals(MockJcr.DEFAULT_USER_ID)) {
+                        return getRRForUser(passedAuthIDUser);
+                    } else {
+                        return getFreshAdminRR();
+                    }
+                }
+        ).when(fullResourceAccess).acquireAccess(any(AuthIDUser.class));
+        lenient().doAnswer(invocation -> getFreshAdminRR()).when(fullResourceAccess).acquireAccess();
         context.registerInjectActivateService(fullResourceAccess);
         log.debug("Registered {}", fullResourceAccess);
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
@@ -113,6 +120,7 @@ public abstract class TestEnvironment {
      * <p>
      * The {@link User} for which the {@link ResourceResolver} is returned must be loggable with
      * {@link SimpleCredentials} and {@link DataSourceConfig#PASSWORD} as the password.
+     *
      * @param authIDUser {@link AuthIDUser} for which a {@link ResourceResolver} should be returned.
      * @return {@link ResourceResolver} for a {@link User} represented by the specified {@link AuthIDUser}
      */
@@ -147,6 +155,7 @@ public abstract class TestEnvironment {
 
     /**
      * Loads a resource from the classpath and saves it to a new temporary {@link File} on the disk.
+     *
      * @param resourceName name of the resource to be loaded
      * @return {@link File} that was created
      */
@@ -188,6 +197,7 @@ public abstract class TestEnvironment {
     /**
      * Retrieves an {@link AuthID} of a {@link User} specified by the passed {@link AuthIDUser}.
      * If the {@link User} doesn't already exist, it is created.
+     *
      * @param authIDUser {@link AuthIDUser} for the retrieved {@link User}.
      * @return {@link AuthID} for the retrieved {@link User}.
      */
@@ -198,6 +208,7 @@ public abstract class TestEnvironment {
     /**
      * Retrieves an {@link AuthID} of a {@link Group} specified by the passed {@link AuthIDGroup}.
      * If the {@link Group} doesn't already exist, it is created.
+     *
      * @param authIDGroup {@link AuthIDGroup} for the retrieved {@link Group}.
      * @return {@link AuthID} for the retrieved {@link Group}.
      */

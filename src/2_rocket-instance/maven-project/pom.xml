@@ -63,6 +63,8 @@
         <sling.port>8080</sling.port>
         <sling.user>admin</sling.user>
         <sling.password>admin</sling.password>
+        <sling.mock.resourceresolverfactoryactivator.timeout.ms>2000
+        </sling.mock.resourceresolverfactoryactivator.timeout.ms>
         <!-- ====================================================================== -->
         <!-- NON_OSGI_DEPENDENCIES                                                  -->
         <!-- ====================================================================== -->
@@ -264,7 +266,7 @@
         <org.apache.sling.event.dea.version>1.1.6</org.apache.sling.event.dea.version>
         <org.apache.sling.event.version>4.3.14</org.apache.sling.event.version>
         <org.apache.sling.servlets.resolver.version>2.11.8</org.apache.sling.servlets.resolver.version>
-        <org.apache.sling.caconfig.impl.version>1.6.0</org.apache.sling.caconfig.impl.version>
+        <org.apache.sling.caconfig.impl.version>1.7.2</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>1.4.6</org.apache.sling.servlet-helpers.version>
         <org.apache.sling.auth.oauth-client.version>0.1.0</org.apache.sling.auth.oauth-client.version>
         <!-- ====================================================================== -->
@@ -362,13 +364,13 @@
         <mockito-core.version>5.16.1</mockito-core.version>
         <mockito-junit-jupiter.version>5.16.1</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
-        <org.apache.sling.testing.sling-mock.junit5.version>3.5.2</org.apache.sling.testing.sling-mock.junit5.version>
+        <org.apache.sling.testing.sling-mock.junit5.version>3.5.4</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>
-        <org.apache.sling.testing.sling-mock.core.version>3.5.2</org.apache.sling.testing.sling-mock.core.version>
+        <org.apache.sling.testing.sling-mock.core.version>3.5.4</org.apache.sling.testing.sling-mock.core.version>
         <!-- ====================================================================== -->
         <!-- PLUGINS                                                                -->
         <!-- ====================================================================== -->
-        <wcmio-content-package-maven-plugin.version>2.1.6</wcmio-content-package-maven-plugin.version>
+        <wcmio-content-package-maven-plugin.version>2.2.0</wcmio-content-package-maven-plugin.version>
         <sling-maven-plugin.version>3.0.4</sling-maven-plugin.version>
         <filevault-package-maven-plugin.version>1.4.0</filevault-package-maven-plugin.version>
         <sling.nodetypes.version>12.0.0</sling.nodetypes.version>
@@ -2160,6 +2162,12 @@
                 <version>${org.apache.sling.testing.sling-mock.core.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -2277,6 +2285,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <sling.mock.resourceresolverfactoryactivator.timeout.ms>
+                                ${sling.mock.resourceresolverfactoryactivator.timeout.ms}
+                            </sling.mock.resourceresolverfactoryactivator.timeout.ms>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -2287,6 +2302,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven-failsafe-plugin.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <sling.mock.resourceresolverfactoryactivator.timeout.ms>
+                                ${sling.mock.resourceresolverfactoryactivator.timeout.ms}
+                            </sling.mock.resourceresolverfactoryactivator.timeout.ms>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2588,6 +2610,14 @@
                             <rule>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
+                                <ignoreVersion>
+                                    <type>regex</type>
+                                    <version>2.*</version>
+                                </ignoreVersion>
+                            </rule>
+                            <rule>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>slf4j-simple</artifactId>
                                 <ignoreVersion>
                                     <type>regex</type>
                                     <version>2.*</version>

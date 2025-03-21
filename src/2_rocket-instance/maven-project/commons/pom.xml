@@ -182,9 +182,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <!-- For enabling logging in tests -->
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.log</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
