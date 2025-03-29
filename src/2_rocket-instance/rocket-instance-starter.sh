@@ -1,6 +1,10 @@
 #!/bin/bash
 
 SLING_DIR=${SLING_DIR:-/opt/sling}
+echo "=================================================="
+echo "|               SLING ROCKET START               |"
+echo "|$(date)                                         |"
+echo "=================================================="
 echo "[INFO] SLING_DIR=$SLING_DIR"
 HTTP_PORT="${HTTP_PORT:-8080}"
 echo "[INFO] HTTP_PORT=$HTTP_PORT"

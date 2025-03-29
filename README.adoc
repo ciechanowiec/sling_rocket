@@ -26,7 +26,7 @@ _Sling Rocket_ is a framework for building dynamic web applications.
 
 === Sling Rocket Components
 
-_Sling Rocket_ consists of three basic parts:
+_Sling Rocket_ consists of four basic parts:
 [upperalpha]
 . Sling Rocket Parent POM ("*SR Parent POM*")
 +
@@ -39,10 +39,57 @@ A Maven project object model that declaratively describes basic and universal ap
 .. Defined by the SR Parent POM.
 .. Has an embedded NoSQL database - Apache Jackrabbit Oak (Java Content Repository, JCR). It can be simultaneously connected to other databases.
 +
+. Sling Rocket Backuper ("*SR Backuper*")
++
+Application that performs backups of the database via backing it up into a separate destination.
 . Sling Rocket Nginx ("*SR Nginx*")
 +
 Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It is responsible for all incoming and outgoing HTTP(S) traffic.
 
+image::sling-rocket-components-diagram.svg[]
+
+.Raw diagram
+[%collapsible]
+====
+[ditaa, shadows=false, separation=false, target=sling-rocket-components-diagram, format=svg, opts=inline]
+....
+                                                                /--------------\
+                                                                |              |
+                                                                | SR Parent POM|
+                                                                |   c68F       |
+                                                                \-------+------/
+                                                                        |
+                                                                        |defines SR Instance
+                                                                        |
+                                                                        v
++-------------------+          +-------------------+          +---------+---------+
+|                   |   HTTP   |                   |   HTTP   |                   |
+|   Outside world   +<-------->|      SR Nginx     +<-------->|    SR Instance    |
+|{io}               |          |c1FF               |          | cGRE              |
++-------------------+          +-------------------+          | +---------------+ |
+                                                              | |               | |
+                                                              | |    database   | |
+                                                              | |{s} cPNK       | |
+                                                              +-+-------+-------+-+
+                                                                        |
+                                                                        |
+                                                                        v
+                                                                +---------------+
+                                                                |               |
+                                                                |  SR Backuper  |
+                                                                |cDAF           |
+                                                                +-------+-------+
+                                                                        |
+                                                                        |backups the database
+                                                                        v
+                                                                +---------------+
+                                                                :               |
+                                                                |    database   |
+                                                                |     backup    |
+                                                                |{s}cPNK        |
+                                                                +---------------+
+....
+====
 
 === Business Applications Development Flow
 The development of business applications for _Sling Rocket_ has this flow:
@@ -50,6 +97,9 @@ The development of business applications for _Sling Rocket_ has this flow:
 [upperalpha]
 . Deploy an SR Instance.
 . Develop a business application with the SR Parent POM.
++
+[TIP]
+As a template for the business application https://github.com/ciechanowiec/slexamplus[Slexamplus,window=_blank] can be used.
 . Deploy the business application to the SR Instance.
 . The SR Parent POM will provide the business application with all dependencies and configurations available in the targeted SR Instance. In other words, the SR Parent POM will give the business application the environment in which it will run, as the SR Instance itself was built using the same SR Parent POM.
 . The business application can override the default application components of the targeted SR Instance.
@@ -61,37 +111,54 @@ image::sling-rocket-architecture-diagram.svg[]
 ====
 [ditaa, shadows=false, separation=false, target=sling-rocket-architecture-diagram, format=svg, opts=inline]
 ....
-                                          /--------------\
-                                          |              |
-                                          | SR Parent POM|
-                                          |   c68F       |
-                                          \-------+------/
-                                                  |
-                   +------------------------------+------------------------------+
-                   |                              |                              |
-                   v                              |                              v
-      +------------------------+                  |                  +------------------------+
-      :                        |                  |                  :                        |
-      |   business application |                  |                  |   business application |
-      |          "UNO"         |                  |                  |          "DUO"         |
-      |                        |                  |                  |                        |
-      +------------+-----------+                  |                  +-----------+------------+
-                   |                              v                              |
-                   |                   +-------------------+                     |
-                   |                   |                   |                     |
-                   +------------------>|    SR Instance    |<--------------------+
-                                       | cGRE              |
-                                       | +---------------+ |
-                                       | |               | |
-                                       | |    database   | |
-                                       | |{s} cPNK       | |
-                                       +-+---------------+-+
+                                           /--------------\
+                                           |              |
+                                           | SR Parent POM|
+                                           |   c68F       |
+                                           \-------+------/
+                                                   |
+                   +-------------------------------+--------------------------------+
+                   |                               |                                |
+                   v                               |                                v
+      +------------------------+                   |                    +------------------------+
+      :                        |                   |                    :                        |
+      |   business application |                   |                    |   business application |
+      |          "UNO"         |                   |                    |          "DUO"         |
+      |                        |                   |                    |                        |
+      +------------+-----------+                   |                    +-----------+------------+
+                   |                               v                                |
+                   |                     +-------------------+                      |
+                   |                     |                   |                      |
+                   +-------------------->|    SR Instance    |<---------------------+
+                       is deployed       | cGRE              |      is deployed
+                     into SR Instance    | +---------------+ |    into SR Instance
+                                         | |               | |
+                                         | |    database   | |
+                                         | |{s} cPNK       | |
+                                         +-+---------------+-+
 ....
 ====
 
 == Usage
+=== `docker-compose.yml`
+[upperalpha]
+. _Sling Rocket_ is supposed to be run and managed using the `docker-compose.yml` file located in the root of this repository.
+. The `docker-compose.yml` file defines default setup of _Sling Rocket_ components and can be adjusted according to the specific needs of a given deployment, hence serve as a template for custom deployments.
+. The default `docker-compose.yml` contains a setup of the following _Sling Rocket_ components:
+[upperroman]
+.. SR Instance - `rocket-instance` container.
+.. SR Backuper - `rocket-backuper` container.
+.. SR Nginx - `rocket-nginx` container.
+. To bootstrap _Sling Rocket_ with a default setup, run the following commands:
++
+[source,bash]
+....
+curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
+docker compose up -d
+....
 
-The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `14.0.2`, the version of the SR Instance must also be `14.0.2`.
+=== SR Parent POM and SR Instance Versions
+The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `14.0.4`, the version of the SR Instance must also be `14.0.4`.
 
 === SR Parent POM
 
@@ -101,29 +168,75 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 <parent>
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>14.0.2</version>
+    <version>14.0.4</version>
 </parent>
 ....
 
 === SR Instance
 
-The SR Instance is intended to run as a Docker container with the persistence layer extracted into a separate volume with rolling backups. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`. It is recommended to run and manage the SR Instance using a `docker-compose.yml` file located in the root of this repository, which can be adjusted according to the specific needs of a given deployment:
-
-[source,bash]
-....
-curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
-docker compose up -d
-....
+The SR Instance is intended to run as a Docker container with the persistence layer extracted into separate volumes. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`.
 
 ==== Persistence and Application Files
 
-Static files related to an SR Instance reside in `/opt/sling`. These files are of two types: _persistence files_ and _application files_.
+Static files related to an SR Instance reside in `/opt/sling`. Typical structure of that directory looks this way:
+[source,bash]
+....
+/opt/sling
+├── bin <1>
+│   ├── launcher
+│   └── launcher.bat
+├── dump-rocket-data.sh <2>
+├── launcher <3>
+│   ├── cache
+│   ├── framework <4>
+│   ├── install <5>
+│   ├── logs <6>
+│   ├── repository <7>
+│   │   ├── index <8>
+│   │   ├── segmentstore <9>
+│   │   │   ├── data00000a.tar
+│   │   │   ├── data00001a.tar
+│   │   │   ├── journal.log
+│   │   │   ├── manifest
+│   │   │   └── repo.lock
+│   └── resources
+├── lib
+│   ├── commons-cli-1.4.jar
+│   ├── commons-lang3-3.12.0.jar
+│   ├── commons-text-1.10.0.jar
+│   ├── jakarta.json-api-2.0.2.jar
+│   ├── johnzon-core-1.2.19-jakarta.jar
+│   ├── org.apache.felix.cm.json-2.0.0.jar
+│   ├── org.apache.sling.feature-2.0.4.jar
+│   ├── org.apache.sling.feature.launcher-1.3.2.jar
+│   ├── org.osgi.util.converter-1.0.9.jar
+│   ├── org.osgi.util.function-1.0.0.jar
+│   ├── osgi.core-8.0.0.jar
+│   ├── slf4j-api-1.7.25.jar
+│   └── slf4j-simple-1.7.25.jar
+├── oak-run-1.76.0.jar <10>
+├── rocket-instance-starter.sh <11>
+└── sling.rocket.feature-14.0.4-oak_tar.far <12>
+....
+<1> scripts that launch the SR Instance
+<2> script that dumps the database into a separate destination
+<3> https://sling.apache.org/documentation/configuration.html[`sling.home`] directory where basic SR Instance files are stored
+<4> https://felix.apache.org/documentation/subprojects/apache-felix-framework/apache-felix-framework-bundle-cache.html[`org.osgi.framework.storage`] directory with bundles cache
+<5> https://sling.apache.org/documentation/bundles/file-installer-provider.html[`sling.fileinstall.dir`] directory; artifacts put into this directory are automatically installed when SR Instance starts
+<6> https://sling.apache.org/documentation/development/logging.html[log files]
+<7> https://jackrabbit.apache.org/oak/docs/osgi_config.html[`repository.home`] directory where the database files are stored
+<8> https://jackrabbit.apache.org/oak/docs/query/lucene.html[`localIndexDir`] directory where database indexes are stored
+<9> https://jackrabbit.apache.org/oak/docs/osgi_config.html[`segmentstore`] directory with <<Persistence Files>>, i.e. Segment Node Storage files
+<10> https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md[Oak Run tool] for operations on the database
+<11> proxy script that launches the SR Instance
+<12> OSGi Feature that describes the SR Instance
+
+All static files residing in `/opt/sling` are of two types: _persistence files_ and _application files_.
 
 ===== Persistence Files
-
-As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
+As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage^]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
 [upperalpha]
-. should be mounted as a persistent Docker volume for a given SR Instance,
+. should be mounted as a persistent volume for a given SR Instance,
 . should be retained and reused between _Sling Rocket_ updates for a given SR Instance.
 
 ===== Application Files
@@ -134,22 +247,111 @@ Static files related to an SR Instance that reside in `/opt/sling` but aren't _p
 . are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
 . do not persistently store any business data.
 
-==== Backups Restoration
+==== Volumes
+SR Instance has two volumes attached to it: `rocket-data-raw` and `rocket-data-dump`.
 
-The mechanism for performing a full backup restoration of the SR Instance is as follows:
+===== `rocket-data-raw`
+The `rocket-data-raw` volume is mounted at `/opt/sling/launcher/repository/segmentstore`. It contains all actual _persistence files_ of the SR Instance. Therefore, this volume is the actual database of the SR Instance.
+
+===== `rocket-data-dump`
+The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where `/opt/sling/dump-rocket-data.sh` puts the database dumps created out of persistence files, i.e. out of Segment Node Storage at `/opt/sling/launcher/repository/segmentstore`. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup] Oak Run command are stored, i.e. the dumps represented as tar files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export] Oak Run command are stored, i.e. the dumps represented as human-readable json files with referenced binary files.
+
+image::sling-rocket-backuper-diagram.svg[]
+
+.Raw diagram
+[%collapsible]
+====
+[ditaa, shadows=false, separation=false, target=sling-rocket-backuper-diagram, format=svg, opts=inline]
+....
+                                             +---------+---------+
+                                             |                   |
+                                             |    SR Instance    |
+                                             | cGRE              |
+                                             | +---------------+ |
+                                             | |               | |
+                                             | |    database   | |
+                                             | |{s} cPNK       | |
+                                             +-+-------+-------+-+
+                                                       |
+                                                       |volumes
+                                                       |
+                      +--------------------------------+--------------------------------------+
+                      |                                                                       |
+                      |rocket–data–raw                                                        |rocket–data–dump
+                      |                                                                       |
+                      v                                                                       v
++---------------------+---------------------+              +----------------------------------+--------------------------------+
+| {s} cFEE                                  |              | {s} cFEE                   database dumps                         |
+|                                           |              |                        /var/rocket–data–dump                      |
+|/opt/sling/launcher/repository/segmentstore|              |    +----------------------------+  +----------------------------+ |
+|                                           |              |    |/var/rocket–data–dump/backup|  |/var/rocket–data–dump/export| |
+|                                           |              |    |                            |  |                            | |
+|             persistence files             |              |    |          tar files         |  |json + related binary files | |
+|                                           |              |    |                            |  |                            | |
+|                                           |              |    |cFEE                        |  |cFEE                        | |
+|                                           |              |    +----------------------------+  +----------------------------+ |
++-------------------------------------------+              +-------------------------------------------------------------------+
+....
+====
+
+=== SR Backuper
+
+SR Backuper is an application that performs backups of the database via backing it up into a separate destination on the host machine. It is done via backing up the contents of `rocket-data-raw` (`/opt/sling/launcher/repository/segmentstore`) and `rocket–data–dump` (`/var/rocket–data–dump`) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
+
+A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a tar archive. Internally, that archive has the following structure:
+
+[source,bash]
+....
+rocket-backup-2025-03-01T11-00-00.tar.gz
+└── backup
+    ├── rocket-data-dump <1>
+    │   ├── backup <2>
+    │   │   ├── data00000a.tar
+    │   │   ├── gc.log
+    │   │   ├── journal.log
+    │   │   ├── manifest
+    │   │   └── repo.lock
+    │   └── export <3>
+    │       ├── blobs
+    │       └── nodestates.json
+    └── rocket-data-raw <4>
+        ├── data00000a.tar
+        ├── data00001a.tar
+        ├── data00001a.tar.2.ro.bak
+        ├── data00001a.tar.ro.bak
+        ├── journal.log
+        ├── manifest
+        └── repo.lock
+....
+<1> content of `rocket-data-dump` volume (`/var/rocket–data–dump`)
+<2> content of `/var/rocket–data–dump/backup` path from the `rocket-data-dump` volume
+<3> content of `/var/rocket–data–dump/export` path from the `rocket-data-dump` volume
+<4> content of `rocket-data-raw` volume (`/opt/sling/launcher/repository/segmentstore`)
+
+==== Backups Trigger
+Backups are performed regularly and automatically according to the schedule configured in the `docker-compose.yml` file.
+
+A backup can also be triggered manually by running the following command:
+[source,bash]
+....
+docker exec rocket-backup backup
+....
+
+==== Backups Restoration
+The database can be restored both from the `rocket-data-dump` volume backup, as well as from the `rocket-data-raw` volume backup. The latter one is the recommended way of restoring the database and can be performed as follows:
 
 [upperalpha]
-. Remove all SR Instance Docker artifacts, i.e., the `rocket-instance` container and the `rocket-data` volume:
+. Remove SR Instance container (`rocket-instance`) and volumes (`rocket-data-raw` and `rocket-data-dump`):
 +
 [source,bash]
 ....
 docker container rm -f rocket-instance
-docker volume rm rocket-data
+docker volume rm rocket-data-raw rocket-data-dump
 ....
 
-. Restore the backup archive that contains the persistence files into a new `rocket-data` volume before running a new `rocket-instance` container.
+. Restore the backup archive that contains the persistence files into a new `rocket-data-raw` volume before running a new `rocket-instance` container.
 +
-Assuming that backups are stored in the `$HOME/backups` directory and the backup archive is named `backup-2025-03-05T01-00-00.tar.gz`, you can use a command structure like the following:
+Assuming that backups are stored in the `$HOME/backups` directory and the backup archive is named `rocket-backup-2025-03-05T01-00-00.tar.gz`, you can use a command structure like the following:
 +
 [source,bash]
 ....
@@ -157,42 +359,37 @@ docker run \
   --interactive \
   --tty \
   --rm \
-  --volume rocket-data:/restore \
+  --volume rocket-data-raw:/restore \
   --volume "$HOME/backups:/archive:ro" \
   alpine \
   tar --extract --verbose --gzip \
-      --file /archive/backup-2025-03-05T01-00-00.tar.gz \
+      --file /archive/rocket-backup-2025-03-05T01-00-00.tar.gz \
       --directory /restore \
-      --strip-components=2
+      --strip-components=2 \
+      backup/rocket-data-raw
 ....
 +
 In the example above:
 [upperroman]
-.. The volume `rocket-data` (where the restored persistent files will be located) is mounted at `/restore` inside the temporary container.
+.. The volume `rocket-data-raw` (where the restored persistent files will be located) is mounted at `/restore` inside the temporary container.
 .. The local backups directory (`$HOME/backups`) is mounted in read-only mode at `/archive` inside the temporary container.
 .. The `tar` command expands the backup archive that contains the persistent files into `/restore`, thereby placing all persistent files from the archive there.
 .. The `--strip-components=2` parameter removes the first two path components from the extracted files (due to the default structure of the backups).
 
-. In the `volumes` section of the `docker-compose.yml` file, adjust the `rocket-data` configuration by adding the `external: true` parameter:
+. In the `volumes` section of the `docker-compose.yml` file, adjust the `rocket-data-raw` configuration by adding the `external: true` parameter:
 +
 [source,yml]
 ....
 volumes:
-    rocket-data:
-        name: "rocket-data"
+    rocket-data-raw:
+        name: "rocket-data-raw"
         external: true
 ....
 
-. Run a new `rocket-instance` container. It will automatically attach to the newly created `rocket-data` volume, ensuring that the restored SR Instance state (i.e., persistent files) is accurately reflected in the running application.
+. Run a new `rocket-instance` container. It will automatically attach to the newly created `rocket-data-raw` volume, ensuring that the restored SR Instance state (i.e., persistent files) is accurately reflected in the running application.
 
 === SR Nginx
-In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`. Just like in case of an SR Instance, it is recommended to run and manage the SR Nginx using a `docker-compose.yml` file located in the root of this repository, which can be adjusted according to the specific needs of a given deployment:
-
-[source,bash]
-....
-curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/docker-compose.yml > docker-compose.yml
-docker compose up -d
-....
+In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`.
 
 The image of an SR Nginx includes a default configuration file at `/etc/nginx/nginx.conf`. This file is a template that can be customized according to the specific needs of a given deployment. Among others, it can be done via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
 
@@ -205,46 +402,78 @@ volumes:
     read_only: true
 ....
 
+
+
 == Miscellaneous
 
 === Apache Sling
 
-_Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling] framework. As a starting point for the build, the 14th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter] was used.
+_Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling,window=_blank] framework. As a starting point for the build, the 14th SNAPSHOT version of the https://github.com/apache/sling-org-apache-sling-starter[Apache Sling Starter,window=_blank] was used.
 
-=== Publishing
+=== Building & Publishing
 
-Publication of new versions of _Sling Rocket_ consists of the following steps:
+==== Public
+Public building and publication of new versions of _Sling Rocket_ is driven by GitHub workflows defined at `.github/workflows` directory. It consists of two following steps:
 [upperalpha]
-. Build and publish the SR Parent POM and subordinate artifacts in the Maven Central Repository:
+. Build and publish the SR Parent POM and subordinate artifacts in the Maven Central Repository via running the `.github/workflows/release-maven-artifacts.yaml` workflow.
+. Build and publish the SR Instance image and SR Nginx image in Docker Hub via running the `.github/workflows/release-docker-images.yaml` workflow.
+
+==== Local
+Local builds of _Sling Rocket_ consist of two following steps:
+[upperalpha]
+. Build the SR Parent POM and subordinate artifacts and install them in the local Maven Central Repository:
 +
 [source,bash]
 ....
 cd "$PROJECT_REPO_ROOT"/src/2_rocket-instance/maven-project
-mvn clean deploy -P release
+mvn clean install
 ....
 +
-. Build and publish the SR Instance image and SR Nginx image in Docker Hub:
+. Build _Sling Rocket_ images:
 +
 [source,bash]
 ....
 cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
-docker push ciechanowiec/rocket-instance:14.0.2 && docker push ciechanowiec/rocket-nginx:14.0.2
 ....
 
 === Access Password
-By default, _Sling Rocket_ allows access via a user `admin` with the password `admin`. For production deployments this password should be changed according to the respective https://sling.apache.org/documentation/bundles/managing-users-and-groups-jackrabbit-usermanager.html[Apache Sling instruction]. A command to change the password might look the following way:
+By default, _Sling Rocket_ allows access via a user `admin` with the password `admin`. For production deployments this password should be changed according to the respective https://sling.apache.org/documentation/bundles/managing-users-and-groups-jackrabbit-usermanager.html[Apache Sling instruction,window=_blank]. A command to change the password might look the following way:
 [source,bash]
 ....
 curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -FnewPwdConfirm=passwordus-novus \
   http://localhost:8080/system/userManager/user/admin.changePassword.html
 ....
 
+=== Useful Links
+
+The list below contains useful links to default administration tools of an SR instance.
+[upperalpha]
+. JCR Browser:
++
+http://localhost:8080/bin/browser.html
+. OSGi bundles:
++
+http://localhost:8080/system/console/bundles
+. OSGi components:
++
+http://localhost:8080/system/console/components
+. OSGi configurations:
++
+http://localhost:8080/system/console/configMgr
+. Requests tracker:
++
+http://localhost:8080/system/console/requests
+. Online logs:
++
+http://localhost:8080/system/console/slinglog
+
+
 === Ideas to be Considered for Implementation
 
 [upperalpha]
-. Implementing an https://jackrabbit.apache.org/filevault/installhooks.html[installation hook] for index deployments, similar to https://github.com/code-distillery/filevault-oak-reindex-hook, but should reside in the OSGi container so that it can be referenced by packages.
-. Integration tests for the running SR Instance, including additional Apache Felix Health Checks, write-read operations on the JCR repository and Composum console verification. The https://github.com/apache/sling-org-apache-sling-starter/tree/master/src/test/java/org/apache/sling/launchpad[Apache Sling Starter integration tests] can serve as an example.
+. Implementing an https://jackrabbit.apache.org/filevault/installhooks.html[installation hook,window=_blank] for index deployments, similar to https://github.com/code-distillery/filevault-oak-reindex-hook, but should reside in the OSGi container so that it can be referenced by packages.
+. Integration tests for the running SR Instance, including additional Apache Felix Health Checks, write-read operations on the JCR repository and Composum console verification. The https://github.com/apache/sling-org-apache-sling-starter/tree/master/src/test/java/org/apache/sling/launchpad[Apache Sling Starter integration tests,window=_blank] can serve as an example.
 . JMX plugin for the Apache Felix Web Console.
 . i18n support.
 

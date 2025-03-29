@@ -31,6 +31,34 @@ startSlingInBackground () {
   ./rocket-instance-starter.sh &
 }
 
+setupOakRun () {
+echo ""
+echo "Resolving Jackrabbit Oak version..."
+JACKRABBIT_OAK_VERSION=$(curl --silent --user admin:admin http://localhost:"$HTTP_PORT"/system/console/bundles.json | jq -r '.data[] | select(.symbolicName == "org.apache.jackrabbit.oak-api") | .version')
+echo "Resolved Jackrabbit Oak version: $JACKRABBIT_OAK_VERSION"
+echo "Downloading Oak Run JAR..."
+curl --verbose --remote-name "https://repo1.maven.org/maven2/org/apache/jackrabbit/oak-run/$JACKRABBIT_OAK_VERSION/oak-run-$JACKRABBIT_OAK_VERSION.jar"
+cat > "$SLING_DIR/dump-rocket-data.sh" << EOF
+#!/bin/bash
+
+echo "[\$(date)] Dumping Sling Rocket data stored at \$SLING_DIR/launcher/repository/segmentstore..."
+
+echo "[\$(date)] Removing old dumps..."
+rm -rfv /var/rocket-data-dump/*
+mkdir -p /var/rocket-data-dump/backup
+mkdir -p /var/rocket-data-dump/export
+
+echo "[\$(date)] Dumping data via backup command..."
+java -jar "oak-run-$JACKRABBIT_OAK_VERSION.jar" backup "\$SLING_DIR/launcher/repository/segmentstore" /var/rocket-data-dump/backup
+du -sh /var/rocket-data-dump/backup
+echo "[\$(date)] Dumping data via export command..."
+java -jar "oak-run-$JACKRABBIT_OAK_VERSION.jar" export "\$SLING_DIR/launcher/repository/segmentstore" --blobs true --out /var/rocket-data-dump/export
+du -sh /var/rocket-data-dump/export
+EOF
+echo "Adjusting permissions for the dump script..."
+chmod +x "$SLING_DIR/dump-rocket-data.sh"
+}
+
 updateActualBundlesStatus () {
   echo ""
   echo "Updating actual bundles status..."
@@ -80,4 +108,5 @@ sed -i "s/{{ROCKET_FEATURE_ARTIFACT_FINAL_NAME}}/$ROCKET_FEATURE_ARTIFACT_FINAL_
 downloadLauncher
 startSlingInBackground # warmup and initialize
 waitUntilBundlesStatusMatch
+setupOakRun
 killSling

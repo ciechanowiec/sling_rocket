@@ -38,8 +38,11 @@ services:
     container_name: rocket-instance
     volumes:
       - type: volume
-        source: rocket-data
+        source: rocket-data-raw
         target: /opt/sling/launcher/repository/segmentstore
+      - type: volume
+        source: rocket-data-dump
+        target: /var/rocket-data-dump
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: rocket-instance
@@ -87,8 +90,10 @@ services:
       - rocket-base
 
 volumes:
-  rocket-data:
-    name: "rocket-data"
+  rocket-data-raw:
+    name: "rocket-data-raw"
+  rocket-data-dump:
+    name: "rocket-data-dump"
 
 networks:
   rocket-network:

@@ -11,12 +11,15 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/rocket-instance:14.0.2
+    image: ciechanowiec/rocket-instance:14.0.4
     container_name: rocket-instance
     volumes:
       - type: volume
-        source: rocket-data
+        source: rocket-data-raw
         target: /opt/sling/launcher/repository/segmentstore
+      - type: volume
+        source: rocket-data-dump
+        target: /var/rocket-data-dump
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: rocket-instance
@@ -35,20 +38,25 @@ services:
         mode: host
     labels:
       - "docker-volume-backup.stop-during-backup=false"
+      - "docker-volume-backup.archive-pre=/bin/sh -c '/opt/sling/dump-rocket-data.sh'"
 
-  backup:
+  rocket-backuper:
     environment:
       # Every day at 1:00 a.m.
       BACKUP_CRON_EXPRESSION: "0 1 * * *"
-      BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
-      BACKUP_PRUNING_PREFIX: backup-
+      BACKUP_FILENAME: rocket-backup-%Y-%m-%dT%H-%M-%S.tar.gz
+      BACKUP_PRUNING_PREFIX: rocket-backup-
       BACKUP_RETENTION_DAYS: 7
     image: offen/docker-volume-backup:v2
-    container_name: backup
+    container_name: rocket-backuper
     volumes:
       - type: volume
-        source: rocket-data
-        target: /backup/rocket
+        source: rocket-data-raw
+        target: /backup/rocket-data-raw
+        read_only: true
+      - type: volume
+        source: rocket-data-dump
+        target: /backup/rocket-data-dump
         read_only: true
       - type: bind
         source: /var/run/docker.sock
@@ -60,7 +68,7 @@ services:
         read_only: false
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
-    hostname: backup
+    hostname: rocket-backuper
     networks:
       - rocket-network
     depends_on:
@@ -71,7 +79,7 @@ services:
       DOMAIN: ciechanowiec.hopto.org
       EMAIL: herman@ciechanowiec.eu
       IS_STAGING_ENV: true
-    image: ciechanowiec/rocket-nginx:14.0.2
+    image: ciechanowiec/rocket-nginx:14.0.4
     container_name: rocket-nginx
     hostname: rocket-nginx
     networks:
@@ -87,8 +95,10 @@ services:
         mode: host
 
 volumes:
-  rocket-data:
-    name: "rocket-data"
+  rocket-data-raw:
+    name: "rocket-data-raw"
+  rocket-data-dump:
+    name: "rocket-data-dump"
 
 networks:
   rocket-network:
