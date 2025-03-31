@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>14.0.4</version>
+    <version>14.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -160,8 +160,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>14.0.4</sling.rocket.login-form.version>
-        <sling.rocket.commons.version>14.0.4</sling.rocket.commons.version>
+        <sling.rocket.login-form.version>14.0.6-SNAPSHOT</sling.rocket.login-form.version>
+        <sling.rocket.commons.version>14.0.6-SNAPSHOT</sling.rocket.commons.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -190,7 +190,7 @@
         <!-- ====================================================================== -->
         <!-- LIBS_ASM                                                               -->
         <!-- ====================================================================== -->
-        <asm.version>9.7.1</asm.version>
+        <asm.version>9.8</asm.version>
         <!-- ====================================================================== -->
         <!-- LIBS_COMMONS                                                           -->
         <!-- ====================================================================== -->
@@ -218,7 +218,7 @@
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.0</jackrabbit.version>
         <jackrabbit-oak-db.version>1.76.0</jackrabbit-oak-db.version>
-        <org.apache.jackrabbit.vault.version>3.8.2</org.apache.jackrabbit.vault.version>
+        <org.apache.jackrabbit.vault.version>3.8.4</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
         <!-- OSGI                                                                   -->
@@ -384,9 +384,9 @@
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
