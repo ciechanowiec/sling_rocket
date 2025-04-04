@@ -5,4 +5,5 @@ package eu.ciechanowiec.sling.rocket.llm;
  */
 @SuppressWarnings("WeakerAccess")
 public interface Chat {
+
 }

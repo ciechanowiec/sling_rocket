@@ -35,24 +35,25 @@ public class CCRequestBodyDefault implements ChatCompletionRequestBody {
 
     /**
      * Constructs an instance of this class.
-     * @param model same as {@link LLMConfig#llm_model()}
-     * @param messages list of consecutive {@link ChatMessage}-s from a single {@link Chat}
-     *                 out of which a {@link ChatCompletion} should be generated
-     * @param llmMaxTokens same as {@link LLMConfig#llm_max__tokens()}
+     *
+     * @param model                  same as {@link LLMConfig#llm_model()}
+     * @param messages               list of consecutive {@link ChatMessage}-s from a single {@link Chat} out of which a
+     *                               {@link ChatCompletion} should be generated
+     * @param llmMaxTokens           same as {@link LLMConfig#llm_max__tokens()}
      * @param llmMaxCompletionTokens same as {@link LLMConfig#llm_max__completion__tokens()}
-     * @param llmTemperature same as {@link LLMConfig#llm_temperature()}
-     * @param llmFrequencyPenalty same as {@link LLMConfig#llm_frequency__penalty()}
-     * @param llmTopP same as {@link LLMConfig#llm_top__p()}
+     * @param llmTemperature         same as {@link LLMConfig#llm_temperature()}
+     * @param llmFrequencyPenalty    same as {@link LLMConfig#llm_frequency__penalty()}
+     * @param llmTopP                same as {@link LLMConfig#llm_top__p()}
      */
     @SuppressWarnings({"ConstructorWithTooManyParameters", "ParameterNumber", "PMD.ExcessiveParameterList"})
     public CCRequestBodyDefault(
-            String model,
-            List<ChatMessage> messages,
-            Supplier<Optional<Integer>> llmMaxTokens,
-            Supplier<Optional<Integer>> llmMaxCompletionTokens,
-            Supplier<Optional<Float>> llmTemperature,
-            Supplier<Optional<Float>> llmFrequencyPenalty,
-            Supplier<Optional<Float>> llmTopP
+        String model,
+        List<ChatMessage> messages,
+        Supplier<Optional<Integer>> llmMaxTokens,
+        Supplier<Optional<Integer>> llmMaxCompletionTokens,
+        Supplier<Optional<Float>> llmTemperature,
+        Supplier<Optional<Float>> llmFrequencyPenalty,
+        Supplier<Optional<Float>> llmTopP
     ) {
         this.model = model;
         this.messages = Collections.unmodifiableList(messages);
@@ -65,9 +66,10 @@ public class CCRequestBodyDefault implements ChatCompletionRequestBody {
 
     /**
      * Constructs an instance of this class.
-     * @param model same as {@link LLMConfig#llm_model()}
-     * @param messages list of consecutive {@link ChatMessage}-s from a single {@link Chat}
-     *                 out of which a {@link ChatCompletion} should be generated
+     *
+     * @param model    same as {@link LLMConfig#llm_model()}
+     * @param messages list of consecutive {@link ChatMessage}-s from a single {@link Chat} out of which a
+     *                 {@link ChatCompletion} should be generated
      */
     public CCRequestBodyDefault(String model, List<ChatMessage> messages) {
         this(model, messages, Optional::empty, Optional::empty, Optional::empty, Optional::empty, Optional::empty);

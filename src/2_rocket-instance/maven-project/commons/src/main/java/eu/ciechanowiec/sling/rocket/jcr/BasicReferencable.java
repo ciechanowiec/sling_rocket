@@ -22,9 +22,10 @@ public class BasicReferencable implements Referencable {
 
     /**
      * Constructs an instance of this class.
-     * @param withJCRPath object that contains a {@link JCRPath} to the underlying {@link Node}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
+     *
+     * @param withJCRPath    object that contains a {@link JCRPath} to the underlying {@link Node}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public BasicReferencable(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
         this.withJCRPath = withJCRPath;

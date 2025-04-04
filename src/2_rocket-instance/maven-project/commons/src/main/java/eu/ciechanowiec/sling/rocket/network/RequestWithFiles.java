@@ -15,12 +15,13 @@ import java.util.List;
 public interface RequestWithFiles {
 
     /**
-     * Returns {@link MediaType#MULTIPART_FORM_DATA} form fields of the wrapped {@link SlingHttpServletRequest}
-     * (i.e. files uploaded with the request) as {@link File}s temporarily written on the disk. An empty {@link List}
-     * is returned if there are no such form fields for the wrapped {@link SlingHttpServletRequest}.
-     * @return {@link MediaType#MULTIPART_FORM_DATA} form fields of the wrapped {@link SlingHttpServletRequest}
-     *         (i.e. files uploaded with the request) as {@link File}s temporarily written on the disk; an empty
-     *         {@link List} is returned if there are no such form fields for the wrapped {@link SlingHttpServletRequest}
+     * Returns {@link MediaType#MULTIPART_FORM_DATA} form fields of the wrapped {@link SlingHttpServletRequest} (i.e.
+     * files uploaded with the request) as {@link File}s temporarily written on the disk. An empty {@link List} is
+     * returned if there are no such form fields for the wrapped {@link SlingHttpServletRequest}.
+     *
+     * @return {@link MediaType#MULTIPART_FORM_DATA} form fields of the wrapped {@link SlingHttpServletRequest} (i.e.
+     * files uploaded with the request) as {@link File}s temporarily written on the disk; an empty {@link List} is
+     * returned if there are no such form fields for the wrapped {@link SlingHttpServletRequest}
      */
     List<FileWithOriginalName> uploadedFiles();
 }

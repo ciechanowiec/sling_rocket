@@ -73,27 +73,27 @@ class RequestUpload implements RequestWithDecomposition {
         log.trace("{} saving assets at {}", this, parentJCRPath);
         UserResourceAccess userResourceAccess = request.userResourceAccess();
         return request.uploadedFiles()
-                .stream()
-                .map(fileWithOriginalName -> {
-                    File file = fileWithOriginalName.file();
-                    String originalName = fileWithOriginalName.originalName();
-                    return new StagedAssetReal(
-                            () -> Optional.of(file),
-                            new FileMetadata(file)
-                                    .set("originalName", originalName)
-                                    .set("remoteAddress", request.remoteAddress())
-                                    .set("remoteHost", request.remoteHost()),
-                            userResourceAccess
-                    );
-                })
-                .map(SafeSaving::new)
-                .map(safeSaving -> safeSaving.save(new TargetJCRPath(parentJCRPath, UUID.randomUUID())))
-                .flatMap(Optional::stream)
-                .map(
-                        asset -> (Affected) new AssetDescriptor(
-                                asset, doIncludeDownloadLink ? downloadLink.generate(asset) : StringUtils.EMPTY
-                        )
+            .stream()
+            .map(fileWithOriginalName -> {
+                File file = fileWithOriginalName.file();
+                String originalName = fileWithOriginalName.originalName();
+                return new StagedAssetReal(
+                    () -> Optional.of(file),
+                    new FileMetadata(file)
+                        .set("originalName", originalName)
+                        .set("remoteAddress", request.remoteAddress())
+                        .set("remoteHost", request.remoteHost()),
+                    userResourceAccess
+                );
+            })
+            .map(SafeSaving::new)
+            .map(safeSaving -> safeSaving.save(new TargetJCRPath(parentJCRPath, UUID.randomUUID())))
+            .flatMap(Optional::stream)
+            .map(
+                asset -> (Affected) new AssetDescriptor(
+                    asset, doIncludeDownloadLink ? downloadLink.generate(asset) : StringUtils.EMPTY
                 )
-                .toList();
+            )
+            .toList();
     }
 }

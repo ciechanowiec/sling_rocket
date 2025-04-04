@@ -20,8 +20,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * Large language model.
  */
 @Component(
-        service = LLM.class,
-        immediate = true
+    service = LLM.class,
+    immediate = true
 )
 @Slf4j
 @ServiceDescription("Large language model")
@@ -36,27 +36,30 @@ public class LLM implements WithJCRPath {
 
     /**
      * Constructs an instance of this class.
-     * @param config {@link LLMConfig} to configure this {@link LLM}
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
+     *
+     * @param config             {@link LLMConfig} to configure this {@link LLM}
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                           access to resources
      */
     @Activate
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_INFERRED")
     public LLM(
-            LLMConfig config,
-            @Reference(cardinality = ReferenceCardinality.MANDATORY) FullResourceAccess fullResourceAccess
+        LLMConfig config,
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess
     ) {
         this.config = new AtomicReference<>(new LLMConfigObfuscated(config));
         this.fullResourceAccess = fullResourceAccess;
         this.llmStats = new LLMStats(this, fullResourceAccess);
         new SimpleNode(
-                this, fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+            this, fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
         ).ensureNodeExists();
         log.info("Initialized {}", this);
     }
 
     /**
      * Configure this {@link LLM}.
+     *
      * @param config {@link LLMConfig} to configure this {@link LLM}
      */
     @Modified
@@ -65,34 +68,35 @@ public class LLM implements WithJCRPath {
         log.info("Configuring {}", config);
         this.config.set(new LLMConfigObfuscated(config));
         new SimpleNode(
-                this.config.get().jcrHome(), fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+            this.config.get().jcrHome(), fullResourceAccess, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
         ).ensureNodeExists();
         log.info("Configured {}", config);
     }
 
     /**
-     * Generates a {@link ChatCompletion} for a given {@link Chat} out of the passed {@link ChatMessage}-s
-     * from that {@link Chat}.
-     * @param chatMessages list of consecutive {@link ChatMessage}-s from a single {@link Chat}
-     *                     out of which a {@link ChatCompletion} should be generated
+     * Generates a {@link ChatCompletion} for a given {@link Chat} out of the passed {@link ChatMessage}-s from that
+     * {@link Chat}.
+     *
+     * @param chatMessages list of consecutive {@link ChatMessage}-s from a single {@link Chat} out of which a
+     *                     {@link ChatCompletion} should be generated
      * @return {@link ChatCompletion} generated out of the passed {@link ChatMessage}-s
      */
     public ChatCompletion complete(List<ChatMessage> chatMessages) {
         log.trace("{} is completing chat for {}", this, chatMessages);
         LLMConfigObfuscated llmConfigObfuscated = config.get();
         ChatCompletionRequestBody chatCompletionRequestBody = new CCRequestBodyDefault(
-                llmConfigObfuscated.llmModel(),
-                chatMessages,
-                llmConfigObfuscated::llmMaxTokens,
-                llmConfigObfuscated::llmMaxCompletionTokens,
-                () -> Optional.of(llmConfigObfuscated.llmTemperature()),
-                () -> Optional.of(llmConfigObfuscated.llmFrequencyPenalty()),
-                () -> Optional.of(llmConfigObfuscated.llmTopP())
+            llmConfigObfuscated.llmModel(),
+            chatMessages,
+            llmConfigObfuscated::llmMaxTokens,
+            llmConfigObfuscated::llmMaxCompletionTokens,
+            () -> Optional.of(llmConfigObfuscated.llmTemperature()),
+            () -> Optional.of(llmConfigObfuscated.llmFrequencyPenalty()),
+            () -> Optional.of(llmConfigObfuscated.llmTopP())
         );
         ChatCompletionRequest chatCompletionRequest = new CCRequestDefault(
-                llmConfigObfuscated.llmAPIurl(),
-                llmConfigObfuscated.llmAPIBearerToken(),
-                chatCompletionRequestBody
+            llmConfigObfuscated.llmAPIurl(),
+            llmConfigObfuscated.llmAPIBearerToken(),
+            chatCompletionRequestBody
         );
         ChatCompletion chatCompletion = chatCompletionRequest.execute();
         log.trace("{} completed chat for {} with {}", this, chatMessages, chatCompletion);
@@ -102,6 +106,7 @@ public class LLM implements WithJCRPath {
 
     /**
      * Returns {@link LLMStats} of this {@link LLM}.
+     *
      * @return {@link LLMStats} of this {@link LLM}
      */
     public LLMStats llmStats() {
@@ -110,6 +115,7 @@ public class LLM implements WithJCRPath {
 
     /**
      * Same as {@link LLMConfig#llm_context$_$window_size()}.
+     *
      * @return same as {@link LLMConfig#llm_context$_$window_size()}
      */
     public int contextWindowSize() {
@@ -118,6 +124,7 @@ public class LLM implements WithJCRPath {
 
     /**
      * Same as {@link LLMConfig#jcr_home()}.
+     *
      * @return same as {@link LLMConfig#jcr_home()}
      */
     @Override

@@ -9,9 +9,10 @@ import java.util.function.Supplier;
 /**
  * A thread-safe memoizing {@link Supplier}.
  * <p>
- * The {@link MemoizingSupplier} caches the value returned upon the first invocation of {@link Supplier#get()}
- * on the delegate {@link Supplier} and subsequently returns the cached value. This is particularly useful when the
- * delegate {@link Supplier}'s computation is expensive or non-idempotent.
+ * The {@link MemoizingSupplier} caches the value returned upon the first invocation of {@link Supplier#get()} on the
+ * delegate {@link Supplier} and subsequently returns the cached value. This is particularly useful when the delegate
+ * {@link Supplier}'s computation is expensive or non-idempotent.
+ *
  * @param <T> the type of the value returned by the {@link MemoizingSupplier}
  */
 public class MemoizingSupplier<T> implements Supplier<T> {
@@ -49,11 +50,11 @@ public class MemoizingSupplier<T> implements Supplier<T> {
     }
 
     /**
-     * Returns the memoized value if it has already been computed, or computes and caches the value
-     * from the underlying {@link Supplier} if this is the first invocation.
+     * Returns the memoized value if it has already been computed, or computes and caches the value from the underlying
+     * {@link Supplier} if this is the first invocation.
      * <p>
-     * This method is thread-safe and ensures that the delegate {@link Supplier} is invoked at most once,
-     * even in the presence of multiple threads.
+     * This method is thread-safe and ensures that the delegate {@link Supplier} is invoked at most once, even in the
+     * presence of multiple threads.
      * <p>
      * Example usage:
      * <pre>
@@ -67,6 +68,7 @@ public class MemoizingSupplier<T> implements Supplier<T> {
      *     String value1 = memoizingSupplier.get(); // Computes and caches the value
      *     String value2 = memoizingSupplier.get(); // Returns the cached value
      * </pre>
+     *
      * @return the memoized value, either computed from the delegate or retrieved from the cache
      */
     @Override
@@ -89,8 +91,8 @@ public class MemoizingSupplier<T> implements Supplier<T> {
     /**
      * Indicates whether the value has already been computed by the {@link MemoizingSupplier}.
      * <p>
-     * This method returns {@code true} if the delegate {@link Supplier} has been invoked and the
-     * result has been cached, otherwise {@code false}.
+     * This method returns {@code true} if the delegate {@link Supplier} has been invoked and the result has been
+     * cached, otherwise {@code false}.
      * <p>
      * Example usage:
      * <pre>
@@ -101,6 +103,7 @@ public class MemoizingSupplier<T> implements Supplier<T> {
      *     memoizingSupplier.get(); // Triggers computation
      *     boolean afterComputation = memoizingSupplier.wasComputed(); // true
      * </pre>
+     *
      * @return {@code true} if the value has been computed and cached; {@code false} otherwise
      */
     @SuppressWarnings("WeakerAccess")

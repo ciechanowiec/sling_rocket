@@ -11,6 +11,7 @@ public class AuthIDGroup implements AuthID {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param originalAuthID value of an ID of a {@link Group} that will be represented by this {@link AuthIDGroup}
      */
     @SuppressWarnings("WeakerAccess")
@@ -43,7 +44,10 @@ public class AuthIDGroup implements AuthID {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") AuthID comparedAuthID) {
+    public int compareTo(
+        @SuppressWarnings("NullableProblems")
+        AuthID comparedAuthID
+    ) {
         return authIDUniversal.compareTo(comparedAuthID);
     }
 }

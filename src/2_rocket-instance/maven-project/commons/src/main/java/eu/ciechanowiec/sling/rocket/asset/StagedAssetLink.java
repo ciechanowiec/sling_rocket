@@ -15,12 +15,12 @@ import javax.jcr.Repository;
 import java.util.Map;
 
 /**
- * Represents a request to save a new {@link Asset} in the {@link Repository}
- * as a {@link Node} of type {@link Asset#NT_ASSET_LINK}.
+ * Represents a request to save a new {@link Asset} in the {@link Repository} as a {@link Node} of type
+ * {@link Asset#NT_ASSET_LINK}.
  *
- * @param linkedAsset {@link Asset} to which a new {@link Node} of type {@link Asset#NT_ASSET_LINK} should point to
- * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
- *                       object to acquire access to resources
+ * @param linkedAsset    {@link Asset} to which a new {@link Node} of type {@link Asset#NT_ASSET_LINK} should point to
+ * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+ *                       resources
  */
 @Slf4j
 public record StagedAssetLink(Asset linkedAsset, ResourceAccess resourceAccess) implements StagedNode<Asset> {
@@ -34,11 +34,11 @@ public record StagedAssetLink(Asset linkedAsset, ResourceAccess resourceAccess) 
             String linkedJCRUUID = linkedAsset.jcrUUID();
             String targetJCRPathRaw = targetJCRPath.get();
             Resource assetLinkResource = ResourceUtil.getOrCreateResource(
-                    resourceResolver, targetJCRPathRaw,
-                    Map.of(
-                            JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_LINK,
-                            Asset.PN_LINKED_ASSET, linkedJCRUUID
-                    ), null, false
+                resourceResolver, targetJCRPathRaw,
+                Map.of(
+                    JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_LINK,
+                    Asset.PN_LINKED_ASSET, linkedJCRUUID
+                ), null, false
             );
             resourceResolver.commit();
             Asset savedAsset = new UniversalAsset(assetLinkResource, resourceAccess);

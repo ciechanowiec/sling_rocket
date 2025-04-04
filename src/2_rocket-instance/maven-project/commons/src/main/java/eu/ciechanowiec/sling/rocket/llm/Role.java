@@ -42,6 +42,7 @@ public enum Role {
 
     /**
      * Returns the name of this enum constant in lowercase.
+     *
      * @return name of this enum constant in lowercase
      */
     @Override
@@ -51,6 +52,7 @@ public enum Role {
 
     /**
      * Returns the name of this enum constant in lowercase.
+     *
      * @return name of this enum constant in lowercase
      */
     @JsonValue
@@ -59,8 +61,9 @@ public enum Role {
     }
 
     /**
-     * Transforms the specified {@code value} to uppercase, passes it to {@link Role#valueOf(String)}
-     * and returns the result produced by that method. Mainly should be used for deserialization.
+     * Transforms the specified {@code value} to uppercase, passes it to {@link Role#valueOf(String)} and returns the
+     * result produced by that method. Mainly should be used for deserialization.
+     *
      * @param value the name of the enum constant to be returned
      * @return the enum constant related with the specified name
      */

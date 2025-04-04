@@ -20,7 +20,8 @@ public class Status {
 
     /**
      * Constructs an instance of this class.
-     * @param code HTTP error code
+     *
+     * @param code    HTTP error code
      * @param message explanation why this {@link Status} occurred
      */
     @SuppressWarnings("WeakerAccess")

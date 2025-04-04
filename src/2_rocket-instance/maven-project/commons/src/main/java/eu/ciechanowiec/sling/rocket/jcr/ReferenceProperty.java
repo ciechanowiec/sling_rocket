@@ -15,8 +15,8 @@ import javax.jcr.RepositoryException;
 import java.util.Optional;
 
 /**
- * Represents a {@link Property} of type {@link PropertyType#WEAKREFERENCE},
- * {@link PropertyType#REFERENCE} or {@link PropertyType#PATH}.
+ * Represents a {@link Property} of type {@link PropertyType#WEAKREFERENCE}, {@link PropertyType#REFERENCE} or
+ * {@link PropertyType#PATH}.
  */
 @Slf4j
 @ToString
@@ -29,13 +29,14 @@ public class ReferenceProperty {
 
     /**
      * Constructs an instance of this class.
-     * @param jcrPathToNode {@link JCRPath} to a {@link Node} that contains the {@link Property} represented by
-     *                      the constructed object
-     * @param propertyName name of the {@link Property} represented by the constructed object;
-     *                     the {@link Property} must be of type {@link PropertyType#WEAKREFERENCE},
-     *                     {@link PropertyType#REFERENCE} or {@link PropertyType#PATH}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                        object to acquire access to resources
+     *
+     * @param jcrPathToNode  {@link JCRPath} to a {@link Node} that contains the {@link Property} represented by the
+     *                       constructed object
+     * @param propertyName   name of the {@link Property} represented by the constructed object; the {@link Property}
+     *                       must be of type {@link PropertyType#WEAKREFERENCE}, {@link PropertyType#REFERENCE} or
+     *                       {@link PropertyType#PATH}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public ReferenceProperty(JCRPath jcrPathToNode, String propertyName, ResourceAccess resourceAccess) {
         this.jcrPathToNode = jcrPathToNode;
@@ -45,19 +46,20 @@ public class ReferenceProperty {
     }
 
     /**
-     * Returns an {@link Optional} containing the {@link JCRPath} to the {@link Node}
-     * referenced by the {@link Property} represented by this object.
+     * Returns an {@link Optional} containing the {@link JCRPath} to the {@link Node} referenced by the {@link Property}
+     * represented by this object.
+     *
      * @return {@link Optional} containing the {@link JCRPath} to the {@link Node} referenced by the {@link Property}
-     *         represented by this object; empty {@link Optional} is returned if the referenced {@link Node} can't be
-     *         identified
+     * represented by this object; empty {@link Optional} is returned if the referenced {@link Node} can't be
+     * identified
      */
     public Optional<JCRPath> referencedNode() {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathToNodeRaw = jcrPathToNode.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathToNodeRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                           .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                           .flatMap(this::referencedNode);
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                .flatMap(this::referencedNode);
         }
     }
 
@@ -72,7 +74,7 @@ public class ReferenceProperty {
             return Optional.of(new TargetJCRPath(referencedPath));
         } catch (RepositoryException exception) {
             String message = String.format(
-                    "Unable to get the referenced node for %s and %s", this, referencingProperty
+                "Unable to get the referenced node for %s and %s", this, referencingProperty
             );
             log.warn(message, exception);
             return Optional.empty();

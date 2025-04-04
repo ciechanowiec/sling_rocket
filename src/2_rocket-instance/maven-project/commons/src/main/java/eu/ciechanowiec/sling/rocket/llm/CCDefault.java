@@ -28,24 +28,25 @@ public class CCDefault implements ChatCompletion {
 
     /**
      * Constructs an instance of this class.
-     * @param id same as {@link ChatCompletion#id()}
+     *
+     * @param id      same as {@link ChatCompletion#id()}
      * @param choices same as {@link ChatCompletion#choices()}
      * @param created same as {@link ChatCompletion#created()}
-     * @param model same as {@link ChatCompletion#model()}
-     * @param usage same as {@link ChatCompletion#usage()}
+     * @param model   same as {@link ChatCompletion#model()}
+     * @param usage   same as {@link ChatCompletion#usage()}
      */
     @SuppressWarnings({"ConstructorWithTooManyParameters", "ParameterNumber", "PMD.ExcessiveParameterList"})
     public CCDefault(
-            @JsonProperty("id")
-            String id,
-            @JsonProperty("choices")
-            List<Choice> choices,
-            @JsonProperty("created")
-            long created,
-            @JsonProperty("model")
-            String model,
-            @JsonProperty("usage")
-            Usage usage
+        @JsonProperty("id")
+        String id,
+        @JsonProperty("choices")
+        List<Choice> choices,
+        @JsonProperty("created")
+        long created,
+        @JsonProperty("model")
+        String model,
+        @JsonProperty("usage")
+        Usage usage
     ) {
         this.id = id;
         this.choices = Collections.unmodifiableList(choices);

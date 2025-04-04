@@ -15,14 +15,13 @@ import java.util.List;
 public interface RequiresPrivilege {
 
     /**
-     * List all {@link Privilege}s that the {@link User} must have assigned in order to interact with
-     * the {@link Repository} via this {@link RequiresPrivilege} entity. Every listed {@link Privilege}
-     * is guaranteed to be one of {@link PrivilegeConstants} fields. Empty {@link List} is returned if
-     * no {@link Privilege}s are required.
-     * @return all {@link Privilege}s that the {@link User} must have assigned in order to interact with
-     *         the {@link Repository} via this {@link RequiresPrivilege} entity;
-     *         every listed {@link Privilege} is guaranteed to be one of {@link PrivilegeConstants} fields;
-     *         empty {@link List} is returned if no {@link Privilege}s are required
+     * List all {@link Privilege}s that the {@link User} must have assigned in order to interact with the
+     * {@link Repository} via this {@link RequiresPrivilege} entity. Every listed {@link Privilege} is guaranteed to be
+     * one of {@link PrivilegeConstants} fields. Empty {@link List} is returned if no {@link Privilege}s are required.
+     *
+     * @return all {@link Privilege}s that the {@link User} must have assigned in order to interact with the
+     * {@link Repository} via this {@link RequiresPrivilege} entity; every listed {@link Privilege} is guaranteed to be
+     * one of {@link PrivilegeConstants} fields; empty {@link List} is returned if no {@link Privilege}s are required
      */
     List<String> requiredPrivileges();
 }

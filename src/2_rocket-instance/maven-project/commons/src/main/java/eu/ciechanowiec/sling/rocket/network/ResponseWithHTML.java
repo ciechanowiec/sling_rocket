@@ -26,9 +26,10 @@ public class ResponseWithHTML {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param wrappedResponse {@link HttpServletResponse} which will be used to send this {@link ResponseWithHTML}
-     * @param htmlToSend HTML {@link String} that will be sent with this {@link Response}
-     * @param httpStatusCode HTTP status code to be sent with this {@link ResponseWithHTML}
+     * @param htmlToSend      HTML {@link String} that will be sent with this {@link Response}
+     * @param httpStatusCode  HTTP status code to be sent with this {@link ResponseWithHTML}
      */
     public ResponseWithHTML(HttpServletResponse wrappedResponse, String htmlToSend, int httpStatusCode) {
         this.wrappedResponse = wrappedResponse;
@@ -40,11 +41,11 @@ public class ResponseWithHTML {
     /**
      * Respond the client to an HTTP request via sending this HTTP {@link ResponseWithHTML}.
      * <p>
-     * This method can be called only once for a given object.
-     * If called more than once or the response has been already committed as specified by
-     * {@link ServletResponse#isCommitted()}, an {@link AlreadySentException} is thrown.
-     * @throws AlreadySentException if this {@link Response} has already been sent or the response
-     * has been already committed as specified by {@link ServletResponse#isCommitted()}
+     * This method can be called only once for a given object. If called more than once or the response has been already
+     * committed as specified by {@link ServletResponse#isCommitted()}, an {@link AlreadySentException} is thrown.
+     *
+     * @throws AlreadySentException if this {@link Response} has already been sent or the response has been already
+     *                              committed as specified by {@link ServletResponse#isCommitted()}
      */
     @SneakyThrows
     public void send() {

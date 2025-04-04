@@ -21,27 +21,28 @@ import java.io.File;
  * Native Sling Rocket statistics.
  */
 @Component(
-        service = {RocketStats.class, NativeStats.class},
-        immediate = true
+    service = {RocketStats.class, NativeStats.class},
+    immediate = true
 )
 @ServiceDescription("Native Sling Rocket statistics")
 @Slf4j
 public class NativeStats implements RocketStats {
 
     /**
-     {@link FullResourceAccess} that will be used by this object to acquire access to resources.
+     * {@link FullResourceAccess} that will be used by this object to acquire access to resources.
      */
     private final FullResourceAccess fullResourceAccess;
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
+     *
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                           access to resources
      */
     @Activate
     public NativeStats(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess
     ) {
         this.fullResourceAccess = fullResourceAccess;
     }
@@ -55,9 +56,9 @@ public class NativeStats implements RocketStats {
         long freeSpace = root.getFreeSpace();
         long occupiedSpace = totalSpace - freeSpace;
         return new DiskStats(
-                new DataSize(totalSpace, DataUnit.BYTES),
-                new DataSize(occupiedSpace, DataUnit.BYTES),
-                new DataSize(freeSpace, DataUnit.BYTES)
+            new DataSize(totalSpace, DataUnit.BYTES),
+            new DataSize(occupiedSpace, DataUnit.BYTES),
+            new DataSize(freeSpace, DataUnit.BYTES)
         );
     }
 

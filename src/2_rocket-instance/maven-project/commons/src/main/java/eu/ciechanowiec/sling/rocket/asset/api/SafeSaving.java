@@ -20,9 +20,11 @@ class SafeSaving {
     }
 
     @SneakyThrows
-    @SuppressWarnings({
+    @SuppressWarnings(
+        {
             "IllegalCatch", "ReturnCount", "MethodWithMultipleReturnPoints", "PMD.AvoidCatchingGenericException"
-    })
+        }
+    )
     Optional<Asset> save(TargetJCRPath targetJCRPath) {
         try {
             return Optional.of(stagedAssetReal.save(targetJCRPath));
@@ -32,7 +34,9 @@ class SafeSaving {
             String message = "Failed to save %s to %s".formatted(stagedAssetReal, targetJCRPath);
             log.warn(message, exception);
             return Optional.empty();
-        } catch (@SuppressWarnings({"OverlyBroadCatchBlock", "squid:S2221"}) Exception exception) {
+        } catch (
+            @SuppressWarnings({"OverlyBroadCatchBlock", "squid:S2221"})
+            Exception exception) {
             boolean isPersistenceException = exception.getClass().isAssignableFrom(PersistenceException.class);
             Conditional.isTrueOrThrow(isPersistenceException, exception);
             String message = "Failed to save %s to %s".formatted(stagedAssetReal, targetJCRPath);

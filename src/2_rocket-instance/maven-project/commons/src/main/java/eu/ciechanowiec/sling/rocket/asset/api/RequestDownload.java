@@ -22,33 +22,33 @@ class RequestDownload implements RequestWithDecomposition {
     RequestDownload(Request request) {
         this.request = request;
         matchingAsset = new MemoizingSupplier<>(
-                () -> request.secondSelector()
-                        .flatMap(
-                                jcrUUID -> new AssetsRepository(
-                                        request.userResourceAccess()
-                                ).find((Referencable) () -> jcrUUID)
-                        )
-                        .filter(
-                                asset -> {
-                                    AssetDescriptor actualAssetDescriptor = new AssetDescriptor(this);
-                                    AssetDescriptor expectedAssetDescriptor = new AssetDescriptor(asset);
-                                    boolean areMatchingDescriptors = expectedAssetDescriptor.equals(
-                                            actualAssetDescriptor
-                                    );
-                                    log.trace(
-                                            "For {} and {} expected asset descriptor is '{}'. "
-                                                    + "Actual asset descriptor is '{}'. "
-                                                    + "Are matching: {}",
-                                            asset, request, expectedAssetDescriptor,
-                                            actualAssetDescriptor, areMatchingDescriptors
-                                    );
-                                    return areMatchingDescriptors;
-                                }
-                        )
-                        .map(asset -> {
-                            log.trace("For {} this asset was matched: {}", request, asset);
-                            return asset;
-                        })
+            () -> request.secondSelector()
+                .flatMap(
+                    jcrUUID -> new AssetsRepository(
+                        request.userResourceAccess()
+                    ).find((Referencable) () -> jcrUUID)
+                )
+                .filter(
+                    asset -> {
+                        AssetDescriptor actualAssetDescriptor = new AssetDescriptor(this);
+                        AssetDescriptor expectedAssetDescriptor = new AssetDescriptor(asset);
+                        boolean areMatchingDescriptors = expectedAssetDescriptor.equals(
+                            actualAssetDescriptor
+                        );
+                        log.trace(
+                            "For {} and {} expected asset descriptor is '{}'. "
+                                + "Actual asset descriptor is '{}'. "
+                                + "Are matching: {}",
+                            asset, request, expectedAssetDescriptor,
+                            actualAssetDescriptor, areMatchingDescriptors
+                        );
+                        return areMatchingDescriptors;
+                    }
+                )
+                .map(asset -> {
+                    log.trace("For {} this asset was matched: {}", request, asset);
+                    return asset;
+                })
         );
     }
 

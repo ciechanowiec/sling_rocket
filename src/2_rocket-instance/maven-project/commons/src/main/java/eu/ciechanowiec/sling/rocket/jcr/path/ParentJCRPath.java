@@ -7,8 +7,8 @@ import javax.jcr.Item;
 import javax.jcr.Repository;
 
 /**
- * Represents a parent path of the persisted or hypothetically persisted {@link Item} in the {@link Repository},
- * upon which some action is to be performed.
+ * Represents a parent path of the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon
+ * which some action is to be performed.
  */
 @ToString
 @Slf4j
@@ -18,6 +18,7 @@ public class ParentJCRPath implements JCRPath {
 
     /**
      * Constructs an instance of this class using a source JCR path.
+     *
      * @param source JCR path to be represented by the constructed object
      */
     public ParentJCRPath(JCRPath source) {
@@ -27,6 +28,7 @@ public class ParentJCRPath implements JCRPath {
 
     /**
      * Constructs an instance of this class using a source JCR path.
+     *
      * @param withJCRPath object that contains a {@link JCRPath} to be represented by the constructed object
      */
     public ParentJCRPath(WithJCRPath withJCRPath) {

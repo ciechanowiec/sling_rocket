@@ -33,9 +33,10 @@ public class ComparableImage {
 
     /**
      * Constructs an instance of this class.
-     * @param fileWithImage {@link File} with the underlying image; the client code must ensure that the {@link File}
-     *                      is a valid image file since for other files there is no guarantee that they will be
-     *                      processed correctly
+     *
+     * @param fileWithImage {@link File} with the underlying image; the client code must ensure that the {@link File} is
+     *                      a valid image file since for other files there is no guarantee that they will be processed
+     *                      correctly
      */
     public ComparableImage(File fileWithImage) {
         this.fileWithImage = fileWithImage;
@@ -86,9 +87,9 @@ public class ComparableImage {
         double normalizedHammingDistance = firstHash.normalizedHammingDistance(secondHash);
         boolean areSimilar = normalizedHammingDistance <= DEFAULT_MAX_NORMALIZED_HAMMING_DISTANCE;
         log.trace(
-                "Distance between {} and {} is {}. Max allowed distance for similarity is {}. "
-              + "Are images similar? Answer: {}", this, comparedImage, normalizedHammingDistance,
-                DEFAULT_MAX_NORMALIZED_HAMMING_DISTANCE, areSimilar
+            "Distance between {} and {} is {}. Max allowed distance for similarity is {}. "
+                + "Are images similar? Answer: {}", this, comparedImage, normalizedHammingDistance,
+            DEFAULT_MAX_NORMALIZED_HAMMING_DISTANCE, areSimilar
         );
         return areSimilar;
     }

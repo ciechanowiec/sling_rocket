@@ -9,6 +9,7 @@ public interface AuthID extends Comparable<AuthID> {
 
     /**
      * Value of an ID of {@link Authorizable}.
+     *
      * @return value of an ID of {@link Authorizable}
      */
     String get();

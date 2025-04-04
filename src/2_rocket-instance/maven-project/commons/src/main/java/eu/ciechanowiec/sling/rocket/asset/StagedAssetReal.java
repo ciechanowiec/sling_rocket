@@ -23,18 +23,18 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Represents a request to save a new {@link Asset} in the {@link Repository}
- * as a {@link Node} of type {@link Asset#NT_ASSET_REAL}.
+ * Represents a request to save a new {@link Asset} in the {@link Repository} as a {@link Node} of type
+ * {@link Asset#NT_ASSET_REAL}.
  *
  * @param assetFile      {@link AssetFile} to be saved in the {@link Repository}
- * @param assetMetadata  {@link AssetMetadata} describing the {@link Asset} and to be saved along
- *                       with that {@link Asset} in the {@link Repository}
- * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
- *                       object to acquire access to resources
+ * @param assetMetadata  {@link AssetMetadata} describing the {@link Asset} and to be saved along with that
+ *                       {@link Asset} in the {@link Repository}
+ * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+ *                       resources
  */
 @Slf4j
 public record StagedAssetReal(
-        AssetFile assetFile, AssetMetadata assetMetadata, ResourceAccess resourceAccess
+    AssetFile assetFile, AssetMetadata assetMetadata, ResourceAccess resourceAccess
 ) implements StagedNode<Asset> {
 
     @SneakyThrows
@@ -45,8 +45,8 @@ public record StagedAssetReal(
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String assetRealJCRPathRaw = targetJCRPath.get();
             Resource assetRealResource = ResourceUtil.getOrCreateResource(
-                    resourceResolver, assetRealJCRPathRaw,
-                    Map.of(JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_REAL), null, false
+                resourceResolver, assetRealJCRPathRaw,
+                Map.of(JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_REAL), null, false
             );
             log.trace("While saving {} to {}, this resource was staged: {}", this, targetJCRPath, assetRealResource);
             attachFile(assetRealResource, assetFile, assetMetadata);
@@ -76,19 +76,19 @@ public record StagedAssetReal(
         log.trace("Attaching {} to {}", assetMetadata, assetRealResource);
         String assetRealJCRPathRaw = assetRealResource.getPath();
         JCRPath metadataJCRPath = new TargetJCRPath(
-                new ParentJCRPath(new TargetJCRPath(assetRealJCRPathRaw)), Asset.METADATA_NODE_NAME
+            new ParentJCRPath(new TargetJCRPath(assetRealJCRPathRaw)), Asset.METADATA_NODE_NAME
         );
         String metadataJCRPathRaw = metadataJCRPath.get();
         AssetMetadata supplementedAssetMetadata = assetMetadata.set(
-                JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_METADATA
+            JcrConstants.JCR_PRIMARYTYPE, Asset.NT_ASSET_METADATA
         ).set("assetSizeUponSaving", assetFile.size().toString());
         @SuppressWarnings("PMD.LongVariable")
         Map<String, Object> assetMetadataWithNodeTypeUnwrapped = supplementedAssetMetadata.allButObjectValues();
         @SuppressWarnings("PMD.CloseResource")
         ResourceResolver resourceResolver = assetRealResource.getResourceResolver();
         Resource metadataResource = ResourceUtil.getOrCreateResource(
-                resourceResolver, metadataJCRPathRaw,
-                assetMetadataWithNodeTypeUnwrapped, null, false
+            resourceResolver, metadataJCRPathRaw,
+            assetMetadataWithNodeTypeUnwrapped, null, false
         );
         log.trace("Staged for saving {}", metadataResource);
     }

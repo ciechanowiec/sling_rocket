@@ -9,8 +9,8 @@ public class NotReferencableException extends RuntimeException {
 
     /**
      * Constructs an instance of this class.
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method)
+     *
+     * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method)
      */
     public NotReferencableException(String message) {
         super(message);

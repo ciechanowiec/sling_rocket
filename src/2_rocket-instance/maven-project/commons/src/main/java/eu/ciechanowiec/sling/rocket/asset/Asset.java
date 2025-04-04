@@ -12,9 +12,8 @@ import java.util.List;
 
 /**
  * <p>
- * Represents {@link Node} instances of primary types specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}.
- * Only {@link Node}s actually persisted and existing in the {@link Repository} can be represented by this
- * {@link Asset}.
+ * Represents {@link Node} instances of primary types specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}. Only
+ * {@link Node}s actually persisted and existing in the {@link Repository} can be represented by this {@link Asset}.
  * </p>
  * <ol>
  *     <li>
@@ -36,21 +35,21 @@ public interface Asset extends WithJCRPath, Referencable {
     String NT_ASSET_REAL = "rocket:AssetReal";
 
     /**
-     * The type name of a {@link Node} that links to a different {@link Node} that can be represented by
-     * an instance of an {@link Asset}.
+     * The type name of a {@link Node} that links to a different {@link Node} that can be represented by an instance of
+     * an {@link Asset}.
      */
     String NT_ASSET_LINK = "rocket:AssetLink";
 
     /**
-     * The type name of a {@link Node} with metadata, which is a
-     * child of a {@link Node} of type {@link Asset#NT_ASSET_REAL}.
+     * The type name of a {@link Node} with metadata, which is a child of a {@link Node} of type
+     * {@link Asset#NT_ASSET_REAL}.
      */
     String NT_ASSET_METADATA = "rocket:AssetMetadata";
 
     /**
      * Name of a {@link Property} of type {@link PropertyType#REFERENCE} on a {@link Node} of type
-     * {@link Asset#NT_ASSET_LINK}, which points to a different {@link Node} that can be represented by
-     * an instance of an {@link Asset}.
+     * {@link Asset#NT_ASSET_LINK}, which points to a different {@link Node} that can be represented by an instance of
+     * an {@link Asset}.
      */
     String PN_LINKED_ASSET = "linkedAsset";
 
@@ -68,17 +67,19 @@ public interface Asset extends WithJCRPath, Referencable {
      * List of {@link Node} primary types supported by {@link Asset}.
      */
     List<String> SUPPORTED_PRIMARY_TYPES = List.of(
-            NT_ASSET_REAL, NT_ASSET_LINK, JcrConstants.NT_RESOURCE, JcrConstants.NT_FILE
+        NT_ASSET_REAL, NT_ASSET_LINK, JcrConstants.NT_RESOURCE, JcrConstants.NT_FILE
     );
 
     /**
      * Returns the {@link AssetFile} associated with this {@link Asset}.
+     *
      * @return {@link AssetFile} associated with this {@link Asset}
      */
     AssetFile assetFile();
 
     /**
      * Returns the {@link AssetMetadata} associated with this {@link Asset}.
+     *
      * @return {@link AssetMetadata} associated with this {@link Asset}
      */
     AssetMetadata assetMetadata();

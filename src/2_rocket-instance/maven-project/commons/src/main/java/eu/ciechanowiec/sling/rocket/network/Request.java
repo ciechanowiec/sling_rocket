@@ -32,10 +32,12 @@ import java.util.stream.Stream;
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object.
  */
-@SuppressWarnings({
+@SuppressWarnings(
+    {
         "WeakerAccess", "MethodCount", "ClassWithTooManyMethods", "PMD.ExcessivePublicCount", "PMD.TooManyMethods",
         "PMD.CouplingBetweenObjects"
-})
+    }
+)
 @Slf4j
 public class Request implements RequestWithDecomposition, RequestWithFiles, JSON {
 
@@ -45,16 +47,17 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
 
     /**
      * Constructs an instance of this class.
-     * @param wrappedRequest {@link SlingHttpServletRequest} to be wrapped by the constructed object
-     * @param creationStackTrace {@link StackTraceElement} array representing the stack trace
-     *                           upon creation of this object
+     *
+     * @param wrappedRequest     {@link SlingHttpServletRequest} to be wrapped by the constructed object
+     * @param creationStackTrace {@link StackTraceElement} array representing the stack trace upon creation of this
+     *                           object
      * @param userResourceAccess {@link UserResourceAccess} for the {@link User} who issued the wrapped
      *                           {@link SlingHttpServletRequest}
      */
     public Request(
-            SlingHttpServletRequest wrappedRequest,
-            StackTraceElement[] creationStackTrace,
-            UserResourceAccess userResourceAccess
+        SlingHttpServletRequest wrappedRequest,
+        StackTraceElement[] creationStackTrace,
+        UserResourceAccess userResourceAccess
     ) {
         this.wrappedRequest = wrappedRequest;
         this.creationStackTrace = Arrays.copyOf(creationStackTrace, creationStackTrace.length);
@@ -63,7 +66,8 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
 
     /**
      * Constructs an instance of this class.
-     * @param wrappedRequest {@link SlingHttpServletRequest} to be wrapped by the constructed object
+     *
+     * @param wrappedRequest     {@link SlingHttpServletRequest} to be wrapped by the constructed object
      * @param userResourceAccess {@link UserResourceAccess} for the {@link User} who issued the wrapped
      *                           {@link SlingHttpServletRequest}
      */
@@ -87,9 +91,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     public Optional<String> secondSelector() {
         List<String> selectors = List.of(wrappedRequest.getRequestPathInfo().getSelectors());
         return Conditional.conditional(selectors.size() >= NumberUtils.INTEGER_TWO)
-                .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_ONE)))
-                .onFalse(() -> Optional.empty())
-                .get(Optional.class);
+            .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_ONE)))
+            .onFalse(() -> Optional.empty())
+            .get(Optional.class);
     }
 
     @Override
@@ -97,9 +101,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     public Optional<String> thirdSelector() {
         List<String> selectors = List.of(wrappedRequest.getRequestPathInfo().getSelectors());
         return Conditional.conditional(selectors.size() >= 3)
-                .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_TWO)))
-                .onFalse(() -> Optional.empty())
-                .get(Optional.class);
+            .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_TWO)))
+            .onFalse(() -> Optional.empty())
+            .get(Optional.class);
     }
 
     @Override
@@ -118,8 +122,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link ServletRequest#getRemoteAddr()}
-     * for the wrapped {@link SlingHttpServletRequest}.
+     * Returns the value returned by {@link ServletRequest#getRemoteAddr()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
      * @return value returned by {@link ServletRequest#getRemoteAddr()} for the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("remoteAddress")
@@ -128,8 +133,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link ServletRequest#getRemoteHost()}
-     * for the wrapped {@link SlingHttpServletRequest}.
+     * Returns the value returned by {@link ServletRequest#getRemoteHost()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
      * @return value returned by {@link ServletRequest#getRemoteHost()} for the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("remoteHost")
@@ -138,8 +144,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link ServletRequest#getRemotePort()}
-     * for the wrapped {@link SlingHttpServletRequest}.
+     * Returns the value returned by {@link ServletRequest#getRemotePort()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
      * @return value returned by {@link ServletRequest#getRemoteHost()} for the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("remotePort")
@@ -148,10 +155,11 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link SlingHttpServletRequest#getRemoteUser()}
-     * for the wrapped {@link SlingHttpServletRequest}.
-     * @return value returned by {@link SlingHttpServletRequest#getRemoteUser()}
-     *         for the wrapped {@link SlingHttpServletRequest}
+     * Returns the value returned by {@link SlingHttpServletRequest#getRemoteUser()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
+     * @return value returned by {@link SlingHttpServletRequest#getRemoteUser()} for the wrapped
+     * {@link SlingHttpServletRequest}
      */
     @JsonProperty("remoteUser")
     public String remoteUser() {
@@ -159,8 +167,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link HttpServletRequest#getMethod()}
-     * for the wrapped {@link SlingHttpServletRequest}.
+     * Returns the value returned by {@link HttpServletRequest#getMethod()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
      * @return value returned by {@link HttpServletRequest#getMethod()} for the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("method")
@@ -169,10 +178,11 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link HttpServletRequest#getRequestURI()}
-     * for the wrapped {@link SlingHttpServletRequest}.
-     * @return value returned by {@link HttpServletRequest#getRequestURI()}
-     *         for the wrapped {@link SlingHttpServletRequest}
+     * Returns the value returned by {@link HttpServletRequest#getRequestURI()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
+     * @return value returned by {@link HttpServletRequest#getRequestURI()} for the wrapped
+     * {@link SlingHttpServletRequest}
      */
     @JsonProperty("uri")
     public HttpURI uri() {
@@ -181,10 +191,11 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the value returned by {@link ServletRequest#getContentLength()}
-     * for the wrapped {@link SlingHttpServletRequest}.
-     * @return value returned by {@link ServletRequest#getContentLength()}
-     *         for the wrapped {@link SlingHttpServletRequest}
+     * Returns the value returned by {@link ServletRequest#getContentLength()} for the wrapped
+     * {@link SlingHttpServletRequest}.
+     *
+     * @return value returned by {@link ServletRequest#getContentLength()} for the wrapped
+     * {@link SlingHttpServletRequest}
      */
     @JsonProperty("contentLength")
     public int contentLength() {
@@ -198,27 +209,29 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
 
     /**
      * Returns all {@link HttpFields} of the wrapped {@link SlingHttpServletRequest}.
+     *
      * @return all {@link HttpFields} of the wrapped {@link SlingHttpServletRequest}
      */
     public HttpFields httpFields() {
         HttpField[] httpFields = headerNames(wrappedRequest).map(
-                        headerName -> {
-                            Collection<String> singleHeaderValues = headerValues(wrappedRequest, headerName);
-                            return httpFields(headerName, singleHeaderValues);
-                        }
-                ).flatMap(Collection::stream)
-                .toArray(HttpField[]::new);
+                headerName -> {
+                    Collection<String> singleHeaderValues = headerValues(wrappedRequest, headerName);
+                    return httpFields(headerName, singleHeaderValues);
+                }
+            ).flatMap(Collection::stream)
+            .toArray(HttpField[]::new);
         return new HttpFields.Immutable(httpFields);
     }
 
     private Collection<HttpField> httpFields(String headerName, Collection<String> headerValues) {
         return headerValues.stream()
-                .map(headerValue -> new HttpField(headerName, headerValue))
-                .toList();
+            .map(headerValue -> new HttpField(headerName, headerValue))
+            .toList();
     }
 
     /**
      * Returns the {@link Class} of the wrapped {@link SlingHttpServletRequest}.
+     *
      * @return {@link Class} of the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("wrappedRequestClass")
@@ -227,19 +240,22 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns the {@link List} of {@link StackTraceElement}s representing the stack trace upon creation of this object.
+     * Returns the {@link List} of {@link StackTraceElement}s representing the stack trace upon creation of this
+     * object.
      * <p>
      * The {@link List} is empty if the stack trace was not provided upon object creation.
-     * @return {@link List} of {@link StackTraceElement}s representing the stack trace upon creation of this object;
-     *         the {@link List} is empty if the stack trace was not provided upon object creation
+     *
+     * @return {@link List} of {@link StackTraceElement}s representing the stack trace upon creation of this object; the
+     * {@link List} is empty if the stack trace was not provided upon object creation
      */
     public List<StackTraceElement> creationStackTrace() {
         return Stream.of(creationStackTrace)
-                     .toList();
+            .toList();
     }
 
     /**
      * Returns the {@link Resource} returned by the wrapped {@link SlingHttpServletRequest#getResource()}.
+     *
      * @return {@link Resource} returned by the wrapped {@link SlingHttpServletRequest#getResource()}
      */
     @JsonProperty("resource")
@@ -248,10 +264,9 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
     }
 
     /**
-     * Returns {@link UserResourceAccess} for the {@link User}
-     * who issued the wrapped {@link SlingHttpServletRequest}.
-     * @return {@link UserResourceAccess} for the {@link User}
-     *         who issued the wrapped {@link SlingHttpServletRequest}
+     * Returns {@link UserResourceAccess} for the {@link User} who issued the wrapped {@link SlingHttpServletRequest}.
+     *
+     * @return {@link UserResourceAccess} for the {@link User} who issued the wrapped {@link SlingHttpServletRequest}
      */
     public UserResourceAccess userResourceAccess() {
         return userResourceAccess;
@@ -282,11 +297,11 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
         Map<String, RequestParameter[]> requestParams = wrappedRequest.getRequestParameterMap();
         log.trace("Request params from {} are {}. Number of params: {}", this, requestParams, requestParams.size());
         return requestParams.values()
-                .stream()
-                .flatMap(Stream::of)
-                .map(this::asTempFile)
-                .flatMap(Optional::stream)
-                .toList();
+            .stream()
+            .flatMap(Stream::of)
+            .map(this::asTempFile)
+            .flatMap(Optional::stream)
+            .toList();
     }
 
     @SneakyThrows
@@ -295,19 +310,19 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
         log.trace("Attempting to convert a request parameter '{}' to a file", requestParameter.getName());
         if (requestParameter.isFormField()) {
             log.trace(
-                    "Request parameter '{}' is a simple form field and will not be converted to a file",
-                    requestParameter.getName()
+                "Request parameter '{}' is a simple form field and will not be converted to a file",
+                requestParameter.getName()
             );
             return Optional.empty();
         }
         try (InputStream inputStreamNullable = requestParameter.getInputStream()) {
             return Optional.ofNullable(inputStreamNullable)
-                    .filter(inputStream -> Objects.nonNull(requestParameter.getFileName()))
-                    .map(inputStream -> {
-                        String fileName = Objects.requireNonNull(requestParameter.getFileName());
-                        File tempFile = asTempFile(inputStream, fileName);
-                        return new FileWithOriginalName(tempFile, fileName);
-                    });
+                .filter(inputStream -> Objects.nonNull(requestParameter.getFileName()))
+                .map(inputStream -> {
+                    String fileName = Objects.requireNonNull(requestParameter.getFileName());
+                    File tempFile = asTempFile(inputStream, fileName);
+                    return new FileWithOriginalName(tempFile, fileName);
+                });
         }
     }
 

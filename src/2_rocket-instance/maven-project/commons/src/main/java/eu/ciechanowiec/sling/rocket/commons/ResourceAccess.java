@@ -19,6 +19,7 @@ public interface ResourceAccess {
 
     /**
      * Provides access to Apache Sling resources, including the underlying {@link Repository}.
+     *
      * @return {@link ResourceResolver} that provides the resource access
      */
     ResourceResolver acquireAccess();

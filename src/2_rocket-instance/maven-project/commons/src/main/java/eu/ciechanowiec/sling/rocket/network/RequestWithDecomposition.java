@@ -5,4 +5,5 @@ package eu.ciechanowiec.sling.rocket.network;
  */
 @SuppressWarnings("WeakerAccess")
 public interface RequestWithDecomposition extends RequestWithContentPath, RequestWithSelectors, RequestWithExtension {
+
 }

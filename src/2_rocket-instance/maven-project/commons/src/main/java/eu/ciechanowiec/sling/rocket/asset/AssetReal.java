@@ -43,18 +43,19 @@ class AssetReal implements Asset {
     public AssetFile assetFile() {
         String mimeTypeName = assetMetadata().mimeType();
         return new AssetFile() {
+
             @Override
             public Optional<File> retrieve() {
                 return ntFile().map(NTFile::assetFile)
-                               .flatMap(AssetFile::retrieve)
-                               .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
+                    .flatMap(AssetFile::retrieve)
+                    .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
             }
 
             @Override
             public DataSize size() {
                 return ntFile().map(NTFile::assetFile)
-                               .map(AssetFile::size)
-                               .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
+                    .map(AssetFile::size)
+                    .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
             }
         };
     }
@@ -66,8 +67,8 @@ class AssetReal implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String metadataJCRPathRaw = metadataJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(metadataJCRPathRaw))
-                    .<AssetMetadata>map(metadataResource -> new ResourceMetadata(metadataResource, resourceAccess))
-                    .orElse(new EmptyMetadata());
+                .<AssetMetadata>map(metadataResource -> new ResourceMetadata(metadataResource, resourceAccess))
+                .orElse(new EmptyMetadata());
         }
     }
 
@@ -77,7 +78,7 @@ class AssetReal implements Asset {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String fileJCRPathRaw = fileJCRPath.get();
             return Optional.ofNullable(resourceResolver.getResource(fileJCRPathRaw))
-                           .map(fileResource -> new NTFile(fileResource, resourceAccess));
+                .map(fileResource -> new NTFile(fileResource, resourceAccess));
         }
     }
 

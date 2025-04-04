@@ -20,7 +20,9 @@ public class UserResourceAccess implements ResourceAccess {
 
     /**
      * Constructs an instance of this class.
-     * @param authIDUser {@link AuthIDUser} representing the {@link User} for which the resource access will be provided
+     *
+     * @param authIDUser         {@link AuthIDUser} representing the {@link User} for which the resource access will be
+     *                           provided
      * @param fullResourceAccess {@link FullResourceAccess} that will be used to acquire access to resources
      */
     @SuppressWarnings("WeakerAccess")
@@ -30,9 +32,10 @@ public class UserResourceAccess implements ResourceAccess {
     }
 
     /**
-     * Returns a {@link ResourceResolver} that provides access to Apache Sling resources for the {@link User} wrapped
-     * in this {@link UserResourceAccess}. The scope of the access provided by the returned {@link ResourceResolver}
-     * is equal to the scope of the access configured for the {@link User}.
+     * Returns a {@link ResourceResolver} that provides access to Apache Sling resources for the {@link User} wrapped in
+     * this {@link UserResourceAccess}. The scope of the access provided by the returned {@link ResourceResolver} is
+     * equal to the scope of the access configured for the {@link User}.
+     *
      * @return {@link ResourceResolver} that provides access to Apache Sling resources
      */
     @Override

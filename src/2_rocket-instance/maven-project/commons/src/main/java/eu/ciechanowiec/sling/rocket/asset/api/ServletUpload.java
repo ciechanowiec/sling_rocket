@@ -45,15 +45,15 @@ import java.util.Map;
  * Upload limitations can be set via configuring {@link RequestParameterSupportConfigurer#PID}.
  */
 @Component(
-        service = {ServletUpload.class, Servlet.class},
-        immediate = true,
-        configurationPolicy = ConfigurationPolicy.OPTIONAL
+    service = {ServletUpload.class, Servlet.class},
+    immediate = true,
+    configurationPolicy = ConfigurationPolicy.OPTIONAL
 )
 @Designate(ocd = ServletUploadConfig.class)
 @SlingServletResourceTypes(
-        methods = HttpConstants.METHOD_POST,
-        resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
-        extensions = ServletUpload.EXTENSION
+    methods = HttpConstants.METHOD_POST,
+    resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
+    extensions = ServletUpload.EXTENSION
 )
 @Slf4j
 @ServiceDescription("Servlet for handling UPLOAD requests to Assets API")
@@ -75,26 +75,27 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
     private ServletUploadConfig config;
 
     /**
-     * {@link DownloadLink} that will be used by this {@link ServletUpload} to generate download links for
-     * uploaded {@link Asset}s.
+     * {@link DownloadLink} that will be used by this {@link ServletUpload} to generate download links for uploaded
+     * {@link Asset}s.
      */
     private final DownloadLink downloadLink;
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
-     * @param config {@link ServletUploadConfig} that will be used by the constructed object
-     * @param downloadLink {@link DownloadLink} that will be used by this {@link ServletUpload}
-     *                     to generate download links for uploaded {@link Asset}s
+     *
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                           access to resources
+     * @param config             {@link ServletUploadConfig} that will be used by the constructed object
+     * @param downloadLink       {@link DownloadLink} that will be used by this {@link ServletUpload} to generate
+     *                           download links for uploaded {@link Asset}s
      */
     @Activate
     public ServletUpload(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess,
-            ServletUploadConfig config,
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            DownloadLink downloadLink
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess,
+        ServletUploadConfig config,
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        DownloadLink downloadLink
     ) {
         this.fullResourceAccess = fullResourceAccess;
         this.config = config;
@@ -122,17 +123,17 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
         RequestUpload requestUpload = new RequestUpload(slingRequest, downloadLink);
         if (requestUpload.isValidStructure()) {
             List<Affected> savedAssets = requestUpload.saveAssets(
-                    new ParentJCRPath(new TargetJCRPath(config.jcr_path())), config.do$_$include$_$download$_$link()
+                new ParentJCRPath(new TargetJCRPath(config.jcr_path())), config.do$_$include$_$download$_$link()
             );
             Status status = Conditional.conditional(savedAssets.isEmpty())
-                    .onTrue(() -> new Status(HttpServletResponse.SC_BAD_REQUEST, "No files uploaded"))
-                    .onFalse(() -> new Status(HttpServletResponse.SC_CREATED, "File(s) uploaded"))
-                    .get(Status.class);
+                .onTrue(() -> new Status(HttpServletResponse.SC_BAD_REQUEST, "No files uploaded"))
+                .onFalse(() -> new Status(HttpServletResponse.SC_CREATED, "File(s) uploaded"))
+                .get(Status.class);
             Response slingResponse = new Response(response, status, savedAssets);
             slingResponse.send();
         } else {
             Response responseWithError = new Response(
-                    response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
+                response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
             );
             responseWithError.send();
         }
@@ -144,8 +145,8 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             String pathToEnsureRaw = pathToEnsure.get();
             Resource resource = ResourceUtil.getOrCreateResource(
-                    resourceResolver, pathToEnsureRaw,
-                    Map.of(JcrConstants.JCR_PRIMARYTYPE, Assets.NT_ASSETS), null, true
+                resourceResolver, pathToEnsureRaw,
+                Map.of(JcrConstants.JCR_PRIMARYTYPE, Assets.NT_ASSETS), null, true
             );
             log.info("Ensured {}", resource);
         }
@@ -154,8 +155,8 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
     @Override
     public List<String> requiredPrivileges() {
         return List.of(
-                PrivilegeConstants.JCR_READ, PrivilegeConstants.JCR_ADD_CHILD_NODES,
-                PrivilegeConstants.JCR_MODIFY_PROPERTIES, PrivilegeConstants.JCR_NODE_TYPE_MANAGEMENT
+            PrivilegeConstants.JCR_READ, PrivilegeConstants.JCR_ADD_CHILD_NODES,
+            PrivilegeConstants.JCR_MODIFY_PROPERTIES, PrivilegeConstants.JCR_NODE_TYPE_MANAGEMENT
         );
     }
 }

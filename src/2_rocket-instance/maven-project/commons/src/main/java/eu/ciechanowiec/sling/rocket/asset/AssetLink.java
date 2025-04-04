@@ -48,13 +48,13 @@ class AssetLink implements Asset {
         Optional<JCRPath> referencedNodeJCRPathNullable = referenceProperty.referencedNode();
         log.trace("{} has this linked asset: {}", this, referencedNodeJCRPathNullable);
         return referencedNodeJCRPathNullable.flatMap(
-                referencedNodeJCRPath -> {
-                    String referencedNodeJCRPathRaw = referencedNodeJCRPath.get();
-                    try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-                        return Optional.ofNullable(resourceResolver.getResource(referencedNodeJCRPathRaw))
-                                       .map(resource -> new UniversalAsset(resource, resourceAccess));
-                    }
+            referencedNodeJCRPath -> {
+                String referencedNodeJCRPathRaw = referencedNodeJCRPath.get();
+                try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                    return Optional.ofNullable(resourceResolver.getResource(referencedNodeJCRPathRaw))
+                        .map(resource -> new UniversalAsset(resource, resourceAccess));
                 }
+            }
         ).orElseThrow();
     }
 

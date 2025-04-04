@@ -30,16 +30,16 @@ import java.util.function.BiFunction;
 @Slf4j
 @ToString
 @Component(
-        service = ResourceProvider.class,
-        property = {
-                ResourceProvider.PROPERTY_ROOT + "=" + AssetsAPI.ASSETS_API_PATH,
-                ResourceProvider.PROPERTY_NAME + "=" + "AssetsAPI",
-                ResourceProvider.PROPERTY_AUTHENTICATE + "=" + ResourceProvider.AUTHENTICATE_REQUIRED,
-                ResourceProvider.PROPERTY_MODIFIABLE + "=" + "false",
-                ResourceProvider.PROPERTY_REFRESHABLE + "=" + "true"
-        },
-        immediate = true,
-        configurationPolicy = ConfigurationPolicy.REQUIRE
+    service = ResourceProvider.class,
+    property = {
+        ResourceProvider.PROPERTY_ROOT + "=" + AssetsAPI.ASSETS_API_PATH,
+        ResourceProvider.PROPERTY_NAME + "=" + "AssetsAPI",
+        ResourceProvider.PROPERTY_AUTHENTICATE + "=" + ResourceProvider.AUTHENTICATE_REQUIRED,
+        ResourceProvider.PROPERTY_MODIFIABLE + "=" + "false",
+        ResourceProvider.PROPERTY_REFRESHABLE + "=" + "true"
+    },
+    immediate = true,
+    configurationPolicy = ConfigurationPolicy.REQUIRE
 )
 @Designate(ocd = AssetsAPIConfig.class)
 @ServiceDescription("Virtual Resource that acts as API for operations on Assets")
@@ -62,18 +62,19 @@ public class AssetsAPI extends ResourceProvider<Object> {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param config {@link AssetsAPIConfig} used by the constructed instance
      */
     @Activate
     public AssetsAPI(AssetsAPIConfig config) {
         this.config = config;
         this.resourcesByPaths = Map.of(
-                ASSETS_API_PATH, (path, resourceResolver) -> {
-                    log.trace("Providing SyntheticResource for path: '{}'", path);
-                    return new SyntheticResource(
-                            resourceResolver, ASSETS_API_PATH, ASSETS_API_RESOURCE_TYPE
-                    );
-                }
+            ASSETS_API_PATH, (path, resourceResolver) -> {
+                log.trace("Providing SyntheticResource for path: '{}'", path);
+                return new SyntheticResource(
+                    resourceResolver, ASSETS_API_PATH, ASSETS_API_RESOURCE_TYPE
+                );
+            }
         );
         log.info("Initialized {}", this);
     }
@@ -86,17 +87,17 @@ public class AssetsAPI extends ResourceProvider<Object> {
 
     @Override
     public Resource getResource(
-            ResolveContext<Object> ctx, @NotNull String path,
-            @NotNull ResourceContext resourceContext, @Nullable Resource parent
+        ResolveContext<Object> ctx, @NotNull String path,
+        @NotNull ResourceContext resourceContext, @Nullable Resource parent
     ) {
         ResourceResolver resourceResolver = ctx.getResourceResolver();
         return Optional.ofNullable(resourcesByPaths.get(path))
-                .filter(resourceSupplier -> config.is$_$enabled())
-                .map(resourceSupplier -> resourceSupplier.apply(path, resourceResolver))
-                .orElseGet(() -> {
-                    log.trace("Providing NonExistingResource for path: '{}'", path);
-                    return new NonExistingResource(resourceResolver, Resource.RESOURCE_TYPE_NON_EXISTING);
-                });
+            .filter(resourceSupplier -> config.is$_$enabled())
+            .map(resourceSupplier -> resourceSupplier.apply(path, resourceResolver))
+            .orElseGet(() -> {
+                log.trace("Providing NonExistingResource for path: '{}'", path);
+                return new NonExistingResource(resourceResolver, Resource.RESOURCE_TYPE_NON_EXISTING);
+            });
     }
 
     @Override

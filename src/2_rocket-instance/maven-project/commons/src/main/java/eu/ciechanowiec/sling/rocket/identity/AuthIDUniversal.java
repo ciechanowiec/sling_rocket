@@ -13,8 +13,9 @@ public class AuthIDUniversal implements AuthID {
 
     /**
      * Constructs an instance of this class.
-     * @param originalAuthID value of an ID of an {@link Authorizable}
-     *                       that will be represented by this {@link AuthIDUniversal}
+     *
+     * @param originalAuthID value of an ID of an {@link Authorizable} that will be represented by this
+     *                       {@link AuthIDUniversal}
      */
     @SuppressWarnings("WeakerAccess")
     public AuthIDUniversal(String originalAuthID) {

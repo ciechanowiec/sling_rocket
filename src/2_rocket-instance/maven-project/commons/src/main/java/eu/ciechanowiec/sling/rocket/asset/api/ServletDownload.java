@@ -28,13 +28,13 @@ import java.util.List;
  * Servlet for handling DOWNLOAD requests to Assets API.
  */
 @Component(
-        service = {ServletDownload.class, Servlet.class},
-        immediate = true
+    service = {ServletDownload.class, Servlet.class},
+    immediate = true
 )
 @SlingServletResourceTypes(
-        methods = HttpConstants.METHOD_GET,
-        resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
-        selectors = ServletDownload.SELECTOR
+    methods = HttpConstants.METHOD_GET,
+    resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
+    selectors = ServletDownload.SELECTOR
 )
 @Slf4j
 @ServiceDescription("Servlet for handling DOWNLOAD requests to Assets API")
@@ -49,13 +49,14 @@ public class ServletDownload extends SlingSafeMethodsServlet implements Requires
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
+     *
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                           access to resources
      */
     @Activate
     public ServletDownload(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess
     ) {
         this.fullResourceAccess = fullResourceAccess;
         log.info("Initialized {}", this);
@@ -73,22 +74,22 @@ public class ServletDownload extends SlingSafeMethodsServlet implements Requires
         RequestDownload requestDelete = new RequestDownload(slingRequest);
         if (requestDelete.isValidStructure()) {
             requestDelete.targetAsset()
-                    .map(asset -> new ResponseWithAsset(response, asset))
-                    .ifPresentOrElse(
-                            responseWithAsset -> responseWithAsset.send(ContentDispositionHeader.ATTACHMENT),
-                            () -> {
-                                Response responseWithError = new Response(
-                                        response, new Status(
-                                        HttpServletResponse.SC_NOT_FOUND,
-                                        "No asset found: '%s'".formatted(new AssetDescriptor(requestDelete))
-                                )
-                                );
-                                responseWithError.send();
-                            }
-                    );
+                .map(asset -> new ResponseWithAsset(response, asset))
+                .ifPresentOrElse(
+                    responseWithAsset -> responseWithAsset.send(ContentDispositionHeader.ATTACHMENT),
+                    () -> {
+                        Response responseWithError = new Response(
+                            response, new Status(
+                            HttpServletResponse.SC_NOT_FOUND,
+                            "No asset found: '%s'".formatted(new AssetDescriptor(requestDelete))
+                        )
+                        );
+                        responseWithError.send();
+                    }
+                );
         } else {
             Response responseWithError = new Response(
-                    response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
+                response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
             );
             responseWithError.send();
         }

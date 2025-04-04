@@ -20,16 +20,16 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Represents {@link Node} instances of type {@link Assets#NT_ASSETS}.
- * That can be either a persisted or a hypothetically persisted {@link Node}.
+ * Represents {@link Node} instances of type {@link Assets#NT_ASSETS}. That can be either a persisted or a
+ * hypothetically persisted {@link Node}.
  */
 @Slf4j
 @ToString
 public class Assets implements WithJCRPath, Referencable {
 
     /**
-     * The type name of a {@link Node} that holds as direct children other {@link Node}-s
-     * of {@link Asset#NT_ASSET_REAL} and {@link Asset#NT_ASSET_LINK} types.
+     * The type name of a {@link Node} that holds as direct children other {@link Node}-s of {@link Asset#NT_ASSET_REAL}
+     * and {@link Asset#NT_ASSET_LINK} types.
      */
     @SuppressWarnings("WeakerAccess")
     public static final String NT_ASSETS = "rocket:Assets";
@@ -41,10 +41,11 @@ public class Assets implements WithJCRPath, Referencable {
 
     /**
      * Constructs an instance of this class.
-     * @param resource the {@link Resource} that will back the constructed object; the type of a {@link Node}
-     *                 behind the {@link Resource} must be one of the types supported by the {@link Assets}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
+     *
+     * @param resource       the {@link Resource} that will back the constructed object; the type of a {@link Node}
+     *                       behind the {@link Resource} must be one of the types supported by the {@link Assets}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public Assets(Resource resource, ResourceAccess resourceAccess) {
         String resourcePath = resource.getPath();
@@ -56,6 +57,7 @@ public class Assets implements WithJCRPath, Referencable {
 
     /**
      * Returns a {@link Collection} of {@link Asset}-s held in this {@link Assets} instance.
+     *
      * @return a {@link Collection} of {@link Asset}-s held in this {@link Assets} instance
      */
     public Collection<Asset> get() {
@@ -63,12 +65,12 @@ public class Assets implements WithJCRPath, Referencable {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .map(Resource::getChildren)
-                    .map(UnwrappedIteration::new)
-                    .map(UnwrappedIteration::stream)
-                    .orElseGet(Stream::empty)
-                    .<Asset>map(resource -> new UniversalAsset(resource, resourceAccess))
-                    .toList();
+                .map(Resource::getChildren)
+                .map(UnwrappedIteration::new)
+                .map(UnwrappedIteration::stream)
+                .orElseGet(Stream::empty)
+                .<Asset>map(resource -> new UniversalAsset(resource, resourceAccess))
+                .toList();
         }
     }
 

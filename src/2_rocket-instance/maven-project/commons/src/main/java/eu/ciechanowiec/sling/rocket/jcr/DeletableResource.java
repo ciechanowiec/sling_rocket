@@ -27,9 +27,10 @@ public class DeletableResource implements RequiresPrivilege {
 
     /**
      * Constructs an instance of this class.
-     * @param jcrPath {@link JCRPath} to the {@link Resource} to be deleted from the {@link Repository}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
+     *
+     * @param jcrPath        {@link JCRPath} to the {@link Resource} to be deleted from the {@link Repository}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     @SuppressWarnings("WeakerAccess")
     public DeletableResource(JCRPath jcrPath, ResourceAccess resourceAccess) {
@@ -39,10 +40,11 @@ public class DeletableResource implements RequiresPrivilege {
 
     /**
      * Constructs an instance of this class.
-     * @param withJCRPath object that contains a {@link JCRPath} to the {@link Resource}
-     *                    to be deleted from the {@link Repository}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                       object to acquire access to resources
+     *
+     * @param withJCRPath    object that contains a {@link JCRPath} to the {@link Resource} to be deleted from the
+     *                       {@link Repository}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public DeletableResource(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
         this(withJCRPath.jcrPath(), resourceAccess);
@@ -50,19 +52,20 @@ public class DeletableResource implements RequiresPrivilege {
 
     /**
      * Deletes the wrapped {@link Resource} from the {@link Repository}.
-     * @return {@link Optional} containing the {@link JCRPath} of the deleted {@link Resource};
-     *         empty {@link Optional} is returned if the deletion operation didn't succeed
-     *         due to {@link PersistenceException} or if the {@link Resource} was not found
+     *
+     * @return {@link Optional} containing the {@link JCRPath} of the deleted {@link Resource}; empty {@link Optional}
+     * is returned if the deletion operation didn't succeed due to {@link PersistenceException} or if the
+     * {@link Resource} was not found
      */
     public Optional<JCRPath> delete() {
         log.trace("Deleting {}", jcrPath);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             return Optional.ofNullable(resourceResolver.getResource(jcrPath.get()))
-                    .flatMap(resource -> delete(resource, resourceResolver))
-                    .or(() -> {
-                        log.trace("Resource at {} not found and won't be deleted", jcrPath);
-                        return Optional.empty();
-                    });
+                .flatMap(resource -> delete(resource, resourceResolver))
+                .or(() -> {
+                    log.trace("Resource at {} not found and won't be deleted", jcrPath);
+                    return Optional.empty();
+                });
         }
     }
 
@@ -84,9 +87,9 @@ public class DeletableResource implements RequiresPrivilege {
     @Override
     public List<String> requiredPrivileges() {
         return List.of(
-                PrivilegeConstants.JCR_READ,
-                PrivilegeConstants.JCR_REMOVE_CHILD_NODES,
-                PrivilegeConstants.JCR_REMOVE_NODE
+            PrivilegeConstants.JCR_READ,
+            PrivilegeConstants.JCR_REMOVE_CHILD_NODES,
+            PrivilegeConstants.JCR_REMOVE_NODE
         );
     }
 }

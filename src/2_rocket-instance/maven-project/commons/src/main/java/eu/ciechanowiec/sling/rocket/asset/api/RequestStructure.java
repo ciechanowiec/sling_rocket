@@ -15,22 +15,22 @@ class RequestStructure {
     private final Supplier<Boolean> isValid;
 
     private RequestStructure(
-            String expectedStructureRegex, String actualStructure,
-            int expectedNumOfSelectors, RequestWithSelectors request
+        String expectedStructureRegex, String actualStructure,
+        int expectedNumOfSelectors, RequestWithSelectors request
     ) {
         isValid = () -> {
             log.trace(
-                    "Validating {}. Expected structure regex: '{}'. Actual structure: '{}'",
-                    request, expectedStructureRegex, actualStructure
+                "Validating {}. Expected structure regex: '{}'. Actual structure: '{}'",
+                request, expectedStructureRegex, actualStructure
             );
             boolean areMatchingStructures = actualStructure.matches(expectedStructureRegex);
             boolean isValidNumOfSelectors = request.numOfSelectors() == expectedNumOfSelectors;
             boolean noEmptySelectors = request.selectorString()
-                                              .filter(selectorString -> selectorString.matches("(.*\\.\\..*|.*\\.$)"))
-                                              .isEmpty();
+                .filter(selectorString -> selectorString.matches("(.*\\.\\..*|.*\\.$)"))
+                .isEmpty();
             log.trace(
-                    "{}: are matching structures: {}, is valid number of selectors: {}, no empty selectors: {}",
-                    request, areMatchingStructures, isValidNumOfSelectors, noEmptySelectors
+                "{}: are matching structures: {}, is valid number of selectors: {}, no empty selectors: {}",
+                request, areMatchingStructures, isValidNumOfSelectors, noEmptySelectors
             );
             return areMatchingStructures && isValidNumOfSelectors && noEmptySelectors;
         };
@@ -48,14 +48,14 @@ class RequestStructure {
         isValid = () -> {
             String uuidRegex = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
             String expectedStructureRegex = String.format(
-                    "^%s\\.%s\\.%s\\.[0-9a-zA-Z]*$", AssetsAPI.ASSETS_API_PATH, expectedFirstSelector, uuidRegex
+                "^%s\\.%s\\.%s\\.[0-9a-zA-Z]*$", AssetsAPI.ASSETS_API_PATH, expectedFirstSelector, uuidRegex
             );
             String actualStructure = String.format(
-                    "%s.%s.%s.%s",
-                    request.contentPath(),
-                    request.firstSelector().orElse(StringUtils.EMPTY),
-                    request.secondSelector().orElse(StringUtils.EMPTY),
-                    request.extension().orElse(StringUtils.EMPTY)
+                "%s.%s.%s.%s",
+                request.contentPath(),
+                request.firstSelector().orElse(StringUtils.EMPTY),
+                request.secondSelector().orElse(StringUtils.EMPTY),
+                request.extension().orElse(StringUtils.EMPTY)
             );
             return new RequestStructure(expectedStructureRegex, actualStructure, 2, request).isValid();
         };
@@ -64,15 +64,15 @@ class RequestStructure {
     RequestStructure(RequestUpload request) {
         isValid = () -> {
             String expectedStructureRegex = String.format(
-                    "^%s\\.%s$", AssetsAPI.ASSETS_API_PATH, ServletUpload.EXTENSION
+                "^%s\\.%s$", AssetsAPI.ASSETS_API_PATH, ServletUpload.EXTENSION
             );
             String actualStructure = String.format(
-                    "%s.%s",
-                    request.contentPath(),
-                    request.extension().orElse(StringUtils.EMPTY)
+                "%s.%s",
+                request.contentPath(),
+                request.extension().orElse(StringUtils.EMPTY)
             );
             return new RequestStructure(
-                    expectedStructureRegex, actualStructure, NumberUtils.INTEGER_ZERO, request
+                expectedStructureRegex, actualStructure, NumberUtils.INTEGER_ZERO, request
             ).isValid();
         };
     }

@@ -27,6 +27,7 @@ public class FileMetadata implements AssetMetadata {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param file {@link File} for which this {@link FileMetadata} will be generated
      */
     @SuppressWarnings("WeakerAccess")
@@ -36,8 +37,9 @@ public class FileMetadata implements AssetMetadata {
 
     /**
      * Constructs an instance of this class.
-     * @param fileSupplier {@link Supplier} that will provide a {@link File} for which
-     *                     this {@link FileMetadata} will be generated
+     *
+     * @param fileSupplier {@link Supplier} that will provide a {@link File} for which this {@link FileMetadata} will be
+     *                     generated
      */
     @SuppressWarnings("WeakerAccess")
     public FileMetadata(Supplier<File> fileSupplier) {

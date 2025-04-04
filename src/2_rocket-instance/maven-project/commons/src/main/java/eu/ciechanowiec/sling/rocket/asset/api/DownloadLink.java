@@ -17,12 +17,12 @@ import java.net.URI;
  * Generates download links for Assets.
  */
 @Component(
-        service = DownloadLink.class,
-        immediate = true,
-        configurationPolicy = ConfigurationPolicy.OPTIONAL
+    service = DownloadLink.class,
+    immediate = true,
+    configurationPolicy = ConfigurationPolicy.OPTIONAL
 )
 @Designate(
-        ocd = DownloadLinkConfig.class
+    ocd = DownloadLinkConfig.class
 )
 @Slf4j
 @ToString
@@ -36,6 +36,7 @@ public class DownloadLink {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param config {@link DownloadLinkConfig} that will be used by the constructed object
      */
     @Activate
@@ -53,18 +54,19 @@ public class DownloadLink {
     @SneakyThrows
     private URI uri() {
         return new URI(
-                config.protocol(),
-                null,
-                config.hostname(),
-                config.include$_$port() ? config.port() : -1,
-                config.assets$_$api_path(),
-                null,
-                null
+            config.protocol(),
+            null,
+            config.hostname(),
+            config.include$_$port() ? config.port() : -1,
+            config.assets$_$api_path(),
+            null,
+            null
         );
     }
 
     /**
      * Generates a download link for the specified {@link Asset}.
+     *
      * @param asset {@link Asset} for which the download link should be generated
      * @return download link for the specified {@link Asset}
      */

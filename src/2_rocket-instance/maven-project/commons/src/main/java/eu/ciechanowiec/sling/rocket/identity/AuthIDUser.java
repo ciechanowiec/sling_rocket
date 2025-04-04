@@ -11,6 +11,7 @@ public class AuthIDUser implements AuthID {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param originalAuthID value of an ID of a {@link User} that will be represented by this {@link AuthIDUser}
      */
     @SuppressWarnings("WeakerAccess")
@@ -43,7 +44,10 @@ public class AuthIDUser implements AuthID {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") AuthID comparedAuthID) {
+    public int compareTo(
+        @SuppressWarnings("NullableProblems")
+        AuthID comparedAuthID
+    ) {
         return authIDUniversal.compareTo(comparedAuthID);
     }
 }

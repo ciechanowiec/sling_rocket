@@ -23,19 +23,19 @@ class CNDSource {
         log.debug("Getting CND source");
         String cndPath = "SLING-INF/notetypes/nodetypes.cnd";
         return currentJarFile().flatMap(
-                        jar -> Optional.ofNullable(jar.getJarEntry(cndPath))
-                                .flatMap(SneakyFunction.sneaky(entry -> Optional.ofNullable(jar.getInputStream(entry))))
-                )
-                .map(cndIS -> new InputStreamReader(cndIS, StandardCharsets.UTF_8))
-                .orElseGet(
-                        () -> {
-                            log.debug("CND not found in JAR, trying to load from the classpath");
-                            ClassLoader classLoader = CNDSource.class.getClassLoader();
-                            InputStream cndIS = Optional.ofNullable(classLoader.getResourceAsStream(cndPath))
-                                                        .orElseThrow();
-                            return new InputStreamReader(cndIS, StandardCharsets.UTF_8);
-                        }
-                );
+                jar -> Optional.ofNullable(jar.getJarEntry(cndPath))
+                    .flatMap(SneakyFunction.sneaky(entry -> Optional.ofNullable(jar.getInputStream(entry))))
+            )
+            .map(cndIS -> new InputStreamReader(cndIS, StandardCharsets.UTF_8))
+            .orElseGet(
+                () -> {
+                    log.debug("CND not found in JAR, trying to load from the classpath");
+                    ClassLoader classLoader = CNDSource.class.getClassLoader();
+                    InputStream cndIS = Optional.ofNullable(classLoader.getResourceAsStream(cndPath))
+                        .orElseThrow();
+                    return new InputStreamReader(cndIS, StandardCharsets.UTF_8);
+                }
+            );
     }
 
     @SneakyThrows

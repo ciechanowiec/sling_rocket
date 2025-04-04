@@ -34,16 +34,18 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
  * Represents {@link Property}-ies of an existing {@link Node}.
  * </p>
  * <p>
- * The class provides API operations on {@link Property}-ies
- * in a way detached from an ongoing {@link Session}. {@link Session}'s live cycle is supposed to be fully
- * managed by {@link NodeProperties} itself in an encapsulated manner.
+ * The class provides API operations on {@link Property}-ies in a way detached from an ongoing {@link Session}.
+ * {@link Session}'s live cycle is supposed to be fully managed by {@link NodeProperties} itself in an encapsulated
+ * manner.
  * </p>
  */
-@SuppressWarnings({
+@SuppressWarnings(
+    {
         "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
         "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount",
         "PMD.TooManyMethods", "PMD.LinguisticNaming"
-})
+    }
+)
 @Slf4j
 @ToString
 public class NodeProperties implements WithJCRPath {
@@ -54,9 +56,10 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Constructs an instance of this class.
-     * @param jcrNodePath {@link JCRPath} to the underlying existing {@link Node}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                        object to acquire access to resources
+     *
+     * @param jcrNodePath    {@link JCRPath} to the underlying existing {@link Node}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public NodeProperties(JCRPath jcrNodePath, ResourceAccess resourceAccess) {
         this.jcrPath = jcrNodePath;
@@ -66,9 +69,10 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Constructs an instance of this class.
-     * @param withJCRPath object that contains a {@link JCRPath} to the underlying {@link Node}
-     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed
-     *                        object to acquire access to resources
+     *
+     * @param withJCRPath    object that contains a {@link JCRPath} to the underlying {@link Node}
+     * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
+     *                       resources
      */
     public NodeProperties(WithJCRPath withJCRPath, ResourceAccess resourceAccess) {
         this(withJCRPath.jcrPath(), resourceAccess);
@@ -76,6 +80,7 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Retrieves the primary type of the underlying {@link Node}.
+     *
      * @return primary type of the underlying {@link Node}
      */
     public String primaryType() {
@@ -83,18 +88,19 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                           .flatMap(sneaky(node -> Optional.ofNullable(node.getPrimaryNodeType())))
-                           .map(NodeType::getName)
-                           .orElseThrow();
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(sneaky(node -> Optional.ofNullable(node.getPrimaryNodeType())))
+                .map(NodeType::getName)
+                .orElseThrow();
         }
     }
 
     /**
      * Checks if the underlying {@link Node} is of one of the specified primary types.
+     *
      * @param acceptablePrimaryTypes names of the primary types against which the check is performed
-     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types;
-     *         {@code false} otherwise
+     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types; {@code false}
+     * otherwise
      */
     public boolean isPrimaryType(String... acceptablePrimaryTypes) {
         return isPrimaryType(List.of(acceptablePrimaryTypes));
@@ -102,9 +108,10 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Checks if the underlying {@link Node} is of one of the specified primary types.
+     *
      * @param acceptablePrimaryTypes names of the primary types against which the check is performed
-     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types;
-     *         {@code false} otherwise
+     * @return {@code true} if the underlying {@link Node} is of one of the specified primary types; {@code false}
+     * otherwise
      */
     public boolean isPrimaryType(Collection<String> acceptablePrimaryTypes) {
         log.trace("Checking if {} is of this primary type: '{}'", this, acceptablePrimaryTypes);
@@ -114,13 +121,14 @@ public class NodeProperties implements WithJCRPath {
 
     /**
      * Asserts that the underlying {@link Node} is of the specified primary type.
+     *
      * @param expectedPrimaryType name of the primary type against which the assertion is performed
      * @throws IllegalPrimaryTypeException if the underlying {@link Node} isn't of the specified primary type
      */
     public void assertPrimaryType(String expectedPrimaryType) {
         log.trace("Asserting that {} is of '{}' primary type", this, expectedPrimaryType);
         Conditional.isTrueOrThrow(
-                isPrimaryType(expectedPrimaryType), new IllegalPrimaryTypeException(expectedPrimaryType)
+            isPrimaryType(expectedPrimaryType), new IllegalPrimaryTypeException(expectedPrimaryType)
         );
     }
 
@@ -157,24 +165,25 @@ public class NodeProperties implements WithJCRPath {
      *    }</pre>
      *         </li>
      *     </ol>
+     *
      * @param propertyName name of the {@link Property} from which the {@link Value} should be retrieved
-     * @param defaultValue default {@link Value} to use if the specified {@link Property} does not exist or
-     *                     its value cannot be converted to the requested type; the {@code defaultValue} is also used
-     *                     to define the type to convert the {@link Value} to
+     * @param defaultValue default {@link Value} to use if the specified {@link Property} does not exist or its value
+     *                     cannot be converted to the requested type; the {@code defaultValue} is also used to define
+     *                     the type to convert the {@link Value} to
+     * @param <T>          expected type
      * @return {@link Value} of the specified {@link Property} converted to the requested type or the
-     *         {@code defaultValue} if the specified {@link Property} does not exist or its {@link Value} cannot be
-     *         converted to the requested type
-     * @param <T> expected type
+     * {@code defaultValue} if the specified {@link Property} does not exist or its {@link Value} cannot be converted to
+     * the requested type
      */
     public <T> T propertyValue(String propertyName, T defaultValue) {
         log.trace("Getting '{}' property value for {}", propertyName, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .map(Resource::getValueMap)
-                           .map(WithPrimitiveArrayTranslation::new)
-                           .map(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, defaultValue))
-                           .orElse(defaultValue);
+                .map(Resource::getValueMap)
+                .map(WithPrimitiveArrayTranslation::new)
+                .map(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, defaultValue))
+                .orElse(defaultValue);
         }
     }
 
@@ -212,27 +221,29 @@ public class NodeProperties implements WithJCRPath {
      *    }</pre>
      *         </li>
      *     </ol>
+     *
      * @param propertyName name of the {@link Property} from which the {@link Value} should be retrieved
-     * @param type {@link Class} with the type that should represent the requested {@link Value} and which that
-     *             {@link Value} will be cast to
+     * @param type         {@link Class} with the type that should represent the requested {@link Value} and which that
+     *                     {@link Value} will be cast to
+     * @param <T>          expected type
      * @return {@link Optional} containing the {@link Value} of the specified {@link Property} converted to the
-     *          requested type; if the specified {@link Property} does not exist or its {@link Value} cannot be
-     *          converted to the requested type, an empty {@link Optional} is returned
-     * @param <T> expected type
+     * requested type; if the specified {@link Property} does not exist or its {@link Value} cannot be converted to the
+     * requested type, an empty {@link Optional} is returned
      */
     public <T> Optional<T> propertyValue(String propertyName, Class<T> type) {
         log.trace("Getting '{}' property value for {}", propertyName, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .map(Resource::getValueMap)
-                    .map(WithPrimitiveArrayTranslation::new)
-                    .flatMap(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, type));
+                .map(Resource::getValueMap)
+                .map(WithPrimitiveArrayTranslation::new)
+                .flatMap(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, type));
         }
     }
 
     /**
      * Retrieves the {@link PropertyType} of the specified {@link Property}.
+     *
      * @param propertyName name of the {@link Property} whose {@link PropertyType} should be retrieved
      * @return {@link PropertyType} of the specified {@link Property}
      */
@@ -241,120 +252,122 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                           .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                           .map(this::firstValue)
-                           .map(Value::getType)
-                           .orElse(PropertyType.UNDEFINED);
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                .map(this::firstValue)
+                .map(Value::getType)
+                .orElse(PropertyType.UNDEFINED);
         }
     }
 
     @SneakyThrows
     private Value firstValue(Property property) {
         return Conditional.conditional(property.isMultiple())
-                .onTrue(() -> property.getValues()[NumberUtils.INTEGER_ZERO])
-                .onFalse(property::getValue)
-                .get(Value.class);
+            .onTrue(() -> property.getValues()[NumberUtils.INTEGER_ZERO])
+            .onFalse(property::getValue)
+            .get(Value.class);
     }
 
     /**
      * Checks if the underlying {@link Node} contains a {@link Property} that has the specified name.
+     *
      * @param propertyName name of the hypothetically existent {@link Property}
      * @return {@code true} if the underlying {@link Node} contains a {@link Property} that has the specified name;
-     *         {@code false} otherwise
+     * {@code false} otherwise
      */
     public boolean containsProperty(String propertyName) {
         log.trace("Checking if '{}' contains property of this name: '{}'", this, propertyName);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .map(Resource::getValueMap)
-                           .map(valueMap -> valueMap.containsKey(propertyName))
-                           .orElse(false);
+                .map(Resource::getValueMap)
+                .map(valueMap -> valueMap.containsKey(propertyName))
+                .orElse(false);
         }
     }
 
     /**
      * Retrieves the {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File}.
+     *
      * @param propertyName name of the {@link Property} from which the {@link Value} of type {@link PropertyType#BINARY}
      *                     should be retrieved
-     * @return {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File};
-     *         empty {@link Optional} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY}
-     *         or doesn't exist
+     * @return {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File}; empty
+     * {@link Optional} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY} or doesn't exist
      */
     public Optional<File> retrieveFile(String propertyName) {
         log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                           .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                           .map(sneaky(Property::getValue))
-                           .flatMap(this::asBinary)
-                           .map(this::asFile);
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                .map(sneaky(Property::getValue))
+                .flatMap(this::asBinary)
+                .map(this::asFile);
         }
     }
 
     /**
      * Retrieves the {@link DataSize} of a {@link Value} of a {@link Property} of type {@link PropertyType#BINARY}.
-     * @param propertyName name of the {@link Property} of type {@link PropertyType#BINARY}
-     *                     that contains a {@link Value} whose {@link DataSize} should be retrieved
-     * @return {@link DataSize} of a {@link Value} of a {@link Property} of type {@link PropertyType#BINARY};
-     *         zero-sized {@link DataSize} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY}
-     *         or doesn't exist
+     *
+     * @param propertyName name of the {@link Property} of type {@link PropertyType#BINARY} that contains a
+     *                     {@link Value} whose {@link DataSize} should be retrieved
+     * @return {@link DataSize} of a {@link Value} of a {@link Property} of type {@link PropertyType#BINARY}; zero-sized
+     * {@link DataSize} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY} or doesn't exist
      */
     public DataSize binarySize(String propertyName) {
         log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                    .map(this::firstValue)
-                    .flatMap(this::asBinary)
-                    .map(sneaky(Binary::getSize))
-                    .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
-                    .orElse(new DataSize(0, DataUnit.BYTES));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+                .map(this::firstValue)
+                .flatMap(this::asBinary)
+                .map(sneaky(Binary::getSize))
+                .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
+                .orElse(new DataSize(0, DataUnit.BYTES));
         }
     }
 
     /**
      * <p>
-     * Returns all {@link Property}-ies of the underlying {@link Node} as a {@link Map}
-     * of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}.
+     * Returns all {@link Property}-ies of the underlying {@link Node} as a {@link Map} of {@link Property} names to
+     * {@link Property} {@link Value}-s converted to {@link String}.
      * </p>
      * The following {@link Property}-ies are omitted from the result:
      * <ol>
      *     <li>{@link Property}-ies with {@link Value}-s that cannot be converted to {@link String}</li>
      *     <li>{@link Property}-ies of type {@link PropertyType#BINARY}</li>
      * </ol>
-     * @return {@link Property}-ies of the underlying {@link Node} as a {@link Map}
-     *         of {@link Property} names to {@link Property} {@link Value}-s converted to {@link String}
+     *
+     * @return {@link Property}-ies of the underlying {@link Node} as a {@link Map} of {@link Property} names to
+     * {@link Property} {@link Value}-s converted to {@link String}
      */
     public Map<String, String> all() {
         log.trace("Retrieving all properties of {}", this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .map(Resource::getValueMap)
-                    .map(ValueMap::keySet)
-                    .orElse(Set.of())
-                    .stream()
-                    .filter(propertyName -> propertyType(propertyName) != PropertyType.BINARY)
-                    .map(propertyName -> Map.entry(
-                            propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
-                    )
-                    .filter(entry -> entry.getValue().isPresent())
-                    .map(entry -> Map.entry(entry.getKey(), entry.getValue().orElseThrow()))
-                    .collect(Collectors.toUnmodifiableMap(
-                            Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first)
-                    );
+                .map(Resource::getValueMap)
+                .map(ValueMap::keySet)
+                .orElse(Set.of())
+                .stream()
+                .filter(propertyName -> propertyType(propertyName) != PropertyType.BINARY)
+                .map(propertyName -> Map.entry(
+                    propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
+                )
+                .filter(entry -> entry.getValue().isPresent())
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().orElseThrow()))
+                .collect(Collectors.toUnmodifiableMap(
+                    Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first)
+                );
         }
     }
 
     /**
-     * Sets the specified {@link Property}-ies for the underlying {@link Node} according to the logic described in
-     * the respective method for a given type of {@link Value}:
+     * Sets the specified {@link Property}-ies for the underlying {@link Node} according to the logic described in the
+     * respective method for a given type of {@link Value}:
      * <ol>
      *     <li>{@link Node#setProperty(String, String)}</li>
      *     <li>{@link Node#setProperty(String, boolean)}</li>
@@ -372,28 +385,29 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, boolean)}, {@link Node#setProperty(String, boolean)},
      * {@link Node#setProperty(String, long)}, {@link Node#setProperty(String, double)},
      * {@link Node#setProperty(String, BigDecimal)} or {@link Node#setProperty(String, Calendar)}.
+     *
      * @param properties {@link Map} of {@link Property}-ies to set, where every key is the name of the {@link Property}
      *                   to set and every value is the value of that {@link Property}; the {@link Class} of the value
      *                   can be only one of the following (if this condition isn't met, the whole operation will fail):
-     *                              <ol>
-     *                              <li>{@link DefaultProperties#STRING_CLASS}</li>
-     *                              <li>{@link DefaultProperties#BOOLEAN_CLASS}</li>
-     *                              <li>{@link DefaultProperties#LONG_CLASS}</li>
-     *                              <li>{@link DefaultProperties#DOUBLE_CLASS}</li>
-     *                              <li>{@link DefaultProperties#DECIMAL_CLASS}</li>
-     *                              <li>{@link DefaultProperties#DATE_CLASS}</li>
-     *                              </ol>
-     * @return {@link Optional} containing this {@link NodeProperties} if all the passed {@link Property}-ies were
-     *         set successfully; an empty {@link Optional} is returned if any of the {@link Property}-ies wasn't
-     *         set due to any reason
+     *                   <ol>
+     *                   <li>{@link DefaultProperties#STRING_CLASS}</li>
+     *                   <li>{@link DefaultProperties#BOOLEAN_CLASS}</li>
+     *                   <li>{@link DefaultProperties#LONG_CLASS}</li>
+     *                   <li>{@link DefaultProperties#DOUBLE_CLASS}</li>
+     *                   <li>{@link DefaultProperties#DECIMAL_CLASS}</li>
+     *                   <li>{@link DefaultProperties#DATE_CLASS}</li>
+     *                   </ol>
+     * @return {@link Optional} containing this {@link NodeProperties} if all the passed {@link Property}-ies were set
+     * successfully; an empty {@link Optional} is returned if any of the {@link Property}-ies wasn't set due to any
+     * reason
      */
     public Optional<NodeProperties> setProperties(Map<String, Object> properties) {
         log.trace("Setting properties '{}' for {}", properties, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperties(node, properties));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperties(node, properties));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -402,18 +416,18 @@ public class NodeProperties implements WithJCRPath {
     private Optional<NodeProperties> setProperties(Node node, Map<String, Object> properties) {
         int expectedNumOfProps = properties.size();
         List<NodeProperties> propsSet = properties.entrySet().stream().map(
-                        entry -> {
-                            String name = entry.getKey();
-                            Object value = entry.getValue();
-                            return setProperty(node, name, value);
-                        }
-                ).filter(Optional::isPresent)
-                .flatMap(Optional::stream)
-                .toList();
+                entry -> {
+                    String name = entry.getKey();
+                    Object value = entry.getValue();
+                    return setProperty(node, name, value);
+                }
+            ).filter(Optional::isPresent)
+            .flatMap(Optional::stream)
+            .toList();
         int actualNumOfProps = propsSet.size();
         return expectedNumOfProps == actualNumOfProps && actualNumOfProps > NumberUtils.INTEGER_ZERO
-                ? Optional.of(propsSet.getFirst())
-                : Optional.empty();
+            ? Optional.of(propsSet.getFirst())
+            : Optional.empty();
     }
 
     private Optional<NodeProperties> setProperty(Node node, String name, Object value) {
@@ -437,12 +451,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, String)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, String)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, String)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, String value) {
@@ -450,8 +465,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -463,12 +478,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, boolean)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, boolean)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, boolean)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, boolean value) {
@@ -476,8 +492,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -489,12 +505,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, long)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, long)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, long)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, long value) {
@@ -502,8 +519,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -515,12 +532,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, double)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, double)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, double)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, double value) {
@@ -528,8 +546,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -541,12 +559,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, BigDecimal)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, BigDecimal)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, BigDecimal)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, BigDecimal value) {
@@ -554,8 +573,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -567,12 +586,13 @@ public class NodeProperties implements WithJCRPath {
      * {@link Node#setProperty(String, Calendar)}.
      * </p>
      * This operation can overwrite the current {@link PropertyType} of the existing {@link Property} if it differs from
-     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which
-     * it is supported by the underlying {@link Node#setProperty(String, Calendar)}.
-     * @param name name of the {@link Property} to set
+     * the new {@link PropertyType}. However, such overwriting behavior is supported only to the extent to which it is
+     * supported by the underlying {@link Node#setProperty(String, Calendar)}.
+     *
+     * @param name  name of the {@link Property} to set
      * @param value value of the {@link Property} to set
-     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully;
-     *         an empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
+     * @return {@link Optional} containing this {@link NodeProperties} if the {@link Property} was set successfully; an
+     * empty {@link Optional} is returned if the {@link Property} wasn't set due to any reason
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, Calendar value) {
@@ -580,8 +600,8 @@ public class NodeProperties implements WithJCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                    .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                    .flatMap(node -> setProperty(node, name, value));
+                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+                .flatMap(node -> setProperty(node, name, value));
             result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
             return result;
         }
@@ -593,7 +613,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -606,7 +628,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -619,7 +643,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -632,7 +658,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -645,7 +673,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -658,7 +688,9 @@ public class NodeProperties implements WithJCRPath {
             node.setProperty(name, value);
             log.trace("Property '{}' set to '{}' for {}", name, value, this);
             return Optional.of(this);
-        } catch (@SuppressWarnings("OverlyBroadCatchBlock") RepositoryException exception) {
+        } catch (
+            @SuppressWarnings("OverlyBroadCatchBlock")
+            RepositoryException exception) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -683,8 +715,10 @@ public class NodeProperties implements WithJCRPath {
         File tempFile = File.createTempFile("jcr-binary_", ".tmp");
         tempFile.deleteOnExit();
         Path tempFilePath = tempFile.toPath();
-        try (InputStream inputStream = binary.getStream();
-             OutputStream outputStream = Files.newOutputStream(tempFilePath)) {
+        try (
+            InputStream inputStream = binary.getStream();
+            OutputStream outputStream = Files.newOutputStream(tempFilePath)
+        ) {
             IOUtils.copy(inputStream, outputStream);
             binary.dispose();
         }

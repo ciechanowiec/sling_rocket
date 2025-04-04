@@ -19,6 +19,7 @@ public class UnwrappedIteration<T> {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param iterator {@link Iterator} to be unwrapped
      */
     public UnwrappedIteration(Iterator<T> iterator) {
@@ -27,6 +28,7 @@ public class UnwrappedIteration<T> {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param iterable {@link Iterable} to be unwrapped
      */
     public UnwrappedIteration(Iterable<T> iterable) {
@@ -62,8 +64,8 @@ public class UnwrappedIteration<T> {
     }
 
     /**
-     * Returns an unmodifiable {@link List} of elements from the wrapped data structure.
-     * A new object is returned each time this method is called.
+     * Returns an unmodifiable {@link List} of elements from the wrapped data structure. A new object is returned each
+     * time this method is called.
      *
      * @return unmodifiable {@link List} of elements from the wrapped data structure
      */

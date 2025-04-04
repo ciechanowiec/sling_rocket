@@ -33,13 +33,13 @@ import java.util.Optional;
  * Servlet for handling DELETE requests to Assets API.
  */
 @Component(
-        service = {ServletDelete.class, Servlet.class},
-        immediate = true
+    service = {ServletDelete.class, Servlet.class},
+    immediate = true
 )
 @SlingServletResourceTypes(
-        methods = HttpConstants.METHOD_POST,
-        resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
-        selectors = ServletDelete.SELECTOR
+    methods = HttpConstants.METHOD_POST,
+    resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE,
+    selectors = ServletDelete.SELECTOR
 )
 @Slf4j
 @ServiceDescription("Servlet for handling DELETE requests to Assets API")
@@ -54,13 +54,14 @@ public class ServletDelete extends SlingAllMethodsServlet implements RequiresPri
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
+     *
+     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                           access to resources
      */
     @Activate
     public ServletDelete(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess
     ) {
         this.fullResourceAccess = fullResourceAccess;
         log.info("Initialized {}", this);
@@ -79,23 +80,25 @@ public class ServletDelete extends SlingAllMethodsServlet implements RequiresPri
         RequestDelete requestDelete = new RequestDelete(slingRequest);
         if (requestDelete.isValidStructure()) {
             requestDelete.targetAsset()
-                    .map(asset -> new DeletableResource(asset, userResourceAccess))
-                    .flatMap(DeletableResource::delete)
-                    .map(
-                            deletedPath -> new Response(
-                                    response, new Status(HttpServletResponse.SC_OK, "Asset deleted"),
-                                    List.of(new AssetDescriptor(requestDelete))
-                            )
-                    ).or(
-                            () -> Optional.of(
-                                    new Response(response, new Status(
-                                    HttpServletResponse.SC_BAD_REQUEST,
-                                    "Unable to delete: '%s'".formatted(new AssetDescriptor(requestDelete))
-                            )))
-                    ).ifPresent(Response::send);
+                .map(asset -> new DeletableResource(asset, userResourceAccess))
+                .flatMap(DeletableResource::delete)
+                .map(
+                    deletedPath -> new Response(
+                        response, new Status(HttpServletResponse.SC_OK, "Asset deleted"),
+                        List.of(new AssetDescriptor(requestDelete))
+                    )
+                ).or(
+                    () -> Optional.of(
+                        new Response(
+                            response, new Status(
+                            HttpServletResponse.SC_BAD_REQUEST,
+                            "Unable to delete: '%s'".formatted(new AssetDescriptor(requestDelete))
+                        )
+                        ))
+                ).ifPresent(Response::send);
         } else {
             Response responseWithError = new Response(
-                    response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
+                response, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure")
             );
             responseWithError.send();
         }

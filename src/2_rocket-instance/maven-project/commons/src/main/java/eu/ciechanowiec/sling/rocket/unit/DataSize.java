@@ -62,8 +62,9 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Constructs an instance of this class.
-     * @param amount amount of the size of digital information represented by this {@link DataSize},
-     *               measured in the specified {@link DataUnit}
+     *
+     * @param amount   amount of the size of digital information represented by this {@link DataSize}, measured in the
+     *                 specified {@link DataUnit}
      * @param dataUnit unit of digital information that the specified amount is measured in
      */
     public DataSize(long amount, DataUnit dataUnit) {
@@ -72,6 +73,7 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param file {@link File} whose size is represented by this {@link DataSize}
      */
     public DataSize(File file) {
@@ -80,17 +82,19 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param fileSupplier {@link Supplier} with a {@link File} whose size is represented by this {@link DataSize}
      */
     public DataSize(Supplier<File> fileSupplier) {
         this.bytesSupplier = new MemoizingSupplier<>(() -> fileSupplier.get().length());
         Conditional.onFalseExecute(
-                fileSupplier.get().exists(), () -> log.warn("This file doesn't exist: '{}'", fileSupplier)
+            fileSupplier.get().exists(), () -> log.warn("This file doesn't exist: '{}'", fileSupplier)
         );
     }
 
     /**
      * Number of {@link DataUnit#BYTES} in this {@link DataSize}.
+     *
      * @return the number of bytes
      */
     public long bytes() {
@@ -99,6 +103,7 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Number of {@link DataUnit#KILOBYTES} in this {@link DataSize}.
+     *
      * @return number of {@link DataUnit#KILOBYTES} in this {@link DataSize}
      */
     public double kilobytes() {
@@ -107,6 +112,7 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Number of {@link DataUnit#MEGABYTES} in this {@link DataSize}.
+     *
      * @return the number of bytes
      */
     public double megabytes() {
@@ -115,6 +121,7 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Number of {@link DataUnit#GIGABYTES} in this {@link DataSize}.
+     *
      * @return the number of bytes
      */
     public double gigabytes() {
@@ -123,6 +130,7 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Number of {@link DataUnit#TERABYTES} in this {@link DataSize}.
+     *
      * @return the number of bytes
      */
     public double terabytes() {
@@ -131,9 +139,10 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Checks if this {@link DataSize} is bigger than the compared {@link DataSize}.
+     *
      * @param comparedDataSize {@link DataSize} to which this {@link DataSize} is compared to
-     * @return {@code true} if this {@link DataSize} is bigger than the compared {@link DataSize};
-     *         {@code false} otherwise
+     * @return {@code true} if this {@link DataSize} is bigger than the compared {@link DataSize}; {@code false}
+     * otherwise
      */
     public boolean biggerThan(DataSize comparedDataSize) {
         return bytesSupplier.get() > comparedDataSize.bytesSupplier.get();
@@ -141,9 +150,10 @@ public final class DataSize implements Comparable<DataSize> {
 
     /**
      * Checks if this {@link DataSize} is smaller than the compared {@link DataSize}.
+     *
      * @param comparedDataSize {@link DataSize} to which this {@link DataSize} is compared to
-     * @return {@code true} if this {@link DataSize} is smaller than the compared {@link DataSize};
-     *         {@code false} otherwise
+     * @return {@code true} if this {@link DataSize} is smaller than the compared {@link DataSize}; {@code false}
+     * otherwise
      */
     public boolean smallerThan(DataSize comparedDataSize) {
         return bytesSupplier.get() < comparedDataSize.bytesSupplier.get();
@@ -155,8 +165,9 @@ public final class DataSize implements Comparable<DataSize> {
     }
 
     /**
-     * Adds the specified {@link DataSize} to this {@link DataSize}.
-     * The sum result is returned and this {@link DataSize} remains unchanged.
+     * Adds the specified {@link DataSize} to this {@link DataSize}. The sum result is returned and this
+     * {@link DataSize} remains unchanged.
+     *
      * @param dataSizeToAdd {@link DataSize} to add to this {@link DataSize}
      * @return new {@link DataSize} that is the sum of this {@link DataSize} and the passed {@link DataSize}
      */
@@ -201,8 +212,8 @@ public final class DataSize implements Comparable<DataSize> {
         long hrBytes = remainingBytes;
 
         return String.format(
-                "[%d TB, %d GB, %d MB, %d KB, %d B (total: %d bytes)]",
-                hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes, bytesSupplier.get()
+            "[%d TB, %d GB, %d MB, %d KB, %d B (total: %d bytes)]",
+            hrTerabytes, hrGigabytes, hrMegabytes, hrKilobytes, hrBytes, bytesSupplier.get()
         );
     }
 }

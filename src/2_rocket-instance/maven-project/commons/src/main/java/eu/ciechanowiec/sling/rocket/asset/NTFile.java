@@ -57,6 +57,7 @@ class NTFile implements Asset {
         JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
         NodeProperties jcrContentChildNP = new NodeProperties(jcrContentChildJCRPath, resourceAccess);
         return new AssetFile() {
+
             @Override
             public Optional<File> retrieve() {
                 return jcrContentChildNP.retrieveFile(JcrConstants.JCR_DATA);
@@ -74,12 +75,13 @@ class NTFile implements Asset {
         JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
         NodeProperties jcrContentChildNP = new NodeProperties(jcrContentChildJCRPath, resourceAccess);
         return new AssetMetadata() {
+
             @Override
             public String mimeType() {
                 return properties().flatMap(
-                        nodeProperties -> nodeProperties.propertyValue(
-                                JcrConstants.JCR_MIMETYPE, DefaultProperties.STRING_CLASS
-                        )
+                    nodeProperties -> nodeProperties.propertyValue(
+                        JcrConstants.JCR_MIMETYPE, DefaultProperties.STRING_CLASS
+                    )
                 ).orElse(MediaType.WILDCARD);
             }
 

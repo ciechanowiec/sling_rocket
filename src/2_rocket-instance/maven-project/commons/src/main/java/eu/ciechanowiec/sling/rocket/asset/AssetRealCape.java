@@ -22,9 +22,9 @@ class AssetRealCape implements Asset {
 
     private Optional<AssetReal> wearCape() {
         return new JCRPathWithParent(ntFile, resourceAccess).parent()
-                .map(parentJCRPath -> new NodeProperties(parentJCRPath, resourceAccess))
-                .filter(parentNodeProperties -> parentNodeProperties.isPrimaryType(NT_ASSET_REAL))
-                .map(parentNodeProperties -> new AssetReal(parentNodeProperties, resourceAccess));
+            .map(parentJCRPath -> new NodeProperties(parentJCRPath, resourceAccess))
+            .filter(parentNodeProperties -> parentNodeProperties.isPrimaryType(NT_ASSET_REAL))
+            .map(parentNodeProperties -> new AssetReal(parentNodeProperties, resourceAccess));
     }
 
     @Override

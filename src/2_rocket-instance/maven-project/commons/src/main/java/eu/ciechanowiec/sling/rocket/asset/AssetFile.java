@@ -15,22 +15,24 @@ import java.util.Optional;
 public interface AssetFile {
 
     /**
-     * Name of a {@link Property} of type {@link PropertyType#STRING} that contains the original
-     * name of the {@link AssetFile} that was given to it in the source system from which this {@link AssetFile}
-     * was obtained, e.g. from the user's file system.
+     * Name of a {@link Property} of type {@link PropertyType#STRING} that contains the original name of the
+     * {@link AssetFile} that was given to it in the source system from which this {@link AssetFile} was obtained, e.g.
+     * from the user's file system.
      */
     String PN_ORIGINAL_NAME = "originalName";
 
     /**
-     * Returns an {@link Optional} containing the unary binary file of an {@link Asset}.
-     * The wrapped {@link File} is written in a temporary directory of the host operational system.
-     * @return {@link Optional} containing the unary binary file of an {@link Asset};
-     *         an empty {@link Optional} is returned if due to any reason file retrieve fails
+     * Returns an {@link Optional} containing the unary binary file of an {@link Asset}. The wrapped {@link File} is
+     * written in a temporary directory of the host operational system.
+     *
+     * @return {@link Optional} containing the unary binary file of an {@link Asset}; an empty {@link Optional} is
+     * returned if due to any reason file retrieve fails
      */
     Optional<File> retrieve();
 
     /**
      * Returns the {@link DataSize} of the unary binary file of an {@link Asset}.
+     *
      * @return {@link DataSize} of the unary binary file of an {@link Asset}
      */
     default DataSize size() {

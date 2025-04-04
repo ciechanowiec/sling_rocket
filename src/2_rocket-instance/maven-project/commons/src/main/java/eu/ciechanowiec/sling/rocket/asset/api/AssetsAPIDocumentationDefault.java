@@ -19,8 +19,8 @@ import java.util.Optional;
  * Default implementation of {@link AssetsAPIDocumentation}.
  */
 @Component(
-        service = {AssetsAPIDocumentation.class, AssetsAPIDocumentationDefault.class},
-        immediate = true
+    service = {AssetsAPIDocumentation.class, AssetsAPIDocumentationDefault.class},
+    immediate = true
 )
 @ServiceDescription("Default implementation of AssetsAPIDocumentation")
 @ServiceRanking(Integer.MIN_VALUE)
@@ -48,8 +48,8 @@ public class AssetsAPIDocumentationDefault implements AssetsAPIDocumentation {
         ClassLoader classLoader = ServletDefault.class.getClassLoader();
         log.debug("Reading HTML content from '{}' with {}", fileName, classLoader);
         try (
-                InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream(fileName)).orElseThrow();
-                OutputStream outputStream = Files.newOutputStream(tempFilePath)
+            InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream(fileName)).orElseThrow();
+            OutputStream outputStream = Files.newOutputStream(tempFilePath)
         ) {
             IOUtils.copy(inputStream, outputStream);
         }

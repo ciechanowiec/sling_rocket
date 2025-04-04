@@ -23,15 +23,15 @@ import java.util.Collection;
  * Display of Rocket Stats.
  */
 @Component(
-        service = {InventoryPrinter.class, RocketStatsDisplay.class},
-        immediate = true,
-        property = {
-                InventoryPrinter.FORMAT + "=JSON",
-                InventoryPrinter.FORMAT + "=TEXT",
-                InventoryPrinter.TITLE + "=Sling Rocket Statistics",
-                InventoryPrinter.NAME + "=sling-rocket-stats",
-                InventoryPrinter.WEBCONSOLE + ":Boolean=true"
-        }
+    service = {InventoryPrinter.class, RocketStatsDisplay.class},
+    immediate = true,
+    property = {
+        InventoryPrinter.FORMAT + "=JSON",
+        InventoryPrinter.FORMAT + "=TEXT",
+        InventoryPrinter.TITLE + "=Sling Rocket Statistics",
+        InventoryPrinter.NAME + "=sling-rocket-stats",
+        InventoryPrinter.WEBCONSOLE + ":Boolean=true"
+    }
 )
 @Slf4j
 @ServiceDescription("Display of Rocket Stats")
@@ -41,9 +41,9 @@ public class RocketStatsDisplay implements InventoryPrinter, JSON {
      * {@link Collection} of {@link RocketStats} that will be displayed.
      */
     @Reference(
-            cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC,
-            policyOption = ReferencePolicyOption.GREEDY
+        cardinality = ReferenceCardinality.MULTIPLE,
+        policy = ReferencePolicy.DYNAMIC,
+        policyOption = ReferencePolicyOption.GREEDY
     )
     @JsonSerialize(contentUsing = RocketStatsSerializer.class)
     @JsonProperty("rocketStats")

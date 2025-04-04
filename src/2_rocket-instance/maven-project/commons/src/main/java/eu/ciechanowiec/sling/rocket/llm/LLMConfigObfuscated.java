@@ -56,6 +56,6 @@ class LLMConfigObfuscated {
 
     Optional<Integer> llmMaxCompletionTokens() {
         return llmMaxCompletionTokens == NumberUtils.INTEGER_ZERO ?
-                Optional.empty() : Optional.of(llmMaxCompletionTokens);
+            Optional.empty() : Optional.of(llmMaxCompletionTokens);
     }
 }

@@ -14,18 +14,21 @@ public interface Usage extends JSON {
 
     /**
      * Returns the number of tokens in the prompt.
+     *
      * @return number of tokens in the prompt
      */
     int promptTokens();
 
     /**
      * Returns the number of tokens in the generated {@link ChatCompletion}.
+     *
      * @return number of tokens in the generated {@link ChatCompletion}
      */
     int completionTokens();
 
     /**
      * Returns the total number of tokens used in the {@link ChatCompletion} request (prompt + completion).
+     *
      * @return total number of tokens used in the {@link ChatCompletion} request
      */
     int totalTokens();

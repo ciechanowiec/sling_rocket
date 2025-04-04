@@ -13,12 +13,14 @@ public interface ChatMessage {
 
     /**
      * Returns the {@link Role} of the author of this {@link ChatMessage}.
+     *
      * @return {@link Role} of the author of this {@link ChatMessage}
      */
     Role role();
 
     /**
      * Returns the content of this {@link ChatMessage}.
+     *
      * @return content of this {@link ChatMessage}
      */
     String content();

@@ -21,9 +21,8 @@ import java.util.Map;
  * Wrapper over a {@link Node}, either existing or hypothetical.
  * </p>
  * <p>
- * The class provides operations on a {@link Node} in a way detached from an ongoing {@link Session}.
- * {@link Session}'s live cycle is supposed to be fully
- * managed by {@link SimpleNode} itself in an encapsulated manner.
+ * The class provides operations on a {@link Node} in a way detached from an ongoing {@link Session}. {@link Session}'s
+ * live cycle is supposed to be fully managed by {@link SimpleNode} itself in an encapsulated manner.
  * </p>
  */
 @SuppressWarnings("WeakerAccess")
@@ -36,7 +35,8 @@ public class SimpleNode {
 
     /**
      * Constructs an instance of this class.
-     * @param pathToNode path to the {@link Node} this {@link SimpleNode} is supposed to represent
+     *
+     * @param pathToNode     path to the {@link Node} this {@link SimpleNode} is supposed to represent
      * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
      */
     public SimpleNode(JCRPath pathToNode, ResourceAccess resourceAccess) {
@@ -45,8 +45,9 @@ public class SimpleNode {
 
     /**
      * Constructs an instance of this class.
-     * @param pathToNode path to the {@link Node} this {@link SimpleNode} is supposed to represent
-     * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
+     *
+     * @param pathToNode      path to the {@link Node} this {@link SimpleNode} is supposed to represent
+     * @param resourceAccess  {@link ResourceAccess} that will be used to acquire access to resources
      * @param defaultNodeType default {@link NodeType} to be used if the {@link Node} represented by this
      *                        {@link SimpleNode} does not exist yet
      */
@@ -58,9 +59,10 @@ public class SimpleNode {
 
     /**
      * Constructs an instance of this class.
-     * @param withJCRPath object that contains a {@link JCRPath} to the {@link Node}
-     *                    this {@link SimpleNode} is supposed to represent
-     * @param resourceAccess {@link ResourceAccess} that will be used to acquire access to resources
+     *
+     * @param withJCRPath     object that contains a {@link JCRPath} to the {@link Node} this {@link SimpleNode} is
+     *                        supposed to represent
+     * @param resourceAccess  {@link ResourceAccess} that will be used to acquire access to resources
      * @param defaultNodeType default {@link NodeType} to be used if the {@link Node} represented by this
      *                        {@link SimpleNode} does not exist yet
      */
@@ -71,8 +73,9 @@ public class SimpleNode {
     }
 
     /**
-     * Returns the {@link NodeProperties} of the {@link Node} represented by this {@link SimpleNode}.
-     * If the {@link Node} does not exist yet, it will be created.
+     * Returns the {@link NodeProperties} of the {@link Node} represented by this {@link SimpleNode}. If the
+     * {@link Node} does not exist yet, it will be created.
+     *
      * @return {@link NodeProperties} of the {@link Node} represented by this {@link SimpleNode}
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_INFERRED")
@@ -82,8 +85,9 @@ public class SimpleNode {
     }
 
     /**
-     * Ensures that the {@link Node} represented by this {@link SimpleNode} exists.
-     * If the {@link Node} does not exist yet, it will be created.
+     * Ensures that the {@link Node} represented by this {@link SimpleNode} exists. If the {@link Node} does not exist
+     * yet, it will be created.
+     *
      * @return {@link SimpleNode} representing an existing {@link Node}
      */
     @SneakyThrows
@@ -91,8 +95,8 @@ public class SimpleNode {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String pathToEnsureRaw = pathToNode.get();
             Resource resource = ResourceUtil.getOrCreateResource(
-                    resourceResolver, pathToEnsureRaw,
-                    Map.of(JcrConstants.JCR_PRIMARYTYPE, defaultNodeType), null, true
+                resourceResolver, pathToEnsureRaw,
+                Map.of(JcrConstants.JCR_PRIMARYTYPE, defaultNodeType), null, true
             );
             log.trace("Ensured {}", resource);
         }

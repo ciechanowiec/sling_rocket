@@ -35,9 +35,9 @@ class JCRPathWithParent implements JCRPath {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                           .map(resource -> Optional.ofNullable(resource.getParent()).orElse(resource))
-                           .map(Resource::getPath)
-                           .map(parentPath -> new ParentJCRPath(new TargetJCRPath(parentPath)));
+                .map(resource -> Optional.ofNullable(resource.getParent()).orElse(resource))
+                .map(Resource::getPath)
+                .map(parentPath -> new ParentJCRPath(new TargetJCRPath(parentPath)));
         }
     }
 

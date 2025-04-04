@@ -14,10 +14,10 @@ public enum ContentDispositionHeader {
      * {@link HttpHeaders#CONTENT_DISPOSITION} HTTP header of type {@code attachment}.
      */
     ATTACHMENT(
-            file -> {
-                String fileName = file.getName();
-                return "attachment;filename=\"%s\"".formatted(fileName);
-            }
+        file -> {
+            String fileName = file.getName();
+            return "attachment;filename=\"%s\"".formatted(fileName);
+        }
     ),
 
     /**
@@ -33,6 +33,7 @@ public enum ContentDispositionHeader {
 
     /**
      * Returns the value of this {@link ContentDispositionHeader} for the specified {@link File}.
+     *
      * @param file {@link File} for which the value of this {@link ContentDispositionHeader} will be returned
      * @return value of this {@link ContentDispositionHeader} for the specified {@link File}
      */

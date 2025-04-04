@@ -9,6 +9,7 @@ public class IllegalPrimaryTypeException extends RuntimeException {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param expectedPrimaryType expected primary type of a {@link Node}
      */
     public IllegalPrimaryTypeException(String expectedPrimaryType) {

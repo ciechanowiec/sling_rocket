@@ -26,12 +26,12 @@ import java.util.List;
  * Servlet for handling DEFAULT requests to Assets API.
  */
 @Component(
-        service = {ServletDefault.class, Servlet.class},
-        immediate = true
+    service = {ServletDefault.class, Servlet.class},
+    immediate = true
 )
 @SlingServletResourceTypes(
-        methods = HttpConstants.METHOD_GET,
-        resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE
+    methods = HttpConstants.METHOD_GET,
+    resourceTypes = AssetsAPI.ASSETS_API_RESOURCE_TYPE
 )
 @Slf4j
 @ServiceDescription("Servlet for handling DEFAULT requests to Assets API")
@@ -50,21 +50,22 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
 
     /**
      * Constructs an instance of this class.
-     * @param fullResourceAccess {@link FullResourceAccess} that will be used by the constructed
-     *                           object to acquire access to resources
+     *
+     * @param fullResourceAccess     {@link FullResourceAccess} that will be used by the constructed object to acquire
+     *                               access to resources
      * @param assetsAPIDocumentation {@link AssetsAPIDocumentation} that will be used to provide Assets API
      *                               documentation
      */
     @Activate
     public ServletDefault(
-            @Reference(cardinality = ReferenceCardinality.MANDATORY)
-            FullResourceAccess fullResourceAccess,
-            @Reference(
-                    cardinality = ReferenceCardinality.MANDATORY,
-                    policy = ReferencePolicy.STATIC,
-                    policyOption = ReferencePolicyOption.GREEDY
-            )
-            AssetsAPIDocumentation assetsAPIDocumentation
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        FullResourceAccess fullResourceAccess,
+        @Reference(
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.STATIC,
+            policyOption = ReferencePolicyOption.GREEDY
+        )
+        AssetsAPIDocumentation assetsAPIDocumentation
     ) {
         this.fullResourceAccess = fullResourceAccess;
         this.htmlToSend = new MemoizingSupplier<>(assetsAPIDocumentation::html);
@@ -80,7 +81,7 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
         Request slingRequest = new Request(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         ResponseWithHTML responseWithHTML = new ResponseWithHTML(
-                response, htmlToSend.get(), HttpServletResponse.SC_OK
+            response, htmlToSend.get(), HttpServletResponse.SC_OK
         );
         responseWithHTML.send();
     }

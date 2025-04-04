@@ -8,6 +8,7 @@ public interface WithJCRPath {
 
     /**
      * Returns the {@link JCRPath} associated with this abstraction.
+     *
      * @return {@link JCRPath} associated with this abstraction
      */
     JCRPath jcrPath();

@@ -30,8 +30,9 @@ public class ResponseWithAsset {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param wrappedResponse {@link HttpServletResponse} which will be used to send this {@link ResponseWithAsset}
-     * @param assetToSend {@link Asset} that will be sent with this {@link Response}
+     * @param assetToSend     {@link Asset} that will be sent with this {@link Response}
      */
     public ResponseWithAsset(HttpServletResponse wrappedResponse, Asset assetToSend) {
         this.wrappedResponse = wrappedResponse;
@@ -42,22 +43,22 @@ public class ResponseWithAsset {
     /**
      * Respond the client to an HTTP request via sending this HTTP {@link ResponseWithAsset}.
      * <p>
-     * This method can be called only once for a given object.
-     * If called more than once or the response has been already committed as specified by
-     * {@link ServletResponse#isCommitted()}, an {@link AlreadySentException} is thrown.
+     * This method can be called only once for a given object. If called more than once or the response has been already
+     * committed as specified by {@link ServletResponse#isCommitted()}, an {@link AlreadySentException} is thrown.
+     *
      * @param contentDispositionHeader {@link ContentDispositionHeader} to be sent with this {@link ResponseWithAsset}
-     * @throws AlreadySentException if this {@link Response} has already been sent or the response
-     * has been already committed as specified by {@link ServletResponse#isCommitted()}
+     * @throws AlreadySentException if this {@link Response} has already been sent or the response has been already
+     *                              committed as specified by {@link ServletResponse#isCommitted()}
      */
     @SneakyThrows
     public void send(ContentDispositionHeader contentDispositionHeader) {
         boolean isAllowed = !wasSent.get() && !wrappedResponse.isCommitted();
         Conditional.isTrueOrThrow(isAllowed, new AlreadySentException(this));
         assetToSend.assetFile().retrieve().ifPresentOrElse(
-                file -> send(file, contentDispositionHeader),
-                () -> new Response(
-                        wrappedResponse, new Status(HttpServletResponse.SC_NOT_FOUND, "No asset found")
-                ).send()
+            file -> send(file, contentDispositionHeader),
+            () -> new Response(
+                wrappedResponse, new Status(HttpServletResponse.SC_NOT_FOUND, "No asset found")
+            ).send()
         );
     }
 

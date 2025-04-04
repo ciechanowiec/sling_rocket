@@ -14,10 +14,12 @@ class WithPrimitiveArrayTranslation {
         this.valueMap = valueMap;
     }
 
-    @SuppressWarnings({
+    @SuppressWarnings(
+        {
             "ReturnCount", "MethodWithMultipleReturnPoints", "IfCanBeSwitch",
             "IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"
-    })
+        }
+    )
     <T> T get(String propertyName, T defaultValue) {
         if (defaultValue instanceof boolean[] defaultValueCast) {
             Boolean[] defaultValueObj = ArrayUtils.toObject(defaultValueCast);
@@ -36,22 +38,24 @@ class WithPrimitiveArrayTranslation {
         }
     }
 
-    @SuppressWarnings({
+    @SuppressWarnings(
+        {
             "ReturnCount", "MethodWithMultipleReturnPoints", "IfCanBeSwitch", "IfStatementWithTooManyBranches"
-    })
+        }
+    )
     <T> Optional<T> get(String propertyName, Class<T> type) {
         if (type.equals(boolean[].class)) {
             return Optional.ofNullable(valueMap.get(propertyName, Boolean[].class))
-                           .map(ArrayUtils::toPrimitive)
-                           .map(array -> (T) array);
+                .map(ArrayUtils::toPrimitive)
+                .map(array -> (T) array);
         } else if (type.equals(long[].class)) {
             return Optional.ofNullable(valueMap.get(propertyName, Long[].class))
-                           .map(ArrayUtils::toPrimitive)
-                           .map(array -> (T) array);
+                .map(ArrayUtils::toPrimitive)
+                .map(array -> (T) array);
         } else if (type.equals(double[].class)) {
             return Optional.ofNullable(valueMap.get(propertyName, Double[].class))
-                           .map(ArrayUtils::toPrimitive)
-                           .map(array -> (T) array);
+                .map(ArrayUtils::toPrimitive)
+                .map(array -> (T) array);
         } else {
             return Optional.ofNullable(valueMap.get(propertyName, type));
         }

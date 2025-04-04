@@ -19,11 +19,17 @@ public class ChatMessageDefault implements ChatMessage {
 
     /**
      * Constructs an instance of this class.
-     * @param role type of the author of this {@link ChatMessage}
+     *
+     * @param role    type of the author of this {@link ChatMessage}
      * @param content content of this {@link ChatMessage}
      */
     @JsonCreator
-    public ChatMessageDefault(@JsonProperty("role") Role role, @JsonProperty("content") String content) {
+    public ChatMessageDefault(
+        @JsonProperty("role")
+        Role role,
+        @JsonProperty("content")
+        String content
+    ) {
         this.roleSupplier = () -> role;
         this.contentSupplier = () -> content;
         log.trace("Initialized {} with content: '{}'. Role: {}", this, content, role);
@@ -31,7 +37,8 @@ public class ChatMessageDefault implements ChatMessage {
 
     /**
      * Constructs an instance of this class.
-     * @param roleSupplier {@link Supplier} that produces the type of the author of this {@link ChatMessage}
+     *
+     * @param roleSupplier    {@link Supplier} that produces the type of the author of this {@link ChatMessage}
      * @param contentSupplier {@link Supplier} that produces the content of this {@link ChatMessage}
      */
     public ChatMessageDefault(Supplier<Role> roleSupplier, Supplier<String> contentSupplier) {
@@ -42,10 +49,11 @@ public class ChatMessageDefault implements ChatMessage {
 
     /**
      * Constructs an instance of this class.
-     * @param sourceMessage {@link ChatMessage} to be used as a source of the {@link Role}
-     *                      and content for the newly constructed {@link ChatMessage}
-     * @param contentTransformer function that will be applied to the content of the {@code sourceMessage}
-     *                           and to produce the content of the newly constructed {@link ChatMessage}
+     *
+     * @param sourceMessage      {@link ChatMessage} to be used as a source of the {@link Role} and content for the
+     *                           newly constructed {@link ChatMessage}
+     * @param contentTransformer function that will be applied to the content of the {@code sourceMessage} and to
+     *                           produce the content of the newly constructed {@link ChatMessage}
      */
     public ChatMessageDefault(ChatMessage sourceMessage, UnaryOperator<String> contentTransformer) {
         this.roleSupplier = sourceMessage::role;

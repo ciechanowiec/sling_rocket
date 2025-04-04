@@ -18,6 +18,7 @@ public class WithUserManager {
 
     /**
      * Constructs an instance of this class.
+     *
      * @param resourceResolver {@link ResourceResolver} that will be wrapped by this {@link WithUserManager}
      */
     public WithUserManager(ResourceResolver resourceResolver) {
@@ -26,6 +27,7 @@ public class WithUserManager {
 
     /**
      * Returns a {@link UserManager} for the wrapped {@link ResourceResolver}.
+     *
      * @return {@link UserManager} for the wrapped {@link ResourceResolver}
      */
     @SneakyThrows

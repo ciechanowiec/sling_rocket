@@ -127,6 +127,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#STRING}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#STRING}
      */
@@ -136,6 +137,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#BOOLEAN}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#BOOLEAN}
      */
@@ -145,6 +147,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#LONG}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#LONG}
      */
@@ -154,6 +157,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#DOUBLE}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#DOUBLE}
      */
@@ -163,6 +167,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#DECIMAL}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#DECIMAL}
      */
@@ -172,6 +177,7 @@ public final class DefaultProperties {
 
     /**
      * Creates a value of a {@link Node} property of type {@link PropertyType#DATE}.
+     *
      * @param defaultValue content of the constructed value
      * @return value of a {@link Node} property of type {@link PropertyType#DATE}
      */

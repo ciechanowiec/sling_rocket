@@ -27,12 +27,13 @@ public class CCRequestDefault implements ChatCompletionRequest {
 
     /**
      * Constructs an instance of this class.
-     * @param llmAPIuri {@link LLMConfig#llm_api_url()}
-     * @param llmAPIBearerToken {@link LLMConfig#llm_api_bearer_token()}
+     *
+     * @param llmAPIuri                 {@link LLMConfig#llm_api_url()}
+     * @param llmAPIBearerToken         {@link LLMConfig#llm_api_bearer_token()}
      * @param chatCompletionRequestBody {@link ChatCompletionRequestBody} of this {@link ChatCompletionRequest}
      */
     public CCRequestDefault(
-            URI llmAPIuri, String llmAPIBearerToken, ChatCompletionRequestBody chatCompletionRequestBody
+        URI llmAPIuri, String llmAPIBearerToken, ChatCompletionRequestBody chatCompletionRequestBody
     ) {
         this.llmAPIuri = llmAPIuri;
         this.llmAPIBearerToken = llmAPIBearerToken;
@@ -46,18 +47,18 @@ public class CCRequestDefault implements ChatCompletionRequest {
         String requestBodyJSON = chatCompletionRequestBody.asJSON();
         log.trace("Executing {}. JSON body: '{}'", this, requestBodyJSON);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(llmAPIuri)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(llmAPIBearerToken))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .POST(HttpRequest.BodyPublishers.ofString(requestBodyJSON))
-                .build();
+            .uri(llmAPIuri)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(llmAPIBearerToken))
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+            .POST(HttpRequest.BodyPublishers.ofString(requestBodyJSON))
+            .build();
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper objectMapper = new ObjectMapper();
             String responseBodyJSON = response.body();
             log.trace(
-                    "Executed {} with this body: '{}'. Response JSON body: '{}'",
-                    this, requestBodyJSON, responseBodyJSON
+                "Executed {} with this body: '{}'. Response JSON body: '{}'",
+                this, requestBodyJSON, responseBodyJSON
             );
             return objectMapper.readValue(responseBodyJSON, ChatCompletion.class);
         }

@@ -13,8 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Represents a path to the persisted or hypothetically persisted {@link Item} in the {@link Repository},
- * upon which some action is to be performed.
+ * Represents a path to the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon which
+ * some action is to be performed.
  */
 @ToString
 @Slf4j
@@ -25,6 +25,7 @@ public class TargetJCRPath implements JCRPath {
 
     /**
      * Constructs an instance of this class using a raw JCR path.
+     *
      * @param rawPath valid JCR path to be represented by the constructed object
      */
     public TargetJCRPath(String rawPath) {
@@ -33,11 +34,11 @@ public class TargetJCRPath implements JCRPath {
     }
 
     /**
-     * Constructs an instance of this class that will represent a JCR path to the specified {@link Resource}.
-     * The specified {@link Resource} must be adaptable to an existing {@link Node} when the instance is
-     * constructed.
-     * @param resource {@link Resource} adaptable to a {@link Node} whose JCR path will be represented by
-     *        the constructed object
+     * Constructs an instance of this class that will represent a JCR path to the specified {@link Resource}. The
+     * specified {@link Resource} must be adaptable to an existing {@link Node} when the instance is constructed.
+     *
+     * @param resource {@link Resource} adaptable to a {@link Node} whose JCR path will be represented by the
+     *                 constructed object
      */
     @SneakyThrows
     public TargetJCRPath(Resource resource) {
@@ -51,9 +52,10 @@ public class TargetJCRPath implements JCRPath {
 
     /**
      * Constructs an instance of this class using a parent JCR path and a child node name.
-     * @param parentJCRPath JCR path that points to the direct parent of an {@link Item} at the JCR path
-     *                      to be represented by the constructed object
-     * @param childJCRName name of the lowest {@link Item} at the JCR path to be represented by the constructed object
+     *
+     * @param parentJCRPath JCR path that points to the direct parent of an {@link Item} at the JCR path to be
+     *                      represented by the constructed object
+     * @param childJCRName  name of the lowest {@link Item} at the JCR path to be represented by the constructed object
      */
     @SuppressWarnings("TypeMayBeWeakened")
     public TargetJCRPath(ParentJCRPath parentJCRPath, String childJCRName) {
@@ -64,9 +66,10 @@ public class TargetJCRPath implements JCRPath {
 
     /**
      * Constructs an instance of this class using a parent JCR path and a child node name.
-     * @param parentJCRPath JCR path that points to the direct parent of an {@link Item} at the JCR path
-     *                      to be represented by the constructed object
-     * @param childJCRName name of the lowest {@link Item} at the JCR path to be represented by the constructed object
+     *
+     * @param parentJCRPath JCR path that points to the direct parent of an {@link Item} at the JCR path to be
+     *                      represented by the constructed object
+     * @param childJCRName  name of the lowest {@link Item} at the JCR path to be represented by the constructed object
      */
     @SuppressWarnings("TypeMayBeWeakened")
     public TargetJCRPath(ParentJCRPath parentJCRPath, UUID childJCRName) {

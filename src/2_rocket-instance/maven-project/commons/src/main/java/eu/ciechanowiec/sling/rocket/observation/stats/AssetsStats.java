@@ -33,11 +33,11 @@ class AssetsStats {
     @JsonProperty("biggestAssets")
     List<String> biggestAssets() {
         return assetsRepository.all()
-                .stream()
-                .sorted((assetOne, assetTwo) -> assetTwo.assetFile().size().compareTo(assetOne.assetFile().size()))
-                .limit(100)
-                .map(asset -> String.format("'%s' - %s", asset.jcrPath().get(), asset.assetFile().size()))
-                .toList();
+            .stream()
+            .sorted((assetOne, assetTwo) -> assetTwo.assetFile().size().compareTo(assetOne.assetFile().size()))
+            .limit(100)
+            .map(asset -> String.format("'%s' - %s", asset.jcrPath().get(), asset.assetFile().size()))
+            .toList();
     }
 
     @JsonProperty("dataSizeOfAllAssets")
@@ -48,14 +48,14 @@ class AssetsStats {
     @JsonProperty("averageAssetSize")
     String averageAssetSize() {
         return Optional.ofNullable(
-                        Conditional.conditional(numberOfAllAssets() > 0)
-                                .onFalse(() -> new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES))
-                                .onTrue(() -> new DataSize(
-                                        dataSizeOfAllAssets.get().bytes() / numberOfAllAssets(), DataUnit.BYTES)
-                                )
-                                .get(DataSize.class)
-                )
-                .orElseThrow()
-                .toString();
+                Conditional.conditional(numberOfAllAssets() > 0)
+                    .onFalse(() -> new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES))
+                    .onTrue(() -> new DataSize(
+                        dataSizeOfAllAssets.get().bytes() / numberOfAllAssets(), DataUnit.BYTES)
+                    )
+                    .get(DataSize.class)
+            )
+            .orElseThrow()
+            .toString();
     }
 }
