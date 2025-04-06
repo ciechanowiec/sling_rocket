@@ -421,7 +421,7 @@ Public building and publication of new versions of _Sling Rocket_ is driven by G
 ==== Local
 Local builds of _Sling Rocket_ consist of two following steps:
 [upperalpha]
-. Build the SR Parent POM and subordinate artifacts and install them in the local Maven Central Repository:
+. Build the SR Parent POM and subordinate artifacts, and install them in the local Maven Central Repository:
 +
 [source,bash]
 ....
