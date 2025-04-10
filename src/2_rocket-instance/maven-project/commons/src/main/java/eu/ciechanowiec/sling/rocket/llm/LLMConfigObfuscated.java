@@ -2,14 +2,13 @@ package eu.ciechanowiec.sling.rocket.llm;
 
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import java.net.URI;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
-
-import java.net.URI;
-import java.util.Optional;
 
 @ToString
 @Slf4j

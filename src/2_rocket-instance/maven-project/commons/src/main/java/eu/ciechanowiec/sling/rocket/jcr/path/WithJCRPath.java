@@ -1,15 +1,15 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
 /**
- * Represents an abstraction that has an associated {@link JCRPath}.
+ * Entity that has an associated {@link JCRPath}.
  */
 @FunctionalInterface
 public interface WithJCRPath {
 
     /**
-     * Returns the {@link JCRPath} associated with this abstraction.
+     * Returns the {@link JCRPath} associated with this entity.
      *
-     * @return {@link JCRPath} associated with this abstraction
+     * @return {@link JCRPath} associated with this entity
      */
     JCRPath jcrPath();
 }

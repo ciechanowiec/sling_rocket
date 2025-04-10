@@ -10,14 +10,13 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
+import java.io.InputStream;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.resource.ResourceResolver;
-
-import java.io.File;
-import java.util.Optional;
 
 @Slf4j
 @ToString
@@ -41,14 +40,13 @@ class AssetReal implements Asset {
 
     @Override
     public AssetFile assetFile() {
-        String mimeTypeName = assetMetadata().mimeType();
         return new AssetFile() {
 
             @Override
-            public Optional<File> retrieve() {
+            public InputStream retrieve() {
                 return ntFile().map(NTFile::assetFile)
-                    .flatMap(AssetFile::retrieve)
-                    .map(file -> new FileWithExtension(file).rename(jcrUUID(), mimeTypeName));
+                    .map(AssetFile::retrieve)
+                    .orElse(InputStream.nullInputStream());
             }
 
             @Override

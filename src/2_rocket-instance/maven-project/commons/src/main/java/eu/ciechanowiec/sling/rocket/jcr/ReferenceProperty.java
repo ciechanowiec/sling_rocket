@@ -3,16 +3,15 @@ package eu.ciechanowiec.sling.rocket.jcr;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
-import lombok.SneakyThrows;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.api.resource.ResourceResolver;
-
+import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import java.util.Optional;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.sling.api.resource.ResourceResolver;
 
 /**
  * Represents a {@link Property} of type {@link PropertyType#WEAKREFERENCE}, {@link PropertyType#REFERENCE} or

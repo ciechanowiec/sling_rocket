@@ -6,12 +6,11 @@ import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.ReferenceProperty;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.ResourceResolver;
-
-import java.util.Optional;
 
 @Slf4j
 @ToString

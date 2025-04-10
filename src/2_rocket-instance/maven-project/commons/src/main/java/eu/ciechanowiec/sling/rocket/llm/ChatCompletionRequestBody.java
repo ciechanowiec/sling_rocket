@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
 import eu.ciechanowiec.sling.rocket.commons.JSON;
-
 import java.util.List;
 
 /**

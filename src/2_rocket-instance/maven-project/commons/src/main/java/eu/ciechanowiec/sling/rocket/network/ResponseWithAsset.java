@@ -4,17 +4,14 @@ import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * HTTP response with an {@link Asset}.
@@ -54,22 +51,12 @@ public class ResponseWithAsset {
     public void send(ContentDispositionHeader contentDispositionHeader) {
         boolean isAllowed = !wasSent.get() && !wrappedResponse.isCommitted();
         Conditional.isTrueOrThrow(isAllowed, new AlreadySentException(this));
-        assetToSend.assetFile().retrieve().ifPresentOrElse(
-            file -> send(file, contentDispositionHeader),
-            () -> new Response(
-                wrappedResponse, new Status(HttpServletResponse.SC_NOT_FOUND, "No asset found")
-            ).send()
-        );
-    }
-
-    @SneakyThrows
-    private void send(File fileToSend, ContentDispositionHeader contentDispositionHeader) {
-        log.trace("Sending {}", fileToSend);
-        int length = (int) fileToSend.length();
+        log.trace("Sending {}", assetToSend);
+        int length = (int) assetToSend.assetFile().size().bytes();
         wrappedResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        wrappedResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDispositionHeader.value(fileToSend));
+        wrappedResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDispositionHeader.value(assetToSend));
         wrappedResponse.setContentLength(length);
-        try (InputStream inputStream = Files.newInputStream(fileToSend.toPath())) {
+        try (InputStream inputStream = assetToSend.assetFile().retrieve()) {
             IOUtils.copy(inputStream, wrappedResponse.getOutputStream());
         }
         wrappedResponse.flushBuffer();

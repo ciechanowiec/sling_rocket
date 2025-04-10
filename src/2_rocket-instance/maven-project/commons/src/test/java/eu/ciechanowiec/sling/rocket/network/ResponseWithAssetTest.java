@@ -1,22 +1,24 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
 import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
 import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
+import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.PrintWriter;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseWithAssetTest extends TestEnvironment {
 
@@ -28,22 +30,22 @@ class ResponseWithAssetTest extends TestEnvironment {
     void mustSend() {
         File file = loadResourceIntoFile("time-forward.mp3");
         Asset asset = new StagedAssetReal(
-                () -> Optional.of(file), new FileMetadata(file), fullResourceAccess
+            new UsualFileAsAssetFile(file), new FileMetadata(file), fullResourceAccess
         ).save(new TargetJCRPath("/content/song"));
         Asset retrievedAsset = new AssetsRepository(fullResourceAccess).find(asset).orElseThrow();
         MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
         ResponseWithAsset responseWithAsset = new ResponseWithAsset(slingResponse, retrievedAsset);
         responseWithAsset.send(ContentDispositionHeader.ATTACHMENT);
         assertAll(
-                () -> assertEquals(MediaType.APPLICATION_OCTET_STREAM, slingResponse.getContentType()),
-                () -> assertTrue(slingResponse.getHeader(
-                        HttpHeaders.CONTENT_DISPOSITION
-                ).matches("attachment;filename=\".+\\.mpga\"")),
-                () -> assertEquals(file.length(), slingResponse.getContentLength()),
-                () -> assertEquals(file.length(), slingResponse.getOutput().length),
-                () -> assertThrows(
-                        AlreadySentException.class, () -> responseWithAsset.send(ContentDispositionHeader.INLINE)
-                )
+            () -> assertEquals(MediaType.APPLICATION_OCTET_STREAM, slingResponse.getContentType()),
+            () -> assertTrue(slingResponse.getHeader(
+                HttpHeaders.CONTENT_DISPOSITION
+            ).matches("attachment;filename=\".+\\.mpga\"")),
+            () -> assertEquals(file.length(), slingResponse.getContentLength()),
+            () -> assertEquals(file.length(), slingResponse.getOutput().length),
+            () -> assertThrows(
+                AlreadySentException.class, () -> responseWithAsset.send(ContentDispositionHeader.INLINE)
+            )
         );
     }
 
@@ -52,7 +54,7 @@ class ResponseWithAssetTest extends TestEnvironment {
     void dontSendIfAlreadySent() {
         File file = loadResourceIntoFile("time-forward.mp3");
         Asset asset = new StagedAssetReal(
-                () -> Optional.of(file), new FileMetadata(file), fullResourceAccess
+            new UsualFileAsAssetFile(file), new FileMetadata(file), fullResourceAccess
         ).save(new TargetJCRPath("/content/song"));
         Asset retrievedAsset = new AssetsRepository(fullResourceAccess).find(asset).orElseThrow();
         MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
@@ -63,11 +65,11 @@ class ResponseWithAssetTest extends TestEnvironment {
         }
         slingResponse.flushBuffer();
         assertAll(
-                () -> assertEquals("Some content", slingResponse.getOutputAsString()),
-                () -> assertTrue(slingResponse.isCommitted()),
-                () -> assertThrows(
-                        AlreadySentException.class, () -> responseWithAsset.send(ContentDispositionHeader.INLINE)
-                )
+            () -> assertEquals("Some content", slingResponse.getOutputAsString()),
+            () -> assertTrue(slingResponse.isCommitted()),
+            () -> assertThrows(
+                AlreadySentException.class, () -> responseWithAsset.send(ContentDispositionHeader.INLINE)
+            )
         );
     }
 }

@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
+import eu.ciechanowiec.sling.rocket.jcr.InputStreamWithDataSize;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
@@ -10,14 +11,13 @@ import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import jakarta.ws.rs.core.MediaType;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Optional;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
-
-import java.io.File;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @ToString
@@ -59,13 +59,16 @@ class NTFile implements Asset {
         return new AssetFile() {
 
             @Override
-            public Optional<File> retrieve() {
-                return jcrContentChildNP.retrieveFile(JcrConstants.JCR_DATA);
+            public InputStream retrieve() {
+                return jcrContentChildNP.retrieveBinary(JcrConstants.JCR_DATA);
             }
 
             @Override
+            @SuppressWarnings("PMD.LinguisticNaming")
             public DataSize size() {
-                return jcrContentChildNP.binarySize(JcrConstants.JCR_DATA);
+                try (InputStreamWithDataSize isWithDataSize = jcrContentChildNP.retrieveBinary(JcrConstants.JCR_DATA)) {
+                    return isWithDataSize.dataSize();
+                }
             }
         };
     }

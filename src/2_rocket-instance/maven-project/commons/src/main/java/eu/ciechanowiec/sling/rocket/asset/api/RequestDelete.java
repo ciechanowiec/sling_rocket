@@ -6,10 +6,9 @@ import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
+import java.util.Optional;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 @Slf4j
 @ToString

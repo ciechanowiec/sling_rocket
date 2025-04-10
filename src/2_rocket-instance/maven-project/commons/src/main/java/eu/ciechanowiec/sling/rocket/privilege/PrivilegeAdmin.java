@@ -4,6 +4,11 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthID;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
+import java.security.Principal;
+import java.util.Optional;
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.security.Privilege;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
@@ -11,12 +16,6 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.jackrabbit.authorization.AccessControlUtils;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.ResourceResolver;
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.security.Privilege;
-import java.security.Principal;
-import java.util.Optional;
 
 /**
  * Administrator of {@link Privilege}s.

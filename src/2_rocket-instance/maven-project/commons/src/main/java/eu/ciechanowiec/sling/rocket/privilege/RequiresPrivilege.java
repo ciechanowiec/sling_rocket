@@ -1,11 +1,10 @@
 package eu.ciechanowiec.sling.rocket.privilege;
 
-import org.apache.jackrabbit.api.security.user.User;
-import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
-
+import java.util.List;
 import javax.jcr.Repository;
 import javax.jcr.security.Privilege;
-import java.util.List;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 
 /**
  * Represents an entity that requires from the {@link User} to have assigned {@link Privilege}s listed in

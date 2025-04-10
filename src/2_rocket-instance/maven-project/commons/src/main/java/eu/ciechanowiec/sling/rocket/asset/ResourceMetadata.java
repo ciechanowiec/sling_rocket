@@ -6,13 +6,12 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import jakarta.ws.rs.core.MediaType;
+import java.util.Map;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
-
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @ToString

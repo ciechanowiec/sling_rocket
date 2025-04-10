@@ -1,9 +1,8 @@
 package eu.ciechanowiec.sling.rocket.asset.image;
 
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -13,8 +12,10 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"ClassWithTooManyFields", "PMD.TooManyFields"})
 class ComparableImagesTest {
@@ -33,26 +34,26 @@ class ComparableImagesTest {
     @Test
     void mustExcludeSimilarImages() {
         ComparableImages comparableImages = new ComparableImages(List.of(
-                new ComparableImage(a1),
-                new ComparableImage(a2),
-                new ComparableImage(a3),
-                new ComparableImage(a4),
-                new ComparableImage(b1),
-                new ComparableImage(b2),
-                new ComparableImage(b3),
-                new ComparableImage(b4),
-                new ComparableImage(mp3)
+            new ComparableImage(a1),
+            new ComparableImage(a2),
+            new ComparableImage(a3),
+            new ComparableImage(a4),
+            new ComparableImage(b1),
+            new ComparableImage(b2),
+            new ComparableImage(b3),
+            new ComparableImage(b4),
+            new ComparableImage(mp3)
         ));
         ComparableImages uniqueImages = comparableImages.excludeSimilarImages();
         Collection<String> namesOfFiles = uniqueImages.asFiles().stream().map(File::getName).toList();
         int numOfFiles = namesOfFiles.size();
         assertAll(
-                () -> assertEquals(5, numOfFiles),
-                () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_a-3_"))),
-                () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_a-4_"))),
-                () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_b-3_"))),
-                () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_b-4_"))),
-                () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_time-forward_")))
+            () -> assertEquals(5, numOfFiles),
+            () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_a-3_"))),
+            () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_a-4_"))),
+            () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_b-3_"))),
+            () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_b-4_"))),
+            () -> assertTrue(namesOfFiles.stream().anyMatch(name -> name.contains("_time-forward_")))
         );
     }
 
@@ -78,10 +79,10 @@ class ComparableImagesTest {
         Thread currentThread = Thread.currentThread();
         ClassLoader classLoader = currentThread.getContextClassLoader();
         try (
-                InputStream inputStream = Optional.ofNullable(
-                        classLoader.getResourceAsStream(resourceName)
-                ).orElseThrow();
-                OutputStream outputStream = Files.newOutputStream(tempFilePath)
+            InputStream inputStream = Optional.ofNullable(
+                classLoader.getResourceAsStream(resourceName)
+            ).orElseThrow();
+            OutputStream outputStream = Files.newOutputStream(tempFilePath)
         ) {
             IOUtils.copy(inputStream, outputStream);
         }

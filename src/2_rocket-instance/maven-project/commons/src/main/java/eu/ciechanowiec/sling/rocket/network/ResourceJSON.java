@@ -1,14 +1,13 @@
 package eu.ciechanowiec.sling.rocket.network;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Iterator;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
 
 class ResourceJSON implements Resource {
 

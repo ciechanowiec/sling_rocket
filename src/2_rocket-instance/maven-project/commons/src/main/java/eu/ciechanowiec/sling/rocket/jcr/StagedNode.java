@@ -3,7 +3,6 @@ package eu.ciechanowiec.sling.rocket.jcr;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
-
 import javax.jcr.Node;
 import javax.jcr.Repository;
 

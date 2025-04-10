@@ -1,8 +1,10 @@
 package eu.ciechanowiec.sling.rocket.identity;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class AuthIDTest {

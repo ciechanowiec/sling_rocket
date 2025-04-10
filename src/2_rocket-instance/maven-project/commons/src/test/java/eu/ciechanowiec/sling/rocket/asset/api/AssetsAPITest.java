@@ -1,17 +1,21 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+@SuppressWarnings("PMD.TooManyStaticImports")
 class AssetsAPITest extends TestEnvironment {
 
     AssetsAPITest() {
@@ -23,12 +27,12 @@ class AssetsAPITest extends TestEnvironment {
         context.registerInjectActivateService(AssetsAPI.class);
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource basicResource = Optional.ofNullable(resourceResolver.getResource(AssetsAPI.ASSETS_API_PATH))
-                                             .orElseThrow();
+                .orElseThrow();
             assertAll(
-                    () -> assertEquals(AssetsAPI.ASSETS_API_RESOURCE_TYPE, basicResource.getResourceType()),
-                    () -> assertTrue(ResourceUtil.isSyntheticResource(basicResource)),
-                    () -> assertEquals(AssetsAPI.ASSETS_API_PATH, basicResource.getPath()),
-                    () -> assertFalse(basicResource.listChildren().hasNext())
+                () -> assertEquals(AssetsAPI.ASSETS_API_RESOURCE_TYPE, basicResource.getResourceType()),
+                () -> assertTrue(ResourceUtil.isSyntheticResource(basicResource)),
+                () -> assertEquals(AssetsAPI.ASSETS_API_PATH, basicResource.getPath()),
+                () -> assertFalse(basicResource.listChildren().hasNext())
             );
         }
     }
@@ -38,12 +42,12 @@ class AssetsAPITest extends TestEnvironment {
         context.registerInjectActivateService(AssetsAPI.class, Map.of("is-enabled", false));
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource basicResource = Optional.ofNullable(resourceResolver.getResource(AssetsAPI.ASSETS_API_PATH))
-                    .orElseThrow();
+                .orElseThrow();
             assertAll(
-                    () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, basicResource.getResourceType()),
-                    () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, basicResource.getPath()),
-                    () -> assertTrue(ResourceUtil.isNonExistingResource(basicResource)),
-                    () -> assertFalse(basicResource.listChildren().hasNext())
+                () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, basicResource.getResourceType()),
+                () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, basicResource.getPath()),
+                () -> assertTrue(ResourceUtil.isNonExistingResource(basicResource)),
+                () -> assertFalse(basicResource.listChildren().hasNext())
             );
         }
     }
@@ -53,13 +57,13 @@ class AssetsAPITest extends TestEnvironment {
         context.registerInjectActivateService(AssetsAPI.class);
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource extendedPath = Optional.ofNullable(resourceResolver.getResource(
-                    AssetsAPI.ASSETS_API_PATH + "/extended"
-                    )).orElseThrow();
+                AssetsAPI.ASSETS_API_PATH + "/extended"
+            )).orElseThrow();
             assertAll(
-                    () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, extendedPath.getResourceType()),
-                    () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, extendedPath.getPath()),
-                    () -> assertTrue(ResourceUtil.isNonExistingResource(extendedPath)),
-                    () -> assertFalse(extendedPath.listChildren().hasNext())
+                () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, extendedPath.getResourceType()),
+                () -> assertEquals(Resource.RESOURCE_TYPE_NON_EXISTING, extendedPath.getPath()),
+                () -> assertTrue(ResourceUtil.isNonExistingResource(extendedPath)),
+                () -> assertFalse(extendedPath.listChildren().hasNext())
             );
         }
     }

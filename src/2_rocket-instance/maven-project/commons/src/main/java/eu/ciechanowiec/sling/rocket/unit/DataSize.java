@@ -2,10 +2,9 @@ package eu.ciechanowiec.sling.rocket.unit;
 
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.util.function.Supplier;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Size of digital information.

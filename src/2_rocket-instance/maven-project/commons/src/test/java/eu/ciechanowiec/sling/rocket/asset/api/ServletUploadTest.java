@@ -1,10 +1,18 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
+
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
+import java.nio.file.Files;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.Resource;
@@ -17,14 +25,9 @@ import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
-
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.AvoidUsingHardCodedIP"})
+@SuppressWarnings(
+    {"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.AvoidUsingHardCodedIP", "PMD.TooManyStaticImports"}
+)
 class ServletUploadTest extends TestEnvironment {
 
     private ServletUpload servletUpload;
@@ -48,10 +51,10 @@ class ServletUploadTest extends TestEnvironment {
         MockSlingHttpServletRequest request = spy(context.request());
         MockSlingHttpServletResponse response = context.response();
         request.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         request.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
@@ -64,9 +67,16 @@ class ServletUploadTest extends TestEnvironment {
         request.setMethod(HttpConstants.METHOD_POST);
         servletUpload.doPost(request, response);
         assertTrue(
-                response.getOutputAsString().matches(
-                        "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
-                )
+            response.getOutputAsString().matches(
+                "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},"
+                    + "\"affected\":\\[\\{\"originalName\":\"[^\"]+\","
+                    + "\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\"
+                    + ".[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\","
+                    + "\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,"
+                    + "\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\"
+                    + ".download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\","
+                    + "\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
+            )
         );
     }
 
@@ -79,10 +89,10 @@ class ServletUploadTest extends TestEnvironment {
         MockSlingHttpServletRequest request = spy(context.request());
         MockSlingHttpServletResponse response = context.response();
         request.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         request.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         doAnswer(invocation -> getRRForUser(testUser)).when(request).getResourceResolver();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(getRRForUser(testUser));
@@ -107,10 +117,10 @@ class ServletUploadTest extends TestEnvironment {
         MockSlingHttpServletRequest request = spy(context.request());
         MockSlingHttpServletResponse response = context.response();
         request.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         request.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         doAnswer(invocation -> getRRForUser(testUser)).when(request).getResourceResolver();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(getRRForUser(testUser));
@@ -132,16 +142,16 @@ class ServletUploadTest extends TestEnvironment {
         AuthIDUser testUser = createOrGetUser(new AuthIDUser("testUser"));
         PrivilegeAdmin privilegeAdmin = new PrivilegeAdmin(fullResourceAccess);
         servletUpload.requiredPrivileges().forEach(
-                privilege -> privilegeAdmin.allow(new TargetJCRPath("/"), testUser, privilege)
+            privilege -> privilegeAdmin.allow(new TargetJCRPath("/"), testUser, privilege)
         );
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
         MockSlingHttpServletRequest request = spy(context.request());
         MockSlingHttpServletResponse response = context.response();
         request.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         request.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         doAnswer(invocation -> getRRForUser(testUser)).when(request).getResourceResolver();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(getRRForUser(testUser));
@@ -155,9 +165,16 @@ class ServletUploadTest extends TestEnvironment {
         request.setMethod(HttpConstants.METHOD_POST);
         servletUpload.doPost(request, response);
         assertTrue(
-                response.getOutputAsString().matches(
-                        "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},\"affected\":\\[\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\",\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
-                )
+            response.getOutputAsString().matches(
+                "\\{\"status\":\\{\"code\":201,\"message\":\"File\\(s\\) uploaded\"},"
+                    + "\"affected\":\\[\\{\"originalName\":\"[^\"]+\","
+                    + "\"assetDownloadLink\":\"http://localhost:8080/api/assets\\.download\\"
+                    + ".[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\","
+                    + "\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"}(,"
+                    + "\\{\"originalName\":\"[^\"]+\",\"assetDownloadLink\":\"http://localhost:8080/api/assets\\"
+                    + ".download\\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\","
+                    + "\"assetDescriptor\":\"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\\.jpg\"})*]}"
+            )
         );
     }
 
@@ -169,10 +186,10 @@ class ServletUploadTest extends TestEnvironment {
         MockSlingHttpServletRequest request = spy(context.request());
         MockSlingHttpServletResponse response = context.response();
         request.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         request.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);

@@ -1,12 +1,11 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import java.net.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
-
-import java.net.URI;
 
 /**
  * Configuration that describes how the associated {@link LLM} should be used.

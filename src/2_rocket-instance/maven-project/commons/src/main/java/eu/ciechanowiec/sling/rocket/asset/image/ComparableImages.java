@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset.image;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.List;

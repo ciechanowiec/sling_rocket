@@ -15,6 +15,11 @@ import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.Response;
 import eu.ciechanowiec.sling.rocket.network.Status;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.Servlet;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
@@ -29,15 +34,14 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.engine.impl.parameters.RequestParameterSupportConfigurer;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
-
-import javax.servlet.Servlet;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Servlet for handling UPLOAD requests to Assets API.

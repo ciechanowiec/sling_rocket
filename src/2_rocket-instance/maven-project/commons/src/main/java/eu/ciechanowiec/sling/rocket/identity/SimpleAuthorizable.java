@@ -5,13 +5,6 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
-import lombok.SneakyThrows;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.jackrabbit.api.security.user.*;
-import org.apache.sling.api.resource.ResourceResolver;
-
-import javax.jcr.Session;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +12,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.jcr.Session;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.Impersonation;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.sling.api.resource.ResourceResolver;
 
 /**
  * <p>

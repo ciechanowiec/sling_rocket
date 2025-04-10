@@ -2,20 +2,20 @@ package eu.ciechanowiec.sling.rocket.asset.api;
 
 import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
 import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
+import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.network.Affected;
 import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @ToString
@@ -74,18 +74,20 @@ class RequestUpload implements RequestWithDecomposition {
         UserResourceAccess userResourceAccess = request.userResourceAccess();
         return request.uploadedFiles()
             .stream()
-            .map(fileWithOriginalName -> {
-                File file = fileWithOriginalName.file();
-                String originalName = fileWithOriginalName.originalName();
-                return new StagedAssetReal(
-                    () -> Optional.of(file),
-                    new FileMetadata(file)
-                        .set("originalName", originalName)
-                        .set("remoteAddress", request.remoteAddress())
-                        .set("remoteHost", request.remoteHost()),
-                    userResourceAccess
-                );
-            })
+            .map(
+                fileWithOriginalName -> {
+                    File file = fileWithOriginalName.file();
+                    String originalName = fileWithOriginalName.originalName();
+                    return new StagedAssetReal(
+                        new UsualFileAsAssetFile(file),
+                        new FileMetadata(file)
+                            .set("originalName", originalName)
+                            .set("remoteAddress", request.remoteAddress())
+                            .set("remoteHost", request.remoteHost()),
+                        userResourceAccess
+                    );
+                }
+            )
             .map(SafeSaving::new)
             .map(safeSaving -> safeSaving.save(new TargetJCRPath(parentJCRPath, UUID.randomUUID())))
             .flatMap(Optional::stream)

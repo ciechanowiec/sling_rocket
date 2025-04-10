@@ -1,5 +1,7 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
+import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
+
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
@@ -7,27 +9,31 @@ import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
-
-import javax.jcr.*;
-import javax.jcr.nodetype.NodeType;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
 
 /**
  * <p>
@@ -43,7 +49,7 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
     {
         "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
         "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount",
-        "PMD.TooManyMethods", "PMD.LinguisticNaming"
+        "PMD.TooManyMethods", "PMD.LinguisticNaming", "PMD.ExcessiveImports"
     }
 )
 @Slf4j
@@ -287,24 +293,18 @@ public class NodeProperties implements WithJCRPath {
     }
 
     /**
-     * Retrieves the {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File}.
+     * Retrieves the {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as an
+     * {@link InputStreamWithDataSize}.
      *
      * @param propertyName name of the {@link Property} from which the {@link Value} of type {@link PropertyType#BINARY}
-     *                     should be retrieved
-     * @return {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as a {@link File}; empty
+     *                     should be retrieved; in most cases it will be {@link JcrConstants#JCR_DATA}
+     * @return {@link Value} of a {@link Property} of type {@link PropertyType#BINARY} as an {@link InputStream}; empty
      * {@link Optional} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY} or doesn't exist
      */
-    public Optional<File> retrieveFile(String propertyName) {
+    @SneakyThrows
+    public InputStreamWithDataSize retrieveBinary(String propertyName) {
         log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                .map(sneaky(Property::getValue))
-                .flatMap(this::asBinary)
-                .map(this::asFile);
-        }
+        return new InputStreamWithDataSize(jcrPath, propertyName, resourceAccess);
     }
 
     /**
@@ -316,7 +316,7 @@ public class NodeProperties implements WithJCRPath {
      * {@link DataSize} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY} or doesn't exist
      */
     public DataSize binarySize(String propertyName) {
-        log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
+        log.trace("Checking the size of the '{}' binary property. {}", propertyName, this);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
@@ -615,7 +615,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -630,7 +631,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -645,7 +647,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -660,7 +663,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -675,7 +679,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -690,7 +695,8 @@ public class NodeProperties implements WithJCRPath {
             return Optional.of(this);
         } catch (
             @SuppressWarnings("OverlyBroadCatchBlock")
-            RepositoryException exception) {
+            RepositoryException exception
+        ) {
             String message = "Unable to set property '%s' to '%s' for %s".formatted(name, value, this);
             log.error(message, exception);
             return Optional.empty();
@@ -707,23 +713,6 @@ public class NodeProperties implements WithJCRPath {
             log.trace("Not a binary type");
             return Optional.empty();
         }
-    }
-
-    @SneakyThrows
-    private File asFile(Binary binary) {
-        log.trace("Converting binary to a file");
-        File tempFile = File.createTempFile("jcr-binary_", ".tmp");
-        tempFile.deleteOnExit();
-        Path tempFilePath = tempFile.toPath();
-        try (
-            InputStream inputStream = binary.getStream();
-            OutputStream outputStream = Files.newOutputStream(tempFilePath)
-        ) {
-            IOUtils.copy(inputStream, outputStream);
-            binary.dispose();
-        }
-        log.trace("Converted binary to a file: {}", tempFile);
-        return tempFile;
     }
 
     @Override

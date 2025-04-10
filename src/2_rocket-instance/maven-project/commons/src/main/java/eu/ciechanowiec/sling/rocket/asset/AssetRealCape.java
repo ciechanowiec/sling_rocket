@@ -4,9 +4,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
-import lombok.ToString;
-
 import java.util.Optional;
+import lombok.ToString;
 
 @ToString
 class AssetRealCape implements Asset {

@@ -1,11 +1,10 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import org.apache.sling.api.resource.ResourceResolver;
-
+import java.util.Optional;
 import javax.jcr.Item;
 import javax.jcr.Repository;
-import java.util.Optional;
+import org.apache.sling.api.resource.ResourceResolver;
 
 /**
  * Represents an absolute path to the persisted or hypothetically persisted {@link Item} in the {@link Repository}.

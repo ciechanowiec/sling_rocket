@@ -1,11 +1,22 @@
 package eu.ciechanowiec.sling.rocket.network;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
+import java.nio.file.Files;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -21,20 +32,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.nio.file.Files;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.spy;
-
 @ExtendWith(SlingContextExtension.class)
-@SuppressWarnings({
+@SuppressWarnings(
+    {
         "MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP",
-        "PMD.LinguisticNaming", "PMD.AvoidAccessibilityAlteration"
-})
+        "PMD.LinguisticNaming", "PMD.AvoidAccessibilityAlteration", "PMD.ExcessiveImports", "PMD.TooManyStaticImports"
+    }
+)
 class RequestTest extends TestEnvironment {
 
     private Resource currentResource;
@@ -46,8 +50,8 @@ class RequestTest extends TestEnvironment {
     @BeforeEach
     void setup() {
         context.build()
-                .resource("/content", Map.of("universe", "Milky Way"))
-                .commit();
+            .resource("/content", Map.of("universe", "Milky Way"))
+            .commit();
         currentResource = context.currentResource("/content");
     }
 
@@ -56,33 +60,33 @@ class RequestTest extends TestEnvironment {
     void basicTest() {
         SlingHttpServletRequest slingRequest = slingHttpServletRequest();
         Request request = new Request(
-                slingRequest, stackTrace(), new UserResourceAccess(
-                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
-            )
+            slingRequest, stackTrace(), new UserResourceAccess(
+            new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        )
         );
         String stringRepresentation = request.toString();
         assertAll(
-                () -> assertEquals("/content", request.contentPath()),
-                () -> assertEquals("delete", request.firstSelector().orElseThrow()),
-                () -> assertEquals("file-id-00313", request.secondSelector().orElseThrow()),
-                () -> assertTrue(request.thirdSelector().isEmpty()),
-                () -> assertEquals("delete.file-id-00313", request.selectorString().orElseThrow()),
-                () -> assertEquals(2, request.numOfSelectors()),
-                () -> assertEquals("mp4", request.extension().orElseThrow()),
-                () -> assertEquals("127.0.0.1", request.remoteAddress()),
-                () -> assertEquals("127.0.0.1", request.remoteHost()),
-                () -> assertEquals(50_261, request.remotePort()),
-                () -> assertEquals(MockJcr.DEFAULT_USER_ID, request.remoteUser()),
-                () -> assertEquals(HttpConstants.METHOD_GET, request.method()),
-                () -> assertEquals(HttpURI.build("/content"), request.uri()),
-                () -> assertEquals(NumberUtils.INTEGER_ZERO, request.contentLength()),
-                () -> assertEquals(3, request.httpFields().size()),
-                () -> assertEquals(MockSlingHttpServletRequest.class, request.wrappedRequestClass()),
-                () -> assertTrue(request.creationStackTrace().size() > NumberUtils.INTEGER_ZERO),
-                () -> assertEquals(currentResource.getPath(), request.resource().getPath()),
-                () -> assertNotNull(request.userResourceAccess().acquireAccess().getResource("/content")),
-                () -> assertTrue(stringRepresentation.contains("gorgus")),
-                () -> assertTrue(stringRepresentation.contains("valus"))
+            () -> assertEquals("/content", request.contentPath()),
+            () -> assertEquals("delete", request.firstSelector().orElseThrow()),
+            () -> assertEquals("file-id-00313", request.secondSelector().orElseThrow()),
+            () -> assertTrue(request.thirdSelector().isEmpty()),
+            () -> assertEquals("delete.file-id-00313", request.selectorString().orElseThrow()),
+            () -> assertEquals(2, request.numOfSelectors()),
+            () -> assertEquals("mp4", request.extension().orElseThrow()),
+            () -> assertEquals("127.0.0.1", request.remoteAddress()),
+            () -> assertEquals("127.0.0.1", request.remoteHost()),
+            () -> assertEquals(50_261, request.remotePort()),
+            () -> assertEquals(MockJcr.DEFAULT_USER_ID, request.remoteUser()),
+            () -> assertEquals(HttpConstants.METHOD_GET, request.method()),
+            () -> assertEquals(HttpURI.build("/content"), request.uri()),
+            () -> assertEquals(NumberUtils.INTEGER_ZERO, request.contentLength()),
+            () -> assertEquals(3, request.httpFields().size()),
+            () -> assertEquals(MockSlingHttpServletRequest.class, request.wrappedRequestClass()),
+            () -> assertTrue(request.creationStackTrace().size() > NumberUtils.INTEGER_ZERO),
+            () -> assertEquals(currentResource.getPath(), request.resource().getPath()),
+            () -> assertNotNull(request.userResourceAccess().acquireAccess().getResource("/content")),
+            () -> assertTrue(stringRepresentation.contains("gorgus")),
+            () -> assertTrue(stringRepresentation.contains("valus"))
         );
     }
 
@@ -90,9 +94,9 @@ class RequestTest extends TestEnvironment {
     void testRequestWithNoFiles() {
         MockSlingHttpServletRequest slingRequest = context.request();
         RequestWithFiles request = new Request(
-                slingRequest, new UserResourceAccess(
-                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
-            )
+            slingRequest, new UserResourceAccess(
+            new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        )
         );
         assertTrue(request.uploadedFiles().isEmpty());
     }
@@ -102,13 +106,13 @@ class RequestTest extends TestEnvironment {
         MockSlingHttpServletRequest slingRequest = context.request();
         slingRequest.addRequestParameter("namus-paremetrus", "valus-parametrus");
         RequestWithFiles request = new Request(
-                slingRequest, new UserResourceAccess(
-                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
-            )
+            slingRequest, new UserResourceAccess(
+            new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        )
         );
         assertAll(
-                () -> assertTrue(request.uploadedFiles().isEmpty()),
-                () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
+            () -> assertTrue(request.uploadedFiles().isEmpty()),
+            () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
         );
     }
 
@@ -118,26 +122,26 @@ class RequestTest extends TestEnvironment {
         MockSlingHttpServletRequest slingRequest = context.request();
         slingRequest.addRequestParameter("namus-paremetrus", "valus-parametrus");
         slingRequest.addRequestParameter(
-                "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
+            "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
         slingRequest.addRequestParameter(
-                "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
+            "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
         RequestWithFiles request = new Request(
-                slingRequest, new UserResourceAccess(
-                new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
-            )
+            slingRequest, new UserResourceAccess(
+            new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        )
         );
         assertAll(
-                () -> assertEquals(2, request.uploadedFiles().size()),
-                () -> assertEquals(
-                        Set.of("1.jpeg", "2.jpeg"),
-                        request.uploadedFiles()
-                               .stream()
-                               .map(FileWithOriginalName::originalName)
-                               .collect(Collectors.toUnmodifiableSet())
-                ),
-                () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
+            () -> assertEquals(2, request.uploadedFiles().size()),
+            () -> assertEquals(
+                Set.of("1.jpeg", "2.jpeg"),
+                request.uploadedFiles()
+                    .stream()
+                    .map(FileWithOriginalName::originalName)
+                    .collect(Collectors.toUnmodifiableSet())
+            ),
+            () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
         );
     }
 
@@ -145,23 +149,25 @@ class RequestTest extends TestEnvironment {
     void noRequestPathInfo() {
         MockSlingHttpServletRequest slingRequest = context.request();
         Request request = new Request(
-                slingRequest, new UserResourceAccess(
-                new AuthIDUser(slingHttpServletRequest().getResourceResolver().getUserID()), fullResourceAccess
-            )
+            slingRequest, new UserResourceAccess(
+            new AuthIDUser(slingHttpServletRequest().getResourceResolver().getUserID()), fullResourceAccess
+        )
         );
         assertAll(
-                () -> assertTrue(request.firstSelector().isEmpty()),
-                () -> assertTrue(request.secondSelector().isEmpty()),
-                () -> assertTrue(request.selectorString().isEmpty()),
-                () -> assertEquals(NumberUtils.INTEGER_ZERO, request.numOfSelectors()),
-                () -> assertTrue(request.extension().isEmpty())
+            () -> assertTrue(request.firstSelector().isEmpty()),
+            () -> assertTrue(request.secondSelector().isEmpty()),
+            () -> assertTrue(request.selectorString().isEmpty()),
+            () -> assertEquals(NumberUtils.INTEGER_ZERO, request.numOfSelectors()),
+            () -> assertTrue(request.extension().isEmpty())
         );
     }
 
-    @SuppressWarnings({
+    @SuppressWarnings(
+        {
             "IllegalCatch", "ThrowCaughtLocally", "PMD.AvoidThrowingRawExceptionTypes", "PMD.ExceptionAsFlowControl",
             "PMD.AvoidCatchingGenericException"
-    })
+        }
+    )
     @SuppressFBWarnings("THROWS_METHOD_THROWS_RUNTIMEEXCEPTION")
     private StackTraceElement[] stackTrace() {
         try {

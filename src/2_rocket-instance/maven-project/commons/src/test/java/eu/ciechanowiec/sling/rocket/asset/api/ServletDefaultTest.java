@@ -1,7 +1,15 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
+
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
+import java.util.Objects;
+import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -13,13 +21,7 @@ import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.spy;
-
+@SuppressWarnings("PMD.TooManyStaticImports")
 class ServletDefaultTest extends TestEnvironment {
 
     private ServletDefault servletDefault;
@@ -50,9 +52,9 @@ class ServletDefaultTest extends TestEnvironment {
         request.setMethod(HttpConstants.METHOD_POST);
         servletDefault.doGet(request, response);
         assertAll(
-                () -> assertEquals(HttpServletResponse.SC_OK, response.getStatus()),
-                () -> assertTrue(response.getOutputAsString().contains("<!DOCTYPE html>")),
-                () -> assertEquals(MediaType.TEXT_HTML, response.getContentType())
+            () -> assertEquals(HttpServletResponse.SC_OK, response.getStatus()),
+            () -> assertTrue(response.getOutputAsString().contains("<!DOCTYPE html>")),
+            () -> assertEquals(MediaType.TEXT_HTML, response.getContentType())
         );
     }
 }

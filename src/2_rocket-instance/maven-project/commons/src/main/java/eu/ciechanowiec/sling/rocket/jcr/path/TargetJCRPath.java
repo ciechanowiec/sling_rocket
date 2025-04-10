@@ -1,16 +1,15 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
+import java.util.Optional;
+import java.util.UUID;
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.Repository;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.Resource;
-
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.Repository;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Represents a path to the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon which

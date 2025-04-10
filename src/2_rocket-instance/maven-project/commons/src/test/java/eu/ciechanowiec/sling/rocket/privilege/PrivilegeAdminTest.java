@@ -1,5 +1,13 @@
 package eu.ciechanowiec.sling.rocket.privilege;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDGroup;
@@ -9,15 +17,13 @@ import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import java.util.Map;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+@SuppressWarnings("PMD.TooManyStaticImports")
 class PrivilegeAdminTest extends TestEnvironment {
 
     PrivilegeAdminTest() {
@@ -38,30 +44,30 @@ class PrivilegeAdminTest extends TestEnvironment {
         ResourceAccess userUserWithoutGroupRR = new UserResourceAccess(userUserWithoutGroup, fullResourceAccess);
         PrivilegeAdmin privilegeAdmin = new PrivilegeAdmin(fullResourceAccess);
         boolean wasAllowedFirst = privilegeAdmin.allow(
-                new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
+            new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
         );
         boolean wasAllowedSecond = privilegeAdmin.allow(
-                new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
+            new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
         );
         assertAll(
-                () -> assertTrue(wasAllowedFirst),
-                () -> assertFalse(wasAllowedSecond),
-                () -> assertFalse(privilegeAdmin.allow(
-                        new TargetJCRPath(path), nonExistentUser, PrivilegeConstants.JCR_READ)
-                ),
-                () -> assertNotNull(userFromGroupRR.acquireAccess().getResource(path)),
-                () -> assertNull(userUserWithoutGroupRR.acquireAccess().getResource(path))
+            () -> assertTrue(wasAllowedFirst),
+            () -> assertFalse(wasAllowedSecond),
+            () -> assertFalse(privilegeAdmin.allow(
+                new TargetJCRPath(path), nonExistentUser, PrivilegeConstants.JCR_READ)
+            ),
+            () -> assertNotNull(userFromGroupRR.acquireAccess().getResource(path)),
+            () -> assertNull(userUserWithoutGroupRR.acquireAccess().getResource(path))
         );
         boolean wasDeniedFirst = privilegeAdmin.deny(
-                new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
+            new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
         );
         boolean wasDeniedSecond = privilegeAdmin.deny(
-                new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
+            new TargetJCRPath(path), testedGroup, PrivilegeConstants.JCR_READ
         );
         assertAll(
-                () -> assertTrue(wasDeniedFirst),
-                () -> assertFalse(wasDeniedSecond),
-                () -> assertNull(userFromGroupRR.acquireAccess().getResource(path))
+            () -> assertTrue(wasDeniedFirst),
+            () -> assertFalse(wasDeniedSecond),
+            () -> assertNull(userFromGroupRR.acquireAccess().getResource(path))
         );
     }
 
@@ -78,11 +84,11 @@ class PrivilegeAdminTest extends TestEnvironment {
         PrivilegeAdmin privilegeAdmin = new PrivilegeAdmin(fullResourceAccess);
         privilegeAdmin.allow(new TargetJCRPath(path), testUser, PrivilegeConstants.JCR_READ);
         assertEquals(
-                propertyValue, nodeProperties.propertyValue(propertyName, DefaultProperties.STRING_CLASS).orElseThrow()
+            propertyValue, nodeProperties.propertyValue(propertyName, DefaultProperties.STRING_CLASS).orElseThrow()
         );
         assertThrows(PersistenceException.class, () -> nodeProperties.setProperty(propertyName, "some-new-value"));
         assertEquals(
-                propertyValue, nodeProperties.propertyValue(propertyName, DefaultProperties.STRING_CLASS).orElseThrow()
+            propertyValue, nodeProperties.propertyValue(propertyName, DefaultProperties.STRING_CLASS).orElseThrow()
         );
         privilegeAdmin.deny(new TargetJCRPath(path), testUser, PrivilegeConstants.JCR_READ);
         assertTrue(nodeProperties.propertyValue(propertyName, DefaultProperties.STRING_CLASS).isEmpty());
@@ -90,9 +96,9 @@ class PrivilegeAdminTest extends TestEnvironment {
         privilegeAdmin.allow(new TargetJCRPath(path), testUser, PrivilegeConstants.REP_WRITE);
         nodeProperties.setProperty(propertyName, "some-new-value");
         assertEquals(
-                "some-new-value", nodeProperties.propertyValue(
-                        propertyName, DefaultProperties.STRING_CLASS
-                ).orElseThrow()
+            "some-new-value", nodeProperties.propertyValue(
+                propertyName, DefaultProperties.STRING_CLASS
+            ).orElseThrow()
         );
     }
 }

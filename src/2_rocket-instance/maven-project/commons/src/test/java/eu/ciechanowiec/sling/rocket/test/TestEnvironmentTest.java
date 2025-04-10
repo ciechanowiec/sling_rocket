@@ -1,12 +1,12 @@
 package eu.ciechanowiec.sling.rocket.test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import eu.ciechanowiec.sling.rocket.identity.AuthIDGroup;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestEnvironmentTest extends TestEnvironment {
 
@@ -21,8 +21,8 @@ class TestEnvironmentTest extends TestEnvironment {
         AuthIDUser userOne = createOrGetUser(new AuthIDUser("userus"));
         AuthIDUser userTwo = createOrGetUser(new AuthIDUser("userus"));
         assertAll(
-                () -> assertEquals(groupOne, groupTwo),
-                () -> assertEquals(userOne, userTwo)
+            () -> assertEquals(groupOne, groupTwo),
+            () -> assertEquals(userOne, userTwo)
         );
     }
 }

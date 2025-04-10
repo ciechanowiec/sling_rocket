@@ -2,18 +2,19 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import org.apache.jackrabbit.JcrConstants;
-
+import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
-import java.util.List;
+import javax.jcr.nodetype.NodeType;
+import org.apache.jackrabbit.JcrConstants;
 
 /**
  * <p>
- * Represents {@link Node} instances of primary types specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}. Only
- * {@link Node}s actually persisted and existing in the {@link Repository} can be represented by this {@link Asset}.
+ * Represents {@link Node} instances of primary {@link NodeType}s specified in {@link Asset#SUPPORTED_PRIMARY_TYPES}.
+ * Only {@link Node}s actually persisted and existing in the {@link Repository} can be represented by this
+ * {@link Asset}.
  * </p>
  * <ol>
  *     <li>

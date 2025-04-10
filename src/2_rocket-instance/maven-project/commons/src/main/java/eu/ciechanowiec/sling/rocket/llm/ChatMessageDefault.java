@@ -2,10 +2,9 @@ package eu.ciechanowiec.sling.rocket.llm;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Default implementation of a {@link ChatMessage}.

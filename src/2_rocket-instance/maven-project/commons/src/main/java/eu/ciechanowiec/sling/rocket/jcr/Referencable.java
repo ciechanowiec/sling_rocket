@@ -1,9 +1,8 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import org.apache.jackrabbit.JcrConstants;
-
 import javax.jcr.Node;
 import javax.jcr.Property;
+import org.apache.jackrabbit.JcrConstants;
 
 /**
  * Represents a {@link Node} that has an associated {@link Property} named {@link JcrConstants#JCR_UUID} of type

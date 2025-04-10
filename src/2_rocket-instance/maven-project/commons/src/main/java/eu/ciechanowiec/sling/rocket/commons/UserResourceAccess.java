@@ -1,11 +1,10 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
+import javax.jcr.Repository;
 import lombok.ToString;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.api.resource.ResourceResolver;
-
-import javax.jcr.Repository;
 
 /**
  * Provides access to Apache Sling resources, including the underlying {@link Repository}, for a specific {@link User}.

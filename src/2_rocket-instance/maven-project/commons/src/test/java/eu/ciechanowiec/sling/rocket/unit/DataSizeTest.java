@@ -1,15 +1,17 @@
 package eu.ciechanowiec.sling.rocket.unit;
 
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("MagicNumber")
 class DataSizeTest {
@@ -28,12 +30,12 @@ class DataSizeTest {
         assertEquals(1.0, dataSizeMB.megabytes(), "1 MB should be 1 MB");
         assertEquals(1.0 / 1024.0, dataSizeMB.gigabytes(), 1e-6, "1 MB should be approximately 0.000976 GB");
         assertEquals(
-                1.0 / (1024.0 * 1024.0), dataSizeMB.terabytes(), 1e-9, "1 MB should be approximately 9.53674316e-7 TB"
+            1.0 / (1024.0 * 1024.0), dataSizeMB.terabytes(), 1e-9, "1 MB should be approximately 9.53674316e-7 TB"
         );
 
         DataSize dataSizeTB = new DataSize(2, DataUnit.TERABYTES);
         assertEquals(
-                2L * DataUnitMultiplications.BYTES_PER_TB, dataSizeTB.bytes(), "2 TB should be correct number of bytes"
+            2L * DataUnitMultiplications.BYTES_PER_TB, dataSizeTB.bytes(), "2 TB should be correct number of bytes"
         );
         assertEquals(2L * 1024L * 1024L * 1024L, dataSizeTB.kilobytes(), "2 TB should be 2,147,483,648 KB");
         assertEquals(2L * 1024L * 1024L, dataSizeTB.megabytes(), "2 TB should be 2,097,152 MB");
@@ -102,18 +104,18 @@ class DataSizeTest {
     @Test
     void testAddition() {
         List<DataSize> dataSizesOne = List.of(
-                new DataSize(2, DataUnit.MEGABYTES),
-                new DataSize(0, DataUnit.MEGABYTES),
-                new DataSize(4, DataUnit.MEGABYTES),
-                new DataSize(5, DataUnit.MEGABYTES)
+            new DataSize(2, DataUnit.MEGABYTES),
+            new DataSize(0, DataUnit.MEGABYTES),
+            new DataSize(4, DataUnit.MEGABYTES),
+            new DataSize(5, DataUnit.MEGABYTES)
         );
         DataSize nonZeroResult = dataSizesOne.stream().reduce(DataSize::add).orElse(new DataSize(0, DataUnit.BYTES));
         List<DataSize> dataSizesTwo = List.of();
         @SuppressWarnings("RedundantOperationOnEmptyContainer")
         DataSize zeroResult = dataSizesTwo.stream().reduce(DataSize::add).orElse(new DataSize(0, DataUnit.BYTES));
         assertAll(
-                () -> assertEquals(new DataSize(11, DataUnit.MEGABYTES), nonZeroResult),
-                () -> assertEquals(new DataSize(0, DataUnit.BYTES), zeroResult)
+            () -> assertEquals(new DataSize(11, DataUnit.MEGABYTES), nonZeroResult),
+            () -> assertEquals(new DataSize(0, DataUnit.BYTES), zeroResult)
         );
     }
 

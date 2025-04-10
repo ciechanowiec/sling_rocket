@@ -2,7 +2,7 @@
  * Useful unit data types.
  */
 @Export
-@Version("14.0.0")
+@Version("14.1.0")
 package eu.ciechanowiec.sling.rocket.unit;
 
 import org.osgi.annotation.bundle.Export;

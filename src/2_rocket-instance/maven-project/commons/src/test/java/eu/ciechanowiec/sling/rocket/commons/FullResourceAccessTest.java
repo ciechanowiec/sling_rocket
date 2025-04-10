@@ -1,5 +1,11 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
@@ -15,13 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SuppressWarnings({"resource", "MultipleStringLiterals"})
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})
 class FullResourceAccessTest {
@@ -33,7 +32,9 @@ class FullResourceAccessTest {
     @SneakyThrows
     void setup() {
         context.resourceResolver(); // trigger RR initialization
-        ServiceUserMapped serviceUserMapped = new ServiceUserMapped() { };
+        ServiceUserMapped serviceUserMapped = new ServiceUserMapped() {
+
+        };
         Map<String, Object> props = Map.of(ServiceUserMapped.SUBSERVICENAME, FullResourceAccess.SUBSERVICE_NAME);
         context.registerService(ServiceUserMapped.class, serviceUserMapped, props);
         resourceAccess = context.registerInjectActivateService(FullResourceAccess.class);
@@ -54,7 +55,7 @@ class FullResourceAccessTest {
             String initialActualValue = props.get("customProperty", String.class);
             assertEquals("Customus Propertius", initialActualValue);
             ModifiableValueMap modifiableValueMap = Optional.ofNullable(resource.adaptTo(ModifiableValueMap.class))
-                    .orElseThrow();
+                .orElseThrow();
             modifiableValueMap.put("customProperty", "Novus Propertius");
             resourceResolver.commit();
         }

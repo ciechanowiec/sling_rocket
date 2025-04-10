@@ -2,7 +2,7 @@
  * Network utilities.
  */
 @Export
-@Version("14.0.0")
+@Version("15.0.0")
 package eu.ciechanowiec.sling.rocket.network;
 
 import org.osgi.annotation.bundle.Export;

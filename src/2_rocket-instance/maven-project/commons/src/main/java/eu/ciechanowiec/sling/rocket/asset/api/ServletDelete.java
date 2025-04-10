@@ -9,6 +9,10 @@ import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.Response;
 import eu.ciechanowiec.sling.rocket.network.Status;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
+import java.util.List;
+import java.util.Optional;
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -23,11 +27,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
-
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Servlet for handling DELETE requests to Assets API.

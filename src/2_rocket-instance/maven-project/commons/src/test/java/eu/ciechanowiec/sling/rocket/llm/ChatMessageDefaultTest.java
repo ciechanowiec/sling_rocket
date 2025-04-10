@@ -1,13 +1,14 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import java.util.function.Supplier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.Supplier;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class ChatMessageDefaultTest {

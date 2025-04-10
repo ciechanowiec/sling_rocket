@@ -5,16 +5,15 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+import javax.jcr.Node;
+import javax.jcr.Repository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
-
-import javax.jcr.Node;
-import javax.jcr.Repository;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * {@link Asset} that can be constructed from any {@link Resource} or {@link JCRPath} that points to an {@link Asset} in

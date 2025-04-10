@@ -1,17 +1,13 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
-import eu.ciechanowiec.sling.rocket.unit.DataUnit;
-
+import java.io.InputStream;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
-import java.io.File;
-import java.util.Optional;
 
 /**
  * Unary binary file of an {@link Asset}.
  */
-@FunctionalInterface
 public interface AssetFile {
 
     /**
@@ -22,20 +18,16 @@ public interface AssetFile {
     String PN_ORIGINAL_NAME = "originalName";
 
     /**
-     * Returns an {@link Optional} containing the unary binary file of an {@link Asset}. The wrapped {@link File} is
-     * written in a temporary directory of the host operational system.
+     * Returns the unary binary file of an {@link Asset} represented as an {@link InputStream}.
      *
-     * @return {@link Optional} containing the unary binary file of an {@link Asset}; an empty {@link Optional} is
-     * returned if due to any reason file retrieve fails
+     * @return the unary binary file of an {@link Asset} represented as an {@link InputStream}
      */
-    Optional<File> retrieve();
+    InputStream retrieve();
 
     /**
      * Returns the {@link DataSize} of the unary binary file of an {@link Asset}.
      *
      * @return {@link DataSize} of the unary binary file of an {@link Asset}
      */
-    default DataSize size() {
-        return retrieve().map(file -> new DataSize(() -> file)).orElse(new DataSize(0, DataUnit.BYTES));
-    }
+    DataSize size();
 }

@@ -3,17 +3,16 @@ package eu.ciechanowiec.sling.rocket.asset;
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypeException;
-import org.apache.tika.mime.MimeTypes;
-
-import javax.jcr.Node;
-import javax.jcr.Repository;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import javax.jcr.Node;
+import javax.jcr.Repository;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 
 /**
  * Represents metadata of an {@link Asset}, either actually persisted and existing in the {@link Repository} or a
@@ -31,9 +30,9 @@ public interface AssetMetadata {
     String PN_MIME_TYPE = "mimeType";
 
     /**
-     * Returns the mime type of the associated {@link Asset}.
+     * Returns the mime type of the associated {@link Asset}, e.g. {@code image/jpeg}.
      *
-     * @return mime type of the associated {@link Asset}
+     * @return mime type of the associated {@link Asset}, e.g. {@code image/jpeg}
      */
     String mimeType();
 

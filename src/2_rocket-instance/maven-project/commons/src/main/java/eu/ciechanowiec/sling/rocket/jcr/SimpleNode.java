@@ -4,17 +4,16 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import java.util.Map;
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.nodetype.NodeType;
-import java.util.Map;
 
 /**
  * <p>

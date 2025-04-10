@@ -4,11 +4,10 @@ import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.PersistenceException;
-
-import java.util.Optional;
 
 @Slf4j
 class SafeSaving {
