@@ -34,7 +34,7 @@ startSlingInBackground () {
 setupOakRun () {
 echo ""
 echo "Resolving Jackrabbit Oak version..."
-for i in {1..3}; do
+for i in {1..10}; do
     JACKRABBIT_OAK_VERSION=$(curl --silent --user admin:admin "http://localhost:${HTTP_PORT}/system/console/bundles.json" | jq -r '.data[] | select(.symbolicName == "org.apache.jackrabbit.oak-api") | .version')
 
     if [ -n "$JACKRABBIT_OAK_VERSION" ]; then
