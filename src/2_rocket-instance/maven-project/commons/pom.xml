@@ -403,7 +403,7 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <failOnWarnings>true</failOnWarnings>
+                    <failOnWarnings>${fail-build-on-static-code-analysis-errors}</failOnWarnings>
                 </configuration>
                 <executions>
                     <execution>
