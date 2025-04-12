@@ -34,21 +34,9 @@ startSlingInBackground () {
 setupOakRun () {
 echo ""
 echo "Resolving Jackrabbit Oak version..."
-for i in {1..10}; do
-    JACKRABBIT_OAK_VERSION=$(curl --silent --user admin:admin "http://localhost:${HTTP_PORT}/system/console/bundles.json" | jq -r '.data[] | select(.symbolicName == "org.apache.jackrabbit.oak-api") | .version')
-
-    if [ -n "$JACKRABBIT_OAK_VERSION" ]; then
-        # Break out of the loop if a version was found
-        break
-    fi
-
-    echo "Attempt ${i}: Jackrabbit Oak version not found, retrying in 5 seconds..."
-    sleep 5
-done
-
-# If after 3 attempts the version is still empty, exit with error
+JACKRABBIT_OAK_VERSION=$(cat JACKRABBIT_OAK_VERSION | xargs)
 if [ -z "$JACKRABBIT_OAK_VERSION" ]; then
-    echo "Error: Failed to resolve Jackrabbit Oak version after 3 attempts."
+    echo "Error: Failed to resolve Jackrabbit Oak version"
     exit 1
 fi
 echo "Resolved Jackrabbit Oak version: $JACKRABBIT_OAK_VERSION"
