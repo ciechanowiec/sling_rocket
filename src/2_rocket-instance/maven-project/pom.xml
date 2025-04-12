@@ -63,7 +63,7 @@
         <sling.port>8080</sling.port>
         <sling.user>admin</sling.user>
         <sling.password>admin</sling.password>
-        <sling.mock.resourceresolverfactoryactivator.timeout.ms>2000
+        <sling.mock.resourceresolverfactoryactivator.timeout.ms>5000
         </sling.mock.resourceresolverfactoryactivator.timeout.ms>
         <!-- ====================================================================== -->
         <!-- NON_OSGI_DEPENDENCIES                                                  -->
