@@ -402,8 +402,6 @@ volumes:
     read_only: true
 ....
 
-
-
 == Miscellaneous
 
 === Apache Sling
