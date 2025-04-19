@@ -80,7 +80,7 @@
         <!-- ====================================================================== -->
         <!-- COMPOSUM                                                               -->
         <!-- ====================================================================== -->
-        <composum.nodes.version>4.3.4</composum.nodes.version>
+        <composum.nodes.version>4.3.5</composum.nodes.version>
         <!-- ====================================================================== -->
         <!-- FELIX                                                                  -->
         <!-- ====================================================================== -->
@@ -91,7 +91,7 @@
         <org.apache.felix.eventadmin.version>1.6.4</org.apache.felix.eventadmin.version>
         <org.apache.felix.cm.json.version>2.0.6</org.apache.felix.cm.json.version>
         <org.apache.felix.log.version>1.3.0</org.apache.felix.log.version>
-        <org.apache.felix.http.servlet-api.version>3.0.0</org.apache.felix.http.servlet-api.version>
+        <org.apache.felix.http.servlet-api.version>6.1.0</org.apache.felix.http.servlet-api.version>
         <org.apache.felix.scr.version>2.2.12</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
@@ -106,7 +106,7 @@
         <!-- FELIX_HEALTHCHECK                                                      -->
         <!-- ====================================================================== -->
         <org.apache.felix.healthcheck.api.version>2.0.4</org.apache.felix.healthcheck.api.version>
-        <org.apache.felix.healthcheck.core.version>2.2.0</org.apache.felix.healthcheck.core.version>
+        <org.apache.felix.healthcheck.core.version>2.3.0</org.apache.felix.healthcheck.core.version>
         <org.apache.felix.healthcheck.generalchecks.version>3.0.8</org.apache.felix.healthcheck.generalchecks.version>
         <!-- ====================================================================== -->
         <!-- FELIX_WEBCONSOLE                                                       -->

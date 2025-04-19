@@ -350,12 +350,9 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
                     </execution>
                 </executions>
             </plugin>
-            <!-- Creates reports on tests coverage (target->site->jacoco->index.html)
-                 and fails the build if the coverage is insufficient -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
