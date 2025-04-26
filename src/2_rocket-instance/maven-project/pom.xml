@@ -141,10 +141,10 @@
         <stax-ex.version>1.8.3</stax-ex.version>
         <stax2-api.version>4.2.2</stax2-api.version>
         <encoder.version>1.3.1</encoder.version>
-        <metrics-core.version>3.2.6</metrics-core.version>
-        <fontbox.version>2.0.33</fontbox.version>
+        <metrics-core.version>4.2.30</metrics-core.version>
+        <fontbox.version>2.0.34</fontbox.version>
         <jempbox.version>1.8.17</jempbox.version>
-        <pdfbox.version>2.0.33</pdfbox.version>
+        <pdfbox.version>2.0.34</pdfbox.version>
         <tika-core.version>1.28.5</tika-core.version>
         <tika-parsers.version>1.28.5</tika-parsers.version>
         <httpclient-osgi.version>4.5.14</httpclient-osgi.version>
@@ -206,7 +206,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.0</woodstox-core.version>
-        <jackson.version>2.18.3</jackson.version>
+        <jackson.version>2.19.0</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -2530,10 +2530,12 @@
                             <rule>
                                 <groupId>io.dropwizard.metrics</groupId>
                                 <artifactId>metrics-core</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>4\..*</version>
-                                </ignoreVersion>
+                                <ignoreVersions>
+                                    <ignoreVersion>
+                                        <type>range</type>
+                                        <version>(,${metrics-core.version}]</version>
+                                    </ignoreVersion>
+                                </ignoreVersions>
                             </rule>
                             <rule>
                                 <groupId>org.apache.felix</groupId>
