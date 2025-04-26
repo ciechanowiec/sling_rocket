@@ -106,6 +106,7 @@
                         json-smart.version,
                         accessors-smart.version,
                         org.apache.servicemix.bundles.jasypt.version,
+                        org.apache.servicemix.bundles.guava.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

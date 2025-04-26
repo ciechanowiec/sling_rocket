@@ -187,6 +187,10 @@
     {
       "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.jasypt:${org.apache.servicemix.bundles.jasypt.version}",
       "start-order": "25"
+    },
+    {
+      "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.guava:${org.apache.servicemix.bundles.guava.version}",
+      "start-order": "25"
     }
   ]
 }

@@ -178,6 +178,7 @@
         <json-smart.version>2.5.2</json-smart.version>
         <accessors-smart.version>2.5.2</accessors-smart.version>
         <org.apache.servicemix.bundles.jasypt.version>1.9.3_1</org.apache.servicemix.bundles.jasypt.version>
+        <org.apache.servicemix.bundles.guava.version>31.1_1</org.apache.servicemix.bundles.guava.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -1080,6 +1081,12 @@
                 <groupId>org.apache.servicemix.bundles</groupId>
                 <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
                 <version>${org.apache.servicemix.bundles.jasypt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.guava</artifactId>
+                <version>${org.apache.servicemix.bundles.guava.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
