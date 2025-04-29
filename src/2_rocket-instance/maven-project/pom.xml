@@ -214,6 +214,7 @@
         <!-- ====================================================================== -->
         <slf4j.version>1.7.36</slf4j.version>
         <org.apache.sling.commons.log.version>5.5.0</org.apache.sling.commons.log.version>
+        <logback.version>1.5.18</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
@@ -266,7 +267,7 @@
         <org.apache.sling.resource.filter.version>1.0.0</org.apache.sling.resource.filter.version>
         <org.apache.sling.provisioning.model.version>1.8.6</org.apache.sling.provisioning.model.version>
         <org.apache.sling.event.dea.version>1.1.6</org.apache.sling.event.dea.version>
-        <org.apache.sling.event.version>4.3.14</org.apache.sling.event.version>
+        <org.apache.sling.event.version>4.3.16</org.apache.sling.event.version>
         <org.apache.sling.servlets.resolver.version>2.11.8</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.7.2</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>1.4.6</org.apache.sling.servlet-helpers.version>
@@ -1268,6 +1269,28 @@
             <!-- LOGGING                                                                -->
             <!-- ====================================================================== -->
             <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.commons.log</artifactId>
+                <version>${org.apache.sling.commons.log.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
@@ -1283,12 +1306,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>org.apache.sling.commons.log</artifactId>
-                <version>${org.apache.sling.commons.log.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -2610,38 +2627,6 @@
                             <rule>
                                 <groupId>org.jvnet.staxex</groupId>
                                 <artifactId>stax-ex</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>2.*</version>
-                                </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>jcl-over-slf4j</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>2.*</version>
-                                </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>log4j-over-slf4j</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>2.*</version>
-                                </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-api</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>2.*</version>
-                                </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-simple</artifactId>
                                 <ignoreVersion>
                                     <type>regex</type>
                                     <version>2.*</version>

@@ -132,6 +132,7 @@
 
                         slf4j.version,
                         org.apache.sling.commons.log.version,
+                        logback.version,
                         org.apache.sling.commons.logservice.version,
 
                         jackrabbit.version,

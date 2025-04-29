@@ -5,10 +5,6 @@
       "start-order": "1"
     },
     {
-      "id": "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:${org.apache.aries.spifly.dynamic.bundle.version}",
-      "start-order": "1"
-    },
-    {
       "id": "org.apache.aries.jmx:org.apache.aries.jmx.api:${org.apache.aries.jmx.api.version}",
       "start-order": "5"
     },

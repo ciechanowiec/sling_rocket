@@ -1,6 +1,18 @@
 {
   "bundles": [
     {
+      "id": "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:${org.apache.aries.spifly.dynamic.bundle.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.log:${org.apache.sling.commons.log.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "org.slf4j:jul-to-slf4j:${slf4j.version}",
+      "start-order": "1"
+    },
+    {
       "id": "org.slf4j:jcl-over-slf4j:${slf4j.version}",
       "start-order": "1"
     },
@@ -10,10 +22,6 @@
     },
     {
       "id": "org.slf4j:slf4j-api:${slf4j.version}",
-      "start-order": "1"
-    },
-    {
-      "id": "org.apache.sling:org.apache.sling.commons.log:${org.apache.sling.commons.log.version}",
       "start-order": "1"
     },
     {
