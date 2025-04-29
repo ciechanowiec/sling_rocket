@@ -9,6 +9,14 @@
       "start-order": "1"
     },
     {
+      "id": "ch.qos.logback:logback-core:${logback.version}",
+      "start-order": "1"
+    },
+    {
+      "id": "ch.qos.logback:logback-classic:${logback.version}",
+      "start-order": "1"
+    },
+    {
       "id": "org.slf4j:jul-to-slf4j:${slf4j.version}",
       "start-order": "1"
     },
