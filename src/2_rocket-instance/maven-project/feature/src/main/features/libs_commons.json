@@ -21,6 +21,10 @@
       "start-order": "5"
     },
     {
+      "id": "commons-logging:commons-logging:${commons-logging.version}",
+      "start-order": "10"
+    },
+    {
       "id": "commons-collections:commons-collections:${commons-collections.version}",
       "start-order": "15"
     },

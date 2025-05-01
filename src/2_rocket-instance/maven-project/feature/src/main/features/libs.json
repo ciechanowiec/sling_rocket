@@ -65,6 +65,10 @@
       "start-order": "10"
     },
     {
+      "id": "org.apache.pdfbox:pdfbox-io:${pdfbox-io.version}",
+      "start-order": "10"
+    },
+    {
       "id": "org.apache.tika:tika-core:${tika-core.version}",
       "start-order": "10"
     },
