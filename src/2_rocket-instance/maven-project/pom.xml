@@ -171,7 +171,7 @@
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250107</json.version>
         <oauth2-oidc-sdk.version>11.24</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.2</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -329,7 +329,7 @@
         <!-- SLING_MODELS                                                           -->
         <!-- ====================================================================== -->
         <org.apache.sling.models.validation-impl.version>1.1.0</org.apache.sling.models.validation-impl.version>
-        <org.apache.sling.models.jacksonexporter.version>1.1.4</org.apache.sling.models.jacksonexporter.version>
+        <org.apache.sling.models.jacksonexporter.version>1.1.6</org.apache.sling.models.jacksonexporter.version>
         <org.apache.sling.models.api.version>1.5.4</org.apache.sling.models.api.version>
         <org.apache.sling.models.caconfig.version>1.0.2</org.apache.sling.models.caconfig.version>
         <org.apache.sling.models.impl.version>1.7.8</org.apache.sling.models.impl.version>
@@ -350,11 +350,11 @@
         </org.apache.sling.scripting.sightly.compiler.java.version>
         <org.apache.sling.scripting.sightly.compiler.version>1.2.14-1.4.0
         </org.apache.sling.scripting.sightly.compiler.version>
-        <org.apache.sling.scripting.sightly.js.provider.version>1.2.12
+        <org.apache.sling.scripting.sightly.js.provider.version>1.2.14
         </org.apache.sling.scripting.sightly.js.provider.version>
         <org.apache.sling.scripting.sightly.runtime.version>1.2.6-1.4.0
         </org.apache.sling.scripting.sightly.runtime.version>
-        <org.apache.sling.scripting.sightly.version>1.4.26-1.4.0</org.apache.sling.scripting.sightly.version>
+        <org.apache.sling.scripting.sightly.version>1.4.28-1.4.0</org.apache.sling.scripting.sightly.version>
         <!-- ====================================================================== -->
         <!-- SLING_WEBCONSOLE                                                       -->
         <!-- ====================================================================== -->
@@ -411,7 +411,7 @@
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
-        <jruby.version>10.0.0.0</jruby.version>
+        <jruby.version>10.0.0.1</jruby.version>
         <asciidoctorj.version>3.0.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>2.3.2</asciidoctorj.diagram.version>
     </properties>
