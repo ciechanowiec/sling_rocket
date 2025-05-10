@@ -5,7 +5,7 @@ COPY ../2_rocket-instance/maven-project .
 RUN mvn clean package -DskipAdvancedDependencyResolution
 RUN mvn help:evaluate -Dexpression=jackrabbit-oak-db.version -q -DforceStdout > JACKRABBIT_OAK_VERSION
 
-FROM ciechanowiec/rocket-base:15.0.2
+FROM ciechanowiec/rocket-base:15.0.4-SNAPSHOT
 
 ARG SLING_DIR
 ARG RUN_MODES
