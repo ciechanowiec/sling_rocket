@@ -172,6 +172,7 @@
         <json.version>20250107</json.version>
         <oauth2-oidc-sdk.version>11.24</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
+        <gson.version>2.13.1</gson.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -1057,6 +1058,12 @@
                 <groupId>com.nimbusds</groupId>
                 <artifactId>nimbus-jose-jwt</artifactId>
                 <version>${nimbus-jose-jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

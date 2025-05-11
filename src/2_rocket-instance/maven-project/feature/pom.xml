@@ -101,6 +101,7 @@
                         json.version,
                         oauth2-oidc-sdk.version,
                         nimbus-jose-jwt.version,
+                        gson.version,
                         content-type.version,
                         lang-tag.version,
                         org.apache.servicemix.bundles.jcip-annotations.version,

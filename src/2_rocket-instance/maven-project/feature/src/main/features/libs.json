@@ -169,6 +169,10 @@
       "start-order": "25"
     },
     {
+      "id": "com.google.code.gson:gson:${gson.version}",
+      "start-order": "25"
+    },
+    {
       "id": "com.nimbusds:content-type:${content-type.version}",
       "start-order": "25"
     },
