@@ -6,15 +6,15 @@
     },
     {
       "id": "com.fasterxml.jackson.core:jackson-annotations:${jackson.version}",
-      "start-order": "20"
+      "start-order": "15"
     },
     {
       "id": "com.fasterxml.jackson.core:jackson-core:${jackson.version}",
-      "start-order": "20"
+      "start-order": "15"
     },
     {
       "id": "com.fasterxml.jackson.core:jackson-databind:${jackson.version}",
-      "start-order": "20"
+      "start-order": "15"
     },
     {
       "id": "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jackson.version}",
