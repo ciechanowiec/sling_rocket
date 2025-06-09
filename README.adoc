@@ -334,7 +334,7 @@ Backups are performed regularly and automatically according to the schedule conf
 A backup can also be triggered manually by running the following command:
 [source,bash]
 ....
-docker exec rocket-backup backup
+docker exec rocket-backuper backup
 ....
 
 ==== Backups Restoration
