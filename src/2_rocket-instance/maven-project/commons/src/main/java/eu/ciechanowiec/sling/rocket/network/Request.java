@@ -153,7 +153,7 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
      * Returns the value returned by {@link ServletRequest#getRemotePort()} for the wrapped
      * {@link SlingHttpServletRequest}.
      *
-     * @return value returned by {@link ServletRequest#getRemoteHost()} for the wrapped {@link SlingHttpServletRequest}
+     * @return value returned by {@link ServletRequest#getRemotePort()} for the wrapped {@link SlingHttpServletRequest}
      */
     @JsonProperty("remotePort")
     public int remotePort() {
