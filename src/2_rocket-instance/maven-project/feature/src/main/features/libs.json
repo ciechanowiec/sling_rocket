@@ -219,6 +219,18 @@
     {
       "id": "org.apache.servicemix.bundles:org.apache.servicemix.bundles.xerces:${org.apache.servicemix.bundles.xerces.version}",
       "start-order": "25"
+    },
+    {
+      "id": "eu.ciechanowiec:io.opencensus:${io.opencensus.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "com.google.http-client:google-http-client:${google-http-client.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "eu.ciechanowiec:google-oauth-client:${google-oauth-client.version}",
+      "start-order": "30"
     }
   ]
 }

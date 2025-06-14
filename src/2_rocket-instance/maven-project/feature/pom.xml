@@ -112,6 +112,9 @@
                         xmlsec.version,
                         org.apache.servicemix.bundles.xmlresolver.version,
                         org.apache.servicemix.bundles.xerces.version,
+                        io.opencensus.version,
+                        google-http-client.version,
+                        google-oauth-client.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

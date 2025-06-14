@@ -184,6 +184,9 @@
         <xmlsec.version>2.3.5</xmlsec.version>
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
+        <io.opencensus.version>0.31.1</io.opencensus.version>
+        <google-http-client.version>1.47.0</google-http-client.version>
+        <google-oauth-client.version>1.39.0</google-oauth-client.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -1124,6 +1127,24 @@
                 <groupId>org.apache.servicemix.bundles</groupId>
                 <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
                 <version>${org.apache.servicemix.bundles.xerces.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>io.opencensus</artifactId>
+                <version>${io.opencensus.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client</artifactId>
+                <version>${google-http-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-oauth-client</artifactId>
+                <version>${google-oauth-client.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
@@ -2602,6 +2623,16 @@
                                     <ignoreVersion>
                                         <type>range</type>
                                         <version>(,${metrics-core.version}]</version>
+                                    </ignoreVersion>
+                                </ignoreVersions>
+                            </rule>
+                            <rule>
+                                <groupId>eu.ciechanowiec</groupId>
+                                <artifactId>com.google.guava</artifactId>
+                                <ignoreVersions>
+                                    <ignoreVersion>
+                                        <type>range</type>
+                                        <version>(,${com.google.guava.version}]</version>
                                     </ignoreVersion>
                                 </ignoreVersions>
                             </rule>
