@@ -108,7 +108,7 @@
                         json-smart.version,
                         accessors-smart.version,
                         org.apache.servicemix.bundles.jasypt.version,
-                        org.apache.servicemix.bundles.guava.version,
+                        com.google.guava.version,
                         xmlsec.version,
                         org.apache.servicemix.bundles.xmlresolver.version,
                         org.apache.servicemix.bundles.xerces.version,

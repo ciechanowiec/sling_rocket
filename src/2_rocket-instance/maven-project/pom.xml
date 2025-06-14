@@ -180,7 +180,7 @@
         <json-smart.version>2.5.2</json-smart.version>
         <accessors-smart.version>2.5.2</accessors-smart.version>
         <org.apache.servicemix.bundles.jasypt.version>1.9.3_1</org.apache.servicemix.bundles.jasypt.version>
-        <org.apache.servicemix.bundles.guava.version>31.1_1</org.apache.servicemix.bundles.guava.version>
+        <com.google.guava.version>33.4.8-jre</com.google.guava.version>
         <xmlsec.version>2.3.5</xmlsec.version>
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
@@ -213,7 +213,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
-        <jackson.version>2.19.0</jackson.version>
+        <jackson.version>2.19.1</jackson.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -272,7 +272,7 @@
         <org.apache.sling.resource.filter.version>1.0.0</org.apache.sling.resource.filter.version>
         <org.apache.sling.provisioning.model.version>1.8.6</org.apache.sling.provisioning.model.version>
         <org.apache.sling.event.dea.version>1.1.6</org.apache.sling.event.dea.version>
-        <org.apache.sling.event.version>4.3.16</org.apache.sling.event.version>
+        <org.apache.sling.event.version>4.3.18</org.apache.sling.event.version>
         <org.apache.sling.servlets.resolver.version>2.11.8</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.7.2</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>1.4.6</org.apache.sling.servlet-helpers.version>
@@ -1103,9 +1103,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.servicemix.bundles</groupId>
-                <artifactId>org.apache.servicemix.bundles.guava</artifactId>
-                <version>${org.apache.servicemix.bundles.guava.version}</version>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>com.google.guava</artifactId>
+                <version>${com.google.guava.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
