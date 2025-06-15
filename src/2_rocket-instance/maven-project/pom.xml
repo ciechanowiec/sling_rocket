@@ -187,6 +187,10 @@
         <io.opencensus.version>0.31.1</io.opencensus.version>
         <google-http-client.version>1.47.0</google-http-client.version>
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
+        <google-auth-library-oauth2-http.version>1.37.0</google-auth-library-oauth2-http.version>
+        <google-http-client-apache-v2.version>1.47.0</google-http-client-apache-v2.version>
+        <google-http-client-gson.version>1.47.0</google-http-client-gson.version>
+        <google-api-client.version>2.8.0</google-api-client.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -298,8 +302,8 @@
         <!-- SLING_DISCOVERY                                                        -->
         <!-- ====================================================================== -->
         <org.apache.sling.discovery.api.version>1.0.6</org.apache.sling.discovery.api.version>
-        <org.apache.sling.discovery.base.version>2.0.14</org.apache.sling.discovery.base.version>
-        <org.apache.sling.discovery.commons.version>1.0.28</org.apache.sling.discovery.commons.version>
+        <org.apache.sling.discovery.base.version>2.1.0</org.apache.sling.discovery.base.version>
+        <org.apache.sling.discovery.commons.version>1.1.0</org.apache.sling.discovery.commons.version>
         <org.apache.sling.discovery.oak.version>1.2.46</org.apache.sling.discovery.oak.version>
         <org.apache.sling.discovery.support.version>1.0.8</org.apache.sling.discovery.support.version>
         <!-- ====================================================================== -->
@@ -1145,6 +1149,30 @@
                 <groupId>eu.ciechanowiec</groupId>
                 <artifactId>google-oauth-client</artifactId>
                 <version>${google-oauth-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-auth-library-oauth2-http</artifactId>
+                <version>${google-auth-library-oauth2-http.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client-apache-v2</artifactId>
+                <version>${google-http-client-apache-v2.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-http-client-gson</artifactId>
+                <version>${google-http-client-gson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google-api-client.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

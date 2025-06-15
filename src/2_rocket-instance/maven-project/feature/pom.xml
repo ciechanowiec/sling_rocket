@@ -115,6 +115,10 @@
                         io.opencensus.version,
                         google-http-client.version,
                         google-oauth-client.version,
+                        google-auth-library-oauth2-http.version,
+                        google-http-client-apache-v2.version,
+                        google-http-client-gson.version,
+                        google-api-client.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,
