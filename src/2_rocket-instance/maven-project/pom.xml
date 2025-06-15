@@ -172,7 +172,6 @@
         <json.version>20250517</json.version>
         <oauth2-oidc-sdk.version>11.25</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <gson.version>2.13.1</gson.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -180,17 +179,10 @@
         <json-smart.version>2.5.2</json-smart.version>
         <accessors-smart.version>2.5.2</accessors-smart.version>
         <org.apache.servicemix.bundles.jasypt.version>1.9.3_1</org.apache.servicemix.bundles.jasypt.version>
-        <com.google.guava.version>33.4.8-jre</com.google.guava.version>
         <xmlsec.version>2.3.5</xmlsec.version>
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
         <io.opencensus.version>0.31.1</io.opencensus.version>
-        <google-http-client.version>1.47.0</google-http-client.version>
-        <google-oauth-client.version>1.39.0</google-oauth-client.version>
-        <google-auth-library-oauth2-http.version>1.37.0</google-auth-library-oauth2-http.version>
-        <google-http-client-apache-v2.version>1.47.0</google-http-client-apache-v2.version>
-        <google-http-client-gson.version>1.47.0</google-http-client-gson.version>
-        <google-api-client.version>2.8.0</google-api-client.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -221,6 +213,17 @@
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <jackson.version>2.19.1</jackson.version>
+        <!-- ====================================================================== -->
+        <!-- LIBS_GOOGLE                                                            -->
+        <!-- ====================================================================== -->
+        <gson.version>2.13.1</gson.version>
+        <com.google.guava.version>33.4.8-jre</com.google.guava.version>
+        <google-http-client.version>1.47.0</google-http-client.version>
+        <google-oauth-client.version>1.39.0</google-oauth-client.version>
+        <google-auth-library-oauth2-http.version>1.37.0</google-auth-library-oauth2-http.version>
+        <google-http-client-apache-v2.version>1.47.0</google-http-client-apache-v2.version>
+        <google-http-client-gson.version>1.47.0</google-http-client-gson.version>
+        <google-api-client.version>2.8.0</google-api-client.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -1068,12 +1071,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.nimbusds</groupId>
                 <artifactId>content-type</artifactId>
                 <version>${content-type.version}</version>
@@ -1110,12 +1107,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>eu.ciechanowiec</groupId>
-                <artifactId>com.google.guava</artifactId>
-                <version>${com.google.guava.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
                 <version>${xmlsec.version}</version>
@@ -1137,42 +1128,6 @@
                 <groupId>eu.ciechanowiec</groupId>
                 <artifactId>io.opencensus</artifactId>
                 <version>${io.opencensus.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.http-client</groupId>
-                <artifactId>google-http-client</artifactId>
-                <version>${google-http-client.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>eu.ciechanowiec</groupId>
-                <artifactId>google-oauth-client</artifactId>
-                <version>${google-oauth-client.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>eu.ciechanowiec</groupId>
-                <artifactId>google-auth-library-oauth2-http</artifactId>
-                <version>${google-auth-library-oauth2-http.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.http-client</groupId>
-                <artifactId>google-http-client-apache-v2</artifactId>
-                <version>${google-http-client-apache-v2.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>eu.ciechanowiec</groupId>
-                <artifactId>google-http-client-gson</artifactId>
-                <version>${google-http-client-gson.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.api-client</groupId>
-                <artifactId>google-api-client</artifactId>
-                <version>${google-api-client.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
@@ -1347,6 +1302,57 @@
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- ====================================================================== -->
+            <!-- LIBS_GOOGLE                                                            -->
+            <!-- ====================================================================== -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>com.google.guava</artifactId>
+                <version>${com.google.guava.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client</artifactId>
+                <version>${google-http-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-oauth-client</artifactId>
+                <version>${google-oauth-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-auth-library-oauth2-http</artifactId>
+                <version>${google-auth-library-oauth2-http.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client-apache-v2</artifactId>
+                <version>${google-http-client-apache-v2.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-http-client-gson</artifactId>
+                <version>${google-http-client-gson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google-api-client.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
