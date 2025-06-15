@@ -38,7 +38,7 @@
                         org.apache.felix.scr.version,
                         org.apache.felix.metatype.version,
                         org.apache.felix.bundlerepository.version,
-                        org.apache.felix.http.jetty.version,
+                        org.apache.felix.http.jetty12.version,
                         org.apache.felix.http.whiteboard.version,
                         org.apache.felix.inventory.version,
                         org.apache.felix.prefs.version,

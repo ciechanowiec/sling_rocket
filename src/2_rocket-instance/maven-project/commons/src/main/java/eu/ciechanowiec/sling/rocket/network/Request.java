@@ -8,22 +8,6 @@ import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,6 +18,16 @@ import org.apache.sling.api.resource.Resource;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object.
@@ -226,7 +220,7 @@ public class Request implements RequestWithDecomposition, RequestWithFiles, JSON
                 }
             ).flatMap(Collection::stream)
             .toArray(HttpField[]::new);
-        return new HttpFields.Immutable(httpFields);
+        return HttpFields.from(httpFields);
     }
 
     private Collection<HttpField> httpFields(String headerName, Collection<String> headerValues) {

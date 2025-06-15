@@ -1,8 +1,5 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +7,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -17,16 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 class LLMTest extends TestEnvironment {
@@ -43,9 +44,10 @@ class LLMTest extends TestEnvironment {
     @SuppressWarnings({"MagicNumber", "PMD.CloseResource"})
     void setup() {
         server = new Server(0);
-        ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServletWithMapping(new ServletHolder(new LLMAPI()), "/*");
-        server.setHandler(servletHandler);
+        ServletContextHandler contextHandler = new ServletContextHandler();
+        contextHandler.setContextPath("/");
+        contextHandler.addServlet(new ServletHolder(new LLMAPI()), "/*");
+        server.setHandler(contextHandler);
         server.start();
         ServerConnector connector = (ServerConnector) server.getConnectors()[0];
         int port = connector.getLocalPort();
