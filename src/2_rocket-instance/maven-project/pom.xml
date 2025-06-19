@@ -224,6 +224,10 @@
         <google-http-client-apache-v2.version>1.47.0</google-http-client-apache-v2.version>
         <google-http-client-gson.version>1.47.0</google-http-client-gson.version>
         <google-api-client.version>2.8.0</google-api-client.version>
+        <google-oauth-client-jetty.version>1.39.0</google-oauth-client-jetty.version>
+        <google-oauth-client-java6.version>1.39.0</google-oauth-client-java6.version>
+        <google-http-client-jackson2.version>1.47.0</google-http-client-jackson2.version>
+        <google-api-services-admin-directory.version>20250616</google-api-services-admin-directory.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -1353,6 +1357,30 @@
                 <groupId>com.google.api-client</groupId>
                 <artifactId>google-api-client</artifactId>
                 <version>${google-api-client.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client-jetty</artifactId>
+                <version>${google-oauth-client-jetty.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client-java6</artifactId>
+                <version>${google-oauth-client-java6.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-http-client-jackson2</artifactId>
+                <version>${google-http-client-jackson2.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>google-api-services-admin-directory</artifactId>
+                <version>${google-api-services-admin-directory.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

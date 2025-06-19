@@ -142,6 +142,10 @@
                         google-http-client-apache-v2.version,
                         google-http-client-gson.version,
                         google-api-client.version,
+                        google-oauth-client-jetty.version,
+                        google-oauth-client-java6.version,
+                        google-http-client-jackson2.version,
+                        google-api-services-admin-directory.version,
 
                         slf4j.version,
                         org.apache.sling.commons.log.version,
