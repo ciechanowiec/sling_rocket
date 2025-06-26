@@ -68,7 +68,6 @@ class RequestUpload implements RequestWithDecomposition {
         return new RequestStructure(this).isValid();
     }
 
-    @SuppressWarnings("PMD.UnnecessaryCast")
     List<Affected> saveAssets(ParentJCRPath parentJCRPath, boolean doIncludeDownloadLink) {
         log.trace("{} saving assets at {}", this, parentJCRPath);
         UserResourceAccess userResourceAccess = request.userResourceAccess();

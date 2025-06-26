@@ -13,7 +13,6 @@ import org.apache.sling.api.resource.SyntheticResource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class TargetJCRPathTest extends TestEnvironment {
 
     TargetJCRPathTest() {

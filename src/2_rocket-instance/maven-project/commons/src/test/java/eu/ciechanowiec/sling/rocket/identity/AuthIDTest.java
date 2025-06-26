@@ -37,12 +37,14 @@ class AuthIDTest {
     }
 
     @Test
+    @SuppressWarnings({"EqualsWithItself", "squid:S5863"})
     void testAuthIDUniversalCompareTo() {
         AuthID authID1 = new AuthIDUniversal("testID");
         AuthID authID2 = new AuthIDUniversal("testID");
         AuthID authID3 = new AuthIDUniversal("otherID");
 
         assertEquals(0, authID1.compareTo(authID2));
+        assertEquals(authID1, authID1);
         assertTrue(authID1.compareTo(authID3) > 0);
         assertTrue(authID3.compareTo(authID1) < 0);
     }

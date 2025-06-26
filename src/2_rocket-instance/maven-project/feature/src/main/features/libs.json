@@ -126,19 +126,19 @@
     },
     {
       "id": "eu.ciechanowiec:sling.rocket.login-form:${project.version}",
-      "start-order": "25"
+      "start-order": "30"
     },
     {
       "id": "eu.ciechanowiec:sling.rocket.commons:${project.version}",
-      "start-order": "25"
+      "start-order": "30"
     },
     {
       "id": "eu.ciechanowiec:sneakyfun:${sneakyfun.version}",
-      "start-order": "25"
+      "start-order": "30"
     },
     {
       "id": "eu.ciechanowiec:conditional:${conditional.version}",
-      "start-order": "25"
+      "start-order": "30"
     },
     {
       "id": "javax.servlet:javax.servlet-api:${javax.servlet-api.version}",

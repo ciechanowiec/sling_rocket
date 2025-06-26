@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 @SuppressWarnings(
     {
         "WeakerAccess", "MethodCount", "ClassWithTooManyMethods", "PMD.ExcessivePublicCount", "PMD.TooManyMethods",
-        "PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"
+        "PMD.CouplingBetweenObjects"
     }
 )
 @Slf4j

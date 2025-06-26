@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
     {
         "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals",
         "PMD.NcssCount", "resource", "OverlyCoupledClass", "ClassDataAbstractionCoupling",
-        "PMD.CouplingBetweenObjects", "PMD.ExcessiveImports", "PMD.TooManyStaticImports"
+        "PMD.CouplingBetweenObjects", "PMD.TooManyStaticImports"
     }
 )
 class AssetTest extends TestEnvironment {

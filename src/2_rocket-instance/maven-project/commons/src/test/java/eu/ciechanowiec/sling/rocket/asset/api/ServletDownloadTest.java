@@ -35,7 +35,7 @@ import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.TooManyStaticImports"})
+@SuppressWarnings("PMD.TooManyStaticImports")
 class ServletDownloadTest extends TestEnvironment {
 
     private ServletDownload servletDownload;

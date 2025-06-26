@@ -17,6 +17,7 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.UUID;
 import javax.jcr.PropertyType;
+
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -37,7 +39,7 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings(
     {
-        "MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports",
+        "MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals",
         "PMD.TooManyStaticImports"
     }
 )

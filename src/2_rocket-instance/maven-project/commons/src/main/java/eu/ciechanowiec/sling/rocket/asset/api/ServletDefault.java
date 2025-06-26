@@ -39,7 +39,6 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
 )
 @Slf4j
 @ServiceDescription("Servlet for handling DEFAULT requests to Assets API")
-@SuppressWarnings("PMD.ExcessiveImports")
 public class ServletDefault extends SlingSafeMethodsServlet implements RequiresPrivilege {
 
     /**

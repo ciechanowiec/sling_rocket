@@ -48,8 +48,8 @@ import org.apache.sling.api.resource.ValueMap;
 @SuppressWarnings(
     {
         "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
-        "PMD.AvoidDuplicateLiterals", "PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount",
-        "PMD.TooManyMethods", "PMD.LinguisticNaming", "PMD.ExcessiveImports"
+        "PMD.AvoidDuplicateLiterals", "PMD.ExcessivePublicCount",
+        "PMD.TooManyMethods", "PMD.LinguisticNaming"
     }
 )
 @Slf4j

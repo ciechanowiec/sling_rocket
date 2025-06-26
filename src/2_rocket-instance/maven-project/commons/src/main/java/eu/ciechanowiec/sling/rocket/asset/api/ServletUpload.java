@@ -61,7 +61,7 @@ import org.osgi.service.metatype.annotations.Designate;
 )
 @Slf4j
 @ServiceDescription("Servlet for handling UPLOAD requests to Assets API")
-@SuppressWarnings({"PMD.ExcessiveImports", "JavadocReference"})
+@SuppressWarnings("JavadocReference")
 @SuppressFBWarnings({"MSF_MUTABLE_SERVLET_FIELD", "MTIA_SUSPECT_SERVLET_INSTANCE_FIELD"})
 @MultipartConfig
 public class ServletUpload extends SlingAllMethodsServlet implements RequiresPrivilege {

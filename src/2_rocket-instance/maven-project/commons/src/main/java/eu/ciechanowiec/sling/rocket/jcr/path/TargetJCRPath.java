@@ -17,7 +17,7 @@ import org.apache.sling.api.resource.Resource;
  */
 @ToString
 @Slf4j
-@SuppressWarnings({"squid:S1192", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings("squid:S1192")
 public class TargetJCRPath implements JCRPath {
 
     private final String rawPath;

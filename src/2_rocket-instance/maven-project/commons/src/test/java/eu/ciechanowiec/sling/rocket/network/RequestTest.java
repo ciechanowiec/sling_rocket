@@ -13,10 +13,12 @@ import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
+
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -35,8 +37,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(SlingContextExtension.class)
 @SuppressWarnings(
     {
-        "MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP",
-        "PMD.LinguisticNaming", "PMD.AvoidAccessibilityAlteration", "PMD.ExcessiveImports", "PMD.TooManyStaticImports"
+        "MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP", "PMD.TooManyStaticImports"
     }
 )
 class RequestTest extends TestEnvironment {

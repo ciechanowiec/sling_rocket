@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings("MultipleStringLiterals")
 class ChatMessageDefaultTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
