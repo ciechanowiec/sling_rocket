@@ -14,11 +14,13 @@ import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.identity.WithUserManager;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import eu.ciechanowiec.sneakyfun.SneakySupplier;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +35,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -269,15 +272,47 @@ public abstract class TestEnvironment {
     }
 
     @SneakyThrows
-    @SuppressWarnings({"squid:S1905", "unchecked", "rawtypes"})
     private void registerNodeTypes() {
         CNDSource cndSource = new CNDSource();
+        try (InputStreamReader isrWithCNDFile = cndSource.get()) {
+            registerNodeTypes(isrWithCNDFile);
+        }
+    }
+
+    /**
+     * Registers {@link NodeType}s from the specified <a
+     * href="https://developer.adobe.com/experience-manager/reference-materials/spec/jcr/2.0/25_Appendix.html">compact
+     * node type definition (CND)</a> file.
+     *
+     * @param cndFile CND {@link File}
+     */
+    @SuppressWarnings("unused")
+    @SneakyThrows
+    protected void registerNodeTypes(File cndFile) {
+        Path cndFilePath = cndFile.toPath();
         try (
-            InputStreamReader cndISR = cndSource.get();
+            InputStream inWithCNDFile = Files.newInputStream(cndFilePath);
+            InputStreamReader isrWithCNDFile = new InputStreamReader(inWithCNDFile, StandardCharsets.UTF_8)
+        ) {
+            registerNodeTypes(isrWithCNDFile);
+        }
+    }
+
+    /**
+     * Registers {@link NodeType}s from the specified <a
+     * href="https://developer.adobe.com/experience-manager/reference-materials/spec/jcr/2.0/25_Appendix.html">compact
+     * node type definition (CND)</a> file.
+     *
+     * @param isrWithCNDFile {@link InputStreamReader} that contains the CND file
+     */
+    @SneakyThrows
+    @SuppressWarnings({"squid:S1905", "unchecked", "rawtypes"})
+    protected void registerNodeTypes(InputStreamReader isrWithCNDFile) {
+        try (
             ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()
         ) {
             Session session = Optional.ofNullable(resourceResolver.adaptTo(Session.class)).orElseThrow();
-            CndImporter.registerNodeTypes(cndISR, session);
+            CndImporter.registerNodeTypes(isrWithCNDFile, session);
             session.save();
         }
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
