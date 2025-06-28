@@ -5,7 +5,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   release:
@@ -29,5 +29,27 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.RELEASES_GPG_PASSPHRASE }}
-          # To extract the key below run `gpg --dump-secret-keys herman@ciechanowiec.eu | base64`
+          # To extract the key below run `gpg --export-secret-keys herman@ciechanowiec.eu | base64`
           MAVEN_GPG_KEY: ${{ secrets.RELEASES_GPG_PRIVATE_KEY }}
+
+      - name: Extract project properties from POM
+        id: project_props
+        working-directory: src/2_rocket-instance/maven-project
+        run: |
+          echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec -DforceStdout)" >> $GITHUB_OUTPUT
+          echo "name=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: Create and push Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.project_props.outputs.version }}" -m "Release ${{ steps.project_props.outputs.version }}"
+          git push origin "${{ steps.project_props.outputs.version }}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.project_props.outputs.version }}" \
+            --title "${{ steps.project_props.outputs.name }} // ${{ steps.project_props.outputs.version }}" \
+            --notes ""

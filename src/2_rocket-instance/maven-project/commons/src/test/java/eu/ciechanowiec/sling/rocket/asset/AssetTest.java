@@ -8,11 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
-import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
-import eu.ciechanowiec.sling.rocket.jcr.DeletableResource;
-import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
-import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
+import eu.ciechanowiec.sling.rocket.jcr.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -329,7 +325,7 @@ class AssetTest extends TestEnvironment {
             .commit();
         Resource resource = Optional.ofNullable(context.resourceResolver().getResource("/content/illegal-nt"))
             .orElseThrow();
-        assertThrows(IllegalArgumentException.class, () -> new UniversalAsset(resource, fullResourceAccess));
+        assertThrows(IllegalPrimaryTypeException.class, () -> new UniversalAsset(resource, fullResourceAccess));
     }
 
     @Test

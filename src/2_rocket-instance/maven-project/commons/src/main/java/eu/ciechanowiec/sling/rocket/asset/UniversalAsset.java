@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
+import eu.ciechanowiec.sling.rocket.jcr.IllegalPrimaryTypeException;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -33,8 +34,8 @@ public class UniversalAsset implements Asset {
      *                       behind the {@link Resource} must be one of the types supported by the {@link Asset}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
      *                       resources
-     * @throws IllegalArgumentException if the primary type of the {@link Node} behind the {@link Resource} is not
-     *                                  supported by the {@link Asset}
+     * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} behind the {@link Resource} is not
+     *                                     supported by the {@link Asset}
      */
     @SuppressWarnings("WeakerAccess")
     @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
@@ -49,7 +50,8 @@ public class UniversalAsset implements Asset {
      *                       the {@link Node} must be one of the types supported by the {@link Asset}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
      *                       resources
-     * @throws IllegalArgumentException if the primary type of the {@link Node} is not supported by the {@link Asset}
+     * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} is not supported by the
+     *                                     {@link Asset}
      */
     @SuppressWarnings("WeakerAccess")
     @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
@@ -74,7 +76,7 @@ public class UniversalAsset implements Asset {
             .orElseThrow(
                 () -> {
                     String message = String.format("Unsupported primary type of %s: %s", jcrPath, primaryType);
-                    return new IllegalArgumentException(message);
+                    return new IllegalPrimaryTypeException(message);
                 }
             );
         log.trace("Initialized {}", this);

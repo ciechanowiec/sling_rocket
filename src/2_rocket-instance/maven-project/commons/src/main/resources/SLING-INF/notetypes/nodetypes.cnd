@@ -19,3 +19,30 @@ orderable
 orderable
 - * (UNDEFINED) multiple
 - * (UNDEFINED)
+
+[rocket:Calendar] > nt:base, mix:created, mix:lastModified, mix:referenceable
+orderable
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (rocket:Year) = rocket:Year mandatory
+
+[rocket:Year] > nt:base, mix:created, mix:lastModified, mix:referenceable
+orderable
+- rocket:year (LONG) mandatory
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (rocket:Month) = rocket:Month mandatory
+
+[rocket:Month] > nt:base, mix:created, mix:lastModified, mix:referenceable
+orderable
+- rocket:month (LONG) mandatory
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (rocket:Day) = rocket:Day mandatory
+
+[rocket:Day] > nt:base, mix:created, mix:lastModified, mix:referenceable
+orderable
+- rocket:day (DATE) mandatory
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (nt:base)
