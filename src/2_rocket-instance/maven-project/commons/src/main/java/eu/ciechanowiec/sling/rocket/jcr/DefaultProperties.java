@@ -1,16 +1,17 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Represents default {@link Property}-ies of a {@link Node}.

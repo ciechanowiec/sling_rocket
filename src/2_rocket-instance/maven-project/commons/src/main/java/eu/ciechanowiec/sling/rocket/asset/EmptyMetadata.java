@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import jakarta.ws.rs.core.MediaType;
+
 import java.util.Map;
 import java.util.Optional;
 

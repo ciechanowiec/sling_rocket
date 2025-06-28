@@ -2,9 +2,6 @@ package eu.ciechanowiec.sling.rocket.commons;
 
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.identity.SimpleAuthorizable;
-import java.util.Collections;
-import java.util.Map;
-import javax.jcr.Repository;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.api.security.user.User;
@@ -16,6 +13,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
+
+import javax.jcr.Repository;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Provides full and unlimited access to Apache Sling resources, including the underlying {@link Repository}.

@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.SneakyThrows;
+import lombok.ToString;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import lombok.SneakyThrows;
-import lombok.ToString;
 
 /**
  * Default implementation of {@link ChatCompletionRequestBody}.

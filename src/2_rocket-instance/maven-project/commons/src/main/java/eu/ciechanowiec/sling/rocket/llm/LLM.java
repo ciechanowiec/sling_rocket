@@ -5,19 +5,16 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.SimpleNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Large language model.

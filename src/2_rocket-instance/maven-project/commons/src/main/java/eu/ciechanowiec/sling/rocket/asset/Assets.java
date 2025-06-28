@@ -8,15 +8,16 @@ import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Stream;
-import javax.jcr.Node;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Node;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Represents {@link Node} instances of type {@link Assets#NT_ASSETS}. That can be either a persisted or a

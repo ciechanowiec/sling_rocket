@@ -1,8 +1,9 @@
 package eu.ciechanowiec.sling.rocket.network;
 
-import java.util.Optional;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
+
+import java.util.Optional;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related

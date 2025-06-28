@@ -7,9 +7,10 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.math.NumberUtils;
 
 class AssetsStats {
 

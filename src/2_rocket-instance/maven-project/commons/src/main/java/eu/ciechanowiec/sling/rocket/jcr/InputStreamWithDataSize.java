@@ -8,19 +8,15 @@ import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import eu.ciechanowiec.sling.rocket.unit.WithDataSize;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Optional;
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Optional;
 
 /**
  * An {@link InputStream} that has a known {@link DataSize}.
@@ -52,7 +48,8 @@ public class InputStreamWithDataSize extends InputStream implements WithDataSize
 
     @SuppressWarnings("PMD.CloseResource")
     private Optional<Binary> binary(
-        @SuppressWarnings("PMD.LongVariable") JCRPath jcrPathToNodeWithBinaryProperty, String binaryPropertyName,
+        @SuppressWarnings("PMD.LongVariable")
+        JCRPath jcrPathToNodeWithBinaryProperty, String binaryPropertyName,
         MemoizingSupplier<ResourceResolver> resourceResolverSupplier
     ) {
         ResourceResolver resourceResolver = resourceResolverSupplier.get();

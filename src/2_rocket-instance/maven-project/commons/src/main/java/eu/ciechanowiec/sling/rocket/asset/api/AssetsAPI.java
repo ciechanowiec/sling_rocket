@@ -1,10 +1,5 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.NonExistingResource;
@@ -22,6 +17,12 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * Virtual {@link Resource} that acts as API for operations on Assets.

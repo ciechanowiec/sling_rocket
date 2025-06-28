@@ -5,14 +5,15 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
-import java.util.List;
-import java.util.Optional;
-import javax.jcr.Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Repository;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents a {@link Resource} that can be deleted from the {@link Repository}.

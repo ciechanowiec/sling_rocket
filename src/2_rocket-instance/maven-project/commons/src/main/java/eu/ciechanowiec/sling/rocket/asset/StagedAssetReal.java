@@ -5,11 +5,6 @@ import eu.ciechanowiec.sling.rocket.jcr.StagedNode;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-import javax.jcr.Node;
-import javax.jcr.Repository;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
@@ -17,6 +12,12 @@ import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
+
+import javax.jcr.Node;
+import javax.jcr.Repository;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Represents a request to save a new {@link Asset} in the {@link Repository} as a {@link Node} of type

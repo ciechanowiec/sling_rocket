@@ -2,9 +2,10 @@ package eu.ciechanowiec.sling.rocket.network;
 
 import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import jakarta.ws.rs.core.MediaType;
+import org.apache.sling.api.SlingHttpServletRequest;
+
 import java.io.File;
 import java.util.List;
-import org.apache.sling.api.SlingHttpServletRequest;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related

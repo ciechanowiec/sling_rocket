@@ -1,9 +1,10 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
-import java.io.InputStream;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
+import java.io.InputStream;
 
 /**
  * Unary binary file of an {@link Asset}.

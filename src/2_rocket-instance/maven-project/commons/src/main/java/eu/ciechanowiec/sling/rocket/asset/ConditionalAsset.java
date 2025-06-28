@@ -4,9 +4,10 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
-import java.util.Optional;
-import javax.jcr.Node;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Node;
+import java.util.Optional;
 
 /**
  * Represent a {@link Node} that might be an {@link Asset}.

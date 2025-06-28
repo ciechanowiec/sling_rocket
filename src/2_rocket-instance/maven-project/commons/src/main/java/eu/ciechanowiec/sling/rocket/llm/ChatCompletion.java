@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.llm;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

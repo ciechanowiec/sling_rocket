@@ -1,6 +1,9 @@
 package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,8 +14,6 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.Optional;
 import java.util.jar.JarFile;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class CNDSource {

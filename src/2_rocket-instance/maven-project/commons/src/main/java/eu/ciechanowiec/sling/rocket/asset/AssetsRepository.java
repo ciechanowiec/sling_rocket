@@ -8,16 +8,17 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
-import javax.jcr.Repository;
-import javax.jcr.query.Query;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Repository;
+import javax.jcr.query.Query;
+import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 /**
  * Repository for {@link Asset}s.

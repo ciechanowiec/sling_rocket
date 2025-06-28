@@ -1,9 +1,10 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
-import javax.jcr.Item;
-import javax.jcr.Repository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.jcr.Item;
+import javax.jcr.Repository;
 
 /**
  * Represents a parent path of the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon

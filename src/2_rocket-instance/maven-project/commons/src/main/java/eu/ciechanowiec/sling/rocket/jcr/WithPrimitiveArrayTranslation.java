@@ -1,8 +1,9 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import java.util.Optional;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.ValueMap;
+
+import java.util.Optional;
 
 class WithPrimitiveArrayTranslation {
 

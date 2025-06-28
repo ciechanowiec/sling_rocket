@@ -2,10 +2,11 @@ package eu.ciechanowiec.sling.rocket.asset.api;
 
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
 import eu.ciechanowiec.sling.rocket.network.RequestWithSelectors;
-import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.function.Supplier;
 
 @Slf4j
 class RequestStructure {

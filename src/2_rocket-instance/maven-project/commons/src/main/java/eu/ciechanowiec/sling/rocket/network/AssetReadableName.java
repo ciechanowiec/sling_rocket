@@ -2,12 +2,13 @@ package eu.ciechanowiec.sling.rocket.network;
 
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetMetadata;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
+
+import java.util.Optional;
 
 @Slf4j
 class AssetReadableName {

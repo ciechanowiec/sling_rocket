@@ -7,9 +7,6 @@ import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.ResponseWithHTML;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
-import java.util.List;
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -18,13 +15,12 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Servlet for handling DEFAULT requests to Assets API.

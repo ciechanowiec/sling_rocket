@@ -1,18 +1,19 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Default implementation of {@link AssetsAPIDocumentation}.

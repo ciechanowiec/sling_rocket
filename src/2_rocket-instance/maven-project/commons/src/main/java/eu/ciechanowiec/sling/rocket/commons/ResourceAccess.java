@@ -1,8 +1,9 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
-import javax.jcr.Repository;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Repository;
 
 /**
  * Provides access to Apache Sling resources, including the underlying {@link Repository}.

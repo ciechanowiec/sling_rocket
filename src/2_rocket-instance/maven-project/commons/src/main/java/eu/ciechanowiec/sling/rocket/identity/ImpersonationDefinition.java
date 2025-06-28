@@ -1,7 +1,8 @@
 package eu.ciechanowiec.sling.rocket.identity;
 
-import java.security.Principal;
 import org.apache.jackrabbit.api.security.user.Impersonation;
+
+import java.security.Principal;
 
 @FunctionalInterface
 interface ImpersonationDefinition {

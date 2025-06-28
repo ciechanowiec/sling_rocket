@@ -3,15 +3,8 @@ package eu.ciechanowiec.sling.rocket.asset.api;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
-import eu.ciechanowiec.sling.rocket.network.ContentDispositionHeader;
-import eu.ciechanowiec.sling.rocket.network.Request;
-import eu.ciechanowiec.sling.rocket.network.Response;
-import eu.ciechanowiec.sling.rocket.network.ResponseWithAsset;
-import eu.ciechanowiec.sling.rocket.network.Status;
+import eu.ciechanowiec.sling.rocket.network.*;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
-import java.util.List;
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -26,6 +19,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Servlet for handling DOWNLOAD requests to Assets API.

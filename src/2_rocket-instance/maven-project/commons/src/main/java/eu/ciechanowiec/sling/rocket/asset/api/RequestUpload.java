@@ -9,13 +9,14 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.network.Affected;
 import eu.ciechanowiec.sling.rocket.network.Request;
 import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @ToString

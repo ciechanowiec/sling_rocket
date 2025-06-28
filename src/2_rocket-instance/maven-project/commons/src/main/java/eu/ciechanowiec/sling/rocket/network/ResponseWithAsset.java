@@ -4,14 +4,15 @@ import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
-import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * HTTP response with an {@link Asset}.

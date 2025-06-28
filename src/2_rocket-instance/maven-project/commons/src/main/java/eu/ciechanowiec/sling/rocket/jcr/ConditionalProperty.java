@@ -1,10 +1,11 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import java.util.Optional;
-import javax.jcr.Node;
-import javax.jcr.Property;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import java.util.Optional;
 
 @Slf4j
 record ConditionalProperty(String propertyName) {

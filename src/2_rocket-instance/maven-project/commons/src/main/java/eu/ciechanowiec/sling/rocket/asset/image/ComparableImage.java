@@ -4,13 +4,14 @@ import dev.brachtendorf.jimagehash.hash.Hash;
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Represents an image that can be compared with other images.

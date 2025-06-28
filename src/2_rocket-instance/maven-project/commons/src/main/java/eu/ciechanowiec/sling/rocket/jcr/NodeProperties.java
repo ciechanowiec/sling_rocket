@@ -1,7 +1,5 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
-
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
@@ -9,23 +7,6 @@ import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.nodetype.NodeType;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +15,15 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
+
+import javax.jcr.*;
+import javax.jcr.nodetype.NodeType;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
 
 /**
  * <p>

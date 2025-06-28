@@ -2,13 +2,14 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import java.util.List;
+import org.apache.jackrabbit.JcrConstants;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.nodetype.NodeType;
-import org.apache.jackrabbit.JcrConstants;
+import java.util.List;
 
 /**
  * <p>

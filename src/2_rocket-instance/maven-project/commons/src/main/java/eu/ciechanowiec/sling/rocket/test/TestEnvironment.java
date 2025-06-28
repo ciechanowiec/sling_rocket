@@ -1,10 +1,5 @@
 package eu.ciechanowiec.sling.rocket.test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
@@ -14,28 +9,6 @@ import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.identity.WithUserManager;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import eu.ciechanowiec.sneakyfun.SneakySupplier;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.jcr.Credentials;
-import javax.jcr.Repository;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
-import javax.jcr.nodetype.NodeTypeManager;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -59,6 +32,30 @@ import org.apache.sling.testing.mock.sling.junit5.SlingContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 /**
  * Test environment for Sling Rocket applications. It is supposed to be used as a superclass for other test classes.

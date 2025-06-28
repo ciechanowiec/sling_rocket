@@ -1,11 +1,12 @@
 package eu.ciechanowiec.sling.rocket.identity;
 
-import java.util.Optional;
-import javax.jcr.Session;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
+import java.util.Optional;
 
 /**
  * {@link ResourceResolver} with a wrapped access to {@link UserManager}.

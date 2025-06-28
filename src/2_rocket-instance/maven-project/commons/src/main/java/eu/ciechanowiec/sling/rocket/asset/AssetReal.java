@@ -10,13 +10,14 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
-import java.io.InputStream;
-import java.util.Optional;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.resource.ResourceResolver;
+
+import java.io.InputStream;
+import java.util.Optional;
 
 @Slf4j
 @ToString

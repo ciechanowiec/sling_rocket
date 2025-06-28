@@ -3,10 +3,11 @@ package eu.ciechanowiec.sling.rocket.jcr;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
-import javax.jcr.Node;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
+
+import javax.jcr.Node;
 
 /**
  * Basic implementation of {@link Referencable}.

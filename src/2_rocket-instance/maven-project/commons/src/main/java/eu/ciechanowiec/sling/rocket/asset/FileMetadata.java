@@ -2,13 +2,14 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sneakyfun.SneakySupplier;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.Tika;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.tika.Tika;
 
 /**
  * In-memory {@link AssetMetadata} generated for a {@link File}. The mime type is detected automatically.

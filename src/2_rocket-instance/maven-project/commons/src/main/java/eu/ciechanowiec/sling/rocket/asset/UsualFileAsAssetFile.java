@@ -1,10 +1,11 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import lombok.SneakyThrows;
+
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import lombok.SneakyThrows;
 
 /**
  * {@link AssetFile} made out of a {@link File}.
