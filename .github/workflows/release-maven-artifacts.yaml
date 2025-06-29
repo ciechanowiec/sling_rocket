@@ -51,5 +51,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ steps.project_props.outputs.version }}" \
-            --title "${{ steps.project_props.outputs.name }} // ${{ steps.project_props.outputs.version }}" \
+            --title "Sling Rocket // ${{ steps.project_props.outputs.version }}" \
             --notes ""
