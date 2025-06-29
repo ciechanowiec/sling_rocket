@@ -1,4 +1,4 @@
-FROM ciechanowiec/rocket-base:15.1.2
+FROM ciechanowiec/rocket-base:15.1.4-SNAPSHOT
 
 ARG SLING_DIR
 ARG RUN_MODES

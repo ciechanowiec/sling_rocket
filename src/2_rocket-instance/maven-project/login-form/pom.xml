@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>15.1.2</version>
+        <version>15.1.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>sling.rocket.login-form</artifactId>
