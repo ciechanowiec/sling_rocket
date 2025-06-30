@@ -166,6 +166,7 @@
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
@@ -1040,6 +1041,12 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${javax.servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.servlet-api.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

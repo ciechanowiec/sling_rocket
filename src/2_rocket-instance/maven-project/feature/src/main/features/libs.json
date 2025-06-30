@@ -145,6 +145,10 @@
       "start-order": "25"
     },
     {
+      "id": "jakarta.servlet:jakarta.servlet-api:${jakarta.servlet-api.version}",
+      "start-order": "25"
+    },
+    {
       "id": "jakarta.ws.rs:jakarta.ws.rs-api:${jakarta.ws.rs-api.version}",
       "start-order": "25"
     },

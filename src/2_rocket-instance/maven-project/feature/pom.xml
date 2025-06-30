@@ -115,6 +115,7 @@
                         sneakyfun.version,
                         conditional.version,
                         javax.servlet-api.version,
+                        jakarta.servlet-api.version,
                         jakarta.ws.rs-api.version,
                         icu4j.version,
                         jimage.hash.version,
