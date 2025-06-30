@@ -61,7 +61,7 @@ class GoogleExternalGroup implements ExternalGroup {
 
     @Override
     public String getIntermediatePath() {
-        return "google";
+        return StringUtils.EMPTY;
     }
 
     @Override

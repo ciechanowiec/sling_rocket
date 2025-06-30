@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.google;
 import com.google.api.services.directory.model.Group;
 import com.google.api.services.directory.model.Member;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalIdentityRef;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class GoogleExternalGroupTest {
     @Test
     void testGetIntermediatePath() {
         String actualIntermediatePath = googleExternalGroup.getIntermediatePath();
-        assertEquals("google", actualIntermediatePath);
+        assertEquals(StringUtils.EMPTY, actualIntermediatePath);
     }
 
     @Test

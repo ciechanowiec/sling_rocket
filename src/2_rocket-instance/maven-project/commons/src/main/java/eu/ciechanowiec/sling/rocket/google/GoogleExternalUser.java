@@ -48,7 +48,7 @@ class GoogleExternalUser implements ExternalUser {
 
     @Override
     public String getIntermediatePath() {
-        return "google";
+        return StringUtils.EMPTY;
     }
 
     @Override
