@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.jcr.Credentials;
+import javax.jcr.SimpleCredentials;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +36,13 @@ class GoogleIdentityProviderTest extends TestEnvironment {
     @BeforeEach
     void setup() {
         googleDirectory = spy(context.registerInjectActivateService(GoogleDirectory.class));
-        googleIdentityProvider = new GoogleIdentityProvider(googleDirectory);
+        GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy = context.registerInjectActivateService(
+            GoogleIdTokenVerifierProxy.class
+        );
+        GoogleIdentityProvider googleIdentityProviderTemp = new GoogleIdentityProvider(
+            googleDirectory, googleIdTokenVerifierProxy
+        );
+        googleIdentityProvider = context.registerInjectActivateService(googleIdentityProviderTemp);
     }
 
     @Test
@@ -138,12 +145,17 @@ class GoogleIdentityProviderTest extends TestEnvironment {
     }
 
     @Test
-    void testAuthenticateInvalidCredentials() {
+    void testAuthenticate() {
+        Credentials simpleCredentials = new SimpleCredentials("admin", "password".toCharArray());
         Credentials invalidCredentials = new Credentials() {
-            // Empty implementation
+            // Invalid credentials
         };
-        ExternalUser externalUser = googleIdentityProvider.authenticate(invalidCredentials);
-        assertNull(externalUser);
+        ExternalUser externalUserFromSimpleCreds = googleIdentityProvider.authenticate(simpleCredentials);
+        ExternalUser externalUserFromInvalidCreds = googleIdentityProvider.authenticate(invalidCredentials);
+        assertAll(
+            () -> assertNull(externalUserFromSimpleCreds),
+            () -> assertNull(externalUserFromInvalidCreds)
+        );
     }
 
     @Test
@@ -186,7 +198,7 @@ class GoogleIdentityProviderTest extends TestEnvironment {
             count++;
             assertTrue(
                 group.getId().equals("group1@example.com")
-                   || group.getId().equals("group2@example.com")
+                    || group.getId().equals("group2@example.com")
             );
         }
         assertEquals(2, count);

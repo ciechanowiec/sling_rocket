@@ -1,10 +1,8 @@
 package eu.ciechanowiec.sling.rocket.google;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.directory.Directory;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
@@ -17,8 +15,6 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -39,19 +35,24 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
 
     static final String SERVICE_DESCRIPTION = "External Identity Provider based on Google Directory";
     private final GoogleDirectory googleDirectory;
+    private final GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy;
 
     /**
      * Constructs an instance of this class.
      *
      * @param googleDirectory {@link GoogleDirectory} used by the constructed instance
+     * @param googleIdTokenVerifierProxy {@link GoogleIdTokenVerifierProxy} used by the constructed instance
      */
     @Activate
     public GoogleIdentityProvider(
         @Reference(cardinality = ReferenceCardinality.MANDATORY)
-        GoogleDirectory googleDirectory
+        GoogleDirectory googleDirectory,
+        @Reference(cardinality = ReferenceCardinality.MANDATORY)
+        GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy
     ) {
         super(GoogleIdentityProviderMBean.class);
         this.googleDirectory = googleDirectory;
+        this.googleIdTokenVerifierProxy = googleIdTokenVerifierProxy;
         log.info("{} initialized", this);
     }
 
@@ -108,25 +109,19 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
         return Optional.ofNullable(authenticate(new SimpleCredentials(email, idToken.toCharArray())));
     }
 
-    private Optional<GoogleIdToken.Payload> extractPayload(GoogleSimpleCredentials googleSimpleCredentials) {
+    private Optional<GoogleIdToken.Payload> extractPayload(
+        GoogleSimpleCredentials googleSimpleCredentials
+    ) {
         log.trace("Extracting payload from {}", googleSimpleCredentials);
-        try {
-            GoogleIdTokenVerifier googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance()
-            ).build();
-            String actualIDToken = googleSimpleCredentials.idToken();
-            return Optional.ofNullable(googleIdTokenVerifier.verify(actualIDToken))
-                .map(GoogleIdToken::getPayload)
-                .map(
-                    payload -> {
-                        log.trace("From {} this payload extracted: {}", googleSimpleCredentials, payload);
-                        return payload;
-                    }
-                );
-        } catch (GeneralSecurityException | IOException exception) {
-            log.error("Could not extract payload from %s".formatted(googleSimpleCredentials), exception);
-            return Optional.empty();
-        }
+        String actualIDToken = googleSimpleCredentials.idToken();
+        return googleIdTokenVerifierProxy.verify(actualIDToken)
+            .map(GoogleIdToken::getPayload)
+            .map(
+                payload -> {
+                    log.trace("From {} this payload extracted: {}", googleSimpleCredentials, payload);
+                    return payload;
+                }
+            );
     }
 
     @Override
