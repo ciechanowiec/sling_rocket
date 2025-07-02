@@ -172,7 +172,7 @@
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
         <oauth2-oidc-sdk.version>11.26</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.3.1</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -412,7 +412,7 @@
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-enforcer-plugin.version>3.6.0</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
@@ -428,12 +428,13 @@
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
         <jruby.version>10.0.0.1</jruby.version>
         <asciidoctorj.version>3.0.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>3.0.1</asciidoctorj.diagram.version>
+        <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -2629,6 +2630,26 @@
                             <version>${asciidoctorj.diagram.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.sling</groupId>
+                    <artifactId>htl-maven-plugin</artifactId>
+                    <version>${htl-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>validate-htl-scripts</id>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <failOnWarnings>true</failOnWarnings>
+                                <generateJavaClasses>true</generateJavaClasses>
+                                <generatedJavaClassesPrefix>${project.groupId}</generatedJavaClassesPrefix>
+                                <sourceDirectory>jcr_root</sourceDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

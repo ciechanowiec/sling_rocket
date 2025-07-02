@@ -2,7 +2,6 @@ package eu.ciechanowiec.sling.rocket.google;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.services.directory.Directory;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
