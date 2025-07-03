@@ -34,7 +34,7 @@
     },
     {
       "id": "org.apache.commons:commons-math3:${commons-math3.version}",
-      "start-order": "20"
+      "start-order": "15"
     }
   ]
 }
