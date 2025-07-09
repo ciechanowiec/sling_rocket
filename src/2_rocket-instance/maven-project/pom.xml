@@ -382,8 +382,8 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>5.13.2</junit-jupiter-api.version>
-        <junit-jupiter-params.version>5.13.2</junit-jupiter-params.version>
+        <junit-jupiter-api.version>5.13.3</junit-jupiter-api.version>
+        <junit-jupiter-params.version>5.13.3</junit-jupiter-params.version>
         <mockito-core.version>5.18.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.18.0</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
