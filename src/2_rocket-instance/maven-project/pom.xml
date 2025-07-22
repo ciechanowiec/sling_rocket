@@ -95,7 +95,7 @@
         <org.apache.felix.scr.version>2.2.12</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
-        <org.apache.felix.http.jetty12.version>1.0.34</org.apache.felix.http.jetty12.version>
+        <org.apache.felix.http.jetty12.version>1.0.36</org.apache.felix.http.jetty12.version>
         <org.apache.felix.http.whiteboard.version>4.0.0</org.apache.felix.http.whiteboard.version>
         <org.apache.felix.inventory.version>2.0.0</org.apache.felix.inventory.version>
         <org.apache.felix.prefs.version>1.1.0</org.apache.felix.prefs.version>
@@ -172,7 +172,7 @@
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
         <oauth2-oidc-sdk.version>11.26</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.3.1</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.4</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -204,7 +204,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-codec.version>1.18.0</commons-codec.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
-        <commons-io.version>2.19.0</commons-io.version>
+        <commons-io.version>2.20.0</commons-io.version>
         <commons-logging.version>1.3.5</commons-logging.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
@@ -213,7 +213,7 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
-        <jackson.version>2.19.1</jackson.version>
+        <jackson.version>2.19.2</jackson.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
@@ -239,7 +239,7 @@
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
-        <jackrabbit.version>2.22.0</jackrabbit.version>
+        <jackrabbit.version>2.22.1</jackrabbit.version>
         <jackrabbit-oak-db.version>1.82.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>3.8.4</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
@@ -317,7 +317,7 @@
         <!-- ====================================================================== -->
         <!-- SLING_INSTALLER                                                        -->
         <!-- ====================================================================== -->
-        <org.apache.sling.installer.core.version>3.14.2</org.apache.sling.installer.core.version>
+        <org.apache.sling.installer.core.version>3.14.4</org.apache.sling.installer.core.version>
         <org.apache.sling.installer.factory.configuration.version>1.4.10
         </org.apache.sling.installer.factory.configuration.version>
         <org.apache.sling.installer.provider.file.version>1.3.4</org.apache.sling.installer.provider.file.version>
@@ -382,8 +382,8 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>5.13.3</junit-jupiter-api.version>
-        <junit-jupiter-params.version>5.13.3</junit-jupiter-params.version>
+        <junit-jupiter-api.version>5.13.4</junit-jupiter-api.version>
+        <junit-jupiter-params.version>5.13.4</junit-jupiter-params.version>
         <mockito-core.version>5.18.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.18.0</mockito-junit-jupiter.version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
@@ -412,7 +412,7 @@
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <maven-enforcer-plugin.version>3.6.0</maven-enforcer-plugin.version>
+        <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
@@ -431,7 +431,7 @@
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
-        <jruby.version>10.0.0.1</jruby.version>
+        <jruby.version>10.0.1.0</jruby.version>
         <asciidoctorj.version>3.0.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>3.0.1</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
