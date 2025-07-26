@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.google;
 import com.google.api.services.directory.model.Group;
 import com.google.api.services.directory.model.User;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalGroup;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalIdentity;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalIdentityRef;
@@ -13,10 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
@@ -202,5 +200,40 @@ class GoogleIdentityProviderTest extends TestEnvironment {
             );
         }
         assertEquals(2, count);
+    }
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    void testGetCredentialClasses() {
+        Set<Class> credentialClasses = googleIdentityProvider.getCredentialClasses();
+        assertAll(
+            () -> assertEquals(NumberUtils.INTEGER_ONE, credentialClasses.size()),
+            () -> assertTrue(credentialClasses.contains(GoogleCredentials.class))
+        );
+    }
+
+    @Test
+    void testGetUserId() {
+        Credentials validCredentials = new GoogleCredentials("test-id-token", "test-id-token-signature".toCharArray());
+        Credentials invalidCredentials = new GoogleCredentials(null, "test-id-token-signature".toCharArray());
+        String validUserId = googleIdentityProvider.getUserId(validCredentials);
+        String invalidUserId = googleIdentityProvider.getUserId(invalidCredentials);
+        assertAll(
+            () -> assertEquals("test-id-token", validUserId),
+            () -> assertNull(invalidUserId)
+        );
+    }
+
+    @Test
+    void testGetAttributes() {
+        Credentials credentials = new GoogleCredentials("test-id-token", "test-id-token-signature".toCharArray());
+        Map<String, ?> attributes = googleIdentityProvider.getAttributes(credentials);
+        assertTrue(attributes.isEmpty());
+    }
+
+    @Test
+    void testSetAttributes() {
+        Credentials credentials = new GoogleCredentials("test-id-token", "test-id-token-signature".toCharArray());
+        assertFalse(googleIdentityProvider.setAttributes(credentials, Map.of("test-key", "test-value")));
     }
 }

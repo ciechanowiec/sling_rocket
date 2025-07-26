@@ -5,7 +5,9 @@ import com.google.api.services.directory.Directory;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
+import org.apache.jackrabbit.oak.spi.security.authentication.credentials.CredentialsSupport;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.*;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -13,15 +15,19 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 
 import javax.jcr.Credentials;
-import javax.jcr.SimpleCredentials;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * {@link ExternalIdentityProvider} based on Google {@link Directory}.
  */
 @Component(
-    service = {ExternalIdentityProvider.class, GoogleIdentityProvider.class, GoogleIdentityProviderMBean.class},
+    service = {
+        ExternalIdentityProvider.class, GoogleIdentityProvider.class,
+        GoogleIdentityProviderMBean.class, CredentialsSupport.class
+    },
     immediate = true,
     property = "jmx.objectname=eu.ciechanowiec.slexamplus:type=Identity Management,name=Google Identity Provider"
 )
@@ -30,7 +36,7 @@ import java.util.Optional;
 @ToString
 @Slf4j
 public class GoogleIdentityProvider extends AnnotatedStandardMBean
-    implements ExternalIdentityProvider, GoogleIdentityProviderMBean {
+    implements ExternalIdentityProvider, GoogleIdentityProviderMBean, CredentialsSupport {
 
     static final String SERVICE_DESCRIPTION = "External Identity Provider based on Google Directory";
     private final GoogleDirectory googleDirectory;
@@ -39,7 +45,7 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
     /**
      * Constructs an instance of this class.
      *
-     * @param googleDirectory {@link GoogleDirectory} used by the constructed instance
+     * @param googleDirectory            {@link GoogleDirectory} used by the constructed instance
      * @param googleIdTokenVerifierProxy {@link GoogleIdTokenVerifierProxy} used by the constructed instance
      */
     @Activate
@@ -88,36 +94,36 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
     public ExternalUser authenticate(Credentials credentials) {
         log.trace("Authenticating {}", credentials);
         return Optional.of(credentials)
-            .filter(SimpleCredentials.class::isInstance)
-            .map(SimpleCredentials.class::cast)
-            .map(GoogleSimpleCredentials::new)
+            .filter(GoogleCredentials.class::isInstance)
+            .map(GoogleCredentials.class::cast)
             .flatMap(this::authenticate)
             .orElse(null);
     }
 
-    private Optional<ExternalUser> authenticate(GoogleSimpleCredentials googleSimpleCredentials) {
-        log.trace("Authenticating {}", googleSimpleCredentials);
-        String actualEmail = googleSimpleCredentials.email();
-        return extractPayload(googleSimpleCredentials).map(GoogleIdToken.Payload::getEmail)
+    private Optional<ExternalUser> authenticate(GoogleCredentials googleCredentials) {
+        log.trace("Authenticating {}", googleCredentials);
+        String actualEmail = googleCredentials.email();
+        return extractPayload(googleCredentials).map(GoogleIdToken.Payload::getEmail)
             .filter(extractedEmail -> extractedEmail.equals(actualEmail))
             .map(this::getUser);
     }
 
     @Override
     public Optional<ExternalUser> authenticate(String email, String idToken) {
-        return Optional.ofNullable(authenticate(new SimpleCredentials(email, idToken.toCharArray())));
+        Credentials credentials = new GoogleCredentials(email, idToken.toCharArray());
+        return Optional.ofNullable(authenticate(credentials));
     }
 
     private Optional<GoogleIdToken.Payload> extractPayload(
-        GoogleSimpleCredentials googleSimpleCredentials
+        GoogleCredentials googleCredentials
     ) {
-        log.trace("Extracting payload from {}", googleSimpleCredentials);
-        String actualIDToken = googleSimpleCredentials.idToken();
+        log.trace("Extracting payload from {}", googleCredentials);
+        String actualIDToken = googleCredentials.idToken();
         return googleIdTokenVerifierProxy.verify(actualIDToken)
             .map(GoogleIdToken::getPayload)
             .map(
                 payload -> {
-                    log.trace("From {} this payload extracted: {}", googleSimpleCredentials, payload);
+                    log.trace("From {} this payload extracted: {}", googleCredentials, payload);
                     return payload;
                 }
             );
@@ -147,5 +153,30 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
             .<ExternalGroup>map(group -> new GoogleExternalGroup(group, googleDirectory))
             .toList()
             .iterator();
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public Set<Class> getCredentialClasses() {
+        return Set.of(GoogleCredentials.class);
+    }
+
+    @Override
+    public @Nullable String getUserId(Credentials credentials) {
+        return Optional.of(credentials)
+            .filter(GoogleCredentials.class::isInstance)
+            .map(GoogleCredentials.class::cast)
+            .map(GoogleCredentials::email)
+            .orElse(null);
+    }
+
+    @Override
+    public Map<String, ?> getAttributes(Credentials credentials) {
+        return Map.of();
+    }
+
+    @Override
+    public boolean setAttributes(Credentials credentials, Map<String, ?> attributes) {
+        return false;
     }
 }
