@@ -68,7 +68,7 @@ public class GoogleIdTokenVerifierProxy {
             ).setAudience(List.of(audience)).build();
             return Optional.ofNullable(googleIdTokenVerifier.verify(googleIdTokenString));
         } catch (GeneralSecurityException | IOException | IllegalArgumentException exception) {
-            log.debug("Could verify token", exception);
+            log.debug("Couldn't verify token", exception);
             return Optional.empty();
         }
     }
