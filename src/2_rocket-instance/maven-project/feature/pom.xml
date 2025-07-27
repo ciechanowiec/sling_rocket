@@ -132,6 +132,7 @@
                         org.apache.servicemix.bundles.xmlresolver.version,
                         org.apache.servicemix.bundles.xerces.version,
                         io.opencensus.version,
+                        caffeine.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

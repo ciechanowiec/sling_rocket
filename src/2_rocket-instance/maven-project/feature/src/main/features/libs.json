@@ -211,6 +211,10 @@
     {
       "id": "eu.ciechanowiec:io.opencensus:${io.opencensus.version}",
       "start-order": "30"
+    },
+    {
+      "id": "com.github.ben-manes.caffeine:caffeine:${caffeine.version}",
+      "start-order": "30"
     }
   ]
 }
