@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.osgi.service.component.annotations.Activate;
@@ -32,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GoogleIdTokenVerifierProxy {
 
     @ToString.Exclude
-    private final AtomicReference<GoogleIdTokenVerifierProxyConfig> config;
+    private final AtomicReference<GoogleIdTokenVerifier> googleIdTokenVerifier;
 
     /**
      * Constructs an instance of this class.
@@ -40,16 +42,29 @@ public class GoogleIdTokenVerifierProxy {
      * @param config {@link GoogleIdTokenVerifierProxyConfig} used by the constructed instance
      */
     @Activate
-    public GoogleIdTokenVerifierProxy(GoogleIdTokenVerifierProxyConfig config) {
-        this.config = new AtomicReference<>(config);
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
+    @SneakyThrows
+    public GoogleIdTokenVerifierProxy(
+        GoogleIdTokenVerifierProxyConfig config
+    ) {
+        this.googleIdTokenVerifier = new AtomicReference<>(buildGoogleIdTokenVerifier(config));
         log.info("{} initialized", this);
     }
 
     @Modified
-    void configure(GoogleIdTokenVerifierProxyConfig config) {
+    void configure(GoogleIdTokenVerifierProxyConfig config) throws GeneralSecurityException, IOException {
         log.debug("Configuring {}", this);
-        this.config.set(config);
+        this.googleIdTokenVerifier.set(buildGoogleIdTokenVerifier(config));
         log.debug("Configured {}", this);
+    }
+
+    private GoogleIdTokenVerifier buildGoogleIdTokenVerifier(
+        GoogleIdTokenVerifierProxyConfig config
+    ) throws GeneralSecurityException, IOException {
+        String audience = config.audience();
+        return new GoogleIdTokenVerifier.Builder(
+            GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance()
+        ).setAudience(List.of(audience)).build();
     }
 
     /**
@@ -61,12 +76,8 @@ public class GoogleIdTokenVerifierProxy {
      */
     @SuppressWarnings("WeakerAccess")
     public Optional<GoogleIdToken> verify(String googleIdTokenString) {
-        String audience = config.get().audience();
         try {
-            GoogleIdTokenVerifier googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance()
-            ).setAudience(List.of(audience)).build();
-            return Optional.ofNullable(googleIdTokenVerifier.verify(googleIdTokenString));
+            return Optional.ofNullable(googleIdTokenVerifier.get().verify(googleIdTokenString));
         } catch (GeneralSecurityException | IOException | IllegalArgumentException exception) {
             log.debug("Couldn't verify token", exception);
             return Optional.empty();

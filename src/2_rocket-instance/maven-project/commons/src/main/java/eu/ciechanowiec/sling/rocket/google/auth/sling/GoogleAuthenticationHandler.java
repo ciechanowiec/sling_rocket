@@ -1,18 +1,26 @@
-package eu.ciechanowiec.sling.rocket.google;
+package eu.ciechanowiec.sling.rocket.google.auth.sling;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import eu.ciechanowiec.sling.rocket.google.GoogleCredentials;
+import eu.ciechanowiec.sling.rocket.google.GoogleIdTokenVerifierProxy;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
 import org.apache.sling.auth.core.spi.AuthenticationHandler;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.Designate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -23,17 +31,24 @@ import java.util.concurrent.atomic.AtomicReference;
  * creates an {@link AuthenticationInfo} object upon successful validation.
  */
 @Component(
-    service = {AuthenticationHandler.class, GoogleAuthenticationHandler.class},
-    property = AuthenticationHandler.TYPE_PROPERTY + "=" + GoogleAuthenticationHandler.AUTH_TYPE,
+    service = {AuthenticationHandler.class, GoogleAuthenticationHandler.class, GoogleAuthenticationHandlerMBean.class},
+    property = {
+        AuthenticationHandler.TYPE_PROPERTY + "=" + GoogleAuthenticationHandler.AUTH_TYPE,
+        "jmx.objectname=eu.ciechanowiec.slexamplus:type=Authentication,name=Google Authentication Handler"
+    },
     immediate = true,
     configurationPolicy = ConfigurationPolicy.REQUIRE
 )
 @ServiceRanking(10_000)
 @Slf4j
 @ToString
-@SuppressWarnings("TypeName")
+@SuppressWarnings({"TypeName", "PMD.LooseCoupling"})
 @Designate(ocd = GoogleAuthenticationHandlerConfig.class)
-public class GoogleAuthenticationHandler implements AuthenticationHandler {
+@ServiceDescription(GoogleAuthenticationHandler.SERVICE_DESCRIPTION)
+public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
+    implements AuthenticationHandler, GoogleAuthenticationHandlerMBean {
+
+    static final String SERVICE_DESCRIPTION = "AuthenticationHandler for authenticating users via a GoogleIdToken";
 
     /**
      * The authentication type identifier for this {@link AuthenticationHandler}.
@@ -45,6 +60,9 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
      */
     static final String HEADER_NAME = "X-ID-Token";
     private final GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy;
+    @ToString.Exclude
+    private final AtomicReference<Cache<String, Optional<AuthenticationInfo>>> credentialsExtractionCache;
+    @ToString.Exclude
     private final AtomicReference<GoogleAuthenticationHandlerConfig> config;
 
     /**
@@ -59,15 +77,29 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
         GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy,
         GoogleAuthenticationHandlerConfig config
     ) {
+        super(GoogleAuthenticationHandlerMBean.class);
         this.googleIdTokenVerifierProxy = googleIdTokenVerifierProxy;
+        this.credentialsExtractionCache = new AtomicReference<>(buildCache(config));
         this.config = new AtomicReference<>(config);
         log.info("Initialized {}", this);
     }
 
     @Modified
     void configure(GoogleAuthenticationHandlerConfig config) {
+        log.debug("Configuring {}", this);
+        this.credentialsExtractionCache.set(buildCache(config));
         this.config.set(config);
-        log.info("Configured {}", this);
+        log.debug("Configured {}", this);
+    }
+
+    private Cache<String, Optional<AuthenticationInfo>> buildCache(GoogleAuthenticationHandlerConfig config) {
+        long cacheTTLSeconds = config.cache_ttl_seconds();
+        long cacheMaxSize = config.cache_max$_$size();
+        Caffeine<Object, Object> builder = Caffeine.newBuilder();
+        builder.expireAfterWrite(cacheTTLSeconds, TimeUnit.SECONDS);
+        builder.maximumSize(cacheMaxSize);
+        log.info("Cache built. TTL: {} seconds. Max size: {}", cacheTTLSeconds, cacheMaxSize);
+        return builder.build();
     }
 
     /**
@@ -77,6 +109,8 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
      * provided {@link HttpServletRequest}. If the {@link GoogleIdToken} is present and valid, an
      * {@link AuthenticationInfo} that describes valid {@link GoogleCredentials} is returned. Otherwise, a {@code null}
      * is returned.
+     * <p>
+     * The results of the credentials extraction logic might be cached according to the configuration of this service.
      *
      * @param request  {@link HttpServletRequest} from which the {@link GoogleCredentials} must be extracted
      * @param response {@link HttpServletResponse} in the chain
@@ -86,12 +120,18 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
     @Override
     @SuppressWarnings({"ReturnOfNull", "Regexp"})
     public AuthenticationInfo extractCredentials(HttpServletRequest request, HttpServletResponse response) {
+        String requestURI = request.getRequestURI();
         log.trace(
-            "Extracting credentials from the request to '{}'", request.getRequestURI()
+            "Extracting credentials from the request to '{}'", requestURI
         );
         return Optional.ofNullable(request.getHeader(HEADER_NAME))
-            .flatMap(this::extractCredentials)
-            .orElseGet(
+            .flatMap(this::getCachedCredentials)
+            .map(
+                authenticationInfo -> {
+                    log.trace("Extracted credentials from the request to '{}'", requestURI);
+                    return authenticationInfo;
+                }
+            ).orElseGet(
                 () -> {
                     request.setAttribute(
                         FAILURE_REASON, "Unable to extract credentials from the request"
@@ -102,7 +142,8 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
     }
 
     @SuppressWarnings("PMD.LooseCoupling")
-    private Optional<AuthenticationInfo> extractCredentials(String googleIdToken) {
+    @Override
+    public Optional<AuthenticationInfo> extractCredentials(String googleIdToken) {
         return googleIdTokenVerifierProxy.verify(googleIdToken)
             .map(GoogleIdToken::getPayload)
             .map(GoogleIdToken.Payload::getEmail)
@@ -125,6 +166,16 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
                     return authenticationInfo;
                 }
             );
+    }
+
+    private Optional<AuthenticationInfo> getCachedCredentials(String googleIdToken) {
+        int cacheMaxSize = config.get().cache_max$_$size();
+        int cacheTTLSeconds = config.get().cache_ttl_seconds();
+        boolean isCacheEnabled = cacheMaxSize > NumberUtils.INTEGER_ZERO && cacheTTLSeconds > NumberUtils.INTEGER_ZERO;
+        return Optional.of(credentialsExtractionCache.get())
+            .filter(cache -> isCacheEnabled)
+            .map(cache -> cache.get(googleIdToken, this::extractCredentials))
+            .orElseGet(() -> extractCredentials(googleIdToken));
     }
 
     /**
@@ -150,5 +201,19 @@ public class GoogleAuthenticationHandler implements AuthenticationHandler {
     @Override
     public void dropCredentials(HttpServletRequest request, HttpServletResponse response) {
         log.debug("Dropping credentials for '{}'", request.getRequestURI());
+    }
+
+    @Override
+    public long invalidateAllCache() {
+        long estimatedSize = credentialsExtractionCache.get().estimatedSize();
+        credentialsExtractionCache.get().invalidateAll();
+        log.info("Cache invalidated. Estimated size before invalidation: {}", estimatedSize);
+        return estimatedSize;
+    }
+
+    @Override
+    public long getEstimatedCacheSize() {
+        credentialsExtractionCache.get().cleanUp();
+        return credentialsExtractionCache.get().estimatedSize();
     }
 }
