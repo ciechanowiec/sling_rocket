@@ -171,14 +171,14 @@
         <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
-        <oauth2-oidc-sdk.version>11.26.1</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.4</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.27</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.4.1</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
         </org.apache.servicemix.bundles.jcip-annotations.version>
-        <json-smart.version>2.5.2</json-smart.version>
-        <accessors-smart.version>2.5.2</accessors-smart.version>
+        <json-smart.version>2.6.0</json-smart.version>
+        <accessors-smart.version>2.6.0</accessors-smart.version>
         <org.apache.servicemix.bundles.jasypt.version>1.9.3_1</org.apache.servicemix.bundles.jasypt.version>
         <xmlsec.version>2.3.5</xmlsec.version>
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
@@ -240,9 +240,9 @@
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
-        <jackrabbit.version>2.22.1</jackrabbit.version>
+        <jackrabbit.version>2.22.2</jackrabbit.version>
         <jackrabbit-oak-db.version>1.82.0</jackrabbit-oak-db.version>
-        <org.apache.jackrabbit.vault.version>3.8.4</org.apache.jackrabbit.vault.version>
+        <org.apache.jackrabbit.vault.version>4.0.0</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
         <!-- OSGI                                                                   -->
@@ -432,7 +432,7 @@
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
-        <jruby.version>10.0.1.0</jruby.version>
+        <jruby.version>10.0.2.0</jruby.version>
         <asciidoctorj.version>3.0.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>3.0.1</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
@@ -2705,7 +2705,7 @@
                             <ignoreVersion>
                                 <!-- Ignoring release candidate versions, like 2.16.1-rc1 and 1.8.20-RC -->
                                 <type>regex</type>
-                                <version>(?i)[0-9].+-rc[0-9]*</version>
+                                <version>(?i)[0-9].+-rc-?[0-9]*</version>
                             </ignoreVersion>
                             <ignoreVersion>
                                 <!-- Ignoring develop versions, like 15.0.0.Dev01 -->
