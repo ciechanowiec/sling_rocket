@@ -17,8 +17,7 @@ import javax.jcr.SimpleCredentials;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings({"TypeName", "PMD.LooseCoupling"})
 class GoogleIdentityProviderTest extends TestEnvironment {
@@ -33,7 +32,7 @@ class GoogleIdentityProviderTest extends TestEnvironment {
 
     @BeforeEach
     void setup() {
-        googleDirectory = spy(context.registerInjectActivateService(GoogleDirectory.class));
+        googleDirectory = context.registerInjectActivateService(mock(GoogleDirectory.class));
         GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy = context.registerInjectActivateService(
             GoogleIdTokenVerifierProxy.class
         );

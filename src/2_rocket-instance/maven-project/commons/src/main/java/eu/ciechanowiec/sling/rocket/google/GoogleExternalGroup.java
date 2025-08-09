@@ -6,7 +6,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalGroup;
-import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalIdentityException;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalIdentityRef;
 
 import java.util.List;
@@ -65,7 +64,7 @@ class GoogleExternalGroup implements ExternalGroup {
     }
 
     @Override
-    public Iterable<ExternalIdentityRef> getDeclaredGroups() throws ExternalIdentityException {
+    public Iterable<ExternalIdentityRef> getDeclaredGroups() {
         log.trace("Getting declared groups of {}", this);
         String providerName = GoogleIdentityProvider.class.getSimpleName();
         return Optional.ofNullable(group.getEmail())

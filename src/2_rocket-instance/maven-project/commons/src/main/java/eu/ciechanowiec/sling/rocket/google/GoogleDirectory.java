@@ -8,6 +8,7 @@ import com.google.api.services.directory.Directory;
 import com.google.api.services.directory.model.*;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
@@ -43,34 +44,38 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDirectoryMBean {
 
     static final String SERVICE_DESCRIPTION = "Google Directory";
-    private final AtomicReference<GoogleDirectoryConfig> config;
+    private final AtomicReference<Directory> directory;
 
     /**
      * Constructs an instance of this class.
      *
      * @param config {@link GoogleDirectoryConfig} used by the constructed instance
+     * @throws GeneralSecurityException if a security error occurs during {@link Directory} initialization
+     * @throws IOException if an I/O error occurs during {@link Directory} initialization
      */
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     @Activate
-    public GoogleDirectory(GoogleDirectoryConfig config) {
+    public GoogleDirectory(GoogleDirectoryConfig config) throws GeneralSecurityException, IOException {
         super(GoogleDirectoryMBean.class);
-        this.config = new AtomicReference<>(config);
+        this.directory = new AtomicReference<>(buildDirectory(config));
         log.info("{} initialized", this);
     }
 
     @Modified
-    void configure(GoogleDirectoryConfig config) {
+    void configure(GoogleDirectoryConfig config) throws GeneralSecurityException, IOException {
         log.debug("Configuring {}", this);
-        this.config.set(config);
+        this.directory.set(buildDirectory(config));
         log.debug("Configured {}", this);
     }
 
-    private Directory buildDirectory() throws GeneralSecurityException, IOException {
+    private Directory buildDirectory(GoogleDirectoryConfig config) throws GeneralSecurityException, IOException {
+        log.debug("Building Directory with {}", config);
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        String pathToServiceAccountKeyFile = config.get().path$_$to$_$service$_$account$_$key$_$file();
+        String pathToServiceAccountKeyFile = config.path$_$to$_$service$_$account$_$key$_$file();
         try (InputStream credentialsFIS = Files.newInputStream(Paths.get(pathToServiceAccountKeyFile))) {
             GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsFIS)
-                .createScoped(List.of(config.get().directory$_$scopes()))
-                .createDelegated(config.get().user$_$to$_$impersonate_email());
+                .createScoped(List.of(config.directory$_$scopes()))
+                .createDelegated(config.user$_$to$_$impersonate_email());
             HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
             return new Directory.Builder(httpTransport, GsonFactory.getDefaultInstance(), requestInitializer).build();
         }
@@ -80,10 +85,10 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
     public List<User> listUsers() {
         log.trace("Listing users");
         try {
-            List<User> users = buildDirectory().users().list().setCustomer("my_customer").execute().getUsers();
+            List<User> users = directory.get().users().list().setCustomer("my_customer").execute().getUsers();
             log.trace("Found {} users", users.size());
             return users;
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             log.error("Unable to list users", exception);
             return Collections.emptyList();
         }
@@ -93,10 +98,10 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
     public List<Group> listGroups() {
         log.trace("Listing groups");
         try {
-            List<Group> groups = buildDirectory().groups().list().setCustomer("my_customer").execute().getGroups();
+            List<Group> groups = directory.get().groups().list().setCustomer("my_customer").execute().getGroups();
             log.trace("Found {} groups", groups.size());
             return groups;
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             log.error("Unable to list groups", exception);
             return Collections.emptyList();
         }
@@ -108,7 +113,7 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
         log.trace("Listing groups for '{}'", memberKey);
         List<Group> allGroups = new ArrayList<>();
         try {
-            Directory.Groups.List request = buildDirectory().groups().list().setUserKey(memberKey);
+            Directory.Groups.List request = directory.get().groups().list().setUserKey(memberKey);
             String pageToken = null;
             do {
                 request.setPageToken(pageToken);
@@ -119,7 +124,7 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
             } while (Objects.nonNull(pageToken));
             log.trace("Retrieved {} groups for '{}'", allGroups.size(), memberKey);
             return Collections.unmodifiableList(allGroups);
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             String message = "Unable to list groups for '%s'".formatted(memberKey);
             log.warn(message, exception);
             return Collections.emptyList();
@@ -130,10 +135,10 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
     public Optional<User> retrieveUser(String userKey) {
         log.trace("Retrieving the user '{}'", userKey);
         try {
-            User user = buildDirectory().users().get(userKey).execute();
+            User user = directory.get().users().get(userKey).execute();
             log.trace("Retrieved '{}'", user);
             return Optional.of(user);
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             String message = "User '%s' not found".formatted(userKey);
             log.debug(message, exception);
             return Optional.empty();
@@ -144,10 +149,10 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
     public Optional<Group> retrieveGroup(String groupKey) {
         log.trace("Retrieving the group '{}'", groupKey);
         try {
-            Group group = buildDirectory().groups().get(groupKey).execute();
+            Group group = directory.get().groups().get(groupKey).execute();
             log.trace("Retrieved '{}'", group);
             return Optional.of(group);
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             String message = "Group '%s' not found".formatted(groupKey);
             log.debug(message, exception);
             return Optional.empty();
@@ -160,7 +165,7 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
         log.trace("Listing members for group '{}'", groupKey);
         List<Member> allMembers = new ArrayList<>();
         try {
-            Directory.Members.List request = buildDirectory().members().list(groupKey);
+            Directory.Members.List request = directory.get().members().list(groupKey);
             String pageToken;
             do {
                 Members members = request.execute();
@@ -172,7 +177,7 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
             } while (Objects.nonNull(pageToken));
             log.trace("Retrieved {} members for group '{}'", allMembers.size(), groupKey);
             return Collections.unmodifiableList(allMembers);
-        } catch (IOException | GeneralSecurityException exception) {
+        } catch (IOException exception) {
             String message = "Unable to list members for group '%s'".formatted(groupKey);
             log.warn(message, exception);
             return Collections.emptyList();
