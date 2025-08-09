@@ -19,7 +19,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"TypeName", "PMD.LooseCoupling"})
+@SuppressWarnings(
+    {
+        "TypeName", "PMD.LooseCoupling", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
+        "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals"
+    }
+)
 class GoogleIdentityProviderTest extends TestEnvironment {
 
     private GoogleDirectory googleDirectory;
@@ -33,13 +38,8 @@ class GoogleIdentityProviderTest extends TestEnvironment {
     @BeforeEach
     void setup() {
         googleDirectory = context.registerInjectActivateService(mock(GoogleDirectory.class));
-        GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy = context.registerInjectActivateService(
-            GoogleIdTokenVerifierProxy.class
-        );
-        GoogleIdentityProvider googleIdentityProviderTemp = new GoogleIdentityProvider(
-            googleDirectory, googleIdTokenVerifierProxy
-        );
-        googleIdentityProvider = context.registerInjectActivateService(googleIdentityProviderTemp);
+        context.registerInjectActivateService(GoogleIdTokenVerifierProxy.class);
+        googleIdentityProvider = context.registerInjectActivateService(GoogleIdentityProvider.class);
     }
 
     @Test
@@ -234,5 +234,121 @@ class GoogleIdentityProviderTest extends TestEnvironment {
     void testSetAttributes() {
         Credentials credentials = new GoogleCredentials("test-id-token", "test-id-token-signature".toCharArray());
         assertFalse(googleIdentityProvider.setAttributes(credentials, Map.of("test-key", "test-value")));
+    }
+
+    @Test
+    void testGetUserFoundCached() {
+        User user = new User();
+        user.setPrimaryEmail("test@example.com");
+        user.setId("12345");
+        when(googleDirectory.retrieveUser("12345")).thenReturn(Optional.of(user));
+        googleIdentityProvider.getUser("12345");
+        googleIdentityProvider.getUser("12345");
+        verify(googleDirectory, times(1)).retrieveUser("12345");
+    }
+
+    @Test
+    void testGetGroupFoundCached() {
+        Group group = new Group();
+        group.setName("test-group");
+        group.setId("group-id");
+        when(googleDirectory.retrieveGroup("group-id")).thenReturn(Optional.of(group));
+        googleIdentityProvider.getGroup("group-id");
+        googleIdentityProvider.getGroup("group-id");
+        verify(googleDirectory, times(1)).retrieveGroup("group-id");
+    }
+
+    @Test
+    void testCacheInvalidation() {
+        User user = new User();
+        user.setPrimaryEmail("test@example.com");
+        user.setId("12345");
+        when(googleDirectory.retrieveUser("12345")).thenReturn(Optional.of(user));
+        Group group = new Group();
+        group.setName("test-group");
+        group.setId("group-id");
+        when(googleDirectory.retrieveGroup("group-id")).thenReturn(Optional.of(group));
+        googleIdentityProvider.getUser("12345");
+        googleIdentityProvider.getGroup("group-id");
+        googleIdentityProvider.invalidateAllCache();
+        googleIdentityProvider.getUser("12345");
+        googleIdentityProvider.getGroup("group-id");
+        verify(googleDirectory, times(2)).retrieveUser("12345");
+        verify(googleDirectory, times(2)).retrieveGroup("group-id");
+    }
+
+    @Test
+    void testGetUserWithCacheDisabled() {
+        User user = new User();
+        user.setPrimaryEmail("test@example.com");
+        user.setId("12345");
+        when(googleDirectory.retrieveUser("12345")).thenReturn(Optional.of(user));
+        GoogleIdentityProvider providerWithNoCache = context.registerInjectActivateService(
+            GoogleIdentityProvider.class,
+            Map.of("cache.ttl.seconds", 0)
+        );
+        providerWithNoCache.getUser("12345");
+        providerWithNoCache.getUser("12345");
+        verify(googleDirectory, times(2)).retrieveUser("12345");
+    }
+
+    @Test
+    void testUserCacheMaxSize() {
+        User user1 = new User();
+        user1.setPrimaryEmail("user1@example.com");
+        user1.setId("user1");
+        when(googleDirectory.retrieveUser("user1")).thenReturn(Optional.of(user1));
+        User user2 = new User();
+        user2.setPrimaryEmail("user2@example.com");
+        user2.setId("user2");
+        when(googleDirectory.retrieveUser("user2")).thenReturn(Optional.of(user2));
+        User user3 = new User();
+        user3.setPrimaryEmail("user3@example.com");
+        user3.setId("user3");
+        when(googleDirectory.retrieveUser("user3")).thenReturn(Optional.of(user3));
+        int cacheMaxSize = 1;
+        GoogleIdentityProvider providerWithLimitedCache = context.registerInjectActivateService(
+            GoogleIdentityProvider.class,
+            Map.of("cache.max-size", cacheMaxSize)
+        );
+        providerWithLimitedCache.getUser("user1");
+        providerWithLimitedCache.getUser("user2");
+        assertEquals(cacheMaxSize, providerWithLimitedCache.getEstimatedCacheSizeForUsers());
+        providerWithLimitedCache.getUser("user3");
+        assertEquals(cacheMaxSize, providerWithLimitedCache.getEstimatedCacheSizeForUsers());
+        providerWithLimitedCache.getUser("user1");
+        verify(googleDirectory, times(2)).retrieveUser("user1");
+        verify(googleDirectory, times(1)).retrieveUser("user2");
+        verify(googleDirectory, times(1)).retrieveUser("user3");
+    }
+
+    @Test
+    void testGroupCacheMaxSize() {
+        Group group1 = new Group();
+        group1.setName("group1");
+        group1.setId("group1");
+        when(googleDirectory.retrieveGroup("group1")).thenReturn(Optional.of(group1));
+        Group group2 = new Group();
+        group2.setName("group2");
+        group2.setId("group2");
+        when(googleDirectory.retrieveGroup("group2")).thenReturn(Optional.of(group2));
+        Group group3 = new Group();
+        group3.setName("group3");
+        group3.setId("group3");
+        when(googleDirectory.retrieveGroup("group3")).thenReturn(Optional.of(group3));
+        int cacheMaxSize = 1;
+        GoogleIdentityProvider providerWithLimitedCache = context.registerInjectActivateService(
+            GoogleIdentityProvider.class,
+            Map.of("cache.max-size", cacheMaxSize)
+        );
+        providerWithLimitedCache.getGroup("group1");
+        providerWithLimitedCache.getGroup("group2");
+        assertEquals(cacheMaxSize, providerWithLimitedCache.getEstimatedCacheSizeForGroups());
+        providerWithLimitedCache.getGroup("group3");
+        assertEquals(cacheMaxSize, providerWithLimitedCache.getEstimatedCacheSizeForGroups());
+        providerWithLimitedCache.getGroup("group1");
+        verify(googleDirectory, times(2)).retrieveGroup("group1");
+        verify(googleDirectory, times(1)).retrieveGroup("group2");
+        verify(googleDirectory, times(1)).retrieveGroup("group3");
     }
 }
