@@ -71,7 +71,7 @@
         <org.apache.sling.servlets.annotations.version>1.2.6</org.apache.sling.servlets.annotations.version>
         <lombok.version>1.18.38</lombok.version>
         <javax.inject.version>1</javax.inject.version>
-        <spotbugs-annotations.version>4.9.3</spotbugs-annotations.version>
+        <spotbugs-annotations.version>4.9.4</spotbugs-annotations.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
@@ -171,8 +171,8 @@
         <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
-        <oauth2-oidc-sdk.version>11.27</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.4.1</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.27.1</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.4.2</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -241,7 +241,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.2</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.82.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.84.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>4.0.0</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
