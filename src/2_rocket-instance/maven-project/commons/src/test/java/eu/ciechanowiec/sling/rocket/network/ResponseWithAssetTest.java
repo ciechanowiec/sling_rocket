@@ -16,6 +16,8 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.PrintWriter;
+
+import lombok.SneakyThrows;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -49,6 +51,7 @@ class ResponseWithAssetTest extends TestEnvironment {
         );
     }
 
+    @SneakyThrows
     @Test
     @SuppressWarnings("VariableDeclarationUsageDistance")
     void dontSendIfAlreadySent() {

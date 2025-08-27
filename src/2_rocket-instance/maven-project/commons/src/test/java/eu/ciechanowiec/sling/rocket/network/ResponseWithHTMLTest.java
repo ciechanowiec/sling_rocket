@@ -9,6 +9,8 @@ import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
+
+import lombok.SneakyThrows;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,7 @@ class ResponseWithHTMLTest extends TestEnvironment {
         );
     }
 
+    @SneakyThrows
     @Test
     @SuppressWarnings("VariableDeclarationUsageDistance")
     void dontSendIfAlreadySent() {

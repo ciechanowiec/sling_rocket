@@ -17,7 +17,7 @@ class WithPrimitiveArrayTranslation {
     @SuppressWarnings(
         {
             "ReturnCount", "MethodWithMultipleReturnPoints", "IfCanBeSwitch",
-            "IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"
+            "IfStatementWithTooManyBranches", "ChainOfInstanceofChecks", "squid:S6880"
         }
     )
     <T> T get(String propertyName, T defaultValue) {
@@ -40,7 +40,7 @@ class WithPrimitiveArrayTranslation {
 
     @SuppressWarnings(
         {
-            "ReturnCount", "MethodWithMultipleReturnPoints", "IfCanBeSwitch", "IfStatementWithTooManyBranches"
+            "ReturnCount", "MethodWithMultipleReturnPoints", "IfStatementWithTooManyBranches"
         }
     )
     <T> Optional<T> get(String propertyName, Class<T> type) {
