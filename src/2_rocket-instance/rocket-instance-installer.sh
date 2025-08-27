@@ -112,5 +112,5 @@ sed -i "s/{{ROCKET_FEATURE_ARTIFACT_FINAL_NAME}}/$ROCKET_FEATURE_ARTIFACT_FINAL_
 downloadLauncher
 startSlingInBackground # warmup and initialize
 waitUntilBundlesStatusMatch
-setupOakRun
 killSling
+setupOakRun
