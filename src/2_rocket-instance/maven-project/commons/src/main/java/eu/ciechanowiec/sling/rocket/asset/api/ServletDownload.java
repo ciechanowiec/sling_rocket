@@ -69,7 +69,7 @@ public class ServletDownload extends SlingSafeMethodsServlet implements Requires
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);
         UserResourceAccess userResourceAccess = new UserResourceAccess(authIDUser, fullResourceAccess);
-        Request slingRequest = new Request(request, userResourceAccess);
+        SlingRequest slingRequest = new SlingRequest(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         RequestDownload requestDelete = new RequestDownload(slingRequest);
         if (requestDelete.isValidStructure()) {

@@ -11,7 +11,7 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.network.Affected;
-import eu.ciechanowiec.sling.rocket.network.Request;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.Response;
 import eu.ciechanowiec.sling.rocket.network.Status;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
@@ -118,7 +118,7 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);
         UserResourceAccess userResourceAccess = new UserResourceAccess(authIDUser, fullResourceAccess);
-        Request slingRequest = new Request(request, userResourceAccess);
+        SlingRequest slingRequest = new SlingRequest(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         RequestUpload requestUpload = new RequestUpload(slingRequest, downloadLink);
         if (requestUpload.isValidStructure()) {

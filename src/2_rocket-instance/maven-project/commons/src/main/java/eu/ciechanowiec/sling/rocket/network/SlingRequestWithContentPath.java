@@ -5,10 +5,10 @@ import org.apache.sling.api.request.RequestPathInfo;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related
- * to request content path.
+ * to the request content path.
  */
 @FunctionalInterface
-public interface RequestWithContentPath {
+public interface SlingRequestWithContentPath {
 
     /**
      * Returns the value returned by {@link RequestPathInfo#getResourcePath()} for the wrapped

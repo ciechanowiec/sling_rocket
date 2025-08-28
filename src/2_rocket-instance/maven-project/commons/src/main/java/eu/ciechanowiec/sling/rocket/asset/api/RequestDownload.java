@@ -4,8 +4,8 @@ import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
-import eu.ciechanowiec.sling.rocket.network.Request;
-import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
+import eu.ciechanowiec.sling.rocket.network.SlingRequestWithDecomposition;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,19 +13,19 @@ import java.util.Optional;
 
 @Slf4j
 @ToString
-class RequestDownload implements RequestWithDecomposition {
+class RequestDownload implements SlingRequestWithDecomposition {
 
-    private final Request request;
+    private final SlingRequest slingRequest;
     @ToString.Exclude
     private final MemoizingSupplier<Optional<Asset>> matchingAsset;
 
-    RequestDownload(Request request) {
-        this.request = request;
+    RequestDownload(SlingRequest slingRequest) {
+        this.slingRequest = slingRequest;
         matchingAsset = new MemoizingSupplier<>(
-            () -> request.secondSelector()
+            () -> slingRequest.secondSelector()
                 .flatMap(
                     jcrUUID -> new AssetsRepository(
-                        request.userResourceAccess()
+                        slingRequest.userResourceAccess()
                     ).find((Referencable) () -> jcrUUID)
                 )
                 .filter(
@@ -39,14 +39,14 @@ class RequestDownload implements RequestWithDecomposition {
                             "For {} and {} expected asset descriptor is '{}'. "
                                 + "Actual asset descriptor is '{}'. "
                                 + "Are matching: {}",
-                            asset, request, expectedAssetDescriptor,
+                            asset, slingRequest, expectedAssetDescriptor,
                             actualAssetDescriptor, areMatchingDescriptors
                         );
                         return areMatchingDescriptors;
                     }
                 )
                 .map(asset -> {
-                    log.trace("For {} this asset was matched: {}", request, asset);
+                    log.trace("For {} this asset was matched: {}", slingRequest, asset);
                     return asset;
                 })
         );
@@ -58,37 +58,37 @@ class RequestDownload implements RequestWithDecomposition {
 
     @Override
     public String contentPath() {
-        return request.contentPath();
+        return slingRequest.contentPath();
     }
 
     @Override
     public Optional<String> firstSelector() {
-        return request.firstSelector();
+        return slingRequest.firstSelector();
     }
 
     @Override
     public Optional<String> secondSelector() {
-        return request.secondSelector();
+        return slingRequest.secondSelector();
     }
 
     @Override
     public Optional<String> thirdSelector() {
-        return request.thirdSelector();
+        return slingRequest.thirdSelector();
     }
 
     @Override
     public Optional<String> selectorString() {
-        return request.selectorString();
+        return slingRequest.selectorString();
     }
 
     @Override
     public int numOfSelectors() {
-        return request.numOfSelectors();
+        return slingRequest.numOfSelectors();
     }
 
     @Override
     public Optional<String> extension() {
-        return request.extension();
+        return slingRequest.extension();
     }
 
     boolean isValidStructure() {

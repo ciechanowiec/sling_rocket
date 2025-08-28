@@ -1,7 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
-import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
-import eu.ciechanowiec.sling.rocket.network.RequestWithSelectors;
+import eu.ciechanowiec.sling.rocket.network.SlingRequestWithDecomposition;
+import eu.ciechanowiec.sling.rocket.network.SlingRequestWithSelectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -16,7 +16,7 @@ class RequestStructure {
 
     private RequestStructure(
         String expectedStructureRegex, String actualStructure,
-        int expectedNumOfSelectors, RequestWithSelectors request
+        int expectedNumOfSelectors, SlingRequestWithSelectors request
     ) {
         isValid = () -> {
             log.trace(
@@ -44,7 +44,7 @@ class RequestStructure {
         isValid = () -> new RequestStructure(request, ServletDownload.SELECTOR).isValid();
     }
 
-    private RequestStructure(RequestWithDecomposition request, String expectedFirstSelector) {
+    private RequestStructure(SlingRequestWithDecomposition request, String expectedFirstSelector) {
         isValid = () -> {
             String uuidRegex = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
             String expectedStructureRegex = String.format(

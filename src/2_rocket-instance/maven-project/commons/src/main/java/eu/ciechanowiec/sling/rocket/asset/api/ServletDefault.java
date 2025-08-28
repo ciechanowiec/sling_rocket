@@ -4,7 +4,7 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
-import eu.ciechanowiec.sling.rocket.network.Request;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.ResponseWithHTML;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);
         UserResourceAccess userResourceAccess = new UserResourceAccess(authIDUser, fullResourceAccess);
-        Request slingRequest = new Request(request, userResourceAccess);
+        SlingRequest slingRequest = new SlingRequest(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         ResponseWithHTML responseWithHTML = new ResponseWithHTML(
             response, htmlToSend.get(), HttpServletResponse.SC_OK

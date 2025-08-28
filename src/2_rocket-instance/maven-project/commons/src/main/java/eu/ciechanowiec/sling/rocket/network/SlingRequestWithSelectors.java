@@ -9,7 +9,7 @@ import java.util.Optional;
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related
  * to request selectors.
  */
-public interface RequestWithSelectors {
+public interface SlingRequestWithSelectors {
 
     /**
      * Returns an {@link Optional} containing the <b>first</b> selector among selectors returned by

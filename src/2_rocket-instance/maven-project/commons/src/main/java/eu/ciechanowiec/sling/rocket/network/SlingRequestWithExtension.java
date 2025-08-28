@@ -7,10 +7,10 @@ import java.util.Optional;
 
 /**
  * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related
- * to request extension.
+ * to the request extension.
  */
 @FunctionalInterface
-public interface RequestWithExtension {
+public interface SlingRequestWithExtension {
 
     /**
      * Returns an {@link Optional} containing the extension returned by {@link RequestPathInfo#getExtension()} for the

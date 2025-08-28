@@ -5,7 +5,7 @@ import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.DeletableResource;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
-import eu.ciechanowiec.sling.rocket.network.Request;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.Response;
 import eu.ciechanowiec.sling.rocket.network.Status;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
@@ -75,7 +75,7 @@ public class ServletDelete extends SlingAllMethodsServlet implements RequiresPri
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);
         UserResourceAccess userResourceAccess = new UserResourceAccess(authIDUser, fullResourceAccess);
-        Request slingRequest = new Request(request, userResourceAccess);
+        SlingRequest slingRequest = new SlingRequest(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
         RequestDelete requestDelete = new RequestDelete(slingRequest);
         if (requestDelete.isValidStructure()) {

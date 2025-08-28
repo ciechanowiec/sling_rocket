@@ -7,8 +7,8 @@ import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.network.Affected;
-import eu.ciechanowiec.sling.rocket.network.Request;
-import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
+import eu.ciechanowiec.sling.rocket.network.SlingRequestWithDecomposition;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,49 +20,49 @@ import java.util.UUID;
 
 @Slf4j
 @ToString
-class RequestUpload implements RequestWithDecomposition {
+class RequestUpload implements SlingRequestWithDecomposition {
 
-    private final Request request;
+    private final SlingRequest slingRequest;
     private final DownloadLink downloadLink;
 
-    RequestUpload(Request request, DownloadLink downloadLink) {
-        this.request = request;
+    RequestUpload(SlingRequest slingRequest, DownloadLink downloadLink) {
+        this.slingRequest = slingRequest;
         this.downloadLink = downloadLink;
     }
 
     @Override
     public String contentPath() {
-        return request.contentPath();
+        return slingRequest.contentPath();
     }
 
     @Override
     public Optional<String> firstSelector() {
-        return request.firstSelector();
+        return slingRequest.firstSelector();
     }
 
     @Override
     public Optional<String> secondSelector() {
-        return request.secondSelector();
+        return slingRequest.secondSelector();
     }
 
     @Override
     public Optional<String> thirdSelector() {
-        return request.thirdSelector();
+        return slingRequest.thirdSelector();
     }
 
     @Override
     public Optional<String> selectorString() {
-        return request.selectorString();
+        return slingRequest.selectorString();
     }
 
     @Override
     public int numOfSelectors() {
-        return request.numOfSelectors();
+        return slingRequest.numOfSelectors();
     }
 
     @Override
     public Optional<String> extension() {
-        return request.extension();
+        return slingRequest.extension();
     }
 
     boolean isValidStructure() {
@@ -71,8 +71,8 @@ class RequestUpload implements RequestWithDecomposition {
 
     List<Affected> saveAssets(ParentJCRPath parentJCRPath, boolean doIncludeDownloadLink) {
         log.trace("{} saving assets at {}", this, parentJCRPath);
-        UserResourceAccess userResourceAccess = request.userResourceAccess();
-        return request.uploadedFiles()
+        UserResourceAccess userResourceAccess = slingRequest.userResourceAccess();
+        return slingRequest.uploadedFiles()
             .stream()
             .map(
                 fileWithOriginalName -> {
@@ -82,8 +82,8 @@ class RequestUpload implements RequestWithDecomposition {
                         new UsualFileAsAssetFile(file),
                         new FileMetadata(file)
                             .set("originalName", originalName)
-                            .set("remoteAddress", request.remoteAddress())
-                            .set("remoteHost", request.remoteHost()),
+                            .set("remoteAddress", slingRequest.remoteAddress())
+                            .set("remoteHost", slingRequest.remoteHost()),
                         userResourceAccess
                     );
                 }

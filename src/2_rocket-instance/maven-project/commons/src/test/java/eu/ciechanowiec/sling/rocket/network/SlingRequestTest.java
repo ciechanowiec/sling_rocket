@@ -40,11 +40,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
         "MultipleStringLiterals", "PMD.AvoidUsingHardCodedIP", "PMD.TooManyStaticImports"
     }
 )
-class RequestTest extends TestEnvironment {
+class SlingRequestTest extends TestEnvironment {
 
     private Resource currentResource;
 
-    RequestTest() {
+    SlingRequestTest() {
         super(ResourceResolverType.RESOURCERESOLVER_MOCK);
     }
 
@@ -57,35 +57,35 @@ class RequestTest extends TestEnvironment {
     }
 
     @Test
-    @SuppressWarnings({"MagicNumber", "resource"})
+    @SuppressWarnings("MagicNumber")
     void basicTest() {
-        SlingHttpServletRequest slingRequest = slingHttpServletRequest();
-        Request request = new Request(
-            slingRequest, stackTrace(), new UserResourceAccess(
-            new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        SlingHttpServletRequest mockedSlingRequest = slingHttpServletRequest();
+        SlingRequest slingRequest = new SlingRequest(
+            mockedSlingRequest, stackTrace(), new UserResourceAccess(
+            new AuthIDUser(mockedSlingRequest.getResourceResolver().getUserID()), fullResourceAccess
         )
         );
-        String stringRepresentation = request.toString();
+        String stringRepresentation = slingRequest.toString();
         assertAll(
-            () -> assertEquals("/content", request.contentPath()),
-            () -> assertEquals("delete", request.firstSelector().orElseThrow()),
-            () -> assertEquals("file-id-00313", request.secondSelector().orElseThrow()),
-            () -> assertTrue(request.thirdSelector().isEmpty()),
-            () -> assertEquals("delete.file-id-00313", request.selectorString().orElseThrow()),
-            () -> assertEquals(2, request.numOfSelectors()),
-            () -> assertEquals("mp4", request.extension().orElseThrow()),
-            () -> assertEquals("127.0.0.1", request.remoteAddress()),
-            () -> assertEquals("127.0.0.1", request.remoteHost()),
-            () -> assertEquals(50_261, request.remotePort()),
-            () -> assertEquals(MockJcr.DEFAULT_USER_ID, request.remoteUser()),
-            () -> assertEquals(HttpConstants.METHOD_GET, request.method()),
-            () -> assertEquals(HttpURI.build("/content"), request.uri()),
-            () -> assertEquals(NumberUtils.INTEGER_ZERO, request.contentLength()),
-            () -> assertEquals(3, request.httpFields().size()),
-            () -> assertEquals(MockSlingHttpServletRequest.class, request.wrappedRequestClass()),
-            () -> assertTrue(request.creationStackTrace().size() > NumberUtils.INTEGER_ZERO),
-            () -> assertEquals(currentResource.getPath(), request.resource().getPath()),
-            () -> assertNotNull(request.userResourceAccess().acquireAccess().getResource("/content")),
+            () -> assertEquals("/content", slingRequest.contentPath()),
+            () -> assertEquals("delete", slingRequest.firstSelector().orElseThrow()),
+            () -> assertEquals("file-id-00313", slingRequest.secondSelector().orElseThrow()),
+            () -> assertTrue(slingRequest.thirdSelector().isEmpty()),
+            () -> assertEquals("delete.file-id-00313", slingRequest.selectorString().orElseThrow()),
+            () -> assertEquals(2, slingRequest.numOfSelectors()),
+            () -> assertEquals("mp4", slingRequest.extension().orElseThrow()),
+            () -> assertEquals("127.0.0.1", slingRequest.remoteAddress()),
+            () -> assertEquals("127.0.0.1", slingRequest.remoteHost()),
+            () -> assertEquals(50_261, slingRequest.remotePort()),
+            () -> assertEquals(MockJcr.DEFAULT_USER_ID, slingRequest.remoteUser()),
+            () -> assertEquals(HttpConstants.METHOD_GET, slingRequest.method()),
+            () -> assertEquals(HttpURI.build("/content"), slingRequest.uri()),
+            () -> assertEquals(NumberUtils.INTEGER_ZERO, slingRequest.contentLength()),
+            () -> assertEquals(3, slingRequest.httpFields().size()),
+            () -> assertEquals(MockSlingHttpServletRequest.class, slingRequest.wrappedRequestClass()),
+            () -> assertTrue(slingRequest.creationStackTrace().size() > NumberUtils.INTEGER_ZERO),
+            () -> assertEquals(currentResource.getPath(), slingRequest.resource().getPath()),
+            () -> assertNotNull(slingRequest.userResourceAccess().acquireAccess().getResource("/content")),
             () -> assertTrue(stringRepresentation.contains("gorgus")),
             () -> assertTrue(stringRepresentation.contains("valus"))
         );
@@ -94,25 +94,25 @@ class RequestTest extends TestEnvironment {
     @Test
     void testRequestWithNoFiles() {
         MockSlingHttpServletRequest slingRequest = context.request();
-        RequestWithFiles request = new Request(
+        WrappedSlingRequest requestWithFiles = new SlingRequest(
             slingRequest, new UserResourceAccess(
             new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
         )
         );
-        assertTrue(request.uploadedFiles().isEmpty());
+        assertTrue(requestWithFiles.uploadedFiles().isEmpty());
     }
 
     @Test
     void testRequestWithNonFilesFields() {
         MockSlingHttpServletRequest slingRequest = context.request();
         slingRequest.addRequestParameter("namus-paremetrus", "valus-parametrus");
-        RequestWithFiles request = new Request(
+        WrappedSlingRequest requestWithFiles = new SlingRequest(
             slingRequest, new UserResourceAccess(
             new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
         )
         );
         assertAll(
-            () -> assertTrue(request.uploadedFiles().isEmpty()),
+            () -> assertTrue(requestWithFiles.uploadedFiles().isEmpty()),
             () -> assertEquals("valus-parametrus", slingRequest.getParameter("namus-paremetrus"))
         );
     }
@@ -128,16 +128,16 @@ class RequestTest extends TestEnvironment {
         slingRequest.addRequestParameter(
             "secondImage", Files.readAllBytes(loadResourceIntoFile("2.jpeg").toPath()), MediaType.WILDCARD, "2.jpeg"
         );
-        RequestWithFiles request = new Request(
+        WrappedSlingRequest requestWithFiles = new SlingRequest(
             slingRequest, new UserResourceAccess(
             new AuthIDUser(slingRequest.getResourceResolver().getUserID()), fullResourceAccess
         )
         );
         assertAll(
-            () -> assertEquals(2, request.uploadedFiles().size()),
+            () -> assertEquals(2, requestWithFiles.uploadedFiles().size()),
             () -> assertEquals(
                 Set.of("1.jpeg", "2.jpeg"),
-                request.uploadedFiles()
+                requestWithFiles.uploadedFiles()
                     .stream()
                     .map(FileWithOriginalName::originalName)
                     .collect(Collectors.toUnmodifiableSet())
@@ -148,18 +148,18 @@ class RequestTest extends TestEnvironment {
 
     @Test
     void noRequestPathInfo() {
-        MockSlingHttpServletRequest slingRequest = context.request();
-        Request request = new Request(
-            slingRequest, new UserResourceAccess(
+        MockSlingHttpServletRequest mockedSlingRequest = context.request();
+        SlingRequest slingRequest = new SlingRequest(
+            mockedSlingRequest, new UserResourceAccess(
             new AuthIDUser(slingHttpServletRequest().getResourceResolver().getUserID()), fullResourceAccess
         )
         );
         assertAll(
-            () -> assertTrue(request.firstSelector().isEmpty()),
-            () -> assertTrue(request.secondSelector().isEmpty()),
-            () -> assertTrue(request.selectorString().isEmpty()),
-            () -> assertEquals(NumberUtils.INTEGER_ZERO, request.numOfSelectors()),
-            () -> assertTrue(request.extension().isEmpty())
+            () -> assertTrue(slingRequest.firstSelector().isEmpty()),
+            () -> assertTrue(slingRequest.secondSelector().isEmpty()),
+            () -> assertTrue(slingRequest.selectorString().isEmpty()),
+            () -> assertEquals(NumberUtils.INTEGER_ZERO, slingRequest.numOfSelectors()),
+            () -> assertTrue(slingRequest.extension().isEmpty())
         );
     }
 

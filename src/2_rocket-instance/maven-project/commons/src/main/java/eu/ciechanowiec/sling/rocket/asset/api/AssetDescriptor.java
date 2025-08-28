@@ -7,7 +7,7 @@ import eu.ciechanowiec.sling.rocket.asset.AssetFile;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.network.Affected;
-import eu.ciechanowiec.sling.rocket.network.RequestWithDecomposition;
+import eu.ciechanowiec.sling.rocket.network.SlingRequestWithDecomposition;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +50,7 @@ class AssetDescriptor implements Affected {
         this(requestDownload, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
-    private AssetDescriptor(RequestWithDecomposition request, String originalFileName, String downloadLink) {
+    private AssetDescriptor(SlingRequestWithDecomposition request, String originalFileName, String downloadLink) {
         this.source = new MemoizingSupplier<>(() -> {
             String assetDescriptorFromRequest = String.format(
                 "%s.%s",
