@@ -43,14 +43,14 @@ public class JettyRequestMonitor implements Preprocessor {
     @Activate
     public JettyRequestMonitor(
         @Reference(cardinality = ReferenceCardinality.MANDATORY)
-        SlingRequestMonitorConfig config
+        JettyRequestMonitorConfig config
     ) {
         this.isEnabled = new AtomicBoolean(config.is$_$enabled());
         log.debug("Initialized {}", this);
     }
 
     @Modified
-    void configure(SlingRequestMonitorConfig config) {
+    void configure(JettyRequestMonitorConfig config) {
         isEnabled.set(config.is$_$enabled());
         log.debug("Reconfigured {}", this);
     }
