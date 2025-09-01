@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @SuppressWarnings(
     {
         "TypeName", "NullableProblems", "PMD.LooseCoupling", "ClassWithTooManyMethods", "MethodCount",
-        "PMD.CouplingBetweenObjects"
+        "PMD.CouplingBetweenObjects", "MatchXpath"
     }
 )
 @ServiceDescription(GoogleIdentityProvider.SERVICE_DESCRIPTION)
