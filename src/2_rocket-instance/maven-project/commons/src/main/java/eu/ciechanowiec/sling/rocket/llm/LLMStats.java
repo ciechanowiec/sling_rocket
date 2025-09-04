@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.llm;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
@@ -71,6 +72,7 @@ public class LLMStats {
         register(numOfGeneratedTokens, numOfGeneratedCharacters);
     }
 
+    @SuppressFBWarnings("CWO_CLOSED_WITHOUT_OPENED")
     private void register(int numOfGeneratedTokens, int numOfGeneratedCharacters) {
         lock.lock();
         try {
