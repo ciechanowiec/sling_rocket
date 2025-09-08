@@ -1,15 +1,15 @@
 package eu.ciechanowiec.sling.rocket.network.monitor;
 
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,7 +33,7 @@ class SlingRequestMonitorTest extends TestEnvironment {
         SlingRequestMonitor monitor = context.registerInjectActivateService(
             SlingRequestMonitor.class, Map.of("is-enabled", true)
         );
-        MockSlingHttpServletRequest request = spy(context.request());
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
         request.setHeader("FIRST-HEADER", "first-header-value");
         request.setHeader("SECOND-HEADER", "second-header-value");
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -48,10 +48,10 @@ class SlingRequestMonitorTest extends TestEnvironment {
     @SneakyThrows
     @Test
     void mustNotRegisterWhenDisabled() {
-        JettyRequestMonitor monitor = context.registerInjectActivateService(
-            JettyRequestMonitor.class, Map.of("is-enabled", false)
+        SlingRequestMonitor monitor = context.registerInjectActivateService(
+            SlingRequestMonitor.class, Map.of("is-enabled", false)
         );
-        MockSlingHttpServletRequest request = spy(context.request());
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
         request.setHeader("FIRST-HEADER", "first-header-value");
         request.setHeader("SECOND-HEADER", "second-header-value");
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -66,8 +66,8 @@ class SlingRequestMonitorTest extends TestEnvironment {
     @SneakyThrows
     @Test
     void mustNotRegisterWhenWrongClass() {
-        JettyRequestMonitor monitor = context.registerInjectActivateService(
-            JettyRequestMonitor.class, Map.of("is-enabled", true)
+        SlingRequestMonitor monitor = context.registerInjectActivateService(
+            SlingRequestMonitor.class, Map.of("is-enabled", true)
         );
         ServletRequest request = mock(ServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);

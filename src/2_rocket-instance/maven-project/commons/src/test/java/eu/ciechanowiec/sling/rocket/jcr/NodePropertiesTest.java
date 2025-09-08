@@ -1,34 +1,11 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import eu.ciechanowiec.sling.rocket.asset.Asset;
-import eu.ciechanowiec.sling.rocket.asset.AssetMetadata;
-import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
-import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
-import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
+import eu.ciechanowiec.sling.rocket.asset.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.AbstractMap;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.UUID;
-import javax.jcr.PropertyType;
-
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -37,12 +14,14 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings(
-    {
-        "MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals",
-        "PMD.TooManyStaticImports"
-    }
-)
+import javax.jcr.PropertyType;
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals"})
 class NodePropertiesTest extends TestEnvironment {
 
     private Calendar unix1980;

@@ -4,9 +4,10 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.network.SlingRequest;
+import jakarta.servlet.*;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlets.annotations.SlingServletFilter;
 import org.apache.sling.servlets.annotations.SlingServletFilterScope;
@@ -15,7 +16,6 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.Designate;
 
-import javax.servlet.*;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -87,9 +87,9 @@ public class SlingRequestMonitor implements Filter {
 
     @SuppressWarnings("PMD.CloseResource")
     private void register(ServletRequest request) {
-        boolean isSlingRequest = request instanceof SlingHttpServletRequest;
+        boolean isSlingRequest = request instanceof SlingJakartaHttpServletRequest;
         if (isSlingRequest) {
-            SlingHttpServletRequest slingRequest = (SlingHttpServletRequest) request;
+            SlingJakartaHttpServletRequest slingRequest = (SlingJakartaHttpServletRequest) request;
             ResourceResolver resourceResolver = slingRequest.getResourceResolver();
             String userID = resourceResolver.getUserID();
             AuthIDUser authIDUser = new AuthIDUser(userID);

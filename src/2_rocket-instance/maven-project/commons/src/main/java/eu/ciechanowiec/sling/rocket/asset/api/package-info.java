@@ -2,7 +2,7 @@
  * {@link eu.ciechanowiec.sling.rocket.asset.Asset} API utilities.
  */
 @Export
-@Version("14.0.0")
+@Version("15.0.0")
 package eu.ciechanowiec.sling.rocket.asset.api;
 
 import org.osgi.annotation.bundle.Export;

@@ -4,22 +4,22 @@ import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
-import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.ResponseWithHTML;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.api.servlets.SlingJakartaSafeMethodsServlet;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ import java.util.List;
 )
 @Slf4j
 @ServiceDescription("Servlet for handling DEFAULT requests to Assets API")
-public class ServletDefault extends SlingSafeMethodsServlet implements RequiresPrivilege {
+public class ServletDefault extends SlingJakartaSafeMethodsServlet implements RequiresPrivilege {
 
     /**
      * {@link FullResourceAccess} that will be used by this {@link ServletDefault} to acquire access to resources.
@@ -72,7 +72,9 @@ public class ServletDefault extends SlingSafeMethodsServlet implements RequiresP
 
     @Override
     @SuppressWarnings("PMD.CloseResource")
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doGet(
+        @NotNull SlingJakartaHttpServletRequest request, @NotNull SlingJakartaHttpServletResponse response
+    ) {
         ResourceResolver resourceResolver = request.getResourceResolver();
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);

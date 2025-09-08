@@ -1,21 +1,18 @@
 package eu.ciechanowiec.sling.rocket.network;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.MediaType;
-import java.io.PrintWriter;
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.SneakyThrows;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseTest extends TestEnvironment {
 
@@ -25,7 +22,7 @@ class ResponseTest extends TestEnvironment {
 
     @Test
     void basicSend() {
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         Response response = new Response(
             slingResponse, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure"),
             List.of(
@@ -46,7 +43,7 @@ class ResponseTest extends TestEnvironment {
     @Test
     @SuppressWarnings("VariableDeclarationUsageDistance")
     void dontSendIfAlreadySent() {
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         Response response = new Response(
             slingResponse, new Status(HttpServletResponse.SC_BAD_REQUEST, "Invalid request structure"),
             List.of(

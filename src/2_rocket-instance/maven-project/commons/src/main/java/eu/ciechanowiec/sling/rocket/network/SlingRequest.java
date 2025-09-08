@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.api.security.user.User;
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.eclipse.jetty.http.HttpFields;
@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object.
+ * Wrapper around {@link SlingJakartaHttpServletRequest} that provides additional functionality to the wrapped object.
  */
 @SuppressWarnings(
     {"ClassWithTooManyMethods", "WeakerAccess", "MethodCount", "PMD.TooManyMethods", "PMD.ExcessivePublicCount"}
@@ -34,20 +34,20 @@ import java.util.stream.Stream;
 public class SlingRequest implements WrappedSlingRequest {
 
     private final Request wrappedRequest;
-    private final SlingHttpServletRequest wrappedSlingRequest;
+    private final SlingJakartaHttpServletRequest wrappedSlingRequest;
     private final UserResourceAccess userResourceAccess;
 
     /**
      * Constructs an instance of this class.
      *
-     * @param wrappedSlingRequest {@link SlingHttpServletRequest} to be wrapped by the constructed object
+     * @param wrappedSlingRequest {@link SlingJakartaHttpServletRequest} to be wrapped by the constructed object
      * @param creationStackTrace  {@link StackTraceElement} array representing the stack trace upon creation of this
      *                            object
      * @param userResourceAccess  {@link UserResourceAccess} for the {@link User} who issued the wrapped
-     *                            {@link SlingHttpServletRequest}
+     *                            {@link SlingJakartaHttpServletRequest}
      */
     public SlingRequest(
-        SlingHttpServletRequest wrappedSlingRequest,
+        SlingJakartaHttpServletRequest wrappedSlingRequest,
         StackTraceElement[] creationStackTrace,
         UserResourceAccess userResourceAccess
     ) {
@@ -59,11 +59,11 @@ public class SlingRequest implements WrappedSlingRequest {
     /**
      * Constructs an instance of this class.
      *
-     * @param wrappedSlingRequest {@link SlingHttpServletRequest} to be wrapped by the constructed object
+     * @param wrappedSlingRequest {@link SlingJakartaHttpServletRequest} to be wrapped by the constructed object
      * @param userResourceAccess  {@link UserResourceAccess} for the {@link User} who issued the wrapped
-     *                            {@link SlingHttpServletRequest}
+     *                            {@link SlingJakartaHttpServletRequest}
      */
-    public SlingRequest(SlingHttpServletRequest wrappedSlingRequest, UserResourceAccess userResourceAccess) {
+    public SlingRequest(SlingJakartaHttpServletRequest wrappedSlingRequest, UserResourceAccess userResourceAccess) {
         this(wrappedSlingRequest, new StackTraceElement[]{}, userResourceAccess);
     }
 

@@ -1,26 +1,19 @@
 package eu.ciechanowiec.sling.rocket.network;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import eu.ciechanowiec.sling.rocket.asset.Asset;
-import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
-import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
-import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
-import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
+import eu.ciechanowiec.sling.rocket.asset.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
+import lombok.SneakyThrows;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.PrintWriter;
 
-import lombok.SneakyThrows;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseWithAssetTest extends TestEnvironment {
 
@@ -35,7 +28,7 @@ class ResponseWithAssetTest extends TestEnvironment {
             new UsualFileAsAssetFile(file), new FileMetadata(file), fullResourceAccess
         ).save(new TargetJCRPath("/content/song"));
         Asset retrievedAsset = new AssetsRepository(fullResourceAccess).find(asset).orElseThrow();
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         ResponseWithAsset responseWithAsset = new ResponseWithAsset(slingResponse, retrievedAsset);
         responseWithAsset.send(ContentDispositionHeader.ATTACHMENT);
         assertAll(
@@ -60,7 +53,7 @@ class ResponseWithAssetTest extends TestEnvironment {
             new UsualFileAsAssetFile(file), new FileMetadata(file), fullResourceAccess
         ).save(new TargetJCRPath("/content/song"));
         Asset retrievedAsset = new AssetsRepository(fullResourceAccess).find(asset).orElseThrow();
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         ResponseWithAsset responseWithAsset = new ResponseWithAsset(slingResponse, retrievedAsset);
         try (PrintWriter responseWriter = slingResponse.getWriter()) {
             responseWriter.write("Some content");

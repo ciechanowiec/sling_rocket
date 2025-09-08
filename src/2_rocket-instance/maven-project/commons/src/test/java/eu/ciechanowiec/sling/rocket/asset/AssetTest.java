@@ -1,11 +1,5 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.*;
@@ -17,15 +11,6 @@ import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import jakarta.ws.rs.core.MediaType;
-import java.io.File;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,11 +23,19 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SuppressWarnings(
     {
         "ClassFanOutComplexity", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals",
         "PMD.NcssCount", "resource", "OverlyCoupledClass", "ClassDataAbstractionCoupling",
-        "PMD.CouplingBetweenObjects", "PMD.TooManyStaticImports"
+        "PMD.CouplingBetweenObjects"
     }
 )
 class AssetTest extends TestEnvironment {

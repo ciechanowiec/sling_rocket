@@ -1,11 +1,10 @@
 package eu.ciechanowiec.sling.rocket.network;
 
 import eu.ciechanowiec.sling.rocket.commons.JSON;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Wrapper around {@link HttpServletRequest} that provides additional functionality to the wrapped object.

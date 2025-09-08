@@ -1,17 +1,15 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.util.Map;
-import java.util.Objects;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserResourceAccessTest extends TestEnvironment {
 

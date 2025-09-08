@@ -2,6 +2,8 @@ package eu.ciechanowiec.sling.rocket.network;
 
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import lombok.SneakyThrows;
@@ -9,8 +11,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 

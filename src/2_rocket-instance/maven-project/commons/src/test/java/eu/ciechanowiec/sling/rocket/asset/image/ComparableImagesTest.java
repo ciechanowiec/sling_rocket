@@ -1,8 +1,9 @@
 package eu.ciechanowiec.sling.rocket.asset.image;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -12,10 +13,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"ClassWithTooManyFields", "PMD.TooManyFields"})
 class ComparableImagesTest {

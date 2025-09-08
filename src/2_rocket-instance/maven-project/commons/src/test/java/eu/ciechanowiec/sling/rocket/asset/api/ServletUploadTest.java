@@ -1,18 +1,10 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.spy;
-
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.ws.rs.core.MediaType;
-import java.nio.file.Files;
-import java.util.Objects;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.Resource;
@@ -20,13 +12,20 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.testing.mock.jcr.MockJcr;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+
 @SuppressWarnings(
-    {"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.AvoidUsingHardCodedIP", "PMD.TooManyStaticImports"}
+    {"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.AvoidUsingHardCodedIP"}
 )
 class ServletUploadTest extends TestEnvironment {
 
@@ -48,8 +47,8 @@ class ServletUploadTest extends TestEnvironment {
     @Test
     void adminAccess() {
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         request.addRequestParameter(
             "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
@@ -86,8 +85,8 @@ class ServletUploadTest extends TestEnvironment {
     void userWithNoAnyAccess() {
         AuthIDUser testUser = createOrGetUser(new AuthIDUser("testUser"));
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         request.addRequestParameter(
             "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
@@ -114,8 +113,8 @@ class ServletUploadTest extends TestEnvironment {
         AuthIDUser testUser = createOrGetUser(new AuthIDUser("testUser"));
         new PrivilegeAdmin(fullResourceAccess).allow(new TargetJCRPath("/"), testUser, PrivilegeConstants.JCR_READ);
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         request.addRequestParameter(
             "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
@@ -145,8 +144,8 @@ class ServletUploadTest extends TestEnvironment {
             privilege -> privilegeAdmin.allow(new TargetJCRPath("/"), testUser, privilege)
         );
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         request.addRequestParameter(
             "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );
@@ -183,8 +182,8 @@ class ServletUploadTest extends TestEnvironment {
     @Test
     void invalidStructure() {
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         request.addRequestParameter(
             "firstImage", Files.readAllBytes(loadResourceIntoFile("1.jpeg").toPath()), MediaType.WILDCARD, "1.jpeg"
         );

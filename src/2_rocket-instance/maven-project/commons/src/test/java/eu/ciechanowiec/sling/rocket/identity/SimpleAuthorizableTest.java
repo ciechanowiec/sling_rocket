@@ -1,16 +1,14 @@
 package eu.ciechanowiec.sling.rocket.identity;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleAuthorizableTest extends TestEnvironment {
 

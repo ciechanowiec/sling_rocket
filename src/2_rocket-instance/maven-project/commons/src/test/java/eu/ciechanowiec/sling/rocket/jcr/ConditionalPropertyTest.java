@@ -1,14 +1,15 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.util.Optional;
-import javax.jcr.Node;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
+
+import javax.jcr.Node;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConditionalPropertyTest extends TestEnvironment {
 

@@ -11,21 +11,24 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.network.Affected;
-import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.Response;
+import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.Status;
 import eu.ciechanowiec.sling.rocket.privilege.RequiresPrivilege;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.servlets.HttpConstants;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.api.servlets.SlingJakartaAllMethodsServlet;
 import org.apache.sling.engine.impl.parameters.RequestParameterSupportConfigurer;
 import org.apache.sling.servlets.annotations.SlingServletResourceTypes;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +36,6 @@ import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
 
-import javax.servlet.Servlet;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +58,9 @@ import java.util.Map;
 @Slf4j
 @ServiceDescription("Servlet for handling UPLOAD requests to Assets API")
 @SuppressWarnings("JavadocReference")
-@SuppressFBWarnings({"MSF_MUTABLE_SERVLET_FIELD", "MTIA_SUSPECT_SERVLET_INSTANCE_FIELD"})
+@SuppressFBWarnings("MTIA_SUSPECT_SERVLET_INSTANCE_FIELD")
 @MultipartConfig
-public class ServletUpload extends SlingAllMethodsServlet implements RequiresPrivilege {
+public class ServletUpload extends SlingJakartaAllMethodsServlet implements RequiresPrivilege {
 
     static final String EXTENSION = "upload";
 
@@ -113,7 +113,9 @@ public class ServletUpload extends SlingAllMethodsServlet implements RequiresPri
 
     @Override
     @SuppressWarnings("PMD.CloseResource")
-    protected void doPost(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doPost(
+        @NotNull SlingJakartaHttpServletRequest request, @NotNull SlingJakartaHttpServletResponse response
+    ) {
         ResourceResolver resourceResolver = request.getResourceResolver();
         String userID = resourceResolver.getUserID();
         AuthIDUser authIDUser = new AuthIDUser(userID);

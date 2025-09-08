@@ -1,26 +1,21 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import eu.ciechanowiec.sling.rocket.asset.Asset;
-import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
-import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
-import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
-import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
+import eu.ciechanowiec.sling.rocket.asset.*;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.io.File;
-import java.util.Optional;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class DeletableResourceTest extends TestEnvironment {

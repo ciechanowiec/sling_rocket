@@ -1,27 +1,12 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.spy;
-
-import eu.ciechanowiec.sling.rocket.asset.Asset;
-import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
-import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
-import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
-import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
+import eu.ciechanowiec.sling.rocket.asset.*;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.io.File;
-import java.io.InputStream;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -30,12 +15,19 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.testing.mock.jcr.MockJcr;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("PMD.TooManyStaticImports")
+import java.io.File;
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 class ServletDownloadTest extends TestEnvironment {
 
     private ServletDownload servletDownload;
@@ -67,8 +59,8 @@ class ServletDownloadTest extends TestEnvironment {
             assertTrue(is.readAllBytes().length > NumberUtils.INTEGER_ZERO);
         }
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
         mockRequestPathInfo.setSelectorString("%s.%s".formatted(ServletDownload.SELECTOR, asset.jcrUUID()));
@@ -99,8 +91,8 @@ class ServletDownloadTest extends TestEnvironment {
             assertTrue(is.readAllBytes().length > NumberUtils.INTEGER_ZERO);
         }
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         doAnswer(invocation -> getRRForUser(testUser)).when(request).getResourceResolver();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
@@ -156,8 +148,8 @@ class ServletDownloadTest extends TestEnvironment {
         );
         assertTrue(new AssetsRepository(userResourceAccess).find(asset).isPresent());
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         doAnswer(invocation -> getRRForUser(testUser)).when(request).getResourceResolver();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
@@ -188,8 +180,8 @@ class ServletDownloadTest extends TestEnvironment {
             assertTrue(is.readAllBytes().length > NumberUtils.INTEGER_ZERO);
         }
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
         mockRequestPathInfo.setSelectorString("%s.%s.redundant".formatted(ServletDownload.SELECTOR, asset.jcrUUID()));

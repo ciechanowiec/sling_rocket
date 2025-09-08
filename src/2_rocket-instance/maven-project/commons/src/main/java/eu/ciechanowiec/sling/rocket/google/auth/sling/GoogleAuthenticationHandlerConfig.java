@@ -1,13 +1,12 @@
 package eu.ciechanowiec.sling.rocket.google.auth.sling;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import org.apache.sling.auth.core.spi.AuthenticationHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.sling.auth.core.spi.JakartaAuthenticationHandler;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Configuration for {@link GoogleAuthenticationHandler}.
@@ -17,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 public @interface GoogleAuthenticationHandlerConfig {
 
     /**
-     * Values for the {@link AuthenticationHandler#PATH_PROPERTY} property.
+     * Values for the {@link JakartaAuthenticationHandler#PATH_PROPERTY} property.
      *
-     * @return values for the {@link AuthenticationHandler#PATH_PROPERTY} property
+     * @return values for the {@link JakartaAuthenticationHandler#PATH_PROPERTY} property
      */
     @AttributeDefinition(
         name = "Path",

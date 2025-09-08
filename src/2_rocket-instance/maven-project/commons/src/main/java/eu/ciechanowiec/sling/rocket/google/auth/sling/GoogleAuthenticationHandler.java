@@ -5,35 +5,37 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import eu.ciechanowiec.sling.rocket.google.GoogleCredentials;
 import eu.ciechanowiec.sling.rocket.google.GoogleIdTokenVerifierProxy;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
-import org.apache.sling.auth.core.spi.AuthenticationHandler;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
+import org.apache.sling.auth.core.spi.JakartaAuthenticationHandler;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.Designate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * {@link AuthenticationHandler} for authenticating users via a {@link GoogleIdToken}.
+ * {@link JakartaAuthenticationHandler} for authenticating users via a {@link GoogleIdToken}.
  * <p>
- * This {@link AuthenticationHandler} extracts a {@link GoogleIdToken} from an HTTP header named
+ * This {@link JakartaAuthenticationHandler} extracts a {@link GoogleIdToken} from an HTTP header named
  * {@link GoogleAuthenticationHandler#HEADER_NAME}, verifies it using the {@link GoogleIdTokenVerifierProxy}, and then
  * creates an {@link AuthenticationInfo} object upon successful validation.
  */
 @Component(
-    service = {AuthenticationHandler.class, GoogleAuthenticationHandler.class, GoogleAuthenticationHandlerMBean.class},
+    service = {
+        JakartaAuthenticationHandler.class, GoogleAuthenticationHandler.class, GoogleAuthenticationHandlerMBean.class
+    },
     property = {
-        AuthenticationHandler.TYPE_PROPERTY + "=" + GoogleAuthenticationHandler.AUTH_TYPE,
+        JakartaAuthenticationHandler.TYPE_PROPERTY + "=" + GoogleAuthenticationHandler.AUTH_TYPE,
         "jmx.objectname=eu.ciechanowiec.slexamplus:type=Authentication,name=Google Authentication Handler"
     },
     immediate = true,
@@ -46,12 +48,12 @@ import java.util.concurrent.atomic.AtomicReference;
 @Designate(ocd = GoogleAuthenticationHandlerConfig.class)
 @ServiceDescription(GoogleAuthenticationHandler.SERVICE_DESCRIPTION)
 public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
-    implements AuthenticationHandler, GoogleAuthenticationHandlerMBean {
+    implements JakartaAuthenticationHandler, GoogleAuthenticationHandlerMBean {
 
     static final String SERVICE_DESCRIPTION = "AuthenticationHandler for authenticating users via a GoogleIdToken";
 
     /**
-     * The authentication type identifier for this {@link AuthenticationHandler}.
+     * The authentication type identifier for this {@link JakartaAuthenticationHandler}.
      */
     static final String AUTH_TYPE = "GoogleAuth";
 

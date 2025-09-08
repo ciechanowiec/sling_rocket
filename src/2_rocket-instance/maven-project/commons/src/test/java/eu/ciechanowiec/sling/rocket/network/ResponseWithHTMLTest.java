@@ -1,19 +1,16 @@
 package eu.ciechanowiec.sling.rocket.network;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.MediaType;
-import java.io.PrintWriter;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.SneakyThrows;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintWriter;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseWithHTMLTest extends TestEnvironment {
 
@@ -23,7 +20,7 @@ class ResponseWithHTMLTest extends TestEnvironment {
 
     @Test
     void basicSend() {
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         ResponseWithHTML response = new ResponseWithHTML(
             slingResponse, "<div>Hello, Universe</div>",
             HttpServletResponse.SC_OK
@@ -42,7 +39,7 @@ class ResponseWithHTMLTest extends TestEnvironment {
     @Test
     @SuppressWarnings("VariableDeclarationUsageDistance")
     void dontSendIfAlreadySent() {
-        MockSlingHttpServletResponse slingResponse = new MockSlingHttpServletResponse();
+        MockSlingJakartaHttpServletResponse slingResponse = new MockSlingJakartaHttpServletResponse();
         ResponseWithHTML response = new ResponseWithHTML(
             slingResponse, "<div>Hello, Universe</div>",
             HttpServletResponse.SC_OK

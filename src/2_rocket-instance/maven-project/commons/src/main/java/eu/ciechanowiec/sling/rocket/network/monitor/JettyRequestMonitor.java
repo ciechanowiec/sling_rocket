@@ -1,16 +1,16 @@
 package eu.ciechanowiec.sling.rocket.network.monitor;
 
 import eu.ciechanowiec.sling.rocket.network.Request;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
-import org.osgi.service.http.whiteboard.Preprocessor;
 import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.servlet.whiteboard.Preprocessor;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -60,17 +60,6 @@ public class JettyRequestMonitor implements Preprocessor {
         log.info("Initiated {}", this);
     }
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-        boolean isEnabledUnwrapped = isEnabled.get();
-        log.trace("Is filter enabled and the request will be registered? Answer: {}", isEnabledUnwrapped);
-        if (isEnabledUnwrapped) {
-            register(request);
-        }
-        chain.doFilter(request, response);
-    }
-
     private void register(ServletRequest request) {
         boolean isHttpServletRequest = request instanceof HttpServletRequest;
         if (isHttpServletRequest) {
@@ -89,6 +78,19 @@ public class JettyRequestMonitor implements Preprocessor {
         } catch (StackTraceMonitorException exception) {
             return exception.getStackTrace();
         }
+    }
+
+    @Override
+    public void doFilter(
+        ServletRequest request, ServletResponse response,
+        FilterChain chain
+    ) throws IOException, ServletException {
+        boolean isEnabledUnwrapped = isEnabled.get();
+        log.trace("Is filter enabled and the request will be registered? Answer: {}", isEnabledUnwrapped);
+        if (isEnabledUnwrapped) {
+            register(request);
+        }
+        chain.doFilter(request, response);
     }
 
     @Override

@@ -1,66 +1,66 @@
 package eu.ciechanowiec.sling.rocket.network;
 
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
 
 import java.util.Optional;
 
 /**
- * Wrapper around {@link SlingHttpServletRequest} that provides additional functionality to the wrapped object related
- * to request selectors.
+ * Wrapper around {@link SlingJakartaHttpServletRequest} that provides additional functionality to the wrapped object
+ * related to request selectors.
  */
 public interface SlingRequestWithSelectors {
 
     /**
      * Returns an {@link Optional} containing the <b>first</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}. If there are no
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}. If there are no
      * selectors, an empty {@link Optional} is returned.
      *
      * @return {@link Optional} containing the <b>first</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}; if there are no
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}; if there are no
      * selectors, an empty {@link Optional} is returned
      */
     Optional<String> firstSelector();
 
     /**
      * Returns an {@link Optional} containing the <b>second</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}. If there is no such
-     * selector, an empty {@link Optional} is returned.
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}. If there is no
+     * such selector, an empty {@link Optional} is returned.
      *
      * @return {@link Optional} containing the <b>second</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}; if there is no such
-     * selector, an empty {@link Optional} is returned
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}; if there is no
+     * such selector, an empty {@link Optional} is returned
      */
     Optional<String> secondSelector();
 
     /**
      * Returns an {@link Optional} containing the <b>third</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}. If there is no such
-     * selector, an empty {@link Optional} is returned.
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}. If there is no
+     * such selector, an empty {@link Optional} is returned.
      *
      * @return {@link Optional} containing the <b>third</b> selector among selectors returned by
-     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingHttpServletRequest}; if there is no such
-     * selector, an empty {@link Optional} is returned
+     * {@link RequestPathInfo#getSelectors()} for the wrapped {@link SlingJakartaHttpServletRequest}; if there is no
+     * such selector, an empty {@link Optional} is returned
      */
     Optional<String> thirdSelector();
 
     /**
      * Returns an {@link Optional} containing a selector {@link String} returned by
-     * {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingHttpServletRequest}. If there is no such
-     * selector {@link String}, an empty {@link Optional} is returned.
+     * {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingJakartaHttpServletRequest}. If there is
+     * no such selector {@link String}, an empty {@link Optional} is returned.
      *
      * @return {@link Optional} containing a selector {@link String} returned by
-     * {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingHttpServletRequest}; if there is no such
-     * selector {@link String}, an empty {@link Optional} is returned
+     * {@link RequestPathInfo#getSelectorString()} for the wrapped {@link SlingJakartaHttpServletRequest}; if there is
+     * no such selector {@link String}, an empty {@link Optional} is returned
      */
     Optional<String> selectorString();
 
     /**
      * Returns the number of selectors returned by {@link RequestPathInfo#getSelectors()} for the wrapped
-     * {@link SlingHttpServletRequest}. If there are no selectors, {@code 0} is returned.
+     * {@link SlingJakartaHttpServletRequest}. If there are no selectors, {@code 0} is returned.
      *
      * @return number of selectors returned by {@link RequestPathInfo#getSelectors()} for the wrapped
-     * {@link SlingHttpServletRequest}. If there are no selectors, {@code 0} is returned.
+     * {@link SlingJakartaHttpServletRequest}. If there are no selectors, {@code 0} is returned.
      */
     int numOfSelectors();
 }

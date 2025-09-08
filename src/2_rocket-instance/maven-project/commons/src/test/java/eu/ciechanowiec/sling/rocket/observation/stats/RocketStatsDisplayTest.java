@@ -1,18 +1,17 @@
 package eu.ciechanowiec.sling.rocket.observation.stats;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
 import eu.ciechanowiec.sling.rocket.asset.StagedAssetReal;
 import eu.ciechanowiec.sling.rocket.asset.UsualFileAsAssetFile;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.io.File;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class RocketStatsDisplayTest extends TestEnvironment {
 

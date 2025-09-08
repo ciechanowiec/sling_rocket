@@ -1,11 +1,5 @@
 package eu.ciechanowiec.sling.rocket.jcr;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.FileMetadata;
@@ -15,16 +9,18 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.nio.file.Files;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("PMD.TooManyStaticImports")
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.nio.file.Files;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class InputStreamWithDataSizeTest extends TestEnvironment {
 
     private File file;

@@ -1,13 +1,5 @@
 package eu.ciechanowiec.sling.rocket.privilege;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDGroup;
@@ -17,13 +9,15 @@ import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
-import java.util.Map;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("PMD.TooManyStaticImports")
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class PrivilegeAdminTest extends TestEnvironment {
 
     PrivilegeAdminTest() {

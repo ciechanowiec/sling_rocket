@@ -1,11 +1,5 @@
 package eu.ciechanowiec.sling.rocket.commons;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.SneakyThrows;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
@@ -20,6 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings({"resource", "MultipleStringLiterals"})
 @ExtendWith({SlingContextExtension.class, MockitoExtension.class})

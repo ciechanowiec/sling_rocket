@@ -1,27 +1,25 @@
 package eu.ciechanowiec.sling.rocket.asset.api;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.spy;
-
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.MediaType;
-import java.util.Objects;
-import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.testing.mock.jcr.MockJcr;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("PMD.TooManyStaticImports")
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
+
 class ServletDefaultTest extends TestEnvironment {
 
     private ServletDefault servletDefault;
@@ -42,8 +40,8 @@ class ServletDefaultTest extends TestEnvironment {
     @Test
     void mustGetHTML() {
         Resource currentResource = Objects.requireNonNull(context.currentResource(AssetsAPI.ASSETS_API_PATH));
-        MockSlingHttpServletRequest request = spy(context.request());
-        MockSlingHttpServletResponse response = context.response();
+        MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
+        MockSlingJakartaHttpServletResponse response = context.jakartaResponse();
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath(AssetsAPI.ASSETS_API_PATH);
         lenient().when(request.getRequestPathInfo()).thenReturn(mockRequestPathInfo);

@@ -1,17 +1,15 @@
 package eu.ciechanowiec.sling.rocket.unit;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
 class DataSizeTest {
