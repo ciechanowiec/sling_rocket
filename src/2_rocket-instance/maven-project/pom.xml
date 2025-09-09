@@ -229,7 +229,7 @@
         <google-oauth-client-jetty.version>1.39.0</google-oauth-client-jetty.version>
         <google-oauth-client-java6.version>1.39.0</google-oauth-client-java6.version>
         <google-http-client-jackson2.version>1.47.0</google-http-client-jackson2.version>
-        <google-api-services-admin-directory.version>20250616</google-api-services-admin-directory.version>
+        <google-api-services-admin-directory.version>20250804</google-api-services-admin-directory.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
