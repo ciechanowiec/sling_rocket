@@ -96,7 +96,8 @@ public class ServletDelete extends SlingJakartaAllMethodsServlet implements Requ
                             HttpServletResponse.SC_BAD_REQUEST,
                             "Unable to delete: '%s'".formatted(new AssetDescriptor(requestDelete))
                         )
-                        ))
+                        )
+                    )
                 ).ifPresent(Response::send);
         } else {
             Response responseWithError = new Response(
