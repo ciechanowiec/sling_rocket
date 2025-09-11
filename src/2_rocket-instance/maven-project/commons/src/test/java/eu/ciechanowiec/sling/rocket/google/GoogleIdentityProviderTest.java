@@ -259,7 +259,7 @@ class GoogleIdentityProviderTest extends TestEnvironment {
     }
 
     @Test
-    void testCacheInvalidation() {
+    void testAllCacheInvalidation() {
         User user = new User();
         user.setPrimaryEmail("test@example.com");
         user.setId("12345");
@@ -275,6 +275,32 @@ class GoogleIdentityProviderTest extends TestEnvironment {
         googleIdentityProvider.getGroup("group-id");
         verify(googleDirectory, times(2)).retrieveUser("12345");
         verify(googleDirectory, times(2)).retrieveGroup("group-id");
+    }
+
+    @Test
+    void testUserCacheInvalidation() {
+        User userOne = new User();
+        userOne.setPrimaryEmail("unos@example.com");
+        userOne.setId("unos");
+        User userTwo = new User();
+        userTwo.setPrimaryEmail("duos@example.com");
+        userTwo.setId("duos");
+        when(googleDirectory.retrieveUser("unos")).thenReturn(Optional.of(userOne));
+        when(googleDirectory.retrieveUser("duos")).thenReturn(Optional.of(userTwo));
+        Group group = new Group();
+        group.setName("test-group");
+        group.setId("group-id");
+        when(googleDirectory.retrieveGroup("group-id")).thenReturn(Optional.of(group));
+        googleIdentityProvider.getUser("unos");
+        googleIdentityProvider.getUser("duos");
+        googleIdentityProvider.getGroup("group-id");
+        googleIdentityProvider.invalidateCacheForUser("duos");
+        googleIdentityProvider.getUser("unos");
+        googleIdentityProvider.getUser("duos");
+        googleIdentityProvider.getGroup("group-id");
+        verify(googleDirectory, times(1)).retrieveUser("unos");
+        verify(googleDirectory, times(2)).retrieveUser("duos");
+        verify(googleDirectory, times(1)).retrieveGroup("group-id");
     }
 
     @Test

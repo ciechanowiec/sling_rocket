@@ -285,6 +285,12 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
     }
 
     @Override
+    public void invalidateCacheForUser(String userId) {
+        log.trace("Invalidating cache for user '{}'", userId);
+        usersCache.get().invalidate(userId);
+    }
+
+    @Override
     public long getEstimatedCacheSizeForUsers() {
         usersCache.get().cleanUp();
         return usersCache.get().estimatedSize();

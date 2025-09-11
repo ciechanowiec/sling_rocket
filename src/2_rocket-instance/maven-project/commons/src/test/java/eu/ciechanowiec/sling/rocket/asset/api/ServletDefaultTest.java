@@ -47,7 +47,7 @@ class ServletDefaultTest extends TestEnvironment {
         lenient().when(request.getRequestPathInfo()).thenReturn(mockRequestPathInfo);
         request.setPathInfo(currentResource.getPath());
         request.setRemoteUser(MockJcr.DEFAULT_USER_ID);
-        request.setMethod(HttpConstants.METHOD_POST);
+        request.setMethod(HttpConstants.METHOD_GET);
         servletDefault.doGet(request, response);
         assertAll(
             () -> assertEquals(HttpServletResponse.SC_OK, response.getStatus()),

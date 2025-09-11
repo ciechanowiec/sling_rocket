@@ -5,12 +5,14 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import eu.ciechanowiec.sling.rocket.google.GoogleCredentials;
 import eu.ciechanowiec.sling.rocket.google.GoogleIdTokenVerifierProxy;
+import eu.ciechanowiec.sling.rocket.google.GoogleIdentityProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
+import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalUser;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.auth.core.spi.JakartaAuthenticationHandler;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -19,6 +21,7 @@ import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.Designate;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -62,6 +65,8 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      */
     static final String HEADER_NAME = "X-ID-Token";
     private final GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private final Optional<GoogleIdentityProvider> googleIdentityProviderNullable;
     @ToString.Exclude
     private final AtomicReference<Cache<String, Optional<AuthenticationInfo>>> credentialsExtractionCache;
     @ToString.Exclude
@@ -71,16 +76,24 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      * Constructs an instance of this class.
      *
      * @param googleIdTokenVerifierProxy {@link GoogleIdTokenVerifierProxy} for verifying {@link GoogleIdToken}s
+     * @param googleIdentityProvider {@link GoogleIdentityProvider} that delivers related {@link ExternalUser}s
      * @param config                     {@link GoogleAuthenticationHandlerConfig} used by the constructed instance
      */
     @Activate
     public GoogleAuthenticationHandler(
         @Reference(cardinality = ReferenceCardinality.MANDATORY)
         GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy,
+        @Reference(
+            cardinality = ReferenceCardinality.OPTIONAL,
+            policy = ReferencePolicy.STATIC,
+            policyOption = ReferencePolicyOption.GREEDY
+        )
+        GoogleIdentityProvider googleIdentityProvider,
         GoogleAuthenticationHandlerConfig config
     ) {
         super(GoogleAuthenticationHandlerMBean.class);
         this.googleIdTokenVerifierProxy = googleIdTokenVerifierProxy;
+        this.googleIdentityProviderNullable = Optional.ofNullable(googleIdentityProvider);
         this.credentialsExtractionCache = new AtomicReference<>(buildCache(config));
         this.config = new AtomicReference<>(config);
         log.info("Initialized {}", this);
@@ -121,6 +134,7 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      */
     @Override
     @SuppressWarnings({"ReturnOfNull", "Regexp"})
+    @Nullable
     public AuthenticationInfo extractCredentials(HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.trace(
@@ -193,16 +207,25 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
         return false;
     }
 
-    /**
-     * This {@link GoogleAuthenticationHandler} does not support dropping credentials. No action is performed upon this
-     * method call.
-     *
-     * @param request  {@link HttpServletRequest} in the chain
-     * @param response {@link HttpServletResponse} in the chain
-     */
     @Override
     public void dropCredentials(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("Dropping credentials for '{}'", request.getRequestURI());
+        String remoteUser = request.getRemoteUser();
+        log.debug("Dropping credentials for '{}'", remoteUser);
+        Optional.ofNullable(extractCredentials(request, response))
+            .map(AuthenticationInfo::getUser)
+            .ifPresent(
+                user -> googleIdentityProviderNullable.ifPresent(
+                    googleIdentityProvider -> googleIdentityProvider.invalidateCacheForUser(user)
+                )
+            );
+        Optional.ofNullable(request.getHeader(HEADER_NAME))
+            .ifPresentOrElse(
+                token -> {
+                    credentialsExtractionCache.get().invalidate(token);
+                    log.debug("Cached credentials invalidated for '{}'", remoteUser);
+                },
+                () -> log.debug("No cached credentials found for '{}'. Nothing to drop", remoteUser)
+            );
     }
 
     @Override
