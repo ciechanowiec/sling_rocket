@@ -4,6 +4,7 @@
 *.logs*
 logs
 log
+!eu.ciechanowiec.sling.rocket*log*
 !org.apache.sling*log*
 .idea
 .vscode
