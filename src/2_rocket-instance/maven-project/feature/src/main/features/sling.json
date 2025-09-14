@@ -125,6 +125,10 @@
     {
       "id": "org.apache.sling:org.apache.sling.auth.oauth-client:${org.apache.sling.auth.oauth-client.version}",
       "start-order": "25"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.security:${org.apache.sling.security.version}",
+      "start-order": "30"
     }
   ],
   "configurations": {
