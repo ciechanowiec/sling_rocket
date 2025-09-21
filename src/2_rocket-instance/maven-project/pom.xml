@@ -69,9 +69,9 @@
         <!-- NON_OSGI_DEPENDENCIES                                                  -->
         <!-- ====================================================================== -->
         <org.apache.sling.servlets.annotations.version>1.2.6</org.apache.sling.servlets.annotations.version>
-        <lombok.version>1.18.40</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <javax.inject.version>1</javax.inject.version>
-        <spotbugs-annotations.version>4.9.4</spotbugs-annotations.version>
+        <spotbugs-annotations.version>4.9.6</spotbugs-annotations.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
@@ -141,7 +141,7 @@
         <stax-ex.version>1.8.3</stax-ex.version>
         <stax2-api.version>4.2.2</stax2-api.version>
         <encoder.version>1.3.1</encoder.version>
-        <metrics-core.version>4.2.36</metrics-core.version>
+        <metrics-core.version>4.2.37</metrics-core.version>
         <fontbox.version>3.0.5</fontbox.version>
         <jempbox.version>1.8.17</jempbox.version>
         <pdfbox.version>3.0.5</pdfbox.version>
@@ -339,7 +339,7 @@
         <org.apache.sling.jcr.oak.server.version>1.4.4</org.apache.sling.jcr.oak.server.version>
         <org.apache.sling.jcr.jackrabbit.usermanager.version>3.0.0
         </org.apache.sling.jcr.jackrabbit.usermanager.version>
-        <org.apache.sling.jcr.resource.version>3.3.2</org.apache.sling.jcr.resource.version>
+        <org.apache.sling.jcr.resource.version>3.3.4</org.apache.sling.jcr.resource.version>
         <org.apache.sling.jcr.contentloader.version>2.6.0</org.apache.sling.jcr.contentloader.version>
         <org.apache.sling.jcr.jackrabbit.accessmanager.version>5.0.0
         </org.apache.sling.jcr.jackrabbit.accessmanager.version>
@@ -386,9 +386,8 @@
         <!-- ====================================================================== -->
         <junit-jupiter-api.version>5.13.4</junit-jupiter-api.version>
         <junit-jupiter-params.version>5.13.4</junit-jupiter-params.version>
-        <mockito-core.version>5.19.0</mockito-core.version>
-        <mockito-junit-jupiter.version>5.19.0</mockito-junit-jupiter.version>
-        <mockito-inline.version>5.2.0</mockito-inline.version>
+        <mockito-core.version>5.20.0</mockito-core.version>
+        <mockito-junit-jupiter.version>5.20.0</mockito-junit-jupiter.version>
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.0</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>
         <org.apache.sling.testing.sling-mock.core.version>4.0.0</org.apache.sling.testing.sling-mock.core.version>
@@ -399,7 +398,7 @@
         <!-- ====================================================================== -->
         <!-- PLUGINS                                                                -->
         <!-- ====================================================================== -->
-        <wcmio-content-package-maven-plugin.version>2.2.0</wcmio-content-package-maven-plugin.version>
+        <wcmio-content-package-maven-plugin.version>2.3.0</wcmio-content-package-maven-plugin.version>
         <sling-maven-plugin.version>3.0.4</sling-maven-plugin.version>
         <filevault-package-maven-plugin.version>1.4.0</filevault-package-maven-plugin.version>
         <sling.nodetypes.version>12.0.0</sling.nodetypes.version>
@@ -413,21 +412,21 @@
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.19.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <slingfeature-maven-plugin.version>1.9.2</slingfeature-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>3.27.0</maven-pmd-plugin.version>
-        <spotbugs-maven-plugin.version>4.9.4.2</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.6.0</spotbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
@@ -2313,15 +2312,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <!-- Experimental and intermediate library for mocking
-                     final types, enums, final and static methods.
-                     Will be superseded by automatic usage in a future version -->
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>${mockito-inline.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.testing.sling-mock.junit5</artifactId>
                 <version>${org.apache.sling.testing.sling-mock.junit5.version}</version>
@@ -2421,6 +2411,11 @@
                     <version>${maven-dependency-plugin.version}</version>
                     <executions>
                         <execution>
+                            <goals>
+                                <goal>properties</goal>
+                            </goals>
+                        </execution>
+                        <execution>
                             <id>analyze-dependencies</id>
                             <goals>
                                 <goal>analyze</goal>
@@ -2472,6 +2467,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
+                        <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
                         <systemPropertyVariables>
                             <sling.mock.resourceresolverfactoryactivator.timeout.ms>
                                 ${sling.mock.resourceresolverfactoryactivator.timeout.ms}
