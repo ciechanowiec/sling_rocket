@@ -95,7 +95,7 @@
         <org.apache.felix.scr.version>2.2.14</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
-        <org.apache.felix.http.jetty12.version>1.1.0</org.apache.felix.http.jetty12.version>
+        <org.apache.felix.http.jetty12.version>1.1.2</org.apache.felix.http.jetty12.version>
         <org.apache.felix.http.whiteboard.version>4.0.0</org.apache.felix.http.whiteboard.version>
         <org.apache.felix.inventory.version>2.0.0</org.apache.felix.inventory.version>
         <org.apache.felix.prefs.version>1.1.0</org.apache.felix.prefs.version>
@@ -111,7 +111,7 @@
         <!-- ====================================================================== -->
         <!-- FELIX_WEBCONSOLE                                                       -->
         <!-- ====================================================================== -->
-        <org.apache.felix.webconsole.version>5.0.14</org.apache.felix.webconsole.version>
+        <org.apache.felix.webconsole.version>5.0.18</org.apache.felix.webconsole.version>
         <org.apache.felix.webconsole.plugins.ds.version>2.3.0</org.apache.felix.webconsole.plugins.ds.version>
         <org.apache.felix.webconsole.plugins.event.version>1.2.0</org.apache.felix.webconsole.plugins.event.version>
         <org.apache.felix.webconsole.plugins.memoryusage.version>1.1.0
@@ -171,7 +171,7 @@
         <icu4j.version>77.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
-        <oauth2-oidc-sdk.version>11.28</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.29.1</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.5</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -241,7 +241,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.2</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.84.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.86.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>4.0.0</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
