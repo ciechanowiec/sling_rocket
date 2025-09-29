@@ -223,6 +223,7 @@
                         org.apache.sling.servlet-helpers.version,
                         org.apache.sling.auth.oauth-client.version,
                         org.apache.sling.security.version,
+                        org.apache.sling.datasource.version,
 
                         org.apache.sling.commons.johnzon.version,
                         org.apache.sling.commons.osgi.version,

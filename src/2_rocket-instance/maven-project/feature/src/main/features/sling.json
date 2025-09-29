@@ -129,6 +129,10 @@
     {
       "id": "org.apache.sling:org.apache.sling.security:${org.apache.sling.security.version}",
       "start-order": "30"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.datasource:${org.apache.sling.datasource.version}",
+      "start-order": "30"
     }
   ],
   "configurations": {
