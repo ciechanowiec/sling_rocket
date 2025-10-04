@@ -340,7 +340,7 @@
         <org.apache.sling.jcr.oak.server.version>1.4.4</org.apache.sling.jcr.oak.server.version>
         <org.apache.sling.jcr.jackrabbit.usermanager.version>3.0.0
         </org.apache.sling.jcr.jackrabbit.usermanager.version>
-        <org.apache.sling.jcr.resource.version>3.3.4</org.apache.sling.jcr.resource.version>
+        <org.apache.sling.jcr.resource.version>3.3.6</org.apache.sling.jcr.resource.version>
         <org.apache.sling.jcr.contentloader.version>2.6.0</org.apache.sling.jcr.contentloader.version>
         <org.apache.sling.jcr.jackrabbit.accessmanager.version>5.0.0
         </org.apache.sling.jcr.jackrabbit.accessmanager.version>
