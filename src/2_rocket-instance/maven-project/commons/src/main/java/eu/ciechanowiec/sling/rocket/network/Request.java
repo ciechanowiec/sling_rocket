@@ -3,10 +3,10 @@ package eu.ciechanowiec.sling.rocket.network;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpURI;
@@ -131,13 +131,13 @@ public class Request implements WrappedRequest {
     private Stream<String> headerNames(HttpServletRequest request) {
         Enumeration<String> headerNames = request.getHeaderNames();
         Iterator<String> headerNamesIterator = headerNames.asIterator();
-        return new UnwrappedIteration<>(headerNamesIterator).stream();
+        return IteratorUtils.toList(headerNamesIterator).stream();
     }
 
     private Collection<String> headerValues(HttpServletRequest request, String headerName) {
         Enumeration<String> headerValues = request.getHeaders(headerName);
         Iterator<String> headerValuesIterator = headerValues.asIterator();
-        return new UnwrappedIteration<>(headerValuesIterator).list();
+        return IteratorUtils.toList(headerValuesIterator);
     }
 
     @Override

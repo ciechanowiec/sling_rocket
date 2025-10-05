@@ -2,12 +2,12 @@ package eu.ciechanowiec.sling.rocket.identity;
 
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sneakyfun.SneakyConsumer;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.jackrabbit.api.security.user.*;
 import org.apache.sling.api.resource.ResourceResolver;
 
@@ -60,18 +60,14 @@ public class SimpleAuthorizable {
      *
      * @return all impersonators of this {@link SimpleAuthorizable}
      */
-    @SuppressWarnings({"WeakerAccess", "rawtypes", "unchecked"})
+    @SuppressWarnings({"WeakerAccess", "unchecked"})
     public Collection<AuthIDUser> impersonators() {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             log.trace("Listing impersonators of '{}'", this);
             return toUser(authID, resourceResolver)
                 .map(SneakyFunction.sneaky(User::getImpersonation))
                 .map(SneakyFunction.sneaky(Impersonation::getImpersonators))
-                .map(
-                    principalIterator ->
-                        (UnwrappedIteration<Principal>) new UnwrappedIteration<>(principalIterator)
-                )
-                .map(UnwrappedIteration::list)
+                .map(impersonatorsIterator -> (List<Principal>) IteratorUtils.toList(impersonatorsIterator))
                 .orElse(List.of())
                 .stream()
                 .map(SneakyFunction.sneaky(
@@ -242,8 +238,7 @@ public class SimpleAuthorizable {
             UserManager userManager = new WithUserManager(resourceResolver).get();
             return Optional.ofNullable(userManager.getAuthorizable(authID.get()))
                 .map(groupsExtractor)
-                .map(UnwrappedIteration::new)
-                .map(UnwrappedIteration::list)
+                .map(IteratorUtils::toList)
                 .orElseGet(
                     () -> {
                         log.warn("Unable to extract Groups of '{}'", this);

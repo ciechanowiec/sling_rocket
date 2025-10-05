@@ -2,7 +2,6 @@ package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.identity.AuthID;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDGroup;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
@@ -11,6 +10,7 @@ import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import eu.ciechanowiec.sneakyfun.SneakySupplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.api.security.user.Authorizable;
@@ -303,7 +303,7 @@ public abstract class TestEnvironment {
      * @param isrWithCNDFile {@link InputStreamReader} that contains the CND file
      */
     @SneakyThrows
-    @SuppressWarnings({"squid:S1905", "unchecked", "rawtypes"})
+    @SuppressWarnings({"squid:S1905", "unchecked"})
     protected void registerNodeTypes(InputStreamReader isrWithCNDFile) {
         try (
             ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()
@@ -318,9 +318,7 @@ public abstract class TestEnvironment {
                 .getWorkspace()
                 .getNodeTypeManager();
             NodeTypeIterator nodeTypesIterator = nodeTypeManager.getAllNodeTypes();
-            List<NodeType> nodeTypesList = (List<NodeType>) new UnwrappedIteration<>(
-                nodeTypesIterator
-            ).list();
+            List<NodeType> nodeTypesList = (List<NodeType>) IteratorUtils.toList(nodeTypesIterator);
             log.debug("Registered node types: {}", nodeTypesList);
         }
     }

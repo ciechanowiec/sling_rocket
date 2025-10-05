@@ -1,7 +1,7 @@
 package eu.ciechanowiec.sling.rocket.calendar;
 
+import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.DefaultProperties;
 import eu.ciechanowiec.sling.rocket.jcr.IllegalPrimaryTypeException;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
@@ -11,17 +11,22 @@ import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.jackrabbit.vault.util.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 /**
  * Existing {@link Node} of type {@link MonthNode#NT_MONTH}.
@@ -29,7 +34,7 @@ import java.util.stream.Stream;
 @Slf4j
 @ToString
 @EqualsAndHashCode
-public class MonthNode implements WithJCRPath, Comparable<MonthNode> {
+public final class MonthNode implements WithJCRPath, Comparable<MonthNode> {
 
     /**
      * The type name of a {@link Node} that represents a calendar month.
@@ -49,7 +54,58 @@ public class MonthNode implements WithJCRPath, Comparable<MonthNode> {
     private final JCRPath jcrPath;
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final ResourceAccess resourceAccess;
+    private final Supplier<List<DayNode>> daysSupplier;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private final Supplier<YearMonth> monthSupplier;
+
+    /**
+     * Constructs an instance of this class.
+     *
+     * @param jcrPath          {@link JCRPath} pointing to the {@link Node} represented by the constructed object
+     * @param resourceResolver {@link ResourceResolver} that will be used by the constructed object to acquire access to
+     *                         resources
+     * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} represented by the constructed object
+     *                                     is different than {@link MonthNode#NT_MONTH}
+     */
+    @SuppressWarnings("WeakerAccess")
+    public MonthNode(JCRPath jcrPath, ResourceResolver resourceResolver) {
+        this.jcrPath = jcrPath;
+        String jcrPathRaw = jcrPath().get();
+        Resource monthNodeResource = Objects.requireNonNull(resourceResolver.getResource(jcrPathRaw));
+        assertPrimaryType(monthNodeResource);
+        daysSupplier = () -> {
+            log.trace("Listing days of {}", this);
+            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                .map(Resource::getChildren)
+                .map(Iterable::iterator)
+                .map(IteratorUtils::toList)
+                .stream()
+                .flatMap(Collection::stream)
+                .map(Resource::getPath)
+                .map(childPath -> new DayNode(new TargetJCRPath(childPath), resourceResolver))
+                .sorted()
+                .toList();
+        };
+        Supplier<Year> yearSupplier = () -> {
+            log.trace("Getting year of {}", this);
+            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                .map(Resource::getParent)
+                .map(Resource::getPath)
+                .map(parentPath -> new YearNode(new TargetJCRPath(parentPath), resourceResolver))
+                .map(YearNode::year)
+                .orElseThrow(() -> new IllegalStateException("%s has no parent".formatted(this)));
+        };
+        monthSupplier = () -> {
+            log.trace("Getting month of {}", this);
+            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                .map(Resource::getValueMap)
+                .map(valueMap -> valueMap.get(PN_MONTH, DefaultProperties.LONG_CLASS))
+                .map(Long::intValue)
+                .map(month -> yearSupplier.get().atMonth(month))
+                .orElseThrow(() -> new IllegalStateException("%s has no month property".formatted(this)));
+        };
+    }
 
     /**
      * Constructs an instance of this class.
@@ -58,19 +114,64 @@ public class MonthNode implements WithJCRPath, Comparable<MonthNode> {
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
      *                       resources
      * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} represented by the constructed object
-     *                                     is different that {@link MonthNode#NT_MONTH}
+     *                                     is different than {@link MonthNode#NT_MONTH}
      */
     @SuppressWarnings("WeakerAccess")
     public MonthNode(JCRPath jcrPath, ResourceAccess resourceAccess) {
         this.jcrPath = jcrPath;
-        this.resourceAccess = resourceAccess;
-        assertPrimaryType();
+        assertPrimaryType(resourceAccess);
+        daysSupplier = () -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                log.trace("Listing days of {}", this);
+                return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                    .map(Resource::getChildren)
+                    .map(Iterable::iterator)
+                    .map(IteratorUtils::toList)
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .map(Resource::getPath)
+                    .map(childPath -> new DayNode(new TargetJCRPath(childPath), resourceAccess))
+                    .sorted()
+                    .toList();
+            }
+        };
+        Supplier<Year> yearSupplier = () -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                log.trace("Getting year of {}", this);
+                return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                    .map(Resource::getParent)
+                    .map(Resource::getPath)
+                    .map(parentPath -> new YearNode(new TargetJCRPath(parentPath), resourceAccess))
+                    .map(YearNode::year)
+                    .orElseThrow(() -> new IllegalStateException("%s has no parent".formatted(this)));
+            }
+        };
+        monthSupplier = () -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                log.trace("Getting month of {}", this);
+                return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
+                    .map(Resource::getValueMap)
+                    .map(valueMap -> valueMap.get(PN_MONTH, DefaultProperties.LONG_CLASS))
+                    .map(Long::intValue)
+                    .map(month -> yearSupplier.get().atMonth(month))
+                    .orElseThrow(() -> new IllegalStateException("%s has no month property".formatted(this)));
+            }
+        };
     }
 
-    private void assertPrimaryType() {
+    private void assertPrimaryType(ResourceAccess resourceAccess) {
         log.trace("Asserting primary type of {}", this);
         NodeProperties nodeProperties = new NodeProperties(this, resourceAccess);
         nodeProperties.assertPrimaryType(NT_MONTH);
+    }
+
+    private void assertPrimaryType(Resource resource) {
+        log.trace("Asserting primary type of {}", this);
+        ValueMap valueMap = resource.getValueMap();
+        String actualPrimaryType = Objects.requireNonNull(valueMap.get(JcrConstants.JCR_PRIMARYTYPE, String.class));
+        Conditional.isTrueOrThrow(
+            actualPrimaryType.equals(NT_MONTH), new IllegalPrimaryTypeException(NT_MONTH)
+        );
     }
 
     /**
@@ -80,30 +181,7 @@ public class MonthNode implements WithJCRPath, Comparable<MonthNode> {
      */
     @SuppressWarnings("WeakerAccess")
     public List<DayNode> days() {
-        log.trace("Listing days of {}", this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
-                .map(Resource::getChildren)
-                .map(UnwrappedIteration::new)
-                .map(UnwrappedIteration::stream)
-                .orElse(Stream.of())
-                .map(Resource::getPath)
-                .map(childPath -> new DayNode(new TargetJCRPath(childPath), resourceAccess))
-                .sorted()
-                .toList();
-        }
-    }
-
-    private Year year() {
-        log.trace("Getting year of {}", this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
-                .map(Resource::getParent)
-                .map(Resource::getPath)
-                .map(parentPath -> new YearNode(new TargetJCRPath(parentPath), resourceAccess))
-                .map(YearNode::year)
-                .orElseThrow(() -> new IllegalStateException("%s has no parent".formatted(this)));
-        }
+        return daysSupplier.get();
     }
 
     /**
@@ -113,15 +191,7 @@ public class MonthNode implements WithJCRPath, Comparable<MonthNode> {
      */
     @SuppressWarnings("WeakerAccess")
     public YearMonth month() {
-        log.trace("Getting month of {}", this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
-                .map(Resource::getValueMap)
-                .map(valueMap -> valueMap.get(PN_MONTH, DefaultProperties.LONG_CLASS))
-                .map(Long::intValue)
-                .map(month -> year().atMonth(month))
-                .orElseThrow(() -> new IllegalStateException("%s has no month property".formatted(this)));
-        }
+        return monthSupplier.get();
     }
 
     @Override

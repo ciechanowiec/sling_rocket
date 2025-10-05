@@ -42,10 +42,12 @@ public class TargetJCRPath implements JCRPath {
      */
     @SneakyThrows
     public TargetJCRPath(Resource resource) {
-        Node node = Optional.ofNullable(resource.adaptTo(Node.class)).orElseThrow(() -> {
-            String message = String.format("%s does not adapt to Node", resource);
-            return new IllegalArgumentException(message);
-        });
+        Node node = Optional.ofNullable(resource.adaptTo(Node.class)).orElseThrow(
+            () -> {
+                String message = "%s does not adapt to Node".formatted(resource);
+                return new IllegalArgumentException(message);
+            }
+        );
         this.rawPath = node.getPath();
         log.trace("Initialized {}", this);
     }

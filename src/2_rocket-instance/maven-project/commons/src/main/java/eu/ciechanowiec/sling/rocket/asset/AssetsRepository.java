@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
@@ -10,6 +9,7 @@ import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -54,9 +54,8 @@ public class AssetsRepository {
             this, referencable, referencable.jcrUUID(), query
         );
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            Optional<Asset> assetNullable = new UnwrappedIteration<>(
-                resourceResolver.findResources(query, Query.JCR_SQL2)
-            ).stream()
+            Optional<Asset> assetNullable = IteratorUtils.toList(resourceResolver.findResources(query, Query.JCR_SQL2))
+                .stream()
                 .findFirst()
                 .filter(resource -> new NodeProperties(
                     new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
@@ -106,9 +105,7 @@ public class AssetsRepository {
         );
         log.trace("This query was built by {} to retrieve Assets: {}", this, query);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            List<Asset> allAssets = new UnwrappedIteration<>(
-                resourceResolver.findResources(query, Query.JCR_SQL2)
-            ).stream()
+            List<Asset> allAssets = IteratorUtils.toList(resourceResolver.findResources(query, Query.JCR_SQL2)).stream()
                 .filter(resource -> new NodeProperties(
                         new TargetJCRPath(resource), resourceAccess).isPrimaryType(
                         Asset.SUPPORTED_PRIMARY_TYPES

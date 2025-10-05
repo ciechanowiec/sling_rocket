@@ -1,12 +1,12 @@
 package eu.ciechanowiec.sling.rocket.calendar;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.ResourceResolver;
 
@@ -54,9 +54,9 @@ public class CalendarRepository {
         );
         log.trace("This query was built by {} to retrieve Calendar Nodes: {}", this, query);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            List<CalendarNode> calendarNodes = new UnwrappedIteration<>(
-                resourceResolver.findResources(query, Query.JCR_SQL2)
-            ).stream()
+            List<CalendarNode> calendarNodes = IteratorUtils.toList(
+                    resourceResolver.findResources(query, Query.JCR_SQL2)
+                ).stream()
                 .filter(
                     resource -> new NodeProperties(new TargetJCRPath(resource), resourceAccess)
                         .isPrimaryType(CalendarNode.NT_CALENDAR)

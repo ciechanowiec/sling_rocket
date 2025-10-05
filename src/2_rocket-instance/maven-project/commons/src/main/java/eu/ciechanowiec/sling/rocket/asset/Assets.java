@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.commons.UnwrappedIteration;
 import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.Referencable;
@@ -11,13 +10,13 @@ import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Node;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Represents {@link Node} instances of type {@link Assets#NT_ASSETS}. That can be either a persisted or a
@@ -66,9 +65,10 @@ public class Assets implements WithJCRPath, Referencable {
             String jcrPathRaw = jcrPath.get();
             return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
                 .map(Resource::getChildren)
-                .map(UnwrappedIteration::new)
-                .map(UnwrappedIteration::stream)
-                .orElseGet(Stream::empty)
+                .map(Iterable::iterator)
+                .map(IteratorUtils::toList)
+                .stream()
+                .flatMap(Collection::stream)
                 .<Asset>map(resource -> new UniversalAsset(resource, resourceAccess))
                 .toList();
         }
