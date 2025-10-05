@@ -18,6 +18,7 @@ import org.apache.sling.api.resource.ValueMap;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
+import javax.jcr.Repository;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -55,7 +56,17 @@ public final class DayNode implements WithJCRPath, Comparable<DayNode> {
     private final Supplier<LocalDate> daySupplier;
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver}.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
+     * calling context. The provided {@link ResourceResolver} is used for all subsequent {@link Repository} operations
+     * within this object. Consequently, this object will <strong>not</strong> assume ownership of the
+     * {@link ResourceResolver} and will not attempt to close it.
+     * <p>
+     * The object constructed with this constructor offers superior performance compared to
+     * {@link DayNode#DayNode(JCRPath, ResourceAccess)} as it avoids the need to repeatedly acquire and authenticate a
+     * new {@link ResourceResolver} for each {@link Repository} operation. It is therefore the preferred choice in
+     * performance-sensitive code sections where a {@link ResourceResolver} is already available.
      *
      * @param jcrPath          {@link JCRPath} pointing to the {@link Node} represented by the constructed object
      * @param resourceResolver {@link ResourceResolver} that will be used by the constructed object to acquire access to
@@ -77,7 +88,17 @@ public final class DayNode implements WithJCRPath, Comparable<DayNode> {
     }
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class using a {@link ResourceAccess} object to manage {@link ResourceResolver}
+     * instances.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by this
+     * object. The provided {@link ResourceAccess} is used to acquire and subsequently close a {@link ResourceResolver}
+     * for each {@link Repository} operation.
+     * <p>
+     * This object will assume ownership of the {@link ResourceResolver} it acquires and will close it automatically.
+     * However, this might introduce a performance overhead due to repeated acquisitions. For performance-sensitive code
+     * sections where a {@link ResourceResolver} is already available, use
+     * {@link DayNode#DayNode(JCRPath, ResourceResolver)}.
      *
      * @param jcrPath        {@link JCRPath} pointing to the {@link Node} represented by the constructed object
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to

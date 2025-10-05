@@ -21,6 +21,7 @@ import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +51,18 @@ public final class CalendarNode implements WithJCRPath {
     private final Supplier<List<YearNode>> yearsSupplier;
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver} from
+     * the passed {@link Resource}.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
+     * calling context (e.g., Sling). The provided {@link Resource} is used to get a {@link ResourceResolver} for all
+     * subsequent {@link Repository} operations within this object. Consequently, this object will <strong>not</strong>
+     * assume ownership of the {@link ResourceResolver} and will not attempt to close it.
+     * <p>
+     * The object constructed with this constructor offers superior performance compared to
+     * {@link CalendarNode#CalendarNode(JCRPath, ResourceAccess)} as it avoids the need to repeatedly acquire and
+     * authenticate a new {@link ResourceResolver} for each {@link Repository} operation. It is therefore the preferred
+     * choice in performance-sensitive code sections where a {@link ResourceResolver} is already available.
      *
      * @param resource {@link Resource} backed by the {@link Node} represented by the constructed object
      * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} represented by the constructed object
@@ -81,7 +93,16 @@ public final class CalendarNode implements WithJCRPath {
     }
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class using a {@link ResourceAccess} object to manage {@link ResourceResolver}
+     * instances.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by this
+     * object. The provided {@link ResourceAccess} is used to acquire and subsequently close a {@link ResourceResolver}
+     * for each {@link Repository} operation.
+     * <p>
+     * This object will assume ownership of the {@link ResourceResolver} it acquires and will close it automatically.
+     * However, this might introduce a performance overhead due to repeated acquisitions. For performance-sensitive code
+     * sections where a {@link ResourceResolver} is already available, use {@link CalendarNode#CalendarNode(Resource)}.
      *
      * @param jcrPath        {@link JCRPath} pointing to the {@link Node} represented by the constructed object
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to

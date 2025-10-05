@@ -158,7 +158,7 @@ docker compose up -d
 ....
 
 === SR Parent POM and SR Instance Versions
-The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `17.0.0`, the version of the SR Instance must also be `17.0.0`.
+The SR Parent POM and SR Instance use matching versions. These versions must match within a given application setup. For example, if the version of the SR Parent POM used is `17.0.1`, the version of the SR Instance must also be `17.0.1`.
 
 === SR Parent POM
 
@@ -168,7 +168,7 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 <parent>
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>17.0.0</version>
+    <version>17.0.1</version>
 </parent>
 ....
 
@@ -216,7 +216,7 @@ Static files related to an SR Instance reside in `/opt/sling`. Typical structure
 │   └── slf4j-simple-1.7.25.jar
 ├── oak-run-1.86.0.jar <10>
 ├── rocket-instance-starter.sh <11>
-└── sling.rocket.feature-17.0.0-oak_tar.far <12>
+└── sling.rocket.feature-17.0.1-oak_tar.far <12>
 ....
 <1> scripts that launch the SR Instance
 <2> script that dumps the database into a separate destination
