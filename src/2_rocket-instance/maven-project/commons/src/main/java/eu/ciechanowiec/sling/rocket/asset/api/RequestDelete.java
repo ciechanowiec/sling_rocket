@@ -94,4 +94,9 @@ class RequestDelete implements SlingRequestWithDecomposition {
     boolean isValidStructure() {
         return new RequestStructure(this).isValid();
     }
+
+    @Override
+    public Optional<String> suffix() {
+        return slingRequest.suffix();
+    }
 }

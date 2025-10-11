@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 @Slf4j
 @ToString
 @EqualsAndHashCode
+@SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable")
 public final class YearNode implements WithJCRPath, Comparable<YearNode> {
 
     /**

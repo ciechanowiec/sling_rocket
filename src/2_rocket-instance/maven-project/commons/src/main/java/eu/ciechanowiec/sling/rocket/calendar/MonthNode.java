@@ -35,6 +35,7 @@ import java.util.function.Supplier;
 @Slf4j
 @ToString
 @EqualsAndHashCode
+@SuppressWarnings("PMD.OverrideBothEqualsAndHashCodeOnComparable")
 public final class MonthNode implements WithJCRPath, Comparable<MonthNode> {
 
     /**

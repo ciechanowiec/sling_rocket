@@ -45,6 +45,11 @@
             <property name="minimum" value="2"/>
         </properties>
     </rule>
+    <rule ref="category/java/codestyle.xml/TypeParameterNamingConventions">
+        <properties>
+            <property name="typeParameterNamePattern" value="([A-Z]|AdapterType)" />
+        </properties>
+    </rule>
     <rule ref="category/java/codestyle.xml">
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="AvoidDollarSigns"/>
@@ -137,6 +142,7 @@
         <exclude name="MissingSerialVersionUID"/> <!-- Disablement justification: https://github.com/projectlombok/lombok/wiki/WHY-NOT:-serialVersionUID -->
         <exclude name="NonSerializableClass"/>
         <exclude name="NonStaticInitializer"/>
+        <exclude name="ReplaceJavaUtilCalendar"/>
         <exclude name="UseProperClassLoader"/>
     </rule>
 

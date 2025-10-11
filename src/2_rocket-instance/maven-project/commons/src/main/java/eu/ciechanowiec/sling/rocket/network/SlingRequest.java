@@ -245,4 +245,9 @@ public class SlingRequest implements WrappedSlingRequest {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);
     }
+
+    @Override
+    public Optional<String> suffix() {
+        return Optional.ofNullable(wrappedSlingRequest.getRequestPathInfo().getSuffix());
+    }
 }

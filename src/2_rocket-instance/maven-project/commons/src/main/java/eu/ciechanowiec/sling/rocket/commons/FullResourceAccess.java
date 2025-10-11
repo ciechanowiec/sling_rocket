@@ -46,7 +46,6 @@ public class FullResourceAccess implements ResourceAccess {
      * @param resourceResolverFactory factory used to provide access to the resources
      */
     @Activate
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     public FullResourceAccess(
         @Reference(
             cardinality = ReferenceCardinality.MANDATORY,

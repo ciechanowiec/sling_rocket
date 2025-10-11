@@ -6,6 +6,6 @@ package eu.ciechanowiec.sling.rocket.network;
  */
 @SuppressWarnings("WeakerAccess")
 public interface SlingRequestWithDecomposition
-    extends SlingRequestWithContentPath, SlingRequestWithSelectors, SlingRequestWithExtension {
+    extends SlingRequestWithContentPath, SlingRequestWithSelectors, SlingRequestWithExtension, SlingRequestWithSuffix {
 
 }

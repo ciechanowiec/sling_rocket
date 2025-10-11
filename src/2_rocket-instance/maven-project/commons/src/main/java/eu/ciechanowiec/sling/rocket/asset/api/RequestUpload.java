@@ -98,4 +98,9 @@ class RequestUpload implements SlingRequestWithDecomposition {
             )
             .toList();
     }
+
+    @Override
+    public Optional<String> suffix() {
+        return slingRequest.suffix();
+    }
 }

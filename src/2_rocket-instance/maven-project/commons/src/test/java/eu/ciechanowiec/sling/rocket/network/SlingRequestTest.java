@@ -66,6 +66,7 @@ class SlingRequestTest extends TestEnvironment {
             () -> assertEquals("delete.file-id-00313", slingRequest.selectorString().orElseThrow()),
             () -> assertEquals(2, slingRequest.numOfSelectors()),
             () -> assertEquals("mp4", slingRequest.extension().orElseThrow()),
+            () -> assertEquals("/music-video.zip", slingRequest.suffix().orElseThrow()),
             () -> assertEquals("127.0.0.1", slingRequest.remoteAddress()),
             () -> assertEquals("127.0.0.1", slingRequest.remoteHost()),
             () -> assertEquals(50_261, slingRequest.remotePort()),
@@ -176,6 +177,7 @@ class SlingRequestTest extends TestEnvironment {
         mockRequestPathInfo.setResourcePath("/content");
         mockRequestPathInfo.setSelectorString("delete.file-id-00313");
         mockRequestPathInfo.setExtension("mp4");
+        mockRequestPathInfo.setSuffix("/music-video.zip");
         MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());
         lenient().when(request.getRequestPathInfo()).thenReturn(mockRequestPathInfo);
         request.setPathInfo(currentResource.getPath());

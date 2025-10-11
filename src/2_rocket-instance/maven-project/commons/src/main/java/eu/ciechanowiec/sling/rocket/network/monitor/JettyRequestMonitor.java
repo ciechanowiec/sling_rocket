@@ -42,7 +42,6 @@ public class JettyRequestMonitor implements Preprocessor {
      */
     @Activate
     public JettyRequestMonitor(
-        @Reference(cardinality = ReferenceCardinality.MANDATORY)
         JettyRequestMonitorConfig config
     ) {
         this.isEnabled = new AtomicBoolean(config.is$_$enabled());

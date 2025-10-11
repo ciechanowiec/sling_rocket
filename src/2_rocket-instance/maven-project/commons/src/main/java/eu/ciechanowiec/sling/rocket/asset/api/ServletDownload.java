@@ -73,9 +73,9 @@ public class ServletDownload extends SlingJakartaSafeMethodsServlet implements R
         UserResourceAccess userResourceAccess = new UserResourceAccess(authIDUser, fullResourceAccess);
         SlingRequest slingRequest = new SlingRequest(request, userResourceAccess);
         log.trace("Processing {}", slingRequest);
-        RequestDownload requestDelete = new RequestDownload(slingRequest);
-        if (requestDelete.isValidStructure()) {
-            requestDelete.targetAsset()
+        RequestDownload requestDownload = new RequestDownload(slingRequest);
+        if (requestDownload.isValidStructure()) {
+            requestDownload.targetAsset()
                 .map(asset -> new ResponseWithAsset(response, asset))
                 .ifPresentOrElse(
                     responseWithAsset -> responseWithAsset.send(ContentDispositionHeader.ATTACHMENT),
@@ -83,7 +83,7 @@ public class ServletDownload extends SlingJakartaSafeMethodsServlet implements R
                         Response responseWithError = new Response(
                             response, new Status(
                             HttpServletResponse.SC_NOT_FOUND,
-                            "No asset found: '%s'".formatted(new AssetDescriptor(requestDelete))
+                            "No asset found: '%s'".formatted(new AssetDescriptor(requestDownload))
                         )
                         );
                         responseWithError.send();
