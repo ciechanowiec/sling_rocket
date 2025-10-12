@@ -190,6 +190,9 @@
     "org.apache.sling.jcr.maintenance.internal.VersionCleanupPath~default": {
       "path": "/",
       "limit": 5
+    },
+    "org.apache.sling.engine.parameters": {
+      "sling.default.parameter.encoding": "UTF-8"
     }
   }
 }
