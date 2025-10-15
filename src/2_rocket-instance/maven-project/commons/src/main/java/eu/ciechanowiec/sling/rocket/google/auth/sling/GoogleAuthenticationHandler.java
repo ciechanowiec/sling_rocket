@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalUser;
@@ -76,7 +77,7 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      * Constructs an instance of this class.
      *
      * @param googleIdTokenVerifierProxy {@link GoogleIdTokenVerifierProxy} for verifying {@link GoogleIdToken}s
-     * @param googleIdentityProvider {@link GoogleIdentityProvider} that delivers related {@link ExternalUser}s
+     * @param googleIdentityProvider     {@link GoogleIdentityProvider} that delivers related {@link ExternalUser}s
      * @param config                     {@link GoogleAuthenticationHandlerConfig} used by the constructed instance
      */
     @Activate
@@ -162,7 +163,14 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
     public Optional<AuthenticationInfo> extractCredentials(String googleIdToken) {
         return googleIdTokenVerifierProxy.verify(googleIdToken)
             .map(GoogleIdToken::getPayload)
-            .map(GoogleIdToken.Payload::getEmail)
+            .filter(
+                payload -> {
+                    String expectedHostedDomainRegex = config.get().expected$_$hosted$_$domain_regex();
+                    String actualHostedDomain = Optional.ofNullable(payload.getHostedDomain())
+                        .orElse(StringUtils.EMPTY);
+                    return actualHostedDomain.matches(expectedHostedDomainRegex);
+                }
+            ).map(GoogleIdToken.Payload::getEmail)
             .map(
                 email -> {
                     log.trace(
@@ -220,8 +228,8 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
             );
         Optional.ofNullable(request.getHeader(HEADER_NAME))
             .ifPresentOrElse(
-                token -> {
-                    credentialsExtractionCache.get().invalidate(token);
+                googleIdToken -> {
+                    credentialsExtractionCache.get().invalidate(googleIdToken);
                     log.debug("Cached credentials invalidated for '{}'", remoteUser);
                 },
                 () -> log.debug("No cached credentials found for '{}'. Nothing to drop", remoteUser)

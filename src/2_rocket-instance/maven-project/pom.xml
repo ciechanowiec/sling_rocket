@@ -71,7 +71,7 @@
         <org.apache.sling.servlets.annotations.version>1.2.6</org.apache.sling.servlets.annotations.version>
         <lombok.version>1.18.42</lombok.version>
         <javax.inject.version>1</javax.inject.version>
-        <spotbugs-annotations.version>4.9.6</spotbugs-annotations.version>
+        <spotbugs-annotations.version>4.9.7</spotbugs-annotations.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
@@ -95,7 +95,7 @@
         <org.apache.felix.scr.version>2.2.14</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
-        <org.apache.felix.http.jetty12.version>1.1.2</org.apache.felix.http.jetty12.version>
+        <org.apache.felix.http.jetty12.version>1.1.4</org.apache.felix.http.jetty12.version>
         <org.apache.felix.http.whiteboard.version>4.0.0</org.apache.felix.http.whiteboard.version>
         <org.apache.felix.inventory.version>2.0.0</org.apache.felix.inventory.version>
         <org.apache.felix.prefs.version>1.1.0</org.apache.felix.prefs.version>
@@ -390,7 +390,7 @@
         <mockito-core.version>5.20.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.20.0</mockito-junit-jupiter.version>
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.0</org.apache.sling.testing.sling-mock.junit5.version>
-        <org.apache.sling.testing.sling-mock-oak.version>4.0.0-1.62.0</org.apache.sling.testing.sling-mock-oak.version>
+        <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
         <org.apache.sling.testing.sling-mock.core.version>4.0.0</org.apache.sling.testing.sling-mock.core.version>
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->

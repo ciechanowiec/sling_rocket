@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.google.auth.sling;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.auth.core.spi.JakartaAuthenticationHandler;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.AttributeType;
@@ -27,6 +28,41 @@ public @interface GoogleAuthenticationHandlerConfig {
         type = AttributeType.STRING
     )
     String[] path() default "/";
+
+    /**
+     * Regular expression (regex) for the expected {@code hd} (hosted domain) claim of a {@link GoogleIdToken}.
+     * <ol>
+     *     <li>
+     * The {@code hd} claim indicates the domain associated with the Google Workspace or Cloud organization of the user.
+     * The claim is present only if the user belongs to a Google Workspace or Cloud organization.
+     *     </li>
+     *     <li>
+     * This configuration property allows restricting authentication to users belonging to specific domains. The value
+     * of the {@code hd} claim from the verified {@link GoogleIdToken} is matched against this regular expression. If
+     * the value does not match, the authentication attempt will be rejected.
+     *     </li>
+     *     <li>
+     * If the {@code hd} claim is not present in the {@link GoogleIdToken}, it is treated as an
+     * {@link StringUtils#EMPTY} {@link String} for the purpose of this validation. Therefore, the authentication will
+     * only pass if the configured regex matches an {@link StringUtils#EMPTY} {@link String}.
+     *     </li>
+     *     <li>
+     * The default value is {@code ".*"}, which matches any value, including an an {@link StringUtils#EMPTY}
+     * {@link String}, thus allowing users both belonging and not belonging to some domain. To require a specific domain
+     * like {@code "example.com"}, the value should be set to {@code "example\\.com"} (note that this would reject users
+     * without the {@code hd} claim).
+     *     </li>
+     * </ol>
+     *
+     * @return regular expression (regex) for the expected {@code hd} (hosted domain) claim of a {@link GoogleIdToken}
+     */
+    @AttributeDefinition(
+        name = "Regex for expected hosted domain (hd) claim",
+        description = "Regular expression (regex) for the expected 'hd' (hosted domain) claim of a Google ID Token",
+        defaultValue = ".*",
+        type = AttributeType.STRING
+    )
+    String expected$_$hosted$_$domain_regex() default ".*";
 
     /**
      * Time to live (TTL) for the cached result of the credentials extraction in seconds, i.e., for the result produced

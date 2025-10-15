@@ -300,4 +300,100 @@ class GoogleAuthenticationHandlerTest extends TestEnvironment {
         handlerWithProvider.dropCredentials(request, response);
         verify(identityProvider, never()).invalidateCacheForUser(anyString());
     }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testHostedDomainMatch() {
+        handler = context.registerInjectActivateService(
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+        );
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@example.com");
+        payload.setHostedDomain("ciechanowiec.eu");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        AuthenticationInfo authenticationInfo = Objects.requireNonNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
+        assertAll(
+            () -> assertTrue(
+                authenticationInfo.toString().startsWith(
+                    "{user.jcr.credentials=GoogleCredentials(email=user@example.com), sling.authType=GoogleAuth, user.name=user@example.com, user.password"
+                )
+            ),
+            () -> assertEquals("test-id-token", new String(authenticationInfo.getPassword()))
+        );
+    }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testHostedDomainNoMatch() {
+        handler = context.registerInjectActivateService(
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+        );
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@example.com");
+        payload.setHostedDomain("example.com");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        assertNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
+    }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testHostedDomainNoClaim() {
+        handler = context.registerInjectActivateService(
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+        );
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@example.com");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        assertNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
+    }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testHostedDomainDefaultRegexWithHd() {
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@example.com");
+        payload.setHostedDomain("example.com");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        AuthenticationInfo authenticationInfo = Objects.requireNonNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
+        assertAll(
+            () -> assertTrue(
+                authenticationInfo.toString().startsWith(
+                    "{user.jcr.credentials=GoogleCredentials(email=user@example.com), sling.authType=GoogleAuth, user.name=user@example.com, user.password"
+                )
+            ),
+            () -> assertEquals("test-id-token", new String(authenticationInfo.getPassword()))
+        );
+    }
 }
