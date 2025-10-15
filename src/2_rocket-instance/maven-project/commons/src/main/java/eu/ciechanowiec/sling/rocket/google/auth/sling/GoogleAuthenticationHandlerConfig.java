@@ -47,7 +47,7 @@ public @interface GoogleAuthenticationHandlerConfig {
      * only pass if the configured regex matches an {@link StringUtils#EMPTY} {@link String}.
      *     </li>
      *     <li>
-     * The default value is {@code ".*"}, which matches any value, including an an {@link StringUtils#EMPTY}
+     * The default value is {@code ".*"}, which matches any value, including an {@link StringUtils#EMPTY}
      * {@link String}, thus allowing users both belonging and not belonging to some domain. To require a specific domain
      * like {@code "example.com"}, the value should be set to {@code "example\\.com"} (note that this would reject users
      * without the {@code hd} claim).
