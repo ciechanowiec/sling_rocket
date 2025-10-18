@@ -136,12 +136,6 @@
     }
   ],
   "configurations": {
-    "org.apache.sling.jcr.davex.impl.servlets.SlingDavExServlet": {
-      "alias": "/server"
-    },
-    "org.apache.sling.jcr.webdav.impl.servlets.SimpleWebDavServlet": {
-      "dav.root": "/dav"
-    },
     "org.apache.sling.commons.scheduler.impl.QuartzScheduler": {
       "allowedPoolNames": [
         "oak",
