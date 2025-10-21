@@ -154,6 +154,7 @@
                         commons-math3.version,
 
                         woodstox-core.version,
+                        jackson-annotations.version,
                         jackson.version,
 
                         gson.version,

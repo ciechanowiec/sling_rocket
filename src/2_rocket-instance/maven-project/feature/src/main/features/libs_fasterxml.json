@@ -5,7 +5,7 @@
       "start-order": "15"
     },
     {
-      "id": "com.fasterxml.jackson.core:jackson-annotations:${jackson.version}",
+      "id": "com.fasterxml.jackson.core:jackson-annotations:${jackson-annotations.version}",
       "start-order": "15"
     },
     {
