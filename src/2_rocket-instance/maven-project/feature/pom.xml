@@ -217,6 +217,7 @@
                         org.apache.sling.xss.version,
                         org.apache.sling.resource.filter.version,
                         org.apache.sling.provisioning.model.version,
+                        org.apache.sling.event.api.version,
                         org.apache.sling.event.dea.version,
                         org.apache.sling.event.version,
                         org.apache.sling.servlets.resolver.version,

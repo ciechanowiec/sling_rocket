@@ -103,6 +103,10 @@
       "start-order": "20"
     },
     {
+      "id": "org.apache.sling:org.apache.sling.event.api:${org.apache.sling.event.api.version}",
+      "start-order": "20"
+    },
+    {
       "id": "org.apache.sling:org.apache.sling.event.dea:${org.apache.sling.event.dea.version}",
       "start-order": "20"
     },
