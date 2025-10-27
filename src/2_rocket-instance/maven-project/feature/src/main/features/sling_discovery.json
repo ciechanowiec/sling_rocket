@@ -20,5 +20,10 @@
       "id": "org.apache.sling:org.apache.sling.discovery.support:${org.apache.sling.discovery.support.version}",
       "start-order": "20"
     }
-  ]
+  ],
+  "configurations": {
+    "org.apache.sling.discovery.base.connectors.ping.TopologyConnectorServlet": {
+      "osgi.ds.satisfying.condition.target": "(osgi.condition.id=this-is-not-existing-condition-to-disable-the-component)"
+    }
+  }
 }
