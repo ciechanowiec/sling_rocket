@@ -66,7 +66,7 @@ chmod +x "$SLING_DIR/dump-rocket-data.sh"
 updateActualBundlesStatus () {
   echo ""
   echo "Updating actual bundles status..."
-  actualBundlesStatus=$(curl --verbose http://localhost:"$HTTP_PORT"/system/health.json?tags=bundles)
+  actualBundlesStatus=$(curl --user admin:admin --verbose http://localhost:"$HTTP_PORT"/system/console/bundles.json | jq --raw-output '.status')
 }
 
 waitUntilBundlesStatusMatch () {
@@ -78,8 +78,8 @@ waitUntilBundlesStatusMatch () {
     echo "Latest logs:"
     tail -n 30 "$SLING_DIR/launcher/logs/error.log"
     echo "Actual bundles status: $actualBundlesStatus"
-    echo "Expected bundles status: All [0-9]+ bundles are started"
-    if [[ "$actualBundlesStatus" =~ .*All\ [0-9]+\ bundles\ are\ started.* ]]
+    echo "Expected bundles status: all [0-9]+ bundles active"
+    if [[ "$actualBundlesStatus" =~ .*all\ [0-9]+\ bundles\ active.* ]]
       then
         isInitializationFinalized=true
         echo "Number of bundles matched"
