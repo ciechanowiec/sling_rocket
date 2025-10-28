@@ -140,6 +140,7 @@ image::sling-rocket-architecture-diagram.svg[]
 ====
 
 == Usage
+[[docker-compose]]
 === `docker-compose.yml`
 [upperalpha]
 . _Sling Rocket_ is supposed to be run and managed using the `docker-compose.yml` file located in the root of this repository.
@@ -435,14 +436,6 @@ cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
 ....
 
-=== Access Password
-By default, _Sling Rocket_ allows access via a user `admin` with the password `admin`. For production deployments this password should be changed according to the respective https://sling.apache.org/documentation/bundles/managing-users-and-groups-jackrabbit-usermanager.html[Apache Sling instruction,window=_blank]. A command to change the password might look the following way:
-[source,bash]
-....
-curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -FnewPwdConfirm=passwordus-novus \
-  http://localhost:8080/system/userManager/user/admin.changePassword.html
-....
-
 === Useful Links
 
 The list below contains useful links to default administration tools of an SR instance.
@@ -466,6 +459,25 @@ http://localhost:8080/system/console/requests
 +
 http://localhost:8080/system/console/slinglog
 
+=== Production Deployments
+
+This section describes selected adjustments that should be done for production deployments of _Sling Rocket_.
+[upperalpha]
+. *Apache Sling Referrer Filter*
++
+Configure the https://github.com/apache/sling-org-apache-sling-security?tab=readme-ov-file#referrer-filter-csrf-protection[_Apache Sling Referrer Filter_] to allow only specific hosts.
+. *Disable Debug Mode*
++
+Disable the debug mode. To achieve this, unset the `JAVA_DEBUG_PORT` environmental variable in the xref:#docker-compose[].
+. *`admin` Password*
++
+By default, _Sling Rocket_ allows access via a user `admin` with the password `admin`. For production deployments this password should be changed according to the respective https://sling.apache.org/documentation/bundles/managing-users-and-groups-jackrabbit-usermanager.html[Apache Sling instruction,window=_blank]. A command to change the password might look the following way:
++
+[source,bash]
+....
+curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -FnewPwdConfirm=passwordus-novus \
+  http://localhost:8080/system/userManager/user/admin.changePassword.html
+....
 
 === Ideas to be Considered for Implementation
 

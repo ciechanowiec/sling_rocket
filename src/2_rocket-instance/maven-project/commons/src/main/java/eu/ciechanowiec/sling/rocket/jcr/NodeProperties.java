@@ -31,7 +31,7 @@ import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
  * </p>
  * <p>
  * The class provides API operations on {@link Property}-ies in a way detached from an ongoing {@link Session}.
- * {@link Session}'s live cycle is supposed to be fully managed by {@link NodeProperties} itself in an encapsulated
+ * {@link Session}'s life cycle is supposed to be fully managed by {@link NodeProperties} itself in an encapsulated
  * manner.
  * </p>
  */

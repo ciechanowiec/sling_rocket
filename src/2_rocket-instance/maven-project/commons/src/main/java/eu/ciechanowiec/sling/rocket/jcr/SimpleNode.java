@@ -22,7 +22,7 @@ import java.util.Map;
  * </p>
  * <p>
  * The class provides operations on a {@link Node} in a way detached from an ongoing {@link Session}. {@link Session}'s
- * live cycle is supposed to be fully managed by {@link SimpleNode} itself in an encapsulated manner.
+ * life cycle is supposed to be fully managed by {@link SimpleNode} itself in an encapsulated manner.
  * </p>
  */
 @SuppressWarnings("WeakerAccess")

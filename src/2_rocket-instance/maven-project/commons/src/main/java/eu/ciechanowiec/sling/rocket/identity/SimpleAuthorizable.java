@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * </p>
  * <p>
  * The class provides API operations on {@link Authorizable} in a way detached from an ongoing {@link Session}.
- * {@link Session}'s live cycle is supposed to be fully managed by an {@link SimpleAuthorizable} itself in an
+ * {@link Session}'s life cycle is supposed to be fully managed by an {@link SimpleAuthorizable} itself in an
  * encapsulated manner.
  * </p>
  */
