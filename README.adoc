@@ -46,12 +46,12 @@ Application that performs backups of the database via backing it up into a separ
 +
 Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It is responsible for all incoming and outgoing HTTP(S) traffic.
 
-image::sling-rocket-components-diagram.svg[]
+image::docs/img/sling-rocket-components-diagram.svg[]
 
 .Raw diagram
 [%collapsible]
 ====
-[ditaa, shadows=false, separation=false, target=sling-rocket-components-diagram, format=svg, opts=inline]
+[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-components-diagram, format=svg, opts=inline]
 ....
                                                                 /--------------\
                                                                 |              |
@@ -104,12 +104,12 @@ As a template for the business application https://github.com/ciechanowiec/slexa
 . The SR Parent POM will provide the business application with all dependencies and configurations available in the targeted SR Instance. In other words, the SR Parent POM will give the business application the environment in which it will run, as the SR Instance itself was built using the same SR Parent POM.
 . The business application can override the default application components of the targeted SR Instance.
 
-image::sling-rocket-architecture-diagram.svg[]
+image::docs/img/sling-rocket-architecture-diagram.svg[]
 
 .Raw diagram
 [%collapsible]
 ====
-[ditaa, shadows=false, separation=false, target=sling-rocket-architecture-diagram, format=svg, opts=inline]
+[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-architecture-diagram, format=svg, opts=inline]
 ....
                                            /--------------\
                                            |              |
@@ -257,12 +257,12 @@ The `rocket-data-raw` volume is mounted at `/opt/sling/launcher/repository/segme
 ===== `rocket-data-dump`
 The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where `/opt/sling/dump-rocket-data.sh` puts the database dumps created out of persistence files, i.e. out of Segment Node Storage at `/opt/sling/launcher/repository/segmentstore`. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup] Oak Run command are stored, i.e. the dumps represented as tar files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export] Oak Run command are stored, i.e. the dumps represented as human-readable json files with referenced binary files.
 
-image::sling-rocket-backuper-diagram.svg[]
+image::docs/img/sling-rocket-backuper-diagram.svg[]
 
 .Raw diagram
 [%collapsible]
 ====
-[ditaa, shadows=false, separation=false, target=sling-rocket-backuper-diagram, format=svg, opts=inline]
+[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-backuper-diagram, format=svg, opts=inline]
 ....
                                              +---------+---------+
                                              |                   |

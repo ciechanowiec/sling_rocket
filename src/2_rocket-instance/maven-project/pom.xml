@@ -168,7 +168,7 @@
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <icu4j.version>77.1</icu4j.version>
+        <icu4j.version>78.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
         <oauth2-oidc-sdk.version>11.30</oauth2-oidc-sdk.version>
@@ -184,7 +184,7 @@
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
         <io.opencensus.version>0.31.1</io.opencensus.version>
-        <caffeine.version>3.2.2</caffeine.version>
+        <caffeine.version>3.2.3</caffeine.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -215,7 +215,7 @@
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <jackson-annotations.version>2.20</jackson-annotations.version>
-        <jackson.version>2.20.0</jackson.version>
+        <jackson.version>2.20.1</jackson.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
@@ -278,7 +278,7 @@
         <org.apache.sling.hc.api.version>1.0.4</org.apache.sling.hc.api.version>
         <org.apache.sling.hc.support.version>1.0.10</org.apache.sling.hc.support.version>
         <org.apache.sling.adapter.version>2.3.0</org.apache.sling.adapter.version>
-        <org.apache.sling.auth.form.version>1.0.24</org.apache.sling.auth.form.version>
+        <org.apache.sling.auth.form.version>2.0.0</org.apache.sling.auth.form.version>
         <org.apache.sling.bundleresource.impl.version>2.4.0</org.apache.sling.bundleresource.impl.version>
         <org.apache.sling.engine.version>3.0.0</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.3.0</org.apache.sling.fsresource.version>
@@ -294,7 +294,7 @@
         <org.apache.sling.servlets.resolver.version>3.0.0</org.apache.sling.servlets.resolver.version>
         <org.apache.sling.caconfig.impl.version>1.7.2</org.apache.sling.caconfig.impl.version>
         <org.apache.sling.servlet-helpers.version>2.0.0</org.apache.sling.servlet-helpers.version>
-        <org.apache.sling.auth.oauth-client.version>0.1.2</org.apache.sling.auth.oauth-client.version>
+        <org.apache.sling.auth.oauth-client.version>0.1.4</org.apache.sling.auth.oauth-client.version>
         <org.apache.sling.security.version>1.3.0</org.apache.sling.security.version>
         <org.apache.sling.datasource.version>1.0.4</org.apache.sling.datasource.version>
         <!-- ====================================================================== -->
@@ -379,7 +379,7 @@
         <!-- ====================================================================== -->
         <!-- SLING_WEBCONSOLE                                                       -->
         <!-- ====================================================================== -->
-        <org.apache.sling.commons.log.webconsole.version>1.0.2</org.apache.sling.commons.log.webconsole.version>
+        <org.apache.sling.commons.log.webconsole.version>2.0.0</org.apache.sling.commons.log.webconsole.version>
         <org.apache.sling.extensions.webconsolesecurityprovider.version>1.2.8
         </org.apache.sling.extensions.webconsolesecurityprovider.version>
         <org.apache.sling.jcr.webconsole.version>1.1.0</org.apache.sling.jcr.webconsole.version>
@@ -387,8 +387,8 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>6.0.0</junit-jupiter-api.version>
-        <junit-jupiter-params.version>6.0.0</junit-jupiter-params.version>
+        <junit-jupiter-api.version>6.0.1</junit-jupiter-api.version>
+        <junit-jupiter-params.version>6.0.1</junit-jupiter-params.version>
         <mockito-core.version>5.20.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.20.0</mockito-junit-jupiter.version>
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.0</org.apache.sling.testing.sling-mock.junit5.version>

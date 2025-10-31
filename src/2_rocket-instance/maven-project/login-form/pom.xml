@@ -44,8 +44,8 @@
                                         <include>LICENSE.txt</include>
                                         <include>login-form.png</include>
                                         <include>README.adoc</include>
-                                        <include>README-docinfo.html</include>
-                                        <include>README-docinfo-footer.html</include>
+                                        <include>docinfo.html</include>
+                                        <include>docinfo-footer.html</include>
                                     </includes>
                                     <!-- To enable variables in the resources files
                                          (https://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html): -->
