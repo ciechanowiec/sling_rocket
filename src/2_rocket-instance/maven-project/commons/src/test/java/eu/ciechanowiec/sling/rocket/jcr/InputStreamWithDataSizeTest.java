@@ -11,6 +11,7 @@ import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,11 +54,21 @@ class InputStreamWithDataSizeTest extends TestEnvironment {
         byte[] expected = Files.readAllBytes(file.toPath());
 
         try (
-            InputStreamWithDataSize inputStream =
-                new InputStreamWithDataSize(jcrContent, JcrConstants.JCR_DATA, fullResourceAccess)
+            InputStreamWithDataSize inputStreamRA =
+                new InputStreamWithDataSize(jcrContent, JcrConstants.JCR_DATA, fullResourceAccess);
+            InputStreamWithDataSize inputStreamRR =
+                new InputStreamWithDataSize(jcrContent, JcrConstants.JCR_DATA, context.resourceResolver())
         ) {
-            byte[] actual = inputStream.readAllBytes();
-            assertArrayEquals(expected, actual, "File content read from JCR should match the original file");
+            byte[] actualRAFirstRead = inputStreamRA.readAllBytes();
+            byte[] actualRASecondRead = inputStreamRA.readAllBytes();
+            byte[] actualRR = inputStreamRR.readAllBytes();
+            assertAll(
+                () -> assertArrayEquals(
+                    expected, actualRAFirstRead, "File content read from JCR should match the original file"
+                ),
+                () -> assertEquals(0, actualRASecondRead.length),
+                () -> assertArrayEquals(expected, actualRR, "File content read from JCR should match the original file")
+            );
         }
     }
 
@@ -175,6 +186,38 @@ class InputStreamWithDataSizeTest extends TestEnvironment {
             assertAll(
                 () -> assertDoesNotThrow(inputStream::close),
                 () -> assertDoesNotThrow(inputStream::close)
+            );
+        }
+    }
+
+    @SneakyThrows
+    @Test
+    void mustNotCloseExternalRR() {
+        saveFileInJCR();
+        ResourceResolver resourceResolver = context.resourceResolver();
+        byte[] expected = Files.readAllBytes(file.toPath());
+        try (
+            InputStreamWithDataSize inputStream = new InputStreamWithDataSize(
+                jcrContent, JcrConstants.JCR_DATA, resourceResolver
+            )
+        ) {
+            byte[] actual = inputStream.readAllBytes();
+            assertAll(
+                () -> assertDoesNotThrow(inputStream::close),
+                () -> assertArrayEquals(expected, actual, "File content read from JCR should match the original file")
+            );
+        }
+        assertTrue(resourceResolver.isLive());
+        // Intentionally checking if we can reuse the ResourceResolver
+        try (
+            InputStreamWithDataSize inputStream = new InputStreamWithDataSize(
+                jcrContent, JcrConstants.JCR_DATA, resourceResolver
+            )
+        ) {
+            byte[] actual = inputStream.readAllBytes();
+            assertAll(
+                () -> assertDoesNotThrow(inputStream::close),
+                () -> assertArrayEquals(expected, actual, "File content read from JCR should match the original file")
             );
         }
     }

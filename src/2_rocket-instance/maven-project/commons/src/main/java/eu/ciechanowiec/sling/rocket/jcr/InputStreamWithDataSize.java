@@ -17,6 +17,7 @@ import javax.jcr.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * An {@link InputStream} that has a known {@link DataSize}.
@@ -30,20 +31,38 @@ public class InputStreamWithDataSize extends InputStream implements WithDataSize
     private final MemoizingSupplier<ResourceResolver> resourceResolverSupplier;
     private final MemoizingSupplier<Optional<Binary>> binarySupplier;
     private final MemoizingSupplier<Optional<InputStream>> inputStreamSupplier;
+    private final boolean externalResourceResolver;
 
-    InputStreamWithDataSize(
+    private InputStreamWithDataSize(
         @SuppressWarnings("PMD.LongVariable")
         JCRPath jcrPathToNodeWithBinaryProperty,
-        String binaryPropertyName, ResourceAccess resourceAccess
+        String binaryPropertyName, Supplier<ResourceResolver> resolverSupplier, boolean externalResourceResolver
     ) {
         this.jcrPathToNodeWithBinaryProperty = jcrPathToNodeWithBinaryProperty;
-        this.resourceResolverSupplier = new MemoizingSupplier<>(resourceAccess::acquireAccess);
+        this.resourceResolverSupplier = new MemoizingSupplier<>(resolverSupplier);
         this.binarySupplier = new MemoizingSupplier<>(
             () -> binary(jcrPathToNodeWithBinaryProperty, binaryPropertyName, resourceResolverSupplier)
         );
         this.inputStreamSupplier = new MemoizingSupplier<>(
             () -> binarySupplier.get().map(SneakyFunction.sneaky(Binary::getStream))
         );
+        this.externalResourceResolver = externalResourceResolver;
+    }
+
+    InputStreamWithDataSize(
+        @SuppressWarnings("PMD.LongVariable")
+        JCRPath jcrPathToNodeWithBinaryProperty,
+        String binaryPropertyName, ResourceAccess resourceAccess
+    ) {
+        this(jcrPathToNodeWithBinaryProperty, binaryPropertyName, resourceAccess::acquireAccess, false);
+    }
+
+    InputStreamWithDataSize(
+        @SuppressWarnings("PMD.LongVariable")
+        JCRPath jcrPathToNodeWithBinaryProperty,
+        String binaryPropertyName, ResourceResolver resourceResolver
+    ) {
+        this(jcrPathToNodeWithBinaryProperty, binaryPropertyName, () -> resourceResolver, true);
     }
 
     @SuppressWarnings("PMD.CloseResource")
@@ -65,7 +84,9 @@ public class InputStreamWithDataSize extends InputStream implements WithDataSize
     public void close() {
         inputStreamSupplier.get().ifPresent(SneakyConsumer.sneaky(InputStream::close));
         binarySupplier.get().ifPresent(SneakyConsumer.sneaky(Binary::dispose));
-        resourceResolverSupplier.get().close();
+        if (!externalResourceResolver) {
+            resourceResolverSupplier.get().close();
+        }
     }
 
     @Override

@@ -18,6 +18,8 @@ import java.util.Optional;
 @Slf4j
 class GoogleExternalUser implements ExternalUser {
 
+    static final String PN_THUMBNAIL_PHOTO_URL = "thumbnailPhotoUrl";
+
     private final User user;
     @ToString.Exclude
     private final GoogleDirectory googleDirectory;
@@ -72,7 +74,7 @@ class GoogleExternalUser implements ExternalUser {
             "primaryEmail", Optional.ofNullable(user.getPrimaryEmail()).orElse(StringUtils.EMPTY),
             "isAdmin", Optional.ofNullable(user.getIsAdmin()).orElse(false),
             "kind", Optional.ofNullable(user.getKind()).orElse(StringUtils.EMPTY),
-            "thumbnailPhotoUrl", Optional.ofNullable(user.getThumbnailPhotoUrl()).orElse(StringUtils.EMPTY)
+            PN_THUMBNAIL_PHOTO_URL, Optional.ofNullable(user.getThumbnailPhotoUrl()).orElse(StringUtils.EMPTY)
         );
     }
 }

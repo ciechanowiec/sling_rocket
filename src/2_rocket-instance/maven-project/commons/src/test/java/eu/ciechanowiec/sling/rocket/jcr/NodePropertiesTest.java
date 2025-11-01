@@ -9,6 +9,7 @@ import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,13 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings(
+    {
+        "MagicNumber", "MultipleStringLiterals", "MethodLength", "PMD.AvoidDuplicateLiterals", "JavaNCSS",
+        "PMD.NcssCount",
+        "PMD.CloseResource"
+    }
+)
 class NodePropertiesTest extends TestEnvironment {
 
     private Calendar unix1980;
@@ -55,9 +62,9 @@ class NodePropertiesTest extends TestEnvironment {
     @Test
     void mustSetPropertyGeneral() {
         context.build().resource(
-            "/content",
+            "/contentRA",
             Map.of(
-                "stringus-namus", "stringus-valus",
+                "stringus-namus", "stringus-valus-RA",
                 "booleanus-namus", true,
                 "longus-namus", 123L,
                 "doubleus-namus", 99.99,
@@ -65,8 +72,19 @@ class NodePropertiesTest extends TestEnvironment {
                 "calendarus-namus", unix1980
             )
         ).commit();
-        Map<String, String> initialMap = Map.of(
-            "stringus-namus", "stringus-valus",
+        context.build().resource(
+            "/contentRR",
+            Map.of(
+                "stringus-namus", "stringus-valus-RR",
+                "booleanus-namus", true,
+                "longus-namus", 123L,
+                "doubleus-namus", 99.99,
+                "decimalus-namus", new BigDecimal("999.99"),
+                "calendarus-namus", unix1980
+            )
+        ).commit();
+        Map<String, String> initialMapRA = Map.of(
+            "stringus-namus", "stringus-valus-RA",
             "booleanus-namus", "true",
             "longus-namus", "123",
             "doubleus-namus", "99.99",
@@ -74,19 +92,43 @@ class NodePropertiesTest extends TestEnvironment {
             "calendarus-namus", "1980-01-01T00:00:00.000Z",
             "jcr:primaryType", "nt:unstructured"
         );
-        NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
-        Map<String, String> firstActualMap = nodeProperties.all();
-        assertEquals(initialMap, firstActualMap);
-        nodeProperties.setProperty("stringus-namus", "stringus-valus-2");
-        nodeProperties.setProperty("booleanus-namus", "false");
-        nodeProperties.setProperty("longus-namus", "321");
-        nodeProperties.setProperty("doubleus-namus", "88.88");
-        nodeProperties.setProperty("decimalus-namus", "888.88");
-        NodeProperties newNodeProperties = nodeProperties.setProperty("calendarus-namus", "1990-01-01T00:00:00.000Z")
-            .orElseThrow();
-        Map<String, String> secondActualMap = newNodeProperties.all();
-        Map<String, String> finalMap = Map.of(
-            "stringus-namus", "stringus-valus-2",
+        Map<String, String> initialMapRR = Map.of(
+            "stringus-namus", "stringus-valus-RR",
+            "booleanus-namus", "true",
+            "longus-namus", "123",
+            "doubleus-namus", "99.99",
+            "decimalus-namus", "999.99",
+            "calendarus-namus", "1980-01-01T00:00:00.000Z",
+            "jcr:primaryType", "nt:unstructured"
+        );
+        ResourceResolver resourceResolver = context.resourceResolver();
+        NodeProperties nodePropertiesRA = new NodeProperties(new TargetJCRPath("/contentRA"), fullResourceAccess);
+        NodeProperties nodePropertiesRR = new NodeProperties(new TargetJCRPath("/contentRR"), resourceResolver);
+        Map<String, String> firstActualMapRA = nodePropertiesRA.all();
+        Map<String, String> firstActualMapRR = nodePropertiesRR.all();
+        assertEquals(initialMapRA, firstActualMapRA);
+        assertEquals(initialMapRR, firstActualMapRR);
+        assertNotEquals(initialMapRR, initialMapRA);
+        nodePropertiesRA.setProperty("stringus-namus", "stringus-valus-RA-2");
+        nodePropertiesRA.setProperty("booleanus-namus", "false");
+        nodePropertiesRA.setProperty("longus-namus", "321");
+        nodePropertiesRA.setProperty("doubleus-namus", "88.88");
+        nodePropertiesRA.setProperty("decimalus-namus", "888.88");
+        nodePropertiesRR.setProperty("stringus-namus", "stringus-valus-RR-2");
+        nodePropertiesRR.setProperty("booleanus-namus", "false");
+        nodePropertiesRR.setProperty("longus-namus", "321");
+        nodePropertiesRR.setProperty("doubleus-namus", "88.88");
+        nodePropertiesRR.setProperty("decimalus-namus", "888.88");
+        NodeProperties newNodePropertiesRA = nodePropertiesRA.setProperty(
+            "calendarus-namus", "1990-01-01T00:00:00.000Z"
+        ).orElseThrow();
+        NodeProperties newNodePropertiesRR = nodePropertiesRR.setProperty(
+            "calendarus-namus", "1990-01-01T00:00:00.000Z"
+        ).orElseThrow();
+        Map<String, String> secondActualMapRA = newNodePropertiesRA.all();
+        Map<String, String> secondActualMapRR = newNodePropertiesRR.all();
+        Map<String, String> finalMapRA = Map.of(
+            "stringus-namus", "stringus-valus-RA-2",
             "booleanus-namus", "false",
             "longus-namus", "321",
             "doubleus-namus", "88.88",
@@ -94,7 +136,17 @@ class NodePropertiesTest extends TestEnvironment {
             "calendarus-namus", "1990-01-01T00:00:00.000Z",
             "jcr:primaryType", "nt:unstructured"
         );
-        assertEquals(finalMap, secondActualMap);
+        Map<String, String> finalMapRR = Map.of(
+            "stringus-namus", "stringus-valus-RR-2",
+            "booleanus-namus", "false",
+            "longus-namus", "321",
+            "doubleus-namus", "88.88",
+            "decimalus-namus", "888.88",
+            "calendarus-namus", "1990-01-01T00:00:00.000Z",
+            "jcr:primaryType", "nt:unstructured"
+        );
+        assertEquals(finalMapRA, secondActualMapRA);
+        assertEquals(finalMapRR, secondActualMapRR);
     }
 
     @Test

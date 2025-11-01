@@ -21,25 +21,19 @@ import javax.jcr.nodetype.NodeType;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static eu.ciechanowiec.sneakyfun.SneakyFunction.sneaky;
 
 /**
- * <p>
- * Represents {@link Property}-ies of an existing {@link Node}.
- * </p>
- * <p>
- * The class provides API operations on {@link Property}-ies in a way detached from an ongoing {@link Session}.
- * {@link Session}'s life cycle is supposed to be fully managed by {@link NodeProperties} itself in an encapsulated
- * manner.
- * </p>
+ * {@link Property}-ies of an existing {@link Node}.
  */
 @SuppressWarnings(
     {
         "WeakerAccess", "ClassWithTooManyMethods", "MethodCount", "MultipleStringLiterals",
         "PMD.AvoidDuplicateLiterals", "PMD.ExcessivePublicCount",
-        "PMD.TooManyMethods", "PMD.LinguisticNaming"
+        "PMD.TooManyMethods", "PMD.LinguisticNaming", "PMD.CouplingBetweenObjects"
     }
 )
 @Slf4j
@@ -48,10 +42,22 @@ public class NodeProperties implements WithJCRPath {
 
     private final JCRPath jcrPath;
     @ToString.Exclude
-    private final ResourceAccess resourceAccess;
+    private final Supplier<Optional<ResourceAccess>> resourceAccessSupplier;
+    @ToString.Exclude
+    private final Supplier<Optional<ResourceResolver>> resourceResolverSupplier;
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class using a {@link ResourceAccess} object to manage {@link ResourceResolver}
+     * instances.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by this
+     * object. The provided {@link ResourceAccess} is used to acquire and subsequently close a {@link ResourceResolver}
+     * for each {@link Repository} operation.
+     * <p>
+     * This object will assume ownership of the {@link ResourceResolver} it acquires and will close it automatically.
+     * However, this might introduce a performance overhead due to repeated acquisitions. For performance-sensitive code
+     * sections where a {@link ResourceResolver} is already available, use
+     * {@link NodeProperties#NodeProperties(JCRPath, ResourceResolver)}.
      *
      * @param jcrNodePath    {@link JCRPath} to the underlying existing {@link Node}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
@@ -59,12 +65,23 @@ public class NodeProperties implements WithJCRPath {
      */
     public NodeProperties(JCRPath jcrNodePath, ResourceAccess resourceAccess) {
         this.jcrPath = jcrNodePath;
-        this.resourceAccess = resourceAccess;
+        resourceResolverSupplier = Optional::empty;
+        resourceAccessSupplier = () -> Optional.ofNullable(resourceAccess);
         log.trace("Initialized {}", this);
     }
 
     /**
-     * Constructs an instance of this class.
+     * Constructs an instance of this class using a {@link ResourceAccess} object to manage {@link ResourceResolver}
+     * instances.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by this
+     * object. The provided {@link ResourceAccess} is used to acquire and subsequently close a {@link ResourceResolver}
+     * for each {@link Repository} operation.
+     * <p>
+     * This object will assume ownership of the {@link ResourceResolver} it acquires and will close it automatically.
+     * However, this might introduce a performance overhead due to repeated acquisitions. For performance-sensitive code
+     * sections where a {@link ResourceResolver} is already available, use
+     * {@link NodeProperties#NodeProperties(JCRPath, ResourceResolver)}.
      *
      * @param withJCRPath    object that contains a {@link JCRPath} to the underlying {@link Node}
      * @param resourceAccess {@link ResourceAccess} that will be used by the constructed object to acquire access to
@@ -75,20 +92,58 @@ public class NodeProperties implements WithJCRPath {
     }
 
     /**
+     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver}.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
+     * calling context (e.g., Sling). The provided {@link ResourceResolver} is used for all subsequent
+     * {@link Repository} operations within this object. Consequently, this object will <strong>not</strong> assume
+     * ownership of the {@link ResourceResolver} and will not attempt to close it.
+     * <p>
+     * The object constructed with this constructor offers superior performance compared to
+     * {@link NodeProperties#NodeProperties(JCRPath, ResourceAccess)} and
+     * {@link NodeProperties#NodeProperties(WithJCRPath, ResourceAccess)} as it avoids the need to repeatedly acquire
+     * and authenticate a new {@link ResourceResolver} for each {@link Repository} operation. It is therefore the
+     * preferred choice in performance-sensitive code sections where a {@link ResourceResolver} is already available.
+     *
+     * @param jcrNodePath      {@link JCRPath} to the underlying existing {@link Node}
+     * @param resourceResolver {@link ResourceResolver} that will be used by the constructed object to acquire access to
+     *                         resources
+     */
+    public NodeProperties(JCRPath jcrNodePath, ResourceResolver resourceResolver) {
+        this.jcrPath = jcrNodePath;
+        resourceResolverSupplier = () -> Optional.ofNullable(resourceResolver);
+        resourceAccessSupplier = Optional::empty;
+        log.trace("Initialized {}", this);
+    }
+
+    /**
      * Retrieves the primary type of the underlying {@link Node}.
      *
      * @return primary type of the underlying {@link Node}
      */
     public String primaryType() {
+        return resourceResolverSupplier.get()
+            .map(this::primaryType)
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return primaryType(resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private String primaryType(ResourceResolver resourceResolver) {
         log.trace("Retrieving the primary type of {}", this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(sneaky(node -> Optional.ofNullable(node.getPrimaryNodeType())))
-                .map(NodeType::getName)
-                .orElseThrow();
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(sneaky(node -> Optional.ofNullable(node.getPrimaryNodeType())))
+            .map(NodeType::getName)
+            .orElseThrow();
     }
 
     /**
@@ -172,15 +227,28 @@ public class NodeProperties implements WithJCRPath {
      * the requested type
      */
     public <T> T propertyValue(String propertyName, T defaultValue) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> propertyValue(propertyName, defaultValue, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return propertyValue(propertyName, defaultValue, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private <T> T propertyValue(String propertyName, T defaultValue, ResourceResolver resourceResolver) {
         log.trace("Getting '{}' property value for {}", propertyName, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .map(Resource::getValueMap)
-                .map(WithPrimitiveArrayTranslation::new)
-                .map(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, defaultValue))
-                .orElse(defaultValue);
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .map(Resource::getValueMap)
+            .map(WithPrimitiveArrayTranslation::new)
+            .map(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, defaultValue))
+            .orElse(defaultValue);
     }
 
     /**
@@ -227,14 +295,27 @@ public class NodeProperties implements WithJCRPath {
      * requested type, an empty {@link Optional} is returned
      */
     public <T> Optional<T> propertyValue(String propertyName, Class<T> type) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> propertyValue(propertyName, type, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return propertyValue(propertyName, type, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private <T> Optional<T> propertyValue(String propertyName, Class<T> type, ResourceResolver resourceResolver) {
         log.trace("Getting '{}' property value for {}", propertyName, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .map(Resource::getValueMap)
-                .map(WithPrimitiveArrayTranslation::new)
-                .flatMap(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, type));
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .map(Resource::getValueMap)
+            .map(WithPrimitiveArrayTranslation::new)
+            .flatMap(valueMapWithTranslation -> valueMapWithTranslation.get(propertyName, type));
     }
 
     /**
@@ -244,16 +325,29 @@ public class NodeProperties implements WithJCRPath {
      * @return {@link PropertyType} of the specified {@link Property}
      */
     public int propertyType(String propertyName) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> propertyType(propertyName, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return propertyType(propertyName, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private int propertyType(String propertyName, ResourceResolver resourceResolver) {
         log.trace("Getting '{}' property type for {}", propertyName, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                .map(this::firstValue)
-                .map(Value::getType)
-                .orElse(PropertyType.UNDEFINED);
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+            .map(this::firstValue)
+            .map(Value::getType)
+            .orElse(PropertyType.UNDEFINED);
     }
 
     @SneakyThrows
@@ -272,14 +366,27 @@ public class NodeProperties implements WithJCRPath {
      * {@code false} otherwise
      */
     public boolean containsProperty(String propertyName) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> containsProperty(propertyName, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return containsProperty(propertyName, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private boolean containsProperty(String propertyName, ResourceResolver resourceResolver) {
         log.trace("Checking if '{}' contains property of this name: '{}'", this, propertyName);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .map(Resource::getValueMap)
-                .map(valueMap -> valueMap.containsKey(propertyName))
-                .orElse(false);
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .map(Resource::getValueMap)
+            .map(valueMap -> valueMap.containsKey(propertyName))
+            .orElse(false);
     }
 
     /**
@@ -294,7 +401,14 @@ public class NodeProperties implements WithJCRPath {
     @SneakyThrows
     public InputStreamWithDataSize retrieveBinary(String propertyName) {
         log.trace("Getting the value of the '{}' property as a file. {}", propertyName, this);
-        return new InputStreamWithDataSize(jcrPath, propertyName, resourceAccess);
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> new InputStreamWithDataSize(jcrPath, propertyName, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> new InputStreamWithDataSize(jcrPath, propertyName, resourceAccess)
+                    )
+            ).orElseThrow();
     }
 
     /**
@@ -306,18 +420,31 @@ public class NodeProperties implements WithJCRPath {
      * {@link DataSize} is returned if the {@link Property} isn't of type {@link PropertyType#BINARY} or doesn't exist
      */
     public DataSize binarySize(String propertyName) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> binarySize(propertyName, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return binarySize(propertyName, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private DataSize binarySize(String propertyName, ResourceResolver resourceResolver) {
         log.trace("Checking the size of the '{}' binary property. {}", propertyName, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
-                .map(this::firstValue)
-                .flatMap(this::asBinary)
-                .map(sneaky(Binary::getSize))
-                .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
-                .orElse(new DataSize(0, DataUnit.BYTES));
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> new ConditionalProperty(propertyName).retrieveFrom(node))
+            .map(this::firstValue)
+            .flatMap(this::asBinary)
+            .map(sneaky(Binary::getSize))
+            .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
+            .orElse(new DataSize(0, DataUnit.BYTES));
     }
 
     /**
@@ -335,24 +462,37 @@ public class NodeProperties implements WithJCRPath {
      * {@link Property} {@link Value}-s converted to {@link String}
      */
     public Map<String, String> all() {
+        return resourceResolverSupplier.get()
+            .map(this::all)
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return all(resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Map<String, String> all(ResourceResolver resourceResolver) {
         log.trace("Retrieving all properties of {}", this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .map(Resource::getValueMap)
-                .map(ValueMap::keySet)
-                .orElse(Set.of())
-                .stream()
-                .filter(propertyName -> propertyType(propertyName) != PropertyType.BINARY)
-                .map(propertyName -> Map.entry(
-                    propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
-                )
-                .filter(entry -> entry.getValue().isPresent())
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().orElseThrow()))
-                .collect(Collectors.toUnmodifiableMap(
-                    Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first)
-                );
-        }
+        String jcrPathRaw = jcrPath.get();
+        return Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .map(Resource::getValueMap)
+            .map(ValueMap::keySet)
+            .orElse(Set.of())
+            .stream()
+            .filter(propertyName -> propertyType(propertyName) != PropertyType.BINARY)
+            .map(propertyName -> Map.entry(
+                propertyName, propertyValue(propertyName, DefaultProperties.STRING_CLASS))
+            )
+            .filter(entry -> entry.getValue().isPresent())
+            .map(entry -> Map.entry(entry.getKey(), entry.getValue().orElseThrow()))
+            .collect(Collectors.toUnmodifiableMap(
+                Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first)
+            );
     }
 
     /**
@@ -392,15 +532,28 @@ public class NodeProperties implements WithJCRPath {
      * reason
      */
     public Optional<NodeProperties> setProperties(Map<String, Object> properties) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperties(properties, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperties(properties, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperties(Map<String, Object> properties, ResourceResolver resourceResolver) {
         log.trace("Setting properties '{}' for {}", properties, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperties(node, properties));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperties(node, properties));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     private Optional<NodeProperties> setProperties(Node node, Map<String, Object> properties) {
@@ -451,15 +604,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, String value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, String value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     /**
@@ -478,15 +644,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, boolean value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, boolean value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     /**
@@ -505,15 +684,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, long value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, long value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     /**
@@ -532,15 +724,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, double value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, double value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     /**
@@ -559,15 +764,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, BigDecimal value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, BigDecimal value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     /**
@@ -586,15 +804,28 @@ public class NodeProperties implements WithJCRPath {
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public Optional<NodeProperties> setProperty(String name, Calendar value) {
+        return resourceResolverSupplier.get()
+            .map(resourceResolver -> setProperty(name, value, resourceResolver))
+            .or(
+                () -> resourceAccessSupplier.get()
+                    .map(
+                        resourceAccess -> {
+                            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                                return setProperty(name, value, resourceResolver);
+                            }
+                        }
+                    )
+            ).orElseThrow();
+    }
+
+    private Optional<NodeProperties> setProperty(String name, Calendar value, ResourceResolver resourceResolver) {
         log.trace("Setting property '{}' to '{}' for {}", name, value, this);
-        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            String jcrPathRaw = jcrPath.get();
-            Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
-                .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
-                .flatMap(node -> setProperty(node, name, value));
-            result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
-            return result;
-        }
+        String jcrPathRaw = jcrPath.get();
+        Optional<NodeProperties> result = Optional.ofNullable(resourceResolver.getResource(jcrPathRaw))
+            .flatMap(resource -> Optional.ofNullable(resource.adaptTo(Node.class)))
+            .flatMap(node -> setProperty(node, name, value));
+        result.ifPresent(SneakyConsumer.sneaky(nodeProperties -> resourceResolver.commit()));
+        return result;
     }
 
     @SuppressWarnings("PMD.LinguisticNaming")
