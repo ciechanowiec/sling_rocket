@@ -479,6 +479,51 @@ curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -Fn
   http://localhost:8080/system/userManager/user/admin.changePassword.html
 ....
 
+=== `rocket-sync.sh`
+
+==== Overview
+
+_Sling Rocket_ delivers a `src/4_rocket-sync/rocket-sync.sh` utility, which is a Bash script. It facilitates the synchronization of Java Content Repository (JCR) content, structured in accordance with FileVault, from a local file system to a running SR Instance.
+
+The utility operates on a specified path that resides within a `jcr_root` directory. For the given path, it dynamically constructs a content package. This package contains a single filter that encapsulates the entire subtree of the specified path. Subsequently, the package is uploaded to the target SR Instance and installed via the Composum Package Manager.
+
+Run the `rocket-sync.sh --help` command to learn how to use the utility.
+
+==== Integration with IntelliJ IDEA
+
+The `rocket-sync.sh` utility can be integrated with IntelliJ IDEA as described below to ease the development.
+
+[NOTE]
+The instructions below are for UNIX.
+
+[upperalpha]
+. Download and save the `rocket-sync.sh` utility on a local machine, e.g., in the `~/scripts` directory:
++
+[source,bash]
+....
+curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/src/4_rocket-sync/rocket-sync.sh > ~/scripts/rocket-sync.sh
+....
+. Set up the `rocket-sync.sh` utility as an _External Tool_ in IntelliJ IDEA.
+[upperroman]
+.. Go to _Settings_ -> _Tools_ -> _External Tools_.
+.. Add the `rocket-sync.sh` utility as an _External Tool_.
++
+image::docs/img/rocket-sync.png[]
+[lowergreek]
+... _Name_: `rocket(put)`
+... _Program_: the local directory where the `rocket-sync.sh` utility is stored, e.g., `~/scripts/rocket-sync.sh`
+... _Arguments_: `put -f $FilePath$`
+... _Name_: `$ProjectFileDir`
+.. Assign the `rocket-sync.sh` utility a keyboard shortcut.
++
+image::docs/img/rocket-sync-keymap.png[]
+[lowergreek]
+... Got to _Settings_ -> _Keymap_ -> _External Tools_ -> _External Tools_.
+... Assign the _rocket(put)_ a desired keyboard shortcut.
+.. To run the `rocket-sync.sh` utility on the local directory or file, put focus on that directory/file in the file view in IntelliJ IDEA. After that, press the configured shortcut, which will trigger the immediate synchronization.
++
+image::docs/img/rocket-sync-idea.png[]
+
 === Ideas to be Considered for Implementation
 
 [upperalpha]
