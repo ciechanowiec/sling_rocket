@@ -9,7 +9,7 @@ import javax.jcr.Session;
 import java.util.Optional;
 
 /**
- * {@link ResourceResolver} with a wrapped access to {@link UserManager}.
+ * {@link ResourceResolver} with wrapped access to the {@link UserManager}.
  */
 @SuppressWarnings("TypeName")
 public class WithUserManager {
