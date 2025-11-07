@@ -171,8 +171,8 @@
         <icu4j.version>78.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20250517</json.version>
-        <oauth2-oidc-sdk.version>11.30</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.5</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -203,7 +203,7 @@
         <!-- ====================================================================== -->
         <commons-text.version>1.14.0</commons-text.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
-        <commons-codec.version>1.19.0</commons-codec.version>
+        <commons-codec.version>1.20.0</commons-codec.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
         <commons-io.version>2.20.0</commons-io.version>
         <commons-logging.version>1.3.5</commons-logging.version>
@@ -242,7 +242,7 @@
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
         <jackrabbit.version>2.22.2</jackrabbit.version>
-        <jackrabbit-oak-db.version>1.86.0</jackrabbit-oak-db.version>
+        <jackrabbit-oak-db.version>1.88.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>4.1.4</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
         <!-- ====================================================================== -->
@@ -436,7 +436,7 @@
         <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
         <jruby.version>10.0.2.0</jruby.version>
-        <asciidoctorj.version>3.0.0</asciidoctorj.version>
+        <asciidoctorj.version>3.0.1</asciidoctorj.version>
         <asciidoctorj.diagram.version>3.0.1</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
     </properties>
