@@ -461,7 +461,7 @@ http://localhost:8080/system/console/slinglog
 
 === Production Deployments
 
-This section describes selected adjustments that should be done for production deployments of _Sling Rocket_.
+This section describes selected topics that should be considered for production deployments of _Sling Rocket_.
 [upperalpha]
 . *Apache Sling Referrer Filter*
 +
@@ -478,6 +478,18 @@ By default, _Sling Rocket_ allows access via a user `admin` with the password `a
 curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -FnewPwdConfirm=passwordus-novus \
   http://localhost:8080/system/userManager/user/admin.changePassword.html
 ....
+. *_Lighthouse_*
++
+Analyze the performance of the webpages with the https://github.com/GoogleChrome/lighthouse[_Lighthouse_] tool and fix detected problems.
+. *JCR Query Statistics*
++
+Monitor JCR query statistics available in the JMX beans listed below and address the detected problems:
+[upperroman]
+.. `org.apache.jackrabbit.oak: Oak Query Statistics (QueryStat)`
+.. `org.apache.jackrabbit.oak: Oak Query Statistics (Extended) (QueryStats)`
+. *JCR Version Cleanup*
++
+Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
 
 === `rocket-sync.sh`
 
