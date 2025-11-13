@@ -481,12 +481,15 @@ curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -Fn
 . *_Lighthouse_*
 +
 Analyze the performance of the webpages with the https://github.com/GoogleChrome/lighthouse[_Lighthouse_] tool and fix detected problems.
-. *JCR Query Statistics*
-+
-Monitor JCR query statistics available in the JMX beans listed below and address the detected problems:
+. *JCR Query Audit*
 [upperroman]
-.. `org.apache.jackrabbit.oak: Oak Query Statistics (QueryStat)`
-.. `org.apache.jackrabbit.oak: Oak Query Statistics (Extended) (QueryStats)`
+.. Monitor JCR query statistics available in the JMX beans listed below and address the detected problems:
+[lowergreek]
+... `org.apache.jackrabbit.oak: Oak Query Statistics (QueryStat)`
+... `org.apache.jackrabbit.oak: Oak Query Statistics (Extended) (QueryStats)`
+.. To investigate the details of how a given JCR query performs, the following JMX bean can be used:
++
+`eu.ciechanowiec.sling.rocket.commons: QueryInvestigation (JCR)`
 . *JCR Version Cleanup*
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
