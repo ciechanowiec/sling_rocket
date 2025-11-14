@@ -326,11 +326,23 @@ class NodePropertiesTest extends TestEnvironment {
         Optional<NodeProperties> newNodePropertiesLong = nodeProperties.setProperty(
             JcrConstants.JCR_PRIMARYTYPE, 1L
         );
+        Optional<NodeProperties> newNodePropertiesDouble = nodeProperties.setProperty(
+            JcrConstants.JCR_PRIMARYTYPE, 2.0
+        );
+        Optional<NodeProperties> newNodePropertiesBigDecimal = nodeProperties.setProperty(
+            JcrConstants.JCR_PRIMARYTYPE, new BigDecimal("999.99")
+        );
+        Optional<NodeProperties> newNodePropertiesCalendar = nodeProperties.setProperty(
+            JcrConstants.JCR_PRIMARYTYPE, unix1980
+        );
         Map<String, String> finalAll = nodeProperties.all();
         assertAll(
             () -> assertTrue(newNodePropertiesString.isEmpty()),
             () -> assertTrue(newNodePropertiesBoolean.isEmpty()),
             () -> assertTrue(newNodePropertiesLong.isEmpty()),
+            () -> assertTrue(newNodePropertiesDouble.isEmpty()),
+            () -> assertTrue(newNodePropertiesBigDecimal.isEmpty()),
+            () -> assertTrue(newNodePropertiesCalendar.isEmpty()),
             () -> assertEquals(initialAll, finalAll)
         );
     }
