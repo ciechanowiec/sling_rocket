@@ -129,7 +129,7 @@
       "start-order": "30"
     },
     {
-      "id": "eu.ciechanowiec:sling.rocket.commons:${project.version}",
+      "id": "eu.ciechanowiec:sling.rocket.engine:${project.version}",
       "start-order": "30"
     },
     {

@@ -317,12 +317,20 @@ class NodePropertiesTest extends TestEnvironment {
         context.build().resource("/content", Map.of()).commit();
         NodeProperties nodeProperties = new NodeProperties(new TargetJCRPath("/content"), fullResourceAccess);
         Map<String, String> initialAll = nodeProperties.all();
-        Optional<NodeProperties> newNodeProperties = nodeProperties.setProperty(
+        Optional<NodeProperties> newNodePropertiesString = nodeProperties.setProperty(
             JcrConstants.JCR_PRIMARYTYPE, JcrResourceConstants.NT_SLING_ORDERED_FOLDER
+        );
+        Optional<NodeProperties> newNodePropertiesBoolean = nodeProperties.setProperty(
+            JcrConstants.JCR_PRIMARYTYPE, true
+        );
+        Optional<NodeProperties> newNodePropertiesLong = nodeProperties.setProperty(
+            JcrConstants.JCR_PRIMARYTYPE, 1L
         );
         Map<String, String> finalAll = nodeProperties.all();
         assertAll(
-            () -> assertTrue(newNodeProperties.isEmpty()),
+            () -> assertTrue(newNodePropertiesString.isEmpty()),
+            () -> assertTrue(newNodePropertiesBoolean.isEmpty()),
+            () -> assertTrue(newNodePropertiesLong.isEmpty()),
             () -> assertEquals(initialAll, finalAll)
         );
     }

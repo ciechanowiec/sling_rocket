@@ -92,7 +92,7 @@
     },
     "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling-rocket": {
       "user.mapping": [
-        "eu.ciechanowiec.sling.rocket.commons:sling-rocket-subservice=[sling-rocket-admin]"
+        "eu.ciechanowiec.sling.rocket.engine:sling-rocket-subservice=[sling-rocket-admin]"
       ]
     },
     "org.apache.sling.serviceusermapping.impl.ServiceUserMapperImpl.amended~sling.event": {

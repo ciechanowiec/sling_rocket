@@ -489,7 +489,7 @@ Analyze the performance of the webpages with the https://github.com/GoogleChrome
 ... `org.apache.jackrabbit.oak: Oak Query Statistics (Extended) (QueryStats)`
 .. To investigate the details of how a given JCR query performs, the following JMX bean can be used:
 +
-`eu.ciechanowiec.sling.rocket.commons: QueryInvestigation (JCR)`
+`eu.ciechanowiec.sling.rocket.engine: QueryInvestigation (JCR)`
 . *JCR Version Cleanup*
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.

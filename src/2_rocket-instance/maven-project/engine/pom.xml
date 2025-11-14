@@ -10,11 +10,11 @@
         <version>18.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sling.rocket.commons</artifactId>
+    <artifactId>sling.rocket.engine</artifactId>
     <packaging>jar</packaging>
 
-    <name>Sling Rocket - Commons</name>
-    <description>Common utilities used by Sling Rocket</description>
+    <name>Sling Rocket - Engine</name>
+    <description>The core Java code of Sling Rocket</description>
 
     <properties>
         <fail-build-on-static-code-analysis-errors>true</fail-build-on-static-code-analysis-errors>
@@ -317,6 +317,9 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-baseline-maven-plugin</artifactId>
+                <configuration>
+                    <failOnMissing>false</failOnMissing>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

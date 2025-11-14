@@ -29,7 +29,7 @@ import static eu.ciechanowiec.sling.rocket.jcr.query.QueryInvestigationMBean.SER
 @Component(
     service = QueryInvestigationMBean.class,
     immediate = true,
-    property = "jmx.objectname=eu.ciechanowiec.sling.rocket.commons:type=JCR,name=QueryInvestigation"
+    property = "jmx.objectname=eu.ciechanowiec.sling.rocket.engine:type=JCR,name=QueryInvestigation"
 )
 @ServiceDescription(SERVICE_DESCRIPTION)
 @Slf4j
