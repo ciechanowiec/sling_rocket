@@ -12,6 +12,9 @@ echo "### IS_STAGING_ENV: $IS_STAGING_ENV"
 echo "### This domain will be set in Nginx : '$DOMAIN'"
 sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" /etc/nginx/nginx.conf
 
+echo "### Starting cron in the background..."
+cron
+
 echo "### Starting Nginx in the background to initialize it..."
 nginx &
 

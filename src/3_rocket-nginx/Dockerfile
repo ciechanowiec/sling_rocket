@@ -13,7 +13,7 @@ COPY ../3_rocket-nginx/error.html /usr/share/nginx/html/error.html
 COPY ../3_rocket-nginx/renew-ssl-certs.sh /etc/nginx/renew-ssl-certs.sh
 RUN chmod +x /etc/nginx/renew-ssl-certs.sh
 RUN echo "0 0 * * * /etc/nginx/renew-ssl-certs.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/dailyjob
-RUN chmod 0644 /etc/cron.d/dailyjob && crontab /etc/cron.d/dailyjob
+RUN chmod 0644 /etc/cron.d/dailyjob
 
 # Generate self-signed certificates (required for initial nginx start)
 RUN mkdir -p /etc/ssl/private /etc/ssl/certs && \
