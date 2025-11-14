@@ -2633,7 +2633,7 @@
                         <publishingServerId>central</publishingServerId>
                         <autoPublish>true</autoPublish>
                         <waitUntil>published</waitUntil>
-                        <waitMaxTime>3600</waitMaxTime>
+                        <waitMaxTime>7200</waitMaxTime>
                         <excludeArtifacts>
                             <excludeArtifact>sling.rocket.feature</excludeArtifact>
                         </excludeArtifacts>
