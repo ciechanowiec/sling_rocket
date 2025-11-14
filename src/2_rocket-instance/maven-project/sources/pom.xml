@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.ciechanowiec</groupId>
         <artifactId>sling.rocket.parent</artifactId>
-        <version>19.0.0-SNAPSHOT</version>
+        <version>18.0.0</version>
     </parent>
 
     <artifactId>sling.rocket.sources</artifactId>
