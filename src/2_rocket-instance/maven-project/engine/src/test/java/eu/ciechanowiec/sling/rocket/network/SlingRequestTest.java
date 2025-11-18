@@ -51,7 +51,7 @@ class SlingRequestTest extends TestEnvironment {
     @Test
     @SuppressWarnings("MagicNumber")
     void basicTest() {
-        SlingJakartaHttpServletRequest mockedSlingRequest = slingHttpServletRequest();
+        SlingJakartaHttpServletRequest mockedSlingRequest = slingHttpServletRequest(false);
         SlingRequest slingRequest = new SlingRequest(
             mockedSlingRequest, stackTrace(), new UserResourceAccess(
             new AuthIDUser(mockedSlingRequest.getResourceResolver().getUserID()), fullResourceAccess
@@ -82,6 +82,17 @@ class SlingRequestTest extends TestEnvironment {
             () -> assertTrue(stringRepresentation.contains("gorgus")),
             () -> assertTrue(stringRepresentation.contains("valus"))
         );
+    }
+
+    @Test
+    void thirdSelector() {
+        SlingJakartaHttpServletRequest mockedSlingRequest = slingHttpServletRequest(true);
+        SlingRequestWithSelectors slingRequest = new SlingRequest(
+            mockedSlingRequest, stackTrace(), new UserResourceAccess(
+            new AuthIDUser(mockedSlingRequest.getResourceResolver().getUserID()), fullResourceAccess
+        )
+        );
+        assertEquals("thirdus-selectorus", slingRequest.thirdSelector().orElseThrow());
     }
 
     @Test
@@ -144,7 +155,7 @@ class SlingRequestTest extends TestEnvironment {
         MockSlingJakartaHttpServletRequest mockedSlingRequest = context.jakartaRequest();
         SlingRequest slingRequest = new SlingRequest(
             mockedSlingRequest, new UserResourceAccess(
-            new AuthIDUser(slingHttpServletRequest().getResourceResolver().getUserID()), fullResourceAccess
+            new AuthIDUser(slingHttpServletRequest(false).getResourceResolver().getUserID()), fullResourceAccess
         )
         );
         assertAll(
@@ -172,10 +183,14 @@ class SlingRequestTest extends TestEnvironment {
     }
 
     @SuppressWarnings("MagicNumber")
-    private SlingJakartaHttpServletRequest slingHttpServletRequest() {
+    private SlingJakartaHttpServletRequest slingHttpServletRequest(boolean withThirdSelector) {
         MockRequestPathInfo mockRequestPathInfo = new MockRequestPathInfo(context.resourceResolver());
         mockRequestPathInfo.setResourcePath("/content");
-        mockRequestPathInfo.setSelectorString("delete.file-id-00313");
+        if (withThirdSelector) {
+            mockRequestPathInfo.setSelectorString("delete.file-id-00313.thirdus-selectorus");
+        } else {
+            mockRequestPathInfo.setSelectorString("delete.file-id-00313");
+        }
         mockRequestPathInfo.setExtension("mp4");
         mockRequestPathInfo.setSuffix("/music-video.zip");
         MockSlingJakartaHttpServletRequest request = spy(context.jakartaRequest());

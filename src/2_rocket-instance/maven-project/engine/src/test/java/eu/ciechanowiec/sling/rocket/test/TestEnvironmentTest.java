@@ -5,8 +5,9 @@ import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestEnvironmentTest extends TestEnvironment {
 
@@ -24,5 +25,10 @@ class TestEnvironmentTest extends TestEnvironment {
             () -> assertEquals(groupOne, groupTwo),
             () -> assertEquals(userOne, userTwo)
         );
+    }
+
+    @Test
+    void mustThrowOnNonExistingFile() {
+        assertThrows(NoSuchElementException.class, () -> loadResourceIntoFile("non-existing-file.txt"));
     }
 }

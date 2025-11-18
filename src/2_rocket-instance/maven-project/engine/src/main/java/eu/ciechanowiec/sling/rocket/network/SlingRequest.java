@@ -3,7 +3,6 @@ package eu.ciechanowiec.sling.rocket.network;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.FileWithOriginalName;
 import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import lombok.SneakyThrows;
@@ -79,23 +78,21 @@ public class SlingRequest implements WrappedSlingRequest {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "squid:S1612", "PMD.LambdaCanBeMethodReference"})
+    @SuppressWarnings("squid:S1612")
     public Optional<String> secondSelector() {
         List<String> selectors = List.of(wrappedSlingRequest.getRequestPathInfo().getSelectors());
-        return Conditional.conditional(selectors.size() >= NumberUtils.INTEGER_TWO)
-            .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_ONE)))
-            .onFalse(() -> Optional.empty())
-            .get(Optional.class);
+        return Optional.of(selectors)
+            .filter(selectorList -> selectorList.size() >= 2)
+            .map(selectorList -> selectorList.get(NumberUtils.INTEGER_ONE));
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "squid:S1612", "PMD.LambdaCanBeMethodReference"})
+    @SuppressWarnings("squid:S1612")
     public Optional<String> thirdSelector() {
         List<String> selectors = List.of(wrappedSlingRequest.getRequestPathInfo().getSelectors());
-        return Conditional.conditional(selectors.size() >= 3)
-            .onTrue(() -> Optional.of(selectors.get(NumberUtils.INTEGER_TWO)))
-            .onFalse(() -> Optional.empty())
-            .get(Optional.class);
+        return Optional.of(selectors)
+            .filter(selectorList -> selectorList.size() >= 3)
+            .map(selectorList -> selectorList.get(NumberUtils.INTEGER_TWO));
     }
 
     @Override
