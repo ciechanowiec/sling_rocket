@@ -17,6 +17,7 @@
 :linkcss:
 :stylesdir: https://www.ciechanowiec.eu/linux_mantra/
 :stylesheet: adoc-css-style.css
+:!table-caption:
 
 == Overview
 
@@ -435,6 +436,55 @@ mvn clean install
 cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
 ....
+
+=== Web API Exposure
+
+To ensure architectural consistency and leverage the native resource resolution capabilities of Apache Sling, it is recommended that _Sling Rocket_ business applications expose web APIs according to the resource-oriented specification described below.
+
+==== Path and Node Specification
+
+Web APIs should be exposed via a standardized Uniform Resource Identifier (URI) structure that maps directly to a persistent content structure in the JCR.
+
+[upperalpha]
+. *URI Path Schema*
++
+The recommended schema for API paths is:
++
+`/api/<application-name>/<api-name>`
+. *JCR Node Existence*
++
+The URI path should not be virtual. It is advised that the path corresponds to an existing JCR node hierarchy. For a target API identified as `search` within an application `adbco`, the full path `/api/adbco/search` should exist as a sequence of nodes in the JCR.
+. *Resource Type Definition*
++
+The terminal node of the path (the node representing `<api-name>`) should explicitly define a `sling:resourceType` property. This property identifies the resource type used for servlet resolution.
++
+. *Example*
++
+[cols="1,2", options="header"]
+|===
+^|Property ^|Value
+
+|Path
+|`/api/adbco/search`
+
+|Property Name
+|`sling:resourceType`
+
+|Property Value
+|`api/adbco/search`
+|===
+
+==== Servlet Registration
+
+It is recommended to decouple request processing logic from https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-path[specific abstract paths] and https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-resource-type-etc[bind it instead to resource types].
+
+[upperalpha]
+. *Resource Type Binding*
++
+Servlets should be registered using the OSGi DS component property https://sling.apache.org/documentation/the-sling-engine/servlets.html#servlet-registration[`sling.servlet.resourceTypes`]. The value should match the https://sling.apache.org/documentation/the-sling-engine/resources.html#resource-types[`sling:resourceType`] property defined on the target JCR node.
+. *Path Binding*
++
+Registering servlets via absolute paths (https://sling.apache.org/documentation/the-sling-engine/servlets.html#servlet-registration[`sling.servlet.paths`]) https://sling.apache.org/documentation/the-sling-engine/servlets.html#caveats-when-binding-servlets-by-path[is discouraged] for business APIs. Adhering to resource type binding ensures that the Apache Sling Resource Resolver remains the central authority for mapping requests to resources.
 
 === Useful Links
 
