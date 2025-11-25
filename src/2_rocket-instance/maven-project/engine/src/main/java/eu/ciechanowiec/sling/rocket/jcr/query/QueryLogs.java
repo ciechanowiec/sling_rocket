@@ -66,7 +66,9 @@ public class QueryLogs {
             Query query = queryManager.createQuery(queryToBeLogged, Query.JCR_SQL2);
             query.execute().getRows().hasNext(); // Consume result to trigger all logs
             String interceptionKey = queryLogsInterceptionSwitch.interceptionKey();
-            return queryLogsInterception.savedILoggingEvents(interceptionKey);
+            List<String> logs = queryLogsInterception.savedILoggingEvents(interceptionKey);
+            log.trace("For query '{}' these logs extracted: {}", queryToBeLogged, logs);
+            return logs;
         }
     }
 

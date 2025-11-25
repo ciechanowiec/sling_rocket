@@ -30,7 +30,14 @@ class QueryInvestigationTest extends TestEnvironment {
                 "cost for reference is Infinity\n",
                 "cost for property is Infinity\n",
                 "cost for nodeType is 14.0\n",
-                "cost for traverse is 1.0E7\n"
+                "cost for traverse is 1.0E7\n",
+                """
+                    cost for [/oak:index/clientFullName] of type (lucene-property) with plan [lucene:clientFullName
+                        indexDefinition: /oak:index/clientFullName
+                        estimatedEntries: 16356
+                        luceneQuery: *:*
+                    ] is 9357.00
+                    """
             )
         );
         context.registerInjectActivateService(queryLogsInterception);
@@ -54,6 +61,7 @@ class QueryInvestigationTest extends TestEnvironment {
 
             QUERY COST PER INDEX:
              - Query cost for 'org.apache.jackrabbit.oak.plugins.index.nodetype.NodeTypeIndex' [nodeType]: 14.0
+             - Query cost for 'org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndex' [lucene-property]: 9357.00
              - Query cost for 'org.apache.jackrabbit.oak.query.index.TraversingIndex' [traverse]: 1.0E7
              - Query cost for 'org.apache.jackrabbit.oak.plugins.index.property.PropertyIndex' [property]: Infinity
              - Query cost for 'org.apache.jackrabbit.oak.plugins.index.reference.ReferenceIndex' [reference]: Infinity

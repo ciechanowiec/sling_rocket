@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.jcr.query;
 import eu.ciechanowiec.sling.rocket.jcr.index.IndexDescriptor;
 import eu.ciechanowiec.sling.rocket.jcr.index.IndexDescriptorWithQueryCost;
 import eu.ciechanowiec.sling.rocket.jcr.index.IndexDescriptors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -13,23 +14,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 class QueryCostFromQueryLogs {
 
-    private final Pattern costLogPattern;
+    private final List<Pattern> costLogPatterns;
     private final QueryLogs queryLogs;
 
     QueryCostFromQueryLogs(QueryLogs queryLogs) {
-        // Pattern from `org.apache.jackrabbit.oak.query.QueryImpl`:
-        this.costLogPattern = Pattern.compile("cost for (.*?) is (.*)\n");
+        // Patterns from `org.apache.jackrabbit.oak.query.QueryImpl`:
+        this.costLogPatterns = List.of(
+            Pattern.compile("cost for (.*?) is (.*)\n"),
+            Pattern.compile("cost for \\[/.*?] of type \\((.*?)\\) with plan \\[.*?] is (.*)\n", Pattern.DOTALL)
+        );
         this.queryLogs = queryLogs;
     }
 
     List<IndexDescriptorWithQueryCost> queryCostPerIndex(String queryToBeAssessed) {
         return queryLogs.logsForQuery(queryToBeAssessed)
             .stream()
-            .map(costLogPattern::matcher)
-            .filter(Matcher::matches)
-            .collect(
+            .flatMap(
+                logLine -> costLogPatterns.stream()
+                    .map(pattern -> pattern.matcher(logLine))
+                    .filter(Matcher::matches)
+            ).collect(
                 Collectors.toMap(
                     matcher -> matchingIndexDescriptor(matcher.group(1).trim()),
                     matcher -> matcher.group(2).trim(),
@@ -48,7 +55,7 @@ class QueryCostFromQueryLogs {
     }
 
     private IndexDescriptor matchingIndexDescriptor(String searchedIndexName) {
-        return new IndexDescriptors().all()
+        IndexDescriptor indexDescriptor = new IndexDescriptors().all()
             .stream()
             .filter(descriptor -> descriptor.possibleNames().contains(searchedIndexName))
             .findFirst()
@@ -71,6 +78,8 @@ class QueryCostFromQueryLogs {
                     }
                 }
             );
+        log.trace("'{}' matched with {}", searchedIndexName, indexDescriptor);
+        return indexDescriptor;
     }
 
     @SuppressWarnings({"ReturnCount", "PMD.CognitiveComplexity"})
