@@ -71,15 +71,19 @@ class QueryInvestigationTest extends TestEnvironment {
               PAGE SIZE: 20
               FIRST PAGE RESULTS:
               - /content/someClient
-              TOTAL NUMBER OF RESULTS:       1""";
+              1. TOTAL NUMBER OF RESULTS:       1""";
         String queryInvestigationResult = queryInvestigation.investigate(query).toString();
         assertAll(
             () -> assertTrue(queryInvestigationResult.contains(expectedQueryInvestigationPart)),
-            () -> assertTrue(queryInvestigationResult.contains("QUERY EXECUTION TIME:")),
-            () -> assertTrue(queryInvestigationResult.contains("GET NODES TIME:")),
-            () -> assertTrue(queryInvestigationResult.contains("READ NODES IN FIRST PAGE TIME:")),
-            () -> assertTrue(queryInvestigationResult.contains("READ ALL NODES TIME:")),
-            () -> assertTrue(queryInvestigationResult.contains("TOTAL TIME:"))
+            () -> assertTrue(queryInvestigationResult.contains("2. QUERY EXECUTION TIME:          ")),
+            () -> assertTrue(queryInvestigationResult.contains("[Query#execute()]")),
+            () -> assertTrue(queryInvestigationResult.contains("3. GET NODES TIME:                ")),
+            () -> assertTrue(queryInvestigationResult.contains("[QueryResult#getNodes()]")),
+            () -> assertTrue(queryInvestigationResult.contains("4. READ NODES IN FIRST PAGE TIME: ")),
+            () -> assertTrue(queryInvestigationResult.contains("[NodeIterator#next() * 20]")),
+            () -> assertTrue(queryInvestigationResult.contains("5. READ ALL NODES TIME:           ")),
+            () -> assertTrue(queryInvestigationResult.contains("[NodeIterator#next() * 1]")),
+            () -> assertTrue(queryInvestigationResult.contains("6. TOTAL TIME:                    "))
         );
     }
 }

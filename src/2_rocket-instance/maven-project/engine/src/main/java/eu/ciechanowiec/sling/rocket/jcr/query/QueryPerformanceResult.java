@@ -47,12 +47,16 @@ class QueryPerformanceResult {
               PAGE SIZE: %d
               FIRST PAGE RESULTS:
             %s
-              TOTAL NUMBER OF RESULTS:       %d
-              QUERY EXECUTION TIME:          %d ms
-              GET NODES TIME:                %d ms
-              READ NODES IN FIRST PAGE TIME: %d ms
-              READ ALL NODES TIME:           %d ms
-              TOTAL TIME:                    %d ms
+              1. TOTAL NUMBER OF RESULTS:       %d
+              2. QUERY EXECUTION TIME:          %d ms
+                 [Query#execute()]
+              3. GET NODES TIME:                %d ms
+                 [QueryResult#getNodes()]
+              4. READ NODES IN FIRST PAGE TIME: %d ms
+                 [NodeIterator#next() * %d]
+              5. READ ALL NODES TIME:           %d ms
+                 [NodeIterator#next() * %d]
+              6. TOTAL TIME:                    %d ms
             """.formatted(
             query,
             pageSize,
@@ -61,7 +65,9 @@ class QueryPerformanceResult {
             queryExecutionTimeMS,
             getNodesTimeMS,
             readNodesInFirstPageTimeMS,
+            pageSize,
             readAllNodesTimeMS,
+            totalNumberOfResults,
             totalTimeMS
         );
     }
