@@ -25,7 +25,7 @@ import java.util.Map;
  * </ol>
  */
 @FunctionalInterface
-@SuppressWarnings({"WeakerAccess", "InterfaceNeverImplemented", "InterfaceIsType", "PMD.ConstantsInInterface"})
+@SuppressWarnings({"WeakerAccess", "InterfaceIsType"})
 public interface SchedulableJobConsumer extends JobConsumer {
 
     /**
