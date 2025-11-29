@@ -3,6 +3,7 @@ package eu.ciechanowiec.sling.rocket.jcr;
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
@@ -114,6 +115,28 @@ public class NodeProperties implements WithJCRPath {
         resourceResolverSupplier = () -> Optional.ofNullable(resourceResolver);
         resourceAccessSupplier = Optional::empty;
         log.trace("Initialized {}", this);
+    }
+
+    /**
+     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver} from
+     * the passed {@link Resource}.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
+     * calling context (e.g., Sling). The {@link ResourceResolver} from the passed {@link Resource} is used for all
+     * subsequent {@link Repository} operations within this object. Consequently, this object will <strong>not</strong>
+     * assume ownership of the {@link ResourceResolver} and will not attempt to close it.
+     * <p>
+     * The object constructed with this constructor offers superior performance compared to
+     * {@link NodeProperties#NodeProperties(JCRPath, ResourceAccess)} and
+     * {@link NodeProperties#NodeProperties(WithJCRPath, ResourceAccess)} as it avoids the need to repeatedly acquire
+     * and authenticate a new {@link ResourceResolver} for each {@link Repository} operation. It is therefore the
+     * preferred choice in performance-sensitive code sections where a {@link ResourceResolver} is already available.
+     *
+     * @param resource {@link Resource} that represents the underlying existing {@link Node} and whose
+     *                 {@link ResourceResolver} will be used by the constructed object to acquire access to resources
+     */
+    public NodeProperties(Resource resource) {
+        this(new TargetJCRPath(resource.getPath()), resource.getResourceResolver());
     }
 
     /**

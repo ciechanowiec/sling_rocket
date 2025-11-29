@@ -9,6 +9,7 @@ import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -60,6 +61,7 @@ class NodePropertiesTest extends TestEnvironment {
     }
 
     @Test
+    @SuppressWarnings("ExecutableStatementCount")
     void mustSetPropertyGeneral() {
         context.build().resource(
             "/contentRA",
@@ -102,8 +104,9 @@ class NodePropertiesTest extends TestEnvironment {
             "jcr:primaryType", "nt:unstructured"
         );
         ResourceResolver resourceResolver = context.resourceResolver();
+        Resource resource = Optional.ofNullable(resourceResolver.getResource("/contentRR")).orElseThrow();
         NodeProperties nodePropertiesRA = new NodeProperties(new TargetJCRPath("/contentRA"), fullResourceAccess);
-        NodeProperties nodePropertiesRR = new NodeProperties(new TargetJCRPath("/contentRR"), resourceResolver);
+        NodeProperties nodePropertiesRR = new NodeProperties(resource);
         Map<String, String> firstActualMapRA = nodePropertiesRA.all();
         Map<String, String> firstActualMapRR = nodePropertiesRR.all();
         assertEquals(initialMapRA, firstActualMapRA);

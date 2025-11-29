@@ -2,7 +2,7 @@
  * {@link javax.jcr.Repository} utilities.
  */
 @Export
-@Version("15.1.0")
+@Version("15.2.0")
 package eu.ciechanowiec.sling.rocket.jcr;
 
 import org.osgi.annotation.bundle.Export;
