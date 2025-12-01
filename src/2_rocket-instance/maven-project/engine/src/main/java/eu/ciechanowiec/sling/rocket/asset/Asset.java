@@ -1,6 +1,6 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import org.apache.jackrabbit.JcrConstants;
 
@@ -29,7 +29,7 @@ import java.util.List;
  * </ol>
  */
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-public interface Asset extends WithJCRPath, Referencable {
+public interface Asset extends WithJCRPath, Referenceable {
 
     /**
      * The type name of a {@link Node} that contains a binary file and related metadata.

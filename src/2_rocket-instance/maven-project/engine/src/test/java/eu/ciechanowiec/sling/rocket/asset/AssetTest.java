@@ -6,6 +6,7 @@ import eu.ciechanowiec.sling.rocket.jcr.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
@@ -407,7 +408,7 @@ class AssetTest extends TestEnvironment {
             () -> assertEquals(7, assetsRepository.all().size()),
             () -> assertEquals(7, assetsRepository.find(new TargetJCRPath("/")).size()),
             () -> assertEquals(4, assetsRepository.find(new TargetJCRPath("/content/separate-path")).size()),
-            () -> assertTrue(assetsRepository.find((Referencable) () -> "non-existent-uuid").isEmpty())
+            () -> assertTrue(assetsRepository.find((Referenceable) () -> "non-existent-uuid").isEmpty())
         );
     }
 

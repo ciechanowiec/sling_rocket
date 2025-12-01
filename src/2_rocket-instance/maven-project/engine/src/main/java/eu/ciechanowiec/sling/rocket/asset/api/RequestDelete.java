@@ -3,7 +3,7 @@ package eu.ciechanowiec.sling.rocket.asset.api;
 import eu.ciechanowiec.sling.rocket.asset.Asset;
 import eu.ciechanowiec.sling.rocket.asset.AssetsRepository;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.network.SlingRequest;
 import eu.ciechanowiec.sling.rocket.network.SlingRequestWithDecomposition;
 import lombok.ToString;
@@ -26,7 +26,7 @@ class RequestDelete implements SlingRequestWithDecomposition {
                 .flatMap(
                     jcrUUID -> new AssetsRepository(
                         slingRequest.userResourceAccess()
-                    ).find((Referencable) () -> jcrUUID)
+                    ).find((Referenceable) () -> jcrUUID)
                 )
                 .filter(
                     asset -> {

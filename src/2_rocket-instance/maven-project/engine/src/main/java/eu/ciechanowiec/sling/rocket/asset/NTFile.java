@@ -5,6 +5,8 @@ import eu.ciechanowiec.sling.rocket.jcr.*;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableSimple;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import jakarta.ws.rs.core.MediaType;
 import lombok.ToString;
@@ -100,8 +102,10 @@ class NTFile implements Asset {
     @Override
     public String jcrUUID() {
         JCRPath jcrContentChildJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath), JcrConstants.JCR_CONTENT);
-        Referencable jcrContentChildReferencable = new BasicReferencable(() -> jcrContentChildJCRPath, resourceAccess);
-        return jcrContentChildReferencable.jcrUUID();
+        Referenceable jcrContentChildReferenceable = new ReferenceableSimple(
+            () -> jcrContentChildJCRPath, resourceAccess
+        );
+        return jcrContentChildReferenceable.jcrUUID();
     }
 
     @Override
@@ -110,7 +114,7 @@ class NTFile implements Asset {
             return true;
         }
         if (comparedObject instanceof Asset) {
-            Referencable comparedAsset = (Referencable) comparedObject;
+            Referenceable comparedAsset = (Referenceable) comparedObject;
             return jcrUUID().equals(comparedAsset.jcrUUID());
         } else {
             return false;

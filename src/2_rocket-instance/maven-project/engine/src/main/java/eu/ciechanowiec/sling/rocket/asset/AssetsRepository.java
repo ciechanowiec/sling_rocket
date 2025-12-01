@@ -2,9 +2,9 @@ package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.ToString;
@@ -40,18 +40,18 @@ public class AssetsRepository {
     }
 
     /**
-     * Finds an {@link Asset} for the given {@link Referencable}.
+     * Finds an {@link Asset} for the given {@link Referenceable}.
      *
-     * @param referencable {@link Referencable} pointing to the searched {@link Asset}
+     * @param referenceable {@link Referenceable} pointing to the searched {@link Asset}
      * @return {@link Optional} containing the found {@link Asset}; empty {@link Optional} is returned if no related
      * {@link Asset} was found
      */
     @SuppressWarnings("WeakerAccess")
-    public Optional<Asset> find(Referencable referencable) {
-        String query = buildQuery(referencable);
+    public Optional<Asset> find(Referenceable referenceable) {
+        String query = buildQuery(referenceable);
         log.trace(
             "{} searching for Asset for {}. UUID: '{}'. Query: {}",
-            this, referencable, referencable.jcrUUID(), query
+            this, referenceable, referenceable.jcrUUID(), query
         );
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             Optional<Asset> assetNullable = IteratorUtils.toList(resourceResolver.findResources(query, Query.JCR_SQL2))
@@ -65,7 +65,7 @@ public class AssetsRepository {
                     asset -> {
                         log.trace(
                             "{} found Asset for {}. UUID: '{}': {}",
-                            this, referencable, referencable.jcrUUID(), asset
+                            this, referenceable, referenceable.jcrUUID(), asset
                         );
                         return asset;
                     }
@@ -73,10 +73,10 @@ public class AssetsRepository {
             assetNullable.ifPresentOrElse(
                 asset -> log.debug(
                     "For {} (UUID: '{}') this Asset was found: {} by {}",
-                    referencable, referencable.jcrUUID(), asset, this
+                    referenceable, referenceable.jcrUUID(), asset, this
                 ),
                 () -> log.debug(
-                    "No Asset found for {} by {}. UUID: '{}'", referencable, this, referencable.jcrUUID()
+                    "No Asset found for {} by {}. UUID: '{}'", referenceable, this, referenceable.jcrUUID()
                 )
             );
             return assetNullable;
@@ -159,7 +159,7 @@ public class AssetsRepository {
         return find(new TargetJCRPath("/"));
     }
 
-    private String buildQuery(Referencable referencable) {
+    private String buildQuery(Referenceable referenceable) {
         StringJoiner nodeTypesQueryPart = new StringJoiner(" OR ");
         Asset.SUPPORTED_PRIMARY_TYPES.forEach(
             primaryType -> nodeTypesQueryPart.add(
@@ -171,10 +171,10 @@ public class AssetsRepository {
                 + "WHERE node.[%s] = '%s' "
                 + "AND (%s)",
             JcrConstants.NT_BASE,
-            JcrConstants.JCR_UUID, referencable.jcrUUID(),
+            JcrConstants.JCR_UUID, referenceable.jcrUUID(),
             nodeTypesQueryPart
         );
-        log.trace("For {} this query was built by {}: {}", referencable, this, query);
+        log.trace("For {} this query was built by {}: {}", referenceable, this, query);
         return query;
     }
 }

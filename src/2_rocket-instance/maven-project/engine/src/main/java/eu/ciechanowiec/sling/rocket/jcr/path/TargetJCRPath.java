@@ -53,6 +53,18 @@ public class TargetJCRPath implements JCRPath {
     }
 
     /**
+     * Constructs an instance of this class that will represent a JCR path to the specified {@link Node}.
+     *
+     * @param node {@link Node} whose JCR path will be represented by the constructed object
+     */
+    @SuppressWarnings("TypeMayBeWeakened")
+    @SneakyThrows
+    public TargetJCRPath(Node node) {
+        this.rawPath = node.getPath();
+        log.trace("Initialized {}", this);
+    }
+
+    /**
      * Constructs an instance of this class using a parent JCR path and a child node name.
      *
      * @param parentJCRPath JCR path that points to the direct parent of an {@link Item} at the JCR path to be
@@ -62,7 +74,7 @@ public class TargetJCRPath implements JCRPath {
     @SuppressWarnings("TypeMayBeWeakened")
     public TargetJCRPath(ParentJCRPath parentJCRPath, String childJCRName) {
         String parentJCRPathAsString = parentJCRPath.get();
-        this.rawPath = String.format("%s/%s", parentJCRPathAsString, childJCRName);
+        this.rawPath = "%s/%s".formatted(parentJCRPathAsString, childJCRName);
         log.trace("Initialized {}", this);
     }
 
@@ -77,7 +89,7 @@ public class TargetJCRPath implements JCRPath {
     public TargetJCRPath(ParentJCRPath parentJCRPath, UUID childJCRName) {
         String parentJCRPathAsString = parentJCRPath.get();
         String childJCRNameAsString = childJCRName.toString();
-        this.rawPath = String.format("%s/%s", parentJCRPathAsString, childJCRNameAsString);
+        this.rawPath = "%s/%s".formatted(parentJCRPathAsString, childJCRNameAsString);
         log.trace("Initialized {}", this);
     }
 
@@ -85,7 +97,7 @@ public class TargetJCRPath implements JCRPath {
     public String get() {
         boolean isValidPath = PathUtils.isValid(rawPath);
         if (!isValidPath) {
-            String message = String.format("Invalid JCR path: '%s'", rawPath);
+            String message = "Invalid JCR path: '%s'".formatted(rawPath);
             throw new InvalidJCRPathException(message);
         }
         return rawPath;

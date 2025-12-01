@@ -18,7 +18,7 @@ class ConditionalPropertyTest extends TestEnvironment {
     }
 
     @Test
-    void mustThrowNotReferencableException() {
+    void mustThrowNotReferenceableException() {
         context.build().resource("/content").commit();
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             Resource content = Optional.ofNullable(resourceResolver.getResource("/content")).orElseThrow();

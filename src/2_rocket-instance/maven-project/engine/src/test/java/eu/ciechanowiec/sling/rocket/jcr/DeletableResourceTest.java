@@ -5,6 +5,7 @@ import eu.ciechanowiec.sling.rocket.commons.UserResourceAccess;
 import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
@@ -39,7 +40,7 @@ class DeletableResourceTest extends TestEnvironment {
                 }
             }),
             () -> assertTrue(assetsRepository.find(asset).isPresent()),
-            () -> assertTrue(assetsRepository.find((Referencable) () -> jcrUUID).isPresent())
+            () -> assertTrue(assetsRepository.find((Referenceable) () -> jcrUUID).isPresent())
         );
         Optional<JCRPath> firstDeletedJCR = new DeletableResource(asset, fullResourceAccess).delete();
         Optional<JCRPath> notDeletedJCROne = new DeletableResource(asset, fullResourceAccess).delete();
@@ -53,7 +54,7 @@ class DeletableResourceTest extends TestEnvironment {
                     return Optional.ofNullable(resourceResolver.getResource("/content/jpg")).isEmpty();
                 }
             }),
-            () -> assertTrue(assetsRepository.find((Referencable) () -> jcrUUID).isEmpty()),
+            () -> assertTrue(assetsRepository.find((Referenceable) () -> jcrUUID).isEmpty()),
             () -> assertEquals("/content/jpg", firstDeletedJCR.orElseThrow().get()),
             () -> assertTrue(notDeletedJCROne.isEmpty()),
             () -> assertTrue(notDeletedJCRTwo.isEmpty())
@@ -81,7 +82,7 @@ class DeletableResourceTest extends TestEnvironment {
                 }
             }),
             () -> assertTrue(assetsRepository.find(asset).isPresent()),
-            () -> assertTrue(assetsRepository.find((Referencable) () -> jcrUUID).isPresent()),
+            () -> assertTrue(assetsRepository.find((Referenceable) () -> jcrUUID).isPresent()),
             () -> assertTrue(new DeletableResource(asset, userResourceAccess).delete().isEmpty()),
             () -> assertEquals(1, assetsRepository.all().size())
         );
@@ -99,7 +100,7 @@ class DeletableResourceTest extends TestEnvironment {
                     return Optional.ofNullable(resourceResolver.getResource("/content/jpg")).isEmpty();
                 }
             }),
-            () -> assertTrue(assetsRepository.find((Referencable) () -> jcrUUID).isEmpty()),
+            () -> assertTrue(assetsRepository.find((Referenceable) () -> jcrUUID).isEmpty()),
             () -> assertEquals("/content/jpg", firstDeletedJCR.orElseThrow().get()),
             () -> assertTrue(notDeletedJCROne.isEmpty())
         );

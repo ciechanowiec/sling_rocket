@@ -17,10 +17,6 @@
       "start-order": "15"
     },
     {
-      "id": "org.apache.sling:org.apache.sling.jcr.registration:${org.apache.sling.jcr.registration.version}",
-      "start-order": "15"
-    },
-    {
       "id": "org.apache.sling:org.apache.sling.jcr.webdav:${org.apache.sling.jcr.webdav.version}",
       "start-order": "15"
     },

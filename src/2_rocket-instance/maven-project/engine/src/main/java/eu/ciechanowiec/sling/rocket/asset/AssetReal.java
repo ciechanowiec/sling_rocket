@@ -1,9 +1,9 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableSimple;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
@@ -89,8 +89,8 @@ class AssetReal implements Asset {
 
     @Override
     public String jcrUUID() {
-        Referencable referencable = new BasicReferencable(this, resourceAccess);
-        return referencable.jcrUUID();
+        Referenceable referenceable = new ReferenceableSimple(this, resourceAccess);
+        return referenceable.jcrUUID();
     }
 
     @Override
@@ -99,7 +99,7 @@ class AssetReal implements Asset {
             return true;
         }
         if (comparedObject instanceof Asset) {
-            Referencable comparedAsset = (Referencable) comparedObject;
+            Referenceable comparedAsset = (Referenceable) comparedObject;
             return jcrUUID().equals(comparedAsset.jcrUUID());
         } else {
             return false;

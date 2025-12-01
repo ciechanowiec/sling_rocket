@@ -1,9 +1,9 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.BasicReferencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableSimple;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.Referencable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
-public class Assets implements WithJCRPath, Referencable {
+public class Assets implements WithJCRPath, Referenceable {
 
     /**
      * The type name of a {@link Node} that holds as direct children other {@link Node}-s of {@link Asset#NT_ASSET_REAL}
@@ -76,8 +76,8 @@ public class Assets implements WithJCRPath, Referencable {
 
     @Override
     public String jcrUUID() {
-        Referencable referencable = new BasicReferencable(this, resourceAccess);
-        return referencable.jcrUUID();
+        Referenceable referenceable = new ReferenceableSimple(this, resourceAccess);
+        return referenceable.jcrUUID();
     }
 
     private void assertPrimaryType() {
