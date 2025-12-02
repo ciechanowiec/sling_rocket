@@ -543,6 +543,18 @@ Analyze the performance of the webpages with the https://github.com/GoogleChrome
 . *JCR Version Cleanup*
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
+. *Disable Unsafe Extensions*
++
+Depending on the needs of the business application, consider disabling unsafe rendering extensions, i.e. https://sling.apache.org/documentation/bundles/rendering-content-default-get-servlets.html[`json`, `xml` and `txt` extensions of `DefaultGetServlet`]. Among others, this can be achieved via creating a `org.apache.sling.servlets.get.DefaultGetServlet.cfg.json` OSGi configuration with the following content:
++
+[source,json]
+----
+{
+  "enable.json": false,
+  "enable.txt": false,
+  "enable.xml": false
+}
+----
 
 === `rocket-sync.sh`
 
