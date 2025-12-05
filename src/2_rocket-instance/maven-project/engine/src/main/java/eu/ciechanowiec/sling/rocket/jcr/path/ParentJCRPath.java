@@ -1,6 +1,5 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.jcr.Item;
@@ -10,7 +9,6 @@ import javax.jcr.Repository;
  * Represents a parent path of the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon
  * which some action is to be performed.
  */
-@ToString
 @Slf4j
 public class ParentJCRPath implements JCRPath {
 
@@ -58,5 +56,10 @@ public class ParentJCRPath implements JCRPath {
     @Override
     public int hashCode() {
         return source.get().hashCode() * 31;
+    }
+
+    @Override
+    public String toString() {
+        return source.get();
     }
 }

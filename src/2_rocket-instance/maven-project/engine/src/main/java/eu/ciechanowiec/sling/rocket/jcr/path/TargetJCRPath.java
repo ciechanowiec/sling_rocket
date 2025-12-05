@@ -1,7 +1,6 @@
 package eu.ciechanowiec.sling.rocket.jcr.path;
 
 import lombok.SneakyThrows;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.oak.commons.PathUtils;
 import org.apache.sling.api.resource.Resource;
@@ -16,7 +15,6 @@ import java.util.UUID;
  * Represents a path to the persisted or hypothetically persisted {@link Item} in the {@link Repository}, upon which
  * some action is to be performed.
  */
-@ToString
 @Slf4j
 @SuppressWarnings("squid:S1192")
 public class TargetJCRPath implements JCRPath {
@@ -119,5 +117,10 @@ public class TargetJCRPath implements JCRPath {
     @Override
     public int hashCode() {
         return rawPath.hashCode() * 31;
+    }
+
+    @Override
+    public String toString() {
+        return rawPath;
     }
 }
