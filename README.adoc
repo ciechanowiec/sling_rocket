@@ -450,10 +450,10 @@ Web APIs should be exposed via a standardized Uniform Resource Identifier (URI) 
 +
 The recommended schema for API paths is:
 +
-`/api/<application-name>/<api-name>`
+`/api/<domain-name>/<api-name>`
 . *JCR Node Existence*
 +
-The URI path should not be virtual. It is advised that the path corresponds to an existing JCR node hierarchy. For a target API identified as `search` within an application `adbco`, the full path `/api/adbco/search` should exist as a sequence of nodes in the JCR.
+The URI path should not be virtual. It is advised that the path corresponds to an existing JCR node hierarchy. For a target API identified as `search` within a domain named `adbco`, the full path `/api/adbco/search` should exist as a sequence of nodes in the JCR.
 . *Resource Type Definition*
 +
 The terminal node of the path (the node representing `<api-name>`) should explicitly define a `sling:resourceType` property. This property identifies the resource type used for servlet resolution.
