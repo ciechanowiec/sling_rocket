@@ -401,7 +401,7 @@
         <!-- ====================================================================== -->
         <!-- PLUGINS                                                                -->
         <!-- ====================================================================== -->
-        <wcmio-content-package-maven-plugin.version>2.4.0</wcmio-content-package-maven-plugin.version>
+        <wcmio-content-package-maven-plugin.version>2.4.2</wcmio-content-package-maven-plugin.version>
         <sling-maven-plugin.version>3.0.4</sling-maven-plugin.version>
         <filevault-package-maven-plugin.version>1.4.0</filevault-package-maven-plugin.version>
         <sling.nodetypes.version>12.0.0</sling.nodetypes.version>
