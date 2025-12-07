@@ -491,8 +491,8 @@ Registering servlets via absolute paths (https://sling.apache.org/documentation/
 === JCR Structure
 [upperalpha]
 . It is recommended that business applications deployed to an SR Instance follow the JCR structure described in this section.
-. The JCR tree recommended in this section is not exhaustive and only covers the foundational nodes.
-
+. The JCR tree recommended in this section is not exhaustive and only covers the foundational nodes:
++
 [source,bash]
 ....
 /
@@ -531,6 +531,27 @@ Registering servlets via absolute paths (https://sling.apache.org/documentation/
 <15> Transient and system-generated data, such as logs, audit trails, and temporary files.
 <16> Location where https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html[Sling Jobs are persisted].
 <17> Location where https://sling.apache.org/documentation/bundles/content-package-installer-factory.html[JCR Package Manager] stores packages.
+
+. The following https://sling.apache.org/documentation/bundles/repository-initialization.html[repository initialization script] defines the recommended ACL model for business users:
++
+[source,txt]
+----
+create group acme-business-users with path /home/groups/acme-groups
+
+set ACL for acme-business-users
+    remove * on /
+    deny jcr:all on /
+
+    remove * on /api/acme
+    allow jcr:read on /api/acme
+
+    remove * on /apps/acme/application
+    allow jcr:read on /apps/acme/application
+
+    remove * on /content/acme
+    allow jcr:read on /content/acme
+end
+----
 
 === Useful Links
 
