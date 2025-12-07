@@ -437,6 +437,7 @@ cd "$PROJECT_REPO_ROOT"/src
 docker compose --progress=plain build
 ....
 
+[[web-api-exposure]]
 === Web API Exposure
 
 To ensure architectural consistency and leverage the native resource resolution capabilities of Apache Sling, it is recommended that _Sling Rocket_ business applications expose web APIs according to the resource-oriented specification described below.
@@ -485,6 +486,51 @@ Servlets should be registered using the OSGi DS component property https://sling
 . *Path Binding*
 +
 Registering servlets via absolute paths (https://sling.apache.org/documentation/the-sling-engine/servlets.html#servlet-registration[`sling.servlet.paths`]) https://sling.apache.org/documentation/the-sling-engine/servlets.html#caveats-when-binding-servlets-by-path[is discouraged] for business APIs. Adhering to resource type binding ensures that the Apache Sling Resource Resolver remains the central authority for mapping requests to resources.
+
+
+=== JCR Structure
+[upperalpha]
+. It is recommended that business applications deployed to an SR Instance follow the JCR structure described in this section.
+. The JCR tree recommended in this section is not exhaustive and only covers the foundational nodes.
+
+[source,bash]
+....
+/
+├── api <1>
+│   └── <domain-name> <2>
+├── apps <3>
+│   └── <domain-name> <4>
+│       ├── application <5>
+│       ├── install <6>
+│       └── osgiconfig <7>
+├── content <8>
+│   └── <domain-name> <9>
+├── home <10>
+│   ├── users <11>
+│   └── groups <12>
+├── libs <13>
+├── oak:index <14>
+└── var <15>
+    ├── eventing <16>
+    └── packages <17>
+....
+<1> Root node for exposing xref:#web-api-exposure[web APIs].
+<2> Node for exposing xref:#web-api-exposure[web APIs] for a business application.
+<3> Technical static resources required specifically for a given framework deployment.
+<4> Technical static resources required specifically for a given business application deployment.
+<5> Business application resources required for web rendering (e.g., HTL scripts, JavaScript scripts, icons, fonts).
+<6> Business application artifacts to be https://sling.apache.org/documentation/bundles/jcr-installer-provider.html#configuration-and-scanning[installed automatically] upon deployment.
+<7> OSGi configurations (`.config`, `.cfg.json`) to be https://sling.apache.org/documentation/bundles/configuration-installer-factory.html[installed automatically] upon deployment.
+<8> User-generated mutable content.
+<9> User-generated mutable content for the business application.
+<10> Root node for the storage of security principals (users and groups).
+<11> Storage location for https://github.com/apache/jackrabbit-oak/blob/trunk/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserConfigurationImpl.java[individual user nodes].
+<12> Storage location for https://github.com/apache/jackrabbit-oak/blob/trunk/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserConfigurationImpl.java[individual group nodes].
+<13> Technical static resources required generally for every framework deployment.
+<14> https://jackrabbit.apache.org/oak/docs/query/indexing.html#index-definitions[Index definitions].
+<15> Transient and system-generated data, such as logs, audit trails, and temporary files.
+<16> Location where https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html[Sling Jobs are persisted].
+<17> Location where https://sling.apache.org/documentation/bundles/content-package-installer-factory.html[JCR Package Manager] stores packages.
 
 === Useful Links
 

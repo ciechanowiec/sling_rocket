@@ -166,7 +166,7 @@
         "sling-package-install"
       ],
       "packageRoots": [
-        "/etc/packages"
+        "/var/packages"
       ],
       "authIdsForHookExecution": [
         "sling-package-install"

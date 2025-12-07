@@ -57,10 +57,6 @@ set principal ACL for sling-jcr-usermanager
 end
 # SLING-9809 - Define service user and ACLs for jcr.usermanager >>>
 
-# SLING-10597 - Simplify setup of resource resolution mappings
-create path (sling:Folder) /etc/map
-create path (sling:Folder) /etc/map/http
-
 # eventing
 create service user sling-event with path system/sling
 create path (sling:Folder) /var
