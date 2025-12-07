@@ -171,7 +171,12 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
                     return actualHostedDomain.matches(expectedHostedDomainRegex);
                 }
             ).map(GoogleIdToken.Payload::getEmail)
-            .map(
+            .filter(
+                email -> {
+                    String expectedEmailRegex = config.get().expected$_$email_regex();
+                    return email.matches(expectedEmailRegex);
+                }
+            ).map(
                 email -> {
                     log.trace(
                         "Will create {} of type {} for '{}'", AuthenticationInfo.class.getSimpleName(), AUTH_TYPE, email

@@ -65,6 +65,28 @@ public @interface GoogleAuthenticationHandlerConfig {
     String expected$_$hosted$_$domain_regex() default ".*";
 
     /**
+     * Regular expression (regex) for the expected {@code email} claim of a {@link GoogleIdToken}.
+     * <ol>
+     *     <li>
+     * The {@code email} claim contains the user's email address.
+     *     </li>
+     *     <li>
+     * This configuration property allows restricting authentication to users with specific email addresses. The value
+     * of the email claim from the verified {@link GoogleIdToken} is matched against this regular expression. If the
+     * value does not match, the authentication attempt will be rejected.
+     *     </li>
+     *     <li>
+     * The default value is {@code ".*"}, which matches any value, including an {@link StringUtils#EMPTY}
+     * {@link String}, thus allowing users without email address restrictions. <p>
+     * <i>Example:</i><p> To ensure that only users with email addresses from a domain {@code "example.com"} are allowed
+     * the value should be set to {@code "^[A-Za-z0-9._%+-]+@example\\.com$"}.
+     *     </li>
+     * </ol>
+     * @return regular expression (regex) for the expected {@code email} claim of a {@link GoogleIdToken}
+     */
+    String expected$_$email_regex() default ".*";
+
+    /**
      * Time to live (TTL) for the cached result of the credentials extraction in seconds, i.e., for the result produced
      * by {@link GoogleAuthenticationHandler#extractCredentials(HttpServletRequest, HttpServletResponse)} for a specific
      * {@link GoogleIdToken}.

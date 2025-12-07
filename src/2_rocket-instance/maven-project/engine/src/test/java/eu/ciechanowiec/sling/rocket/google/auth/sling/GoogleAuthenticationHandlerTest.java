@@ -19,7 +19,12 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"TypeName", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.LooseCoupling"})
+@SuppressWarnings(
+    {
+        "TypeName", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "PMD.LooseCoupling", "PMD.TooManyMethods",
+        "ClassWithTooManyMethods", "MethodCount"
+    }
+)
 class GoogleAuthenticationHandlerTest extends TestEnvironment {
 
     private GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy;
@@ -299,6 +304,54 @@ class GoogleAuthenticationHandlerTest extends TestEnvironment {
         // No "X-ID-Token" header is set
         handlerWithProvider.dropCredentials(request, response);
         verify(identityProvider, never()).invalidateCacheForUser(anyString());
+    }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testEmailMatch() {
+        handler = context.registerInjectActivateService(
+            GoogleAuthenticationHandler.class, Map.of("expected-email.regex", "^[A-Za-z0-9._%+-]+@example\\.com$")
+        );
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@example.com");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        AuthenticationInfo authenticationInfo = Objects.requireNonNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
+        assertAll(
+            () -> assertTrue(
+                authenticationInfo.toString().startsWith(
+                    "{user.jcr.credentials=GoogleCredentials(email=user@example.com), sling.authType=GoogleAuth, user.name=user@example.com, user.password"
+                )
+            ),
+            () -> assertEquals("test-id-token", new String(authenticationInfo.getPassword()))
+        );
+    }
+
+    @Test
+    @SuppressWarnings("LineLength")
+    void testEmailNoMatch() {
+        handler = context.registerInjectActivateService(
+            GoogleAuthenticationHandler.class, Map.of("expected-email.regex", "^[A-Za-z0-9._%+-]+@example\\.com$")
+        );
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
+        GoogleIdToken googleIdToken = mock(GoogleIdToken.class);
+        GoogleIdToken.Payload payload = new GoogleIdToken.Payload();
+        when(googleIdToken.getPayload()).thenReturn(payload);
+        payload.setEmail("user@ciechanowiec.eu");
+        when(googleIdTokenVerifierProxy.verify("test-id-token")).thenReturn(Optional.of(googleIdToken));
+        assertNull(
+            handler.extractCredentials(
+                request, new MockSlingJakartaHttpServletResponse()
+            )
+        );
     }
 
     @Test
