@@ -22,11 +22,11 @@ import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.Repository;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Existing {@link Node} of type {@link CalendarNode#NT_CALENDAR}.
@@ -81,11 +81,16 @@ public final class CalendarNode implements WithJCRPath {
             log.trace("Listing years of {}", this);
             return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
                 .map(Resource::getChildren)
-                .map(Iterable::iterator)
-                .map(IteratorUtils::toList)
-                .stream()
-                .flatMap(Collection::stream)
-                .map(Resource::getPath)
+                .map(IteratorUtils::stream)
+                .orElse(Stream.of())
+                .filter(
+                    child -> {
+                        ValueMap valueMap = child.getValueMap();
+                        return Optional.ofNullable(valueMap.get(JcrConstants.JCR_PRIMARYTYPE, String.class))
+                            .filter(childPrimaryType -> childPrimaryType.equals(YearNode.NT_YEAR))
+                            .isPresent();
+                    }
+                ).map(Resource::getPath)
                 .map(childPath -> new YearNode(new TargetJCRPath(childPath), resourceResolver))
                 .sorted()
                 .toList();
@@ -119,11 +124,16 @@ public final class CalendarNode implements WithJCRPath {
                 log.trace("Listing years of {}", this);
                 return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
                     .map(Resource::getChildren)
-                    .map(Iterable::iterator)
-                    .map(IteratorUtils::toList)
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .map(Resource::getPath)
+                    .map(IteratorUtils::stream)
+                    .orElse(Stream.of())
+                    .filter(
+                        child -> {
+                            ValueMap valueMap = child.getValueMap();
+                            return Optional.ofNullable(valueMap.get(JcrConstants.JCR_PRIMARYTYPE, String.class))
+                                .filter(childPrimaryType -> childPrimaryType.equals(YearNode.NT_YEAR))
+                                .isPresent();
+                        }
+                    ).map(Resource::getPath)
                     .map(childPath -> new YearNode(new TargetJCRPath(childPath), resourceAccess))
                     .sorted()
                     .toList();

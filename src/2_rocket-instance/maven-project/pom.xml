@@ -198,11 +198,11 @@
         <!-- ====================================================================== -->
         <!-- LIBS_ASM                                                               -->
         <!-- ====================================================================== -->
-        <asm.version>9.9</asm.version>
+        <asm.version>9.9.1</asm.version>
         <!-- ====================================================================== -->
         <!-- LIBS_COMMONS                                                           -->
         <!-- ====================================================================== -->
-        <commons-text.version>1.14.0</commons-text.version>
+        <commons-text.version>1.15.0</commons-text.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-codec.version>1.20.0</commons-codec.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
@@ -237,7 +237,7 @@
         <!-- ====================================================================== -->
         <slf4j.version>2.0.17</slf4j.version>
         <org.apache.sling.commons.log.version>6.0.2</org.apache.sling.commons.log.version>
-        <logback.version>1.5.21</logback.version>
+        <logback.version>1.5.22</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
@@ -389,8 +389,8 @@
         <!-- ====================================================================== -->
         <junit-jupiter-api.version>6.0.1</junit-jupiter-api.version>
         <junit-jupiter-params.version>6.0.1</junit-jupiter-params.version>
-        <mockito-core.version>5.20.0</mockito-core.version>
-        <mockito-junit-jupiter.version>5.20.0</mockito-junit-jupiter.version>
+        <mockito-core.version>5.21.0</mockito-core.version>
+        <mockito-junit-jupiter.version>5.21.0</mockito-junit-jupiter.version>
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
         <org.apache.sling.testing.sling-mock.core.version>4.0.2</org.apache.sling.testing.sling-mock.core.version>

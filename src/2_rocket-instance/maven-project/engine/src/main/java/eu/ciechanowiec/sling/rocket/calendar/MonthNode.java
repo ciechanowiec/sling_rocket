@@ -23,11 +23,11 @@ import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import java.time.Year;
 import java.time.YearMonth;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Existing {@link Node} of type {@link MonthNode#NT_MONTH}.
@@ -90,11 +90,16 @@ public final class MonthNode implements WithJCRPath, Comparable<MonthNode> {
             log.trace("Listing days of {}", this);
             return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
                 .map(Resource::getChildren)
-                .map(Iterable::iterator)
-                .map(IteratorUtils::toList)
-                .stream()
-                .flatMap(Collection::stream)
-                .map(Resource::getPath)
+                .map(IteratorUtils::stream)
+                .orElse(Stream.of())
+                .filter(
+                    child -> {
+                        ValueMap valueMap = child.getValueMap();
+                        return Optional.ofNullable(valueMap.get(JcrConstants.JCR_PRIMARYTYPE, String.class))
+                            .filter(childPrimaryType -> childPrimaryType.equals(DayNode.NT_DAY))
+                            .isPresent();
+                    }
+                ).map(Resource::getPath)
                 .map(childPath -> new DayNode(new TargetJCRPath(childPath), resourceResolver))
                 .sorted()
                 .toList();
@@ -147,11 +152,16 @@ public final class MonthNode implements WithJCRPath, Comparable<MonthNode> {
                 log.trace("Listing days of {}", this);
                 return Optional.ofNullable(resourceResolver.getResource(jcrPath().get()))
                     .map(Resource::getChildren)
-                    .map(Iterable::iterator)
-                    .map(IteratorUtils::toList)
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .map(Resource::getPath)
+                    .map(IteratorUtils::stream)
+                    .orElse(Stream.of())
+                    .filter(
+                        child -> {
+                            ValueMap valueMap = child.getValueMap();
+                            return Optional.ofNullable(valueMap.get(JcrConstants.JCR_PRIMARYTYPE, String.class))
+                                .filter(childPrimaryType -> childPrimaryType.equals(DayNode.NT_DAY))
+                                .isPresent();
+                        }
+                    ).map(Resource::getPath)
                     .map(childPath -> new DayNode(new TargetJCRPath(childPath), resourceAccess))
                     .sorted()
                     .toList();

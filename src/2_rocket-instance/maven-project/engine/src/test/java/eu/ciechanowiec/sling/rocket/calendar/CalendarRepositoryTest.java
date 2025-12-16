@@ -1,8 +1,12 @@
 package eu.ciechanowiec.sling.rocket.calendar;
 
+import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.jcr.path.OccupiedJCRPathException;
+import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
+import eu.ciechanowiec.sling.rocket.privilege.PrivilegeAdmin;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
+import org.apache.jackrabbit.oak.spi.security.privilege.PrivilegeConstants;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class CalendarRepositoryTest extends TestEnvironment {
 
     private CalendarRepository calendarRepository;
@@ -82,6 +86,45 @@ class CalendarRepositoryTest extends TestEnvironment {
                 new TargetJCRPath("/content/my-calendar/2017/2017-04/2017-04-20"),
                 calendarModel.years().get(2).months().get(3).days().get(19).jcrPath()
             )
+        );
+    }
+
+    @SuppressWarnings({"resource", "PMD.CloseResource"})
+    @Test
+    void testWithPrivileges() {
+        TargetJCRPath calendarPath = new TargetJCRPath("/content/my-calendar");
+        new StagedCalendarNode(Year.of(2015), Year.of(2018), fullResourceAccess).save(calendarPath);
+        PrivilegeAdmin privilegeAdmin = new PrivilegeAdmin(fullResourceAccess);
+        AuthIDUser someUser = createOrGetUser(new AuthIDUser("some-user"));
+        privilegeAdmin.allow(calendarPath, someUser, PrivilegeConstants.JCR_READ);
+        TargetJCRPath year2017Path = new TargetJCRPath(new ParentJCRPath(calendarPath), "2017");
+        privilegeAdmin.deny(
+            year2017Path, someUser, PrivilegeConstants.JCR_READ
+        );
+        privilegeAdmin.allow(
+            new TargetJCRPath(new ParentJCRPath(year2017Path), "2017-04"), someUser, PrivilegeConstants.JCR_READ
+        );
+        ResourceResolver adminRR = fullResourceAccess.acquireAccess();
+        CalendarNode adminModel = Optional.ofNullable(adminRR.getResource("/content/my-calendar"))
+            .map(resource -> resource.adaptTo(CalendarNode.class))
+            .orElseThrow();
+        ResourceResolver userRR = fullResourceAccess.acquireAccess(someUser);
+        CalendarNode userModel = Optional.ofNullable(userRR.getResource("/content/my-calendar"))
+            .map(resource -> resource.adaptTo(CalendarNode.class))
+            .orElseThrow();
+        exportJCRtoXML();
+        assertAll(
+            () -> assertEquals(new TargetJCRPath("/content/my-calendar"), adminModel.jcrPath()),
+            () -> assertEquals(new TargetJCRPath("/content/my-calendar"), userModel.jcrPath()),
+            () -> assertEquals(Year.of(2017), adminModel.years().get(2).year()),
+            () -> assertEquals(Year.of(2018), userModel.years().get(2).year()),
+            () -> assertEquals(
+                YearMonth.of(2017, 4), adminModel.years().get(2).months().get(3).month()
+            ),
+            () -> assertEquals(
+                YearMonth.of(2018, 4), userModel.years().get(2).months().get(3).month()
+            ),
+            () -> assertNotNull(userRR.getResource("/content/my-calendar/2017/2017-04"))
         );
     }
 
