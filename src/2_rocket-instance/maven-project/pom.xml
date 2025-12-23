@@ -237,7 +237,7 @@
         <!-- ====================================================================== -->
         <slf4j.version>2.0.17</slf4j.version>
         <org.apache.sling.commons.log.version>6.0.2</org.apache.sling.commons.log.version>
-        <logback.version>1.5.22</logback.version>
+        <logback.version>1.5.23</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
@@ -394,7 +394,7 @@
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
         <org.apache.sling.testing.sling-mock.core.version>4.0.2</org.apache.sling.testing.sling-mock.core.version>
-        <awaitility.version>4.2.1</awaitility.version>
+        <awaitility.version>4.3.0</awaitility.version>
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->
         <!-- ====================================================================== -->
