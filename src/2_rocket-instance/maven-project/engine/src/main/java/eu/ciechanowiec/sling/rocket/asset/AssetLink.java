@@ -1,11 +1,11 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
 import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
-import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableSimple;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
-import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.jcr.ReferenceProperty;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableSimple;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

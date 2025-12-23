@@ -2,10 +2,7 @@ package eu.ciechanowiec.sling.rocket.test;
 
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
-import eu.ciechanowiec.sling.rocket.identity.AuthID;
-import eu.ciechanowiec.sling.rocket.identity.AuthIDGroup;
-import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
-import eu.ciechanowiec.sling.rocket.identity.WithUserManager;
+import eu.ciechanowiec.sling.rocket.identity.*;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
 import eu.ciechanowiec.sneakyfun.SneakySupplier;
 import lombok.SneakyThrows;
@@ -120,6 +117,7 @@ public abstract class TestEnvironment {
         context.registerInjectActivateService(fullResourceAccess);
         log.debug("Registered {}", fullResourceAccess);
         Conditional.onTrueExecute(isRealOak, this::registerNodeTypes);
+        context.registerInjectActivateService(ResToAuthAdapterFactory.class);
     }
 
     /**

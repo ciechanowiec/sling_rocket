@@ -2,8 +2,8 @@
  * Management of identities that use {@link javax.jcr.Repository}.
  */
 @Export
-@Version("15.0.0")
-package eu.ciechanowiec.sling.rocket.identity;
+@Version("1.0.0")
+package eu.ciechanowiec.sling.rocket.identity.creation;
 
 import org.osgi.annotation.bundle.Export;
 import org.osgi.annotation.versioning.Version;

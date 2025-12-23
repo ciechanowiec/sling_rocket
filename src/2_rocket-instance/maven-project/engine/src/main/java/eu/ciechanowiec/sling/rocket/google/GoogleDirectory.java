@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
     service = {GoogleDirectory.class, GoogleDirectoryMBean.class},
     immediate = true,
     configurationPolicy = ConfigurationPolicy.REQUIRE,
-    property = "jmx.objectname=eu.ciechanowiec.slexamplus:type=Identity Management,name=Google Directory"
+    property = "jmx.objectname=eu.ciechanowiec.sling.rocket.engine:type=Identity Management,name=Google Directory"
 )
 @Designate(ocd = GoogleDirectoryConfig.class)
 @ToString

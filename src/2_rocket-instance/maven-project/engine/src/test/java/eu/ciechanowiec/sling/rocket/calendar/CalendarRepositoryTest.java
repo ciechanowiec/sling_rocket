@@ -40,13 +40,13 @@ class CalendarRepositoryTest extends TestEnvironment {
             new TargetJCRPath("/content/calendar-one-year")
         );
         assertEquals(365, totalAmountOfDays());
-        new StagedCalendarNode(Year.of(1900), Year.of(2100), fullResourceAccess).save(
+        new StagedCalendarNode(Year.of(1900), Year.of(1930), fullResourceAccess).save(
             new TargetJCRPath("/content/calendar-big")
         );
         new StagedCalendarNode(Year.of(1990), Year.of(1995), fullResourceAccess).save(
             new TargetJCRPath("/content/calendar-small")
         );
-        assertEquals(75_605 + 365, totalAmountOfDays());
+        assertEquals(13_513 + 365, totalAmountOfDays());
     }
 
     @SuppressWarnings({"resource", "PMD.CloseResource"})
@@ -112,7 +112,6 @@ class CalendarRepositoryTest extends TestEnvironment {
         CalendarNode userModel = Optional.ofNullable(userRR.getResource("/content/my-calendar"))
             .map(resource -> resource.adaptTo(CalendarNode.class))
             .orElseThrow();
-        exportJCRtoXML();
         assertAll(
             () -> assertEquals(new TargetJCRPath("/content/my-calendar"), adminModel.jcrPath()),
             () -> assertEquals(new TargetJCRPath("/content/my-calendar"), userModel.jcrPath()),

@@ -13,10 +13,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Session;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +33,7 @@ import java.util.stream.Collectors;
 public class SimpleAuthorizable {
 
     private final AuthID authID;
+
     @ToString.Exclude
     private final ResourceAccess resourceAccess;
     @ToString.Exclude
@@ -204,10 +202,12 @@ public class SimpleAuthorizable {
         log.trace("Adding '{}' to '{}'", this, authIDGroup);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             toGroup(authIDGroup, resourceResolver).ifPresentOrElse(
-                SneakyConsumer.sneaky(group -> {
-                    group.addMembers(authID.get());
-                    resourceResolver.commit();
-                }),
+                SneakyConsumer.sneaky(
+                    group -> {
+                        group.addMembers(authID.get());
+                        resourceResolver.commit();
+                    }
+                ),
                 () -> log.warn("'{}' not found. {} will not be added to that group", authIDGroup, this)
             );
         }
@@ -215,15 +215,41 @@ public class SimpleAuthorizable {
     }
 
     /**
-     * Returns a {@link Collection} of {@link AuthIDGroup} identifying all {@link Group}s to which the
+     * Remove the {@link Authorizable} represented by this {@link SimpleAuthorizable} from a {@link Group} identified by
+     * the specified {@link AuthIDGroup}.
+     *
+     * @param authIDGroup {@link AuthIDGroup} identifying a {@link Group} from which the {@link Authorizable}
+     *                    represented by this {@link SimpleAuthorizable} should be removed
+     * @return {@code true} if in the end of the removing operation the {@link Authorizable} represented by this
+     * {@link SimpleAuthorizable} is not a direct (declared) member of the {@link Group} identified by the specified
+     * {@link AuthIDGroup}; {@code false} otherwise
+     */
+    public boolean removeFromGroup(AuthIDGroup authIDGroup) {
+        log.trace("Removing '{}' from '{}'", this, authIDGroup);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            toGroup(authIDGroup, resourceResolver).ifPresentOrElse(
+                SneakyConsumer.sneaky(
+                    group -> {
+                        group.removeMembers(authID.get());
+                        resourceResolver.commit();
+                    }
+                ),
+                () -> log.warn("'{}' not found. {} will not be removed from that group", authIDGroup, this)
+            );
+        }
+        return !groups(true).contains(authIDGroup);
+    }
+
+    /**
+     * Returns a {@link Set} of {@link AuthIDGroup} identifying all {@link Group}s to which the
      * {@link Authorizable} represented by this {@link SimpleAuthorizable} belongs to.
      *
      * @param onlyDeclared {@code true} to consider only direct {@link Group} membership; {@code false} to consider both
      *                     direct and indirect
-     * @return {@link Collection} of {@link AuthIDGroup} identifying all {@link Group}s to which the
+     * @return {@link Set} of {@link AuthIDGroup} identifying all {@link Group}s to which the
      * {@link Authorizable} represented by this {@link SimpleAuthorizable} belongs to
      */
-    public Collection<AuthIDGroup> groups(boolean onlyDeclared) {
+    public Set<AuthIDGroup> groups(boolean onlyDeclared) {
         log.trace("Extracting Groups of {}. Only declared: {}", this, onlyDeclared);
         Function<Authorizable, Iterator<Group>> onlyDeclaredExtractor = SneakyFunction.sneaky(
             Authorizable::declaredMemberOf
@@ -233,7 +259,7 @@ public class SimpleAuthorizable {
     }
 
     @SneakyThrows
-    private Collection<AuthIDGroup> groups(Function<Authorizable, Iterator<Group>> groupsExtractor) {
+    private Set<AuthIDGroup> groups(Function<Authorizable, Iterator<Group>> groupsExtractor) {
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
             UserManager userManager = new WithUserManager(resourceResolver).get();
             return Optional.ofNullable(userManager.getAuthorizable(authID.get()))
@@ -248,7 +274,7 @@ public class SimpleAuthorizable {
                 .stream()
                 .map(SneakyFunction.sneaky(Authorizable::getID))
                 .map(AuthIDGroup::new)
-                .toList();
+                .collect(Collectors.toUnmodifiableSet());
         }
     }
 
@@ -320,5 +346,14 @@ public class SimpleAuthorizable {
                 );
                 return Optional.empty();
             });
+    }
+
+    /**
+     * {@link AuthID} of the {@link Authorizable} represented by this {@link SimpleAuthorizable}.
+     *
+     * @return {@link AuthID} of the {@link Authorizable} represented by this {@link SimpleAuthorizable}
+     */
+    public AuthID authID() {
+        return authID;
     }
 }

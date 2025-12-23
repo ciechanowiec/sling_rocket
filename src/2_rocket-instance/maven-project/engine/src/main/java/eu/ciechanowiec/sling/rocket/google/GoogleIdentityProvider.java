@@ -34,12 +34,12 @@ import java.util.concurrent.atomic.AtomicReference;
         GoogleIdentityProviderMBean.class, CredentialsSupport.class
     },
     immediate = true,
-    property = "jmx.objectname=eu.ciechanowiec.slexamplus:type=Identity Management,name=Google Identity Provider"
+    property = "jmx.objectname=eu.ciechanowiec.sling.rocket.engine:type=Identity Management,name=Google Identity Provider"
 )
 @SuppressWarnings(
     {
         "TypeName", "NullableProblems", "PMD.LooseCoupling", "ClassWithTooManyMethods", "MethodCount",
-        "PMD.CouplingBetweenObjects", "MatchXpath"
+        "PMD.CouplingBetweenObjects", "MatchXpath", "LineLength"
     }
 )
 @ServiceDescription(GoogleIdentityProvider.SERVICE_DESCRIPTION)

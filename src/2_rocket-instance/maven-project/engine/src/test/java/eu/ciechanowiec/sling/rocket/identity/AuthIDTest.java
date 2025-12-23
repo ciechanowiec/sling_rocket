@@ -128,7 +128,8 @@ class AuthIDTest {
         AuthID authIDGroup = new AuthIDGroup("someID");
 
         assertNotEquals(authIDUser, authIDGroup);
-        assertNotEquals(authIDUser, authIDUniversal);
-        assertNotEquals(authIDGroup, authIDUniversal);
+        assertNotEquals(authIDGroup, authIDUser);
+        assertEquals(authIDUser, authIDUniversal);
+        assertEquals(authIDGroup, authIDUniversal);
     }
 }

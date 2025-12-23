@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.identity;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.jackrabbit.api.security.user.Group;
 
 /**
@@ -25,12 +26,16 @@ public class AuthIDGroup implements AuthID {
     }
 
     @Override
-    @SuppressWarnings({"SimplifiableIfStatement", "PMD.SimplifyBooleanReturns"})
+    @SuppressWarnings("SimplifiableIfStatement")
+    @SuppressFBWarnings({"EC_UNRELATED_TYPES", "EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS"})
     public boolean equals(Object comparedObject) {
         if (this == comparedObject) {
             return true;
         }
-        return comparedObject instanceof AuthIDGroup comparedAuthID && this.get().equals(comparedAuthID.get());
+        if (comparedObject instanceof AuthIDUser) {
+            return false;
+        }
+        return comparedObject instanceof AuthID comparedAuthID && this.get().equals(comparedAuthID.get());
     }
 
     @Override

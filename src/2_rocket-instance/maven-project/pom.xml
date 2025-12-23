@@ -394,6 +394,7 @@
         <org.apache.sling.testing.sling-mock.junit5.version>4.0.2</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
         <org.apache.sling.testing.sling-mock.core.version>4.0.2</org.apache.sling.testing.sling-mock.core.version>
+        <awaitility.version>4.2.1</awaitility.version>
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->
         <!-- ====================================================================== -->
@@ -2337,6 +2338,12 @@
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.testing.sling-mock.core</artifactId>
                 <version>${org.apache.sling.testing.sling-mock.core.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

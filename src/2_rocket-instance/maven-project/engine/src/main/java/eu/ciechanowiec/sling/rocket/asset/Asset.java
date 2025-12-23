@@ -1,7 +1,7 @@
 package eu.ciechanowiec.sling.rocket.asset;
 
-import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
 import org.apache.jackrabbit.JcrConstants;
 
 import javax.jcr.Node;

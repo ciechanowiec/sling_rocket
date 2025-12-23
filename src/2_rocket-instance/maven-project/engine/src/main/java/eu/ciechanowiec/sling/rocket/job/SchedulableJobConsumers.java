@@ -103,7 +103,10 @@ public class SchedulableJobConsumers {
                 return new SchedulableRunnableID(serviceReference);
             }
         };
-        boolean wasScheduled = simpleScheduler.schedule(schedulableRunnable);
+        boolean wasScheduled = Optional.of(schedulableRunnable)
+            .filter(sr -> !sr.scheduleCycleCronExpression().isBlank())
+            .map(simpleScheduler::schedule)
+            .orElse(false);
         log.info("Scheduled {}? Answer: {}", schedulableJobConsumer, wasScheduled);
     }
 

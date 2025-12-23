@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
     },
     property = {
         JakartaAuthenticationHandler.TYPE_PROPERTY + "=" + GoogleAuthenticationHandler.AUTH_TYPE,
-        "jmx.objectname=eu.ciechanowiec.slexamplus:type=Authentication,name=Google Authentication Handler"
+        "jmx.objectname=eu.ciechanowiec.sling.rocket.engine:type=Authentication,name=Google Authentication Handler"
     },
     immediate = true,
     configurationPolicy = ConfigurationPolicy.REQUIRE
