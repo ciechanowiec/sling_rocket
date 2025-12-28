@@ -173,7 +173,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>78.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <json.version>20250517</json.version>
+        <json.version>20251224</json.version>
         <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
@@ -422,7 +422,7 @@
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
-        <bnd-maven-plugin.version>7.1.0</bnd-maven-plugin.version>
+        <bnd-maven-plugin.version>7.2.0</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -442,7 +442,7 @@
         <asciidoctorj.version>3.0.1</asciidoctorj.version>
         <asciidoctorj.diagram.version>3.1.0</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
-        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
     </properties>
 
