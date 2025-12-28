@@ -6,7 +6,7 @@
 
     <groupId>eu.ciechanowiec</groupId>
     <artifactId>sling.rocket.parent</artifactId>
-    <version>19.0.0-SNAPSHOT</version>
+    <version>19.0.0</version>
     <packaging>pom</packaging>
 
     <name>Sling Rocket - Parent POM</name>
@@ -163,9 +163,9 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
-        <sling.rocket.login-form.version>19.0.0-SNAPSHOT</sling.rocket.login-form.version>
-        <sling.rocket.oak-auth-external.version>19.0.0-SNAPSHOT</sling.rocket.oak-auth-external.version>
-        <sling.rocket.engine.version>19.0.0-SNAPSHOT</sling.rocket.engine.version>
+        <sling.rocket.login-form.version>19.0.0</sling.rocket.login-form.version>
+        <sling.rocket.oak-auth-external.version>19.0.0</sling.rocket.oak-auth-external.version>
+        <sling.rocket.engine.version>19.0.0</sling.rocket.engine.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
