@@ -129,6 +129,10 @@
       "start-order": "30"
     },
     {
+      "id": "eu.ciechanowiec:sling.rocket.oak-auth-external:${project.version}",
+      "start-order": "30"
+    },
+    {
       "id": "eu.ciechanowiec:sling.rocket.engine:${project.version}",
       "start-order": "30"
     },

@@ -34,6 +34,7 @@
         <module>engine</module>
         <module>feature</module>
         <module>login-form</module>
+        <module>oak-auth-external</module>
         <module>sources</module>
     </modules>
 
@@ -163,6 +164,7 @@
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
         <sling.rocket.login-form.version>19.0.0-SNAPSHOT</sling.rocket.login-form.version>
+        <sling.rocket.oak-auth-external.version>19.0.0-SNAPSHOT</sling.rocket.oak-auth-external.version>
         <sling.rocket.engine.version>19.0.0-SNAPSHOT</sling.rocket.engine.version>
         <sneakyfun.version>1.0.0</sneakyfun.version>
         <conditional.version>1.0.5</conditional.version>
@@ -441,6 +443,7 @@
         <asciidoctorj.diagram.version>3.1.0</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
         <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
+        <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -1024,6 +1027,12 @@
                 <groupId>eu.ciechanowiec</groupId>
                 <artifactId>sling.rocket.login-form</artifactId>
                 <version>${sling.rocket.login-form.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.ciechanowiec</groupId>
+                <artifactId>sling.rocket.oak-auth-external</artifactId>
+                <version>${sling.rocket.oak-auth-external.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -2685,6 +2694,11 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-shade-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

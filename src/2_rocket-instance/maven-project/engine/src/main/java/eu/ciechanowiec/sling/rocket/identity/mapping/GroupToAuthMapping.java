@@ -52,7 +52,7 @@ public class GroupToAuthMapping extends AnnotatedStandardMBean implements EventH
     static final String SERVICE_DESCRIPTION
         = "Ensures that predefined groups contain only predefined authorizables as their members";
     static final String JOB_TOPIC
-        = "eu/ciechanowiec/sling/rocket/identity/mapping/GROU_TO_AUTH_MAPPING";
+        = "eu/ciechanowiec/sling/rocket/identity/mapping/GROUP_TO_AUTH_MAPPING";
 
     @ToString.Exclude
     private final FullResourceAccess fullResourceAccess;
