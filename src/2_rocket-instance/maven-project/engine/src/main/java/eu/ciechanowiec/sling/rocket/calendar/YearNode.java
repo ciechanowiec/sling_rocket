@@ -39,6 +39,9 @@ public final class YearNode implements WithJCRPath, Comparable<YearNode> {
 
     /**
      * The type name of a {@link Node} that represents a calendar year.
+     * <p>
+     * The name of the {@link Node} follows the pattern applied to the return value of the {@link Year#toString()}
+     * method (e.g. {@code 2043} for the year 2043).
      */
     @SuppressWarnings({"StaticMethodOnlyUsedInOneClass", "WeakerAccess"})
     public static final String NT_YEAR = "rocket:Year";
@@ -60,7 +63,7 @@ public final class YearNode implements WithJCRPath, Comparable<YearNode> {
     private final Supplier<List<MonthNode>> monthsSupplier;
 
     /**
-     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver}.
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver}.
      * <p>
      * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
      * calling context. The provided {@link ResourceResolver} is used for all subsequent {@link Repository} operations

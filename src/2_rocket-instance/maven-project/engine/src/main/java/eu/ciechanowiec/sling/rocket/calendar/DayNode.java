@@ -39,6 +39,9 @@ public final class DayNode implements WithJCRPath, Comparable<DayNode> {
 
     /**
      * The type name of a {@link Node} that represents a calendar day.
+     * <p>
+     * The name of the {@link Node} follows the pattern applied to the return value of the {@link LocalDate#toString()}
+     * method (e.g. {@code 2043-11-19} for November 19th, 2043).
      */
     @SuppressWarnings({"StaticMethodOnlyUsedInOneClass", "WeakerAccess"})
     public static final String NT_DAY = "rocket:Day";
@@ -57,7 +60,7 @@ public final class DayNode implements WithJCRPath, Comparable<DayNode> {
     private final Supplier<LocalDate> daySupplier;
 
     /**
-     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver}.
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver}.
      * <p>
      * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
      * calling context. The provided {@link ResourceResolver} is used for all subsequent {@link Repository} operations

@@ -93,7 +93,7 @@ public class NodeProperties implements WithJCRPath {
     }
 
     /**
-     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver}.
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver}.
      * <p>
      * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
      * calling context (e.g., Sling). The provided {@link ResourceResolver} is used for all subsequent
@@ -118,7 +118,7 @@ public class NodeProperties implements WithJCRPath {
     }
 
     /**
-     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver} from
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver} from
      * the passed {@link Resource}.
      * <p>
      * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the

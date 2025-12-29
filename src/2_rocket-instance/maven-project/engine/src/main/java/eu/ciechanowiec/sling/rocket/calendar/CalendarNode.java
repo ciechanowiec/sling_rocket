@@ -5,6 +5,7 @@ import eu.ciechanowiec.sling.rocket.commons.ResourceAccess;
 import eu.ciechanowiec.sling.rocket.jcr.IllegalPrimaryTypeException;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
 import lombok.EqualsAndHashCode;
@@ -22,9 +23,14 @@ import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.Repository;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -41,6 +47,8 @@ public final class CalendarNode implements WithJCRPath {
 
     /**
      * The type name of a {@link Node} that represents a calendar with a specific scope of years.
+     * <p>
+     * There are no restrictions towards the name of the {@link Node}.
      */
     @SuppressWarnings({"StaticMethodOnlyUsedInOneClass", "WeakerAccess"})
     public static final String NT_CALENDAR = "rocket:Calendar";
@@ -49,9 +57,12 @@ public final class CalendarNode implements WithJCRPath {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Supplier<List<YearNode>> yearsSupplier;
+    private final Function<Year, Optional<YearNode>> yearFunction;
+    private final Function<YearMonth, Optional<MonthNode>> monthFunction;
+    private final Function<LocalDate, Optional<DayNode>> dayFunction;
 
     /**
-     * Constructs an instance of this class utilizing an externally-provided, pre-existing {@link ResourceResolver} from
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver} from
      * the passed {@link Resource}.
      * <p>
      * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
@@ -95,6 +106,9 @@ public final class CalendarNode implements WithJCRPath {
                 .sorted()
                 .toList();
         };
+        yearFunction = year -> year(year, resourceResolver);
+        monthFunction = yearMonth -> month(yearMonth, resourceResolver);
+        dayFunction = day -> day(day, resourceResolver);
     }
 
     /**
@@ -139,6 +153,101 @@ public final class CalendarNode implements WithJCRPath {
                     .toList();
             }
         };
+        yearFunction = year -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                return year(year, resourceResolver);
+            }
+        };
+        monthFunction = yearMonth -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                return month(yearMonth, resourceResolver);
+            }
+        };
+        dayFunction = day -> {
+            try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+                return day(day, resourceResolver);
+            }
+        };
+    }
+
+    private Optional<YearNode> year(Year year, ResourceResolver resourceResolver) {
+        JCRPath yearNodeJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath()), year.toString());
+        return Optional.ofNullable(resourceResolver.getResource(yearNodeJCRPath.get()))
+            .map(
+                yearResource -> {
+                    log.trace("Mapping {} to a Year Node", yearResource);
+                    return new YearNode(yearNodeJCRPath, resourceResolver);
+                }
+            );
+    }
+
+    /**
+     * Returns an {@link Optional} containing a {@link YearNode} from this {@link CalendarNode} for the specified
+     * {@link Year}.
+     *
+     * @param year {@link Year} for which the {@link YearNode} is requested
+     * @return {@link Optional} containing a {@link YearNode} from this {@link CalendarNode} for the specified
+     * {@link Year}; empty {@link Optional} is returned if for the specified {@link Year} no {@link YearNode} exists
+     */
+    public Optional<YearNode> year(Year year) {
+        return yearFunction.apply(year);
+    }
+
+    private Optional<MonthNode> month(YearMonth yearMonth, ResourceResolver resourceResolver) {
+        String year = String.valueOf(yearMonth.getYear());
+        JCRPath yearNodeJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath()), year);
+        JCRPath monthNodeJCRPath = new TargetJCRPath(new ParentJCRPath(yearNodeJCRPath), yearMonth.toString());
+        return Optional.ofNullable(resourceResolver.getResource(monthNodeJCRPath.get()))
+            .map(
+                yearResource -> {
+                    log.trace("Mapping {} to a Month Node", yearResource);
+                    return new MonthNode(monthNodeJCRPath, resourceResolver);
+                }
+            );
+    }
+
+    /**
+     * Returns an {@link Optional} containing a {@link MonthNode} from this {@link CalendarNode} for the specified
+     * {@link YearMonth}.
+     *
+     * @param yearMonth {@link YearMonth} for which the {@link MonthNode} is requested
+     * @return {@link Optional} containing a {@link MonthNode} from this {@link CalendarNode} for the specified
+     * {@link YearMonth}; empty {@link Optional} is returned if for the specified {@link YearMonth} no {@link MonthNode}
+     * exists§
+     */
+    @SuppressWarnings("WeakerAccess")
+    public Optional<MonthNode> month(YearMonth yearMonth) {
+        return monthFunction.apply(yearMonth);
+    }
+
+    private Optional<DayNode> day(LocalDate day, ResourceResolver resourceResolver) {
+        int year = day.getYear();
+        Month month = day.getMonth();
+        YearMonth yearMonth = YearMonth.of(year, month);
+        JCRPath yearNodeJCRPath = new TargetJCRPath(new ParentJCRPath(jcrPath()), String.valueOf(year));
+        JCRPath monthNodeJCRPath = new TargetJCRPath(new ParentJCRPath(yearNodeJCRPath), yearMonth.toString());
+        JCRPath dayNodeJCRPath = new TargetJCRPath(new ParentJCRPath(monthNodeJCRPath), day.toString());
+        return Optional.ofNullable(resourceResolver.getResource(dayNodeJCRPath.get()))
+            .map(
+                yearResource -> {
+                    log.trace("Mapping {} to a Day Node", yearResource);
+                    return new DayNode(dayNodeJCRPath, resourceResolver);
+                }
+            );
+    }
+
+    /**
+     * Returns an {@link Optional} containing a {@link DayNode} from this {@link CalendarNode} for the specified
+     * {@link LocalDate}.
+     *
+     * @param day {@link LocalDate} for which the {@link DayNode} is requested
+     * @return {@link Optional} containing a {@link DayNode} from this {@link CalendarNode} for the specified
+     * {@link LocalDate}; empty {@link Optional} is returned if for the specified {@link LocalDate} no {@link DayNode}
+     * exists
+     */
+    @SuppressWarnings("WeakerAccess")
+    public Optional<DayNode> day(LocalDate day) {
+        return dayFunction.apply(day);
     }
 
     private void assertPrimaryType(ResourceAccess resourceAccess) {

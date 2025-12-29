@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.Collection;
@@ -85,7 +86,19 @@ class CalendarRepositoryTest extends TestEnvironment {
             () -> assertEquals(
                 new TargetJCRPath("/content/my-calendar/2017/2017-04/2017-04-20"),
                 calendarModel.years().get(2).months().get(3).days().get(19).jcrPath()
-            )
+            ),
+            () -> assertEquals(Year.of(2016), calendarModel.year(Year.of(2016)).orElseThrow().year()),
+            () -> assertTrue(calendarModel.year(Year.of(2010)).isEmpty()),
+            () -> assertEquals(
+                YearMonth.of(2016, Month.AUGUST),
+                calendarModel.month(YearMonth.of(2016, Month.AUGUST)).orElseThrow().month()
+            ),
+            () -> assertTrue(calendarModel.month(YearMonth.of(2010, Month.AUGUST)).isEmpty()),
+            () -> assertEquals(
+                LocalDate.of(2016, Month.AUGUST, 15),
+                calendarModel.day(LocalDate.of(2016, Month.AUGUST, 15)).orElseThrow().day()
+            ),
+            () -> assertTrue(calendarModel.day(LocalDate.of(2010, Month.AUGUST, 15)).isEmpty())
         );
     }
 
