@@ -58,6 +58,9 @@ du -sh /var/rocket-data-dump/backup
 echo "[\$(date)] Dumping data via export command..."
 java -jar "oak-run-$JACKRABBIT_OAK_VERSION.jar" export "\$SLING_DIR/launcher/repository/segmentstore" --blobs true --out /var/rocket-data-dump/export
 du -sh /var/rocket-data-dump/export
+
+echo "[$(date)] Cleaning up temporary .ro.bak files created by oak-run..."
+find "\$SLING_DIR/launcher/repository/segmentstore" -maxdepth 1 -name "*.ro.bak" -print -delete
 EOF
 echo "Adjusting permissions for the dump script..."
 chmod +x "$SLING_DIR/dump-rocket-data.sh"
