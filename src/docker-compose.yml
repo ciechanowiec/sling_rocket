@@ -53,12 +53,10 @@ services:
         host_ip: 127.0.0.1
         published: 8080
         protocol: tcp
-        mode: host
       - target: 8081
         host_ip: 127.0.0.1
         published: 8081
         protocol: tcp
-        mode: host
     labels:
       - "docker-volume-backup.stop-during-backup=false"
     depends_on:
@@ -81,11 +79,9 @@ services:
       - target: 80
         published: 80
         protocol: tcp
-        mode: host
       - target: 443
         published: 443
         protocol: tcp
-        mode: host
     depends_on:
       - rocket-base
 
@@ -100,3 +96,7 @@ networks:
     driver: bridge
     # This name is required to avoid name prefixing by Docker:
     name: rocket-network
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
