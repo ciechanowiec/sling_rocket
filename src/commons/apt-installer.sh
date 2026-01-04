@@ -26,4 +26,5 @@ apt install less -y && \
     apt install imagemagick -y && \
     apt install certbot -y && \
     apt install python3-certbot-nginx -y && \
+    apt install libnginx-mod-http-headers-more-filter -y && \
     apt install cron -y
