@@ -174,7 +174,7 @@
         <icu4j.version>78.1</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20251224</json.version>
-        <oauth2-oidc-sdk.version>11.30.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.31</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
