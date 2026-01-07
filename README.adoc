@@ -216,7 +216,7 @@ Static files related to an SR Instance reside in `/opt/sling`. Typical structure
 │   ├── osgi.core-8.0.0.jar
 │   ├── slf4j-api-1.7.25.jar
 │   └── slf4j-simple-1.7.25.jar
-├── oak-run-1.88.0.jar <10>
+├── oak-run-1.90.0.jar <10>
 ├── rocket-instance-starter.sh <11>
 └── sling.rocket.feature-20.0.0-SNAPSHOT-oak_tar.far <12>
 ....
