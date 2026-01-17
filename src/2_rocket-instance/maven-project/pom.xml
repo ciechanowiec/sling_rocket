@@ -171,11 +171,11 @@
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <icu4j.version>78.1</icu4j.version>
+        <icu4j.version>78.2</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20251224</json.version>
-        <oauth2-oidc-sdk.version>11.31</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.6</nimbus-jose-jwt.version>
+        <oauth2-oidc-sdk.version>11.31.1</oauth2-oidc-sdk.version>
+        <nimbus-jose-jwt.version>10.7</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -244,7 +244,7 @@
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
-        <jackrabbit.version>2.22.2</jackrabbit.version>
+        <jackrabbit.version>2.22.3</jackrabbit.version>
         <jackrabbit-oak-db.version>1.90.0</jackrabbit-oak-db.version>
         <org.apache.jackrabbit.vault.version>4.1.4</org.apache.jackrabbit.vault.version>
         <jcr.version>2.0</jcr.version>
@@ -422,7 +422,7 @@
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
-        <bnd-maven-plugin.version>7.2.0</bnd-maven-plugin.version>
+        <bnd-maven-plugin.version>7.2.1</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -436,7 +436,7 @@
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <jcrcleaner-maven-plugin.version>1.1.0</jcrcleaner-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
         <jruby.version>10.0.2.0</jruby.version>
         <asciidoctorj.version>3.0.1</asciidoctorj.version>

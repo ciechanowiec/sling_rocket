@@ -6,7 +6,7 @@ import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 /**
- * Configuration for the {@link GoogleIdTokenVerifierProxy}.
+ * Configuration for {@link GoogleIdTokenVerifierProxy}.
  */
 @ObjectClassDefinition
 public @interface GoogleIdTokenVerifierProxyConfig {
