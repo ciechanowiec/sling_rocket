@@ -98,6 +98,7 @@
                         jempbox.version,
                         pdfbox.version,
                         pdfbox-io.version,
+                        xmpbox.version,
                         tika-core.version,
                         tika-parsers.version,
                         httpclient-osgi.version,
@@ -133,6 +134,8 @@
                         org.apache.servicemix.bundles.xerces.version,
                         io.opencensus.version,
                         caffeine.version,
+                        openhtmltopdf.version,
+                        graphics2d.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

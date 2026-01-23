@@ -128,7 +128,7 @@
         <!-- ====================================================================== -->
         <!-- GROOVY                                                                -->
         <!-- ====================================================================== -->
-        <groovy.version>5.0.3</groovy.version>
+        <groovy.version>5.0.4</groovy.version>
         <!-- ====================================================================== -->
         <!-- LIBS                                                                   -->
         <!-- ====================================================================== -->
@@ -148,6 +148,7 @@
         <jempbox.version>1.8.17</jempbox.version>
         <pdfbox.version>3.0.6</pdfbox.version>
         <pdfbox-io.version>3.0.6</pdfbox-io.version>
+        <xmpbox.version>3.0.6</xmpbox.version>
         <tika-core.version>1.28.5</tika-core.version>
         <tika-parsers.version>1.28.5</tika-parsers.version>
         <httpclient-osgi.version>4.5.14</httpclient-osgi.version>
@@ -188,6 +189,8 @@
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
         <io.opencensus.version>0.31.1</io.opencensus.version>
         <caffeine.version>3.2.3</caffeine.version>
+        <openhtmltopdf.version>1.1.37</openhtmltopdf.version>
+        <graphics2d.version>3.0.5</graphics2d.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -217,8 +220,8 @@
         <!-- LIBS_FASTERXML                                                         -->
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
-        <jackson-annotations.version>2.20</jackson-annotations.version>
-        <jackson.version>2.20.1</jackson.version>
+        <jackson-annotations.version>2.21</jackson-annotations.version>
+        <jackson.version>2.21.0</jackson.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
@@ -239,7 +242,7 @@
         <!-- ====================================================================== -->
         <slf4j.version>2.0.17</slf4j.version>
         <org.apache.sling.commons.log.version>6.0.2</org.apache.sling.commons.log.version>
-        <logback.version>1.5.24</logback.version>
+        <logback.version>1.5.25</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
@@ -421,7 +424,7 @@
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
-        <versions-maven-plugin.version>2.20.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.2.1</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
@@ -940,6 +943,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>xmpbox</artifactId>
+                <version>${xmpbox.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
                 <version>${tika-core.version}</version>
@@ -1165,6 +1174,24 @@
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
                 <version>${caffeine.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openhtmltopdf</groupId>
+                <artifactId>openhtmltopdf-core</artifactId>
+                <version>${openhtmltopdf.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openhtmltopdf</groupId>
+                <artifactId>openhtmltopdf-pdfbox</artifactId>
+                <version>${openhtmltopdf.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.rototor.pdfbox</groupId>
+                <artifactId>graphics2d</artifactId>
+                <version>${graphics2d.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
