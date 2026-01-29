@@ -160,7 +160,7 @@
         </org.apache.servicemix.bundles.thymeleaf.version>
         <attoparser.version>2.0.7.RELEASE</attoparser.version>
         <unbescape.version>1.1.6.RELEASE</unbescape.version>
-        <org.apache.servicemix.bundles.ognl.version>3.2.1_1</org.apache.servicemix.bundles.ognl.version>
+        <org.apache.servicemix.bundles.ognl.version>3.3.4_1</org.apache.servicemix.bundles.ognl.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
@@ -175,7 +175,7 @@
         <icu4j.version>78.2</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20251224</json.version>
-        <oauth2-oidc-sdk.version>11.31.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.32</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.7</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -2862,15 +2862,6 @@
                                 <ignoreVersion>
                                     <type>regex</type>
                                     <version>2.*</version>
-                                </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <!-- We need ognl.DefaultMemberAccess (https://stackoverflow.com/questions/54928412/defaultmemberaccess-not-found-in-ognl-3-2-10) -->
-                                <groupId>org.apache.servicemix.bundles</groupId>
-                                <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
-                                <ignoreVersion>
-                                    <type>regex</type>
-                                    <version>.*</version>
                                 </ignoreVersion>
                             </rule>
                             <rule>
