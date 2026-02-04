@@ -1,6 +1,5 @@
 /**
  * Utilities related to the calendar.
- * Security-scanned code.
  */
 @Export
 @Version("16.1.0")
