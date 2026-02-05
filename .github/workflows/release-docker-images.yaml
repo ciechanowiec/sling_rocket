@@ -51,9 +51,6 @@ jobs:
       - name: Deploy `rocket-instance` image
         working-directory: src
         run: |
-          # Create a builder with restricted parallel processing
-          docker buildx create --use --driver-opt "max-parallel=1"
-
           docker buildx bake \
             --file docker-compose.yml \
             --set '*.platform=linux/amd64,linux/arm64' \
@@ -62,7 +59,6 @@ jobs:
       - name: Deploy `rocket-nginx` image
         working-directory: src
         run: |
-          docker buildx create --use
           docker buildx bake \
             --file docker-compose.yml \
             --set '*.platform=linux/amd64,linux/arm64' \
