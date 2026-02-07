@@ -14,9 +14,13 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 public @interface GoogleDirectoryConfig {
 
     /**
-     * Email of the user to impersonate when accessing the {@link Directory} by a service user. All actions performed by
-     * the service user will be performed on behalf of the impersonated user via a domain-wide delegation. The
-     * impersonated user must be a user who has administrative privileges to access the {@link Directory}.
+     * Email of the user to impersonate when accessing the {@link Directory} by a service user.
+     * <p>
+     * All actions performed by the service user configured via {@link #path$_$to$_$service$_$account$_$key$_$file()}
+     * will be performed on behalf of this user via domain-wide delegation.
+     * <p>
+     * This user must possess administrative privileges in the Google Admin Console that correspond to at least all the
+     * scopes defined in {@link #directory$_$scopes()}.
      *
      * @return email of the user to impersonate when accessing the {@link Directory} by a service user
      */
@@ -31,8 +35,14 @@ public @interface GoogleDirectoryConfig {
 
     /**
      * Absolute path in the file system to the JSON key file of the service account that will be used to access the
-     * {@link Directory}. The file should be attached as the volume of type {@code bind} to the Sling Rocket Docker
-     * container in the {@code docker-compose.yml} file, e.g., this way:
+     * {@link Directory}.
+     * <p>
+     * The service account associated with this key file must be configured for domain-wide delegation in the Google
+     * Admin Console. It must be granted the scopes defined in {@link #directory$_$scopes()} to be able to impersonate
+     * the user specified in {@link #user$_$to$_$impersonate_email()}.
+     * <p>
+     * The file should be attached as the volume of type {@code bind} to the Sling Rocket Docker container in the
+     * {@code docker-compose.yml} file, e.g., this way:
      * <pre>
      * - type: bind
      *   source: secrets/GOOGLE_DIRECTORY_SERVICE_ACCOUNT_KEY_FILE.JSON
@@ -57,9 +67,9 @@ public @interface GoogleDirectoryConfig {
     String path$_$to$_$service$_$account$_$key$_$file() default StringUtils.EMPTY;
 
     /**
-     * {@link DirectoryScopes} for the {@link Directory}.
+     * Available {@link DirectoryScopes} for the {@link Directory}.
      *
-     * @return {@link DirectoryScopes} for the {@link Directory}
+     * @return available {@link DirectoryScopes} for the {@link Directory}
      */
     @SuppressWarnings("IllegalIdentifierName")
     @AttributeDefinition(
@@ -67,14 +77,12 @@ public @interface GoogleDirectoryConfig {
         description = "Directory Scopes for the Directory",
         defaultValue = {
             DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY,
-            DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY,
             DirectoryScopes.ADMIN_DIRECTORY_GROUP_MEMBER_READONLY,
             DirectoryScopes.ADMIN_DIRECTORY_GROUP_READONLY
         },
         type = AttributeType.STRING
     )
     String[] directory$_$scopes() default {
-        DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY,
         DirectoryScopes.ADMIN_DIRECTORY_USER_READONLY,
         DirectoryScopes.ADMIN_DIRECTORY_GROUP_MEMBER_READONLY,
         DirectoryScopes.ADMIN_DIRECTORY_GROUP_READONLY

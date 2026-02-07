@@ -53,10 +53,10 @@ public class GoogleUserPhoto {
             ).flatMap(
                 thumbnailPhotoUrl -> {
                     try {
-                        log.debug("Parsing thumbnail photo URL: %s".formatted(thumbnailPhotoUrl));
+                        log.trace("Parsing thumbnail photo URL: {}", thumbnailPhotoUrl);
                         return Optional.of(URI.create(thumbnailPhotoUrl).toURL());
                     } catch (IllegalArgumentException | MalformedURLException exception) {
-                        log.error("Could not parse thumbnail photo URL: %s".formatted(thumbnailPhotoUrl), exception);
+                        log.error("Could not parse thumbnail photo URL: {}", thumbnailPhotoUrl, exception);
                         return Optional.empty();
                     }
                 }
