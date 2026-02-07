@@ -202,7 +202,7 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
         int cacheTTLSeconds = config.get().cache_ttl_seconds();
         boolean isCacheEnabled = cacheMaxSize > NumberUtils.INTEGER_ZERO && cacheTTLSeconds > NumberUtils.INTEGER_ZERO;
         return Optional.of(credentialsExtractionCache.get())
-            .filter(cache -> isCacheEnabled)
+            .filter(_ -> isCacheEnabled)
             .map(cache -> cache.get(googleIdToken, this::extractCredentials))
             .orElseGet(() -> extractCredentials(googleIdToken));
     }

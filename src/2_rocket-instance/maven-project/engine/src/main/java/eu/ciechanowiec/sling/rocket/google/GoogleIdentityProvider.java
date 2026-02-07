@@ -117,7 +117,7 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
         log.trace("getIdentity({})", ref);
         return Optional.ofNullable(ref.getProviderName())
             .filter(providerNameFromEIR -> providerNameFromEIR.equals(getName()))
-            .map(providerNameFromEIR -> ref.getId())
+            .map(_ -> ref.getId())
             .flatMap(
                 externalIdentityRefID -> googleDirectory.retrieveUser(externalIdentityRefID)
                     .<ExternalIdentity>map(user -> new GoogleExternalUser(user, googleDirectory))
@@ -148,10 +148,10 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
 
     private Optional<ExternalUser> getCachedUser(String userId) {
         return Optional.of(usersCache.get())
-            .filter(cache -> isCacheEnabled())
+            .filter(_ -> isCacheEnabled())
             .map(
                 cache -> cache.get(
-                    userId, key -> googleDirectory.retrieveUser(userId)
+                    userId, _ -> googleDirectory.retrieveUser(userId)
                         .map(user -> new GoogleExternalUser(user, googleDirectory))
                 )
             ).orElseGet(
@@ -217,10 +217,10 @@ public class GoogleIdentityProvider extends AnnotatedStandardMBean
 
     private Optional<ExternalGroup> getCachedGroup(String name) {
         return Optional.of(groupsCache.get())
-            .filter(cache -> isCacheEnabled())
+            .filter(_ -> isCacheEnabled())
             .map(
                 cache -> cache.get(
-                    name, key -> googleDirectory.retrieveGroup(name)
+                    name, _ -> googleDirectory.retrieveGroup(name)
                         .map(group -> new GoogleExternalGroup(group, googleDirectory))
                 )
             ).orElseGet(
