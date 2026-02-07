@@ -309,6 +309,8 @@ Sling-Nodetypes: SLING-INF/notetypes/nodetypes.cnd
 
 # Plugins are inlined due to the plugins merge bug: https://github.com/adobe/aem-project-archetype/issues/971
 -plugin org.apache.sling.caconfig.bndplugin.ConfigurationClassScannerPlugin,org.apache.sling.bnd.models.ModelsScannerPlugin
+
+-fixupmessages.privateexport: "*"; restrict:=warning; is:=error
                                 ]]></bnd>
                         </configuration>
                     </execution>
