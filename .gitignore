@@ -1,3 +1,4 @@
+repo.xml
 *.class
 *.iml
 *.log*
@@ -11,7 +12,9 @@ log
 target
 node_modules
 .DS_Store
+.terraform/
+*.tfstate.backup
+*.drawio.png.bkp
 # Compiled documentation:
 README.html
 README.pdf
-repo.xml
