@@ -614,6 +614,23 @@ Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.interna
 . *ZAP Tests*
 +
 Run https://www.zaproxy.org/[_Zed Attack Proxy (ZAP)_] security tests.
+[upperroman]
+.. The basic test can be performed with the use of the command constructed the following way:
++
+[source, bash]
+----
+docker run -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py -t https://example.com
+----
+.. Security headers can be added to the above command the following way:
++
+[source, bash]
+----
+docker run -t \
+    -e ZAP_AUTH_HEADER="Cookie" \
+    -e ZAP_AUTH_HEADER_VALUE="SESSION=6a08d33d-a242-40f9-b172-d69c8bab868f" \
+    ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+    -t https://example.com
+----
 . *Disable Unsafe Extensions*
 +
 Depending on the needs of the business application, consider disabling unsafe rendering extensions, i.e. https://sling.apache.org/documentation/bundles/rendering-content-default-get-servlets.html[`json`, `xml` and `txt` extensions of `DefaultGetServlet`]. Among others, this can be achieved via creating a `org.apache.sling.servlets.get.DefaultGetServlet.cfg.json` OSGi configuration with the following content:
