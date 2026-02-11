@@ -643,6 +643,20 @@ Depending on the needs of the business application, consider disabling unsafe re
   "enable.xml": false
 }
 ----
+. *Request Size and Encoding*
+[upperroman]
+.. The https://github.com/apache/sling-org-apache-sling-engine/blob/dce8005d0cf8917c94b2871f0e9a5207dee633a5/src/main/java/org/apache/sling/engine/impl/parameters/RequestParameterSupportConfigurer.java#L133[`org.apache.sling.engine.parameters`] should be configured. Firstly, the `sling.default.parameter.encoding` parameter should be set to `UTF-8` to ensure that all request parameters are correctly interpreted as UTF-8 encoded. Secondly, the `file.max` and `request.max` parameters should be set to appropriate values to prevent denial-of-service attacks via excessively large requests. To achieve this, the following `org.apache.sling.engine.parameters.cfg.json` OSGi configuration can be created:
++
+[source,json]
+----
+{
+  "sling.default.parameter.encoding": "UTF-8",
+  "file.max": 1000000,
+  "request.max": 1000000
+}
+----
+.. Additionally, to prevent excessively large requests, the https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[`client_max_body_size`] directive of the SR Nginx should be set to an appropriate value (e.g., `client_max_body_size 1M;`).
+
 
 === `rocket-sync.sh`
 
