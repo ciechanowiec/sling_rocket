@@ -645,17 +645,27 @@ Depending on the needs of the business application, consider disabling unsafe re
 ----
 . *Request Size and Encoding*
 [upperroman]
-.. The https://github.com/apache/sling-org-apache-sling-engine/blob/dce8005d0cf8917c94b2871f0e9a5207dee633a5/src/main/java/org/apache/sling/engine/impl/parameters/RequestParameterSupportConfigurer.java#L133[`org.apache.sling.engine.parameters`] should be configured. Firstly, the `sling.default.parameter.encoding` parameter should be set to `UTF-8` to ensure that all request parameters are correctly interpreted as UTF-8 encoded. Secondly, the `file.max` and `request.max` parameters should be set to appropriate values to prevent denial-of-service attacks via excessively large requests. To achieve this, the following `org.apache.sling.engine.parameters.cfg.json` OSGi configuration can be created:
+.. The https://github.com/apache/sling-org-apache-sling-engine/blob/dce8005d0cf8917c94b2871f0e9a5207dee633a5/src/main/java/org/apache/sling/engine/impl/parameters/RequestParameterSupportConfigurer.java#L133[`org.apache.sling.engine.parameters`] should be configured. Firstly, the `sling.default.parameter.encoding` parameter should be set to `UTF-8` to ensure that all request parameters are correctly interpreted as UTF-8 encoded. Secondly, the `file.max` and `request.max` parameters should be set to appropriate values to prevent denial-of-service attacks via excessively large requests.
++
+For example, to achieve the above, the following `org.apache.sling.engine.parameters.cfg.json` OSGi configuration can be created:
 +
 [source,json]
 ----
 {
   "sling.default.parameter.encoding": "UTF-8",
-  "file.max": 1000000,
-  "request.max": 1000000
+  "file.max": "$[env:MAX_REQUEST_SIZE;type=Integer;default=20000000]",
+  "request.max": "$[env:MAX_REQUEST_SIZE;type=Integer;default=20000000]"
 }
 ----
+.. [[file-size-deployment-limitations]]Setting size limits in `sling.default.parameter.encoding` will limit _all_ requests to the SR Instance, including requests whose purpose is to deploy business applications via https://wcm.io/tooling/maven/plugins/wcmio-content-package-maven-plugin/install-mojo.html[Content Package Maven Plugin] and https://www.composum.com/home/nodes/pckgmgr.html[Composum Package Manager]. In such cases the following approach is recommended:
+[lowergreek]
+... Set the `file.max` and `request.max` parameters with the use of an environment variable, e.g., `MAX_REQUEST_SIZE`, that will be https://github.com/apache/felix-dev/blob/master/configadmin-plugins/interpolation/README.md[interpolated].
+... For local development, the respective environment variable, e.g., `MAX_REQUEST_SIZE`, can be set to a large value (e.g., `MAX_REQUEST_SIZE=20000000`) to allow for the deployment of business applications without any issues.
+... For production deployments, the respective environment variable, e.g., `MAX_REQUEST_SIZE`, can be set to a smaller value (e.g., `MAX_REQUEST_SIZE=1000000`). However, if the value isn't sufficient for deploying a business application, it can be temporarily increased to allow for the deployment and then decreased again to the original value to ensure that the SR Instance is protected against excessively large requests.
 .. Additionally, to prevent excessively large requests, the https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size[`client_max_body_size`] directive of the SR Nginx should be set to an appropriate value (e.g., `client_max_body_size 1M;`).
++
+[TIP]
+This setting doesn't introduce xref:#file-size-deployment-limitations[file-size-related limitations] on the business application deployment, since the deployment targets SR Instance directly, while this setting applies to requests that are routed through the SR Nginx.
 
 
 === `rocket-sync.sh`

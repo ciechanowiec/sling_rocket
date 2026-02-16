@@ -24,7 +24,6 @@ public @interface GoogleDirectoryConfig {
      *
      * @return email of the user to impersonate when accessing the {@link Directory} by a service user
      */
-    @SuppressWarnings("IllegalIdentifierName")
     @AttributeDefinition(
         name = "User to Impersonate - Email",
         description = "Email of the user to impersonate when accessing the Directory by a service user",
@@ -56,7 +55,7 @@ public @interface GoogleDirectoryConfig {
      * @return absolute path in the file system to the JSON key file of the service account that will be used to access
      * the {@link Directory}
      */
-    @SuppressWarnings({"IllegalIdentifierName", "NewMethodNamingConvention"})
+    @SuppressWarnings("NewMethodNamingConvention")
     @AttributeDefinition(
         name = "Path to Service Account Key File",
         description = "Absolute path in the file system to the JSON key file of the service "
@@ -71,7 +70,6 @@ public @interface GoogleDirectoryConfig {
      *
      * @return available {@link DirectoryScopes} for the {@link Directory}
      */
-    @SuppressWarnings("IllegalIdentifierName")
     @AttributeDefinition(
         name = "Directory Scopes",
         description = "Directory Scopes for the Directory",

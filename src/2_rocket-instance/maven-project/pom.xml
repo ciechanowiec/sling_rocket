@@ -74,6 +74,7 @@
         <lombok.version>1.18.42</lombok.version>
         <javax.inject.version>1</javax.inject.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
+        <checkstyle.version>13.2.0</checkstyle.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
@@ -175,7 +176,7 @@
         <icu4j.version>78.2</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20251224</json.version>
-        <oauth2-oidc-sdk.version>11.32</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.33</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.7</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -242,7 +243,7 @@
         <!-- ====================================================================== -->
         <slf4j.version>2.0.17</slf4j.version>
         <org.apache.sling.commons.log.version>6.0.2</org.apache.sling.commons.log.version>
-        <logback.version>1.5.28</logback.version>
+        <logback.version>1.5.32</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
@@ -392,13 +393,13 @@
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
-        <junit-jupiter-api.version>6.0.2</junit-jupiter-api.version>
-        <junit-jupiter-params.version>6.0.2</junit-jupiter-params.version>
+        <junit-jupiter-api.version>6.0.3</junit-jupiter-api.version>
+        <junit-jupiter-params.version>6.0.3</junit-jupiter-params.version>
         <mockito-core.version>5.21.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.21.0</mockito-junit-jupiter.version>
-        <org.apache.sling.testing.sling-mock.junit5.version>4.0.2</org.apache.sling.testing.sling-mock.junit5.version>
+        <org.apache.sling.testing.sling-mock.junit5.version>4.0.4</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
-        <org.apache.sling.testing.sling-mock.core.version>4.0.2</org.apache.sling.testing.sling-mock.core.version>
+        <org.apache.sling.testing.sling-mock.core.version>4.0.4</org.apache.sling.testing.sling-mock.core.version>
         <awaitility.version>4.3.0</awaitility.version>
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->
@@ -483,6 +484,12 @@
                 <!-- Although @SuppressFBWarnings annotation, for which this dependency is added,
                      has a CLASS retention policy, in fact it isn't required during runtime or
                      on the final classpath -->
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.puppycrawl.tools</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>${checkstyle.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
@@ -2629,6 +2636,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
