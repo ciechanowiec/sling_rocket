@@ -177,6 +177,7 @@
                         org.apache.sling.commons.log.version,
                         logback.version,
                         org.apache.sling.commons.logservice.version,
+                        log4j.version,
 
                         jackrabbit.version,
                         jackrabbit-oak-db.version,
