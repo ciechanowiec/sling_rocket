@@ -177,7 +177,7 @@
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <json.version>20251224</json.version>
         <oauth2-oidc-sdk.version>11.33</oauth2-oidc-sdk.version>
-        <nimbus-jose-jwt.version>10.7</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.8</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
         <org.apache.servicemix.bundles.jcip-annotations.version>1.0_2
@@ -405,7 +405,7 @@
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->
         <!-- ====================================================================== -->
-        <annotations.version>26.0.2-1</annotations.version>
+        <annotations.version>26.1.0</annotations.version>
         <!-- ====================================================================== -->
         <!-- PLUGINS                                                                -->
         <!-- ====================================================================== -->
@@ -423,9 +423,9 @@
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
         <bnd-maven-plugin.version>7.2.1</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
@@ -434,7 +434,7 @@
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <slingfeature-maven-plugin.version>1.9.2</slingfeature-maven-plugin.version>
+        <slingfeature-maven-plugin.version>1.9.4</slingfeature-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>

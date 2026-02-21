@@ -23,10 +23,7 @@ import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.Repository;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -248,6 +245,20 @@ public final class CalendarNode implements WithJCRPath {
     @SuppressWarnings("WeakerAccess")
     public Optional<DayNode> day(LocalDate day) {
         return dayFunction.apply(day);
+    }
+
+    /**
+     * Returns an {@link Optional} containing a {@link DayNode} from this {@link CalendarNode} for the specified
+     * {@link LocalDateTime}.
+     *
+     * @param day {@link LocalDateTime} for which the {@link DayNode} is requested
+     * @return {@link Optional} containing a {@link DayNode} from this {@link CalendarNode} for the specified
+     * {@link LocalDateTime}; empty {@link Optional} is returned if for the specified {@link LocalDate} no
+     * {@link DayNode} exists
+     */
+    @SuppressWarnings("WeakerAccess")
+    public Optional<DayNode> day(LocalDateTime day) {
+        return day(day.toLocalDate());
     }
 
     private void assertPrimaryType(ResourceAccess resourceAccess) {

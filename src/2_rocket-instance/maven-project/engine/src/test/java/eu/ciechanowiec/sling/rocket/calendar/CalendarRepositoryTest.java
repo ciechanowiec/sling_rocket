@@ -12,10 +12,7 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -98,7 +95,7 @@ class CalendarRepositoryTest extends TestEnvironment {
                 LocalDate.of(2016, Month.AUGUST, 15),
                 calendarModel.day(LocalDate.of(2016, Month.AUGUST, 15)).orElseThrow().day()
             ),
-            () -> assertTrue(calendarModel.day(LocalDate.of(2010, Month.AUGUST, 15)).isEmpty())
+            () -> assertTrue(calendarModel.day(LocalDateTime.of(2010, Month.AUGUST, 15, 20, 20)).isEmpty())
         );
     }
 
