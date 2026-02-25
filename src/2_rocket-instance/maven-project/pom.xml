@@ -222,7 +222,7 @@
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <jackson-annotations.version>2.21</jackson-annotations.version>
-        <jackson.version>2.21.0</jackson.version>
+        <jackson.version>2.21.1</jackson.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
