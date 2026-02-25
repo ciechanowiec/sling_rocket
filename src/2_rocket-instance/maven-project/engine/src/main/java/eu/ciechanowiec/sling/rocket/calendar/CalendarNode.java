@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 @Model(
     adaptables = {Resource.class, SlingJakartaHttpServletRequest.class}
 )
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class CalendarNode implements WithJCRPath {
 
     /**
@@ -106,6 +107,33 @@ public final class CalendarNode implements WithJCRPath {
         yearFunction = year -> year(year, resourceResolver);
         monthFunction = yearMonth -> month(yearMonth, resourceResolver);
         dayFunction = day -> day(day, resourceResolver);
+    }
+
+    /**
+     * Constructs an instance of this class utilizing an externally provided, pre-existing {@link ResourceResolver}.
+     * <p>
+     * This constructor is designed for scenarios where the lifecycle of the {@link ResourceResolver} is managed by the
+     * calling context (e.g., Sling). The provided {@link ResourceResolver} is used for all subsequent
+     * {@link Repository} operations within this object. Consequently, this object will <strong>not</strong> assume
+     * ownership of the {@link ResourceResolver} and will not attempt to close it.
+     * <p>
+     * The object constructed with this constructor offers superior performance compared to
+     * {@link CalendarNode#CalendarNode(JCRPath, ResourceAccess)} as it avoids the need to repeatedly acquire and
+     * authenticate a new {@link ResourceResolver} for each {@link Repository} operation. It is therefore the preferred
+     * choice in performance-sensitive code sections where a {@link ResourceResolver} is already available.
+     *
+     * @param jcrPath          {@link JCRPath} pointing to the {@link Node} represented by the constructed object
+     * @param resourceResolver {@link ResourceResolver} that will be used by the constructed object to acquire access to
+     *                         resources
+     * @throws IllegalPrimaryTypeException if the primary type of the {@link Node} represented by the constructed object
+     *                                     is different than {@link CalendarNode#NT_CALENDAR}
+     * @throws IllegalArgumentException    if no {@link Resource} is available at the specified {@link JCRPath}
+     */
+    @SuppressWarnings({"DataFlowIssue", "WeakerAccess"})
+    public CalendarNode(JCRPath jcrPath, ResourceResolver resourceResolver) {
+        Resource resource = Optional.ofNullable(resourceResolver.getResource(jcrPath.get()))
+            .orElseThrow(() -> new IllegalArgumentException("No resource found for the provided JCR path: " + jcrPath));
+        this(resource);
     }
 
     /**
@@ -186,6 +214,7 @@ public final class CalendarNode implements WithJCRPath {
      * @return {@link Optional} containing a {@link YearNode} from this {@link CalendarNode} for the specified
      * {@link Year}; empty {@link Optional} is returned if for the specified {@link Year} no {@link YearNode} exists
      */
+    @SuppressWarnings("WeakerAccess")
     public Optional<YearNode> year(Year year) {
         return yearFunction.apply(year);
     }

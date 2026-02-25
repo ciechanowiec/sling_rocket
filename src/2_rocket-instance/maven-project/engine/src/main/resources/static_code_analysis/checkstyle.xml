@@ -61,6 +61,10 @@
     TreeWalker checks
     -->
     <module name="TreeWalker">
+        <!-- Java 25 compatibility: https://github.com/checkstyle/checkstyle/issues/17052#issuecomment-3925225556 -->
+        <property name="skipFileOnJavaParseException" value="true"/>
+        <property name="javaParseExceptionSeverity" value="ignore"/>
+
         <!-- Enable usage of @SuppressWarnings -->
         <module name="SuppressWarningsHolder"/>
 

@@ -46,3 +46,9 @@ orderable
 - * (UNDEFINED) multiple
 - * (UNDEFINED)
 + * (nt:base)
+
+[rocket:AuditEntry] > nt:base, mix:created, mix:lastModified
+orderable
+- * (UNDEFINED) multiple
+- * (UNDEFINED)
++ * (nt:base)

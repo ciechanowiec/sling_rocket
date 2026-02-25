@@ -47,7 +47,7 @@ class CalendarRepositoryTest extends TestEnvironment {
         assertEquals(13_513 + 365, totalAmountOfDays());
     }
 
-    @SuppressWarnings({"resource", "PMD.CloseResource"})
+    @SuppressWarnings({"squid:S5778", "PMD.CloseResource", "MethodLength"})
     @Test
     void testSpecificDates() {
         CalendarNode calendar = new StagedCalendarNode(Year.of(2015), Year.of(2018), fullResourceAccess).save(
@@ -57,11 +57,17 @@ class CalendarRepositoryTest extends TestEnvironment {
         CalendarNode calendarModel = Optional.ofNullable(resourceResolver.getResource("/content/my-calendar"))
             .map(resource -> resource.adaptTo(CalendarNode.class))
             .orElseThrow();
+        CalendarNode calendarFromPath = new CalendarNode(new TargetJCRPath("/content/my-calendar"), resourceResolver);
         assertAll(
             () -> assertEquals(new TargetJCRPath("/content/my-calendar"), calendar.jcrPath()),
             () -> assertEquals(new TargetJCRPath("/content/my-calendar"), calendarModel.jcrPath()),
             () -> assertEquals(Year.of(2017), calendar.years().get(2).year()),
             () -> assertEquals(Year.of(2017), calendarModel.years().get(2).year()),
+            () -> assertEquals(Year.of(2017), calendarFromPath.years().get(2).year()),
+            () -> assertThrows(
+                IllegalArgumentException.class,
+                () -> new CalendarNode(new TargetJCRPath("/content/no-calendar"), resourceResolver)
+            ),
             () -> assertEquals(
                 YearMonth.of(2017, 4), calendar.years().get(2).months().get(3).month()
             ),
