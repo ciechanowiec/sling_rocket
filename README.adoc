@@ -23,6 +23,8 @@
 
 _Sling Rocket_ is a framework for building dynamic web applications.
 
+NOTE: This codebase undergoes regular security vulnerability scans.
+
 == Architecture
 
 === Sling Rocket Components
