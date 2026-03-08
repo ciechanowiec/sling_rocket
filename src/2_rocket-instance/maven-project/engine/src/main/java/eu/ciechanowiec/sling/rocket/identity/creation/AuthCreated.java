@@ -34,7 +34,7 @@ public class AuthCreated {
      */
     public Optional<AuthID> authID() {
         return Optional.ofNullable(event.getProperty(AuthID.class.getSimpleName()))
-            .filter(authID -> event.getTopic().equals(AuthCreationBroadcast.TOPIC_AUTH_CREATION))
+            .filter(_ -> event.getTopic().equals(AuthCreationBroadcast.TOPIC_AUTH_CREATION))
             .filter(AuthID.class::isInstance)
             .map(AuthID.class::cast);
     }

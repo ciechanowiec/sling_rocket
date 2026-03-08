@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.oak.commons.jmx.AnnotatedStandardMBean;
 import org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalUser;
+import org.apache.sling.auth.core.AuthConstants;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.auth.core.spi.JakartaAuthenticationHandler;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -187,6 +188,9 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
                 email -> {
                     AuthenticationInfo authenticationInfo = new AuthenticationInfo(
                         AUTH_TYPE, email, googleIdToken.toCharArray()
+                    );
+                    authenticationInfo.put(
+                        AuthConstants.AUTH_INFO_LOGIN, true
                     );
                     authenticationInfo.put(
                         JcrResourceConstants.AUTHENTICATION_INFO_CREDENTIALS,
