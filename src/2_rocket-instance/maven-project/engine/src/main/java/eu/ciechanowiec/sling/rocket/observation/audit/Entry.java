@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,14 @@ public class Entry {
     private final Supplier<String> subject;
     private final Supplier<LocalDateTime> timestamp;
     private final Supplier<Map<String, String>> additionalProperties;
+    @SuppressWarnings("OverlyComplexBooleanExpression")
+    private final Predicate<Map.Entry<String, String>> additionalPropertiesFilter = entry -> {
+        String key = entry.getKey();
+        return !SYSTEM_PROPERTIES.contains(key)
+            && !PN_USER_ID.equals(key)
+            && !PN_SUBJECT.equals(key)
+            && !PN_TIMESTAMP.equals(key);
+    };
 
     /**
      * Constructs an instance of this class.
@@ -89,19 +98,15 @@ public class Entry {
      * @param timestamp            time when the event described by this {@link Entry} occurred
      * @param additionalProperties additional properties related to the event described by this {@link Entry}
      */
-    @SuppressWarnings({"WeakerAccess", "MethodWithMoreThanThreeNegations"})
+    @SuppressWarnings("WeakerAccess")
     public Entry(String userID, String subject, LocalDateTime timestamp, Map<String, String> additionalProperties) {
         this.userID = () -> userID;
         this.subject = () -> subject;
         this.timestamp = () -> timestamp;
         this.additionalProperties = () -> additionalProperties.entrySet()
             .stream()
-            .filter(entry -> !SYSTEM_PROPERTIES.contains(entry.getKey()))
-            .filter(entry -> {
-                    String key = entry.getKey();
-                    return !PN_USER_ID.equals(key) && !PN_SUBJECT.equals(key) && !PN_TIMESTAMP.equals(key);
-                }
-            ).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(additionalPropertiesFilter)
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -112,7 +117,6 @@ public class Entry {
      * @param timestamp time when the event described by this {@link Entry} occurred
      * @param resource  {@link Resource} that represents a {@link Node} of type {@link Entry#NT_AUDIT_ENTRY}
      */
-    @SuppressWarnings("MethodWithMoreThanThreeNegations")
     @Inject
     public Entry(
         @ValueMapValue(name = PN_USER_ID)
@@ -134,14 +138,9 @@ public class Entry {
         Map<String, String> extractedAdditionalProperties = nodeProperties.all()
             .entrySet()
             .stream()
-            .filter(entry -> !SYSTEM_PROPERTIES.contains(entry.getKey()))
-            .filter(entry -> {
-                    String key = entry.getKey();
-                    return !PN_USER_ID.equals(key) && !PN_SUBJECT.equals(key) && !PN_TIMESTAMP.equals(key);
-                }
-            ).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(additionalPropertiesFilter)
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
         this.additionalProperties = () -> extractedAdditionalProperties;
-
     }
 
     /**
