@@ -32,7 +32,7 @@ class DiskStats implements JSON {
     @JsonProperty("freeSpace")
     String freeSpace() {
         String freePercentage = String.format("%.2f", (double) freeSpace.bytes() / totalSpace.bytes() * 100);
-        return String.format("%s (%s%% of total space)", occupiedSpace, freePercentage);
+        return String.format("%s (%s%% of total space)", freeSpace, freePercentage);
     }
 
     @SneakyThrows
