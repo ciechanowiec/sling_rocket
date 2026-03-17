@@ -6,6 +6,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import eu.ciechanowiec.sling.rocket.google.GoogleCredentials;
 import eu.ciechanowiec.sling.rocket.google.GoogleIdTokenVerifierProxy;
 import eu.ciechanowiec.sling.rocket.google.GoogleIdentityProvider;
+import eu.ciechanowiec.sling.rocket.observation.audit.Entry;
+import eu.ciechanowiec.sling.rocket.observation.audit.EntryTrampoline;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.ToString;
@@ -24,6 +26,8 @@ import org.osgi.service.component.propertytypes.ServiceRanking;
 import org.osgi.service.metatype.annotations.Designate;
 
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -69,6 +73,9 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
     private final GoogleIdTokenVerifierProxy googleIdTokenVerifierProxy;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<GoogleIdentityProvider> googleIdentityProviderNullable;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @ToString.Exclude
+    private final Optional<EntryTrampoline> entryTrampolineNullable;
     @ToString.Exclude
     private final AtomicReference<Cache<String, Optional<AuthenticationInfo>>> credentialsExtractionCache;
     @ToString.Exclude
@@ -79,6 +86,8 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      *
      * @param googleIdTokenVerifierProxy {@link GoogleIdTokenVerifierProxy} for verifying {@link GoogleIdToken}s
      * @param googleIdentityProvider     {@link GoogleIdentityProvider} that delivers related {@link ExternalUser}s
+     * @param entryTrampoline            {@link EntryTrampoline} for sumbitting {@link Entry}-s related to
+     *                                   authentication events
      * @param config                     {@link GoogleAuthenticationHandlerConfig} used by the constructed instance
      */
     @Activate
@@ -90,12 +99,21 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
             policy = ReferencePolicy.STATIC,
             policyOption = ReferencePolicyOption.GREEDY
         )
+        @Nullable
         GoogleIdentityProvider googleIdentityProvider,
+        @Reference(
+            cardinality = ReferenceCardinality.OPTIONAL,
+            policy = ReferencePolicy.STATIC,
+            policyOption = ReferencePolicyOption.GREEDY
+        )
+        @Nullable
+        EntryTrampoline entryTrampoline,
         GoogleAuthenticationHandlerConfig config
     ) {
         super(GoogleAuthenticationHandlerMBean.class);
         this.googleIdTokenVerifierProxy = googleIdTokenVerifierProxy;
         this.googleIdentityProviderNullable = Optional.ofNullable(googleIdentityProvider);
+        this.entryTrampolineNullable = Optional.ofNullable(entryTrampoline);
         this.credentialsExtractionCache = new AtomicReference<>(buildCache(config));
         this.config = new AtomicReference<>(config);
         log.info("Initialized {}", this);
@@ -135,7 +153,7 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
      * present and valid; a {@code null} is returned otherwise
      */
     @Override
-    @SuppressWarnings({"ReturnOfNull", "Regexp"})
+    @SuppressWarnings("Regexp")
     @Nullable
     public AuthenticationInfo extractCredentials(HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
@@ -225,9 +243,19 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
     }
 
     @Override
+    @SuppressWarnings("squid:S3864")
     public void dropCredentials(HttpServletRequest request, HttpServletResponse response) {
-        String remoteUser = request.getRemoteUser();
+        String remoteUser = Optional.ofNullable(request.getRemoteUser()).orElse("UNKNOWN");
         log.debug("Dropping credentials for '{}'", remoteUser);
+        entryTrampolineNullable.ifPresent(
+            entryTrampoline -> entryTrampoline.submitForSaving(
+                new Entry(
+                    remoteUser, "%s/LOGOUT".formatted(GoogleAuthenticationHandler.class.getName()),
+                    LocalDateTime.now(),
+                    Map.of()
+                )
+            )
+        );
         Optional.ofNullable(extractCredentials(request, response))
             .map(AuthenticationInfo::getUser)
             .ifPresent(
