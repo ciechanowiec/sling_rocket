@@ -5,16 +5,20 @@ import eu.ciechanowiec.sling.rocket.identity.AuthIDUser;
 import eu.ciechanowiec.sling.rocket.identity.creation.AuthCreationBroadcast;
 import eu.ciechanowiec.sling.rocket.observation.audit.pushers.AuthenticationEventListener;
 import eu.ciechanowiec.sling.rocket.observation.audit.pushers.GenericRCL;
+import eu.ciechanowiec.sling.rocket.observation.audit.pushers.SlingPostMonitor;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.vault.util.JcrConstants;
 import org.apache.sling.api.SlingConstants;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.auth.core.AuthConstants;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.event.jobs.Job;
 import org.apache.sling.event.jobs.JobManager;
 import org.apache.sling.event.jobs.consumer.JobConsumer;
+import org.apache.sling.servlets.post.Modification;
+import org.apache.sling.servlets.post.ModificationType;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class AuditSystemTest extends TestEnvironment {
 
     private Storage storage;
@@ -55,7 +59,7 @@ class AuditSystemTest extends TestEnvironment {
     }
 
     @Test
-    @SuppressWarnings("MethodLength")
+    @SuppressWarnings({"MethodLength", "ExtractMethodRecommender"})
     void testEntryConstructorsAndProperties() {
         LocalDateTime now = LocalDateTime.now();
         Map<String, String> additionalProps = Map.of("key1", "value1", "key2", "value2");
@@ -271,5 +275,211 @@ class AuditSystemTest extends TestEnvironment {
     void testJCRPathOfStorage() {
         String jcrPath = storage.getJCRPath();
         assertEquals("/var/audit/eu.ciechanowiec.sling.rocket", jcrPath);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorEnabledSingleModification() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+        when(request.getRemoteUser()).thenReturn("postUser");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onCreated("/content/node")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("postUser", stored.userID()),
+            () -> assertEquals(Modification.class.getName(), stored.subject()),
+            () -> assertEquals("CREATE", stored.additionalProperties().get(ModificationType.class.getName())),
+            () -> assertEquals("/content/node", stored.additionalProperties().get("source")),
+            () -> assertEquals(Entry.UNKNOWN, stored.additionalProperties().get("destination")),
+            () -> assertNotNull(stored.additionalProperties().get("threadName"))
+        );
+    }
+
+    @Test
+    void testSlingPostMonitorDisabledDoesNotSubmitEntries() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", false));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onModified("/content/page")));
+
+        entryTrampoline.deactivate();
+
+        verify(jobManager, never()).addJob(eq(Storage.JOB_TOPIC), anyMap());
+        assertEquals(0, storage.getCount());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorMultipleModificationsAllStored() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+        when(request.getRemoteUser()).thenReturn("bulkUser");
+
+        List<Modification> modifications = List.of(
+            Modification.onCreated("/content/a"),
+            Modification.onModified("/content/b"),
+            Modification.onDeleted("/content/c")
+        );
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, modifications);
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(3, postEntries.size());
+        List<String> storedTypes = postEntries.stream()
+            .map(entry -> entry.additionalProperties().get(ModificationType.class.getName()))
+            .toList();
+        assertAll(
+            () -> assertTrue(storedTypes.contains("CREATE")),
+            () -> assertTrue(storedTypes.contains("MODIFY")),
+            () -> assertTrue(storedTypes.contains("DELETE"))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorNullRemoteUserFallsBackToUnknown() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+        when(request.getRemoteUser()).thenReturn(null);
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onModified("/content/anon")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        assertEquals(Entry.UNKNOWN, postEntries.getFirst().userID());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorMoveRecordsBothSourceAndDestination() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+        when(request.getRemoteUser()).thenReturn("moverUser");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onMoved("/content/src", "/content/dst")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("MOVE", stored.additionalProperties().get(ModificationType.class.getName())),
+            () -> assertEquals("/content/src", stored.additionalProperties().get("source")),
+            () -> assertEquals("/content/dst", stored.additionalProperties().get("destination"))
+        );
+    }
+
+    @Test
+    void testSlingPostMonitorEmptyModificationListDoesNothing() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        SlingJakartaHttpServletRequest request = mock(SlingJakartaHttpServletRequest.class);
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of());
+
+        entryTrampoline.deactivate();
+
+        verify(jobManager, never()).addJob(eq(Storage.JOB_TOPIC), anyMap());
+        assertEquals(0, storage.getCount());
     }
 }
