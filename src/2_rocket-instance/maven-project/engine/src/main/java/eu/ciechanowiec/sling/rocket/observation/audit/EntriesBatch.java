@@ -90,6 +90,6 @@ class EntriesBatch {
     }
 
     List<Entry> entries() {
-        return entriesSupplier.get();
+        return entriesSupplier.get().stream().sorted().toList();
     }
 }

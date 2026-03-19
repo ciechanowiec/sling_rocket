@@ -23,6 +23,7 @@ class ResToAuthAdapterFactoryTest extends TestEnvironment {
 
     @SneakyThrows
     @Test
+    @SuppressWarnings("PMD.CloseResource")
     void testAdaptation() {
         ResourceResolver resourceResolver = context.resourceResolver();
         AuthIDUser user = createOrGetUser(new AuthIDUser("user-1"));

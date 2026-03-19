@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Storage of audit entries.
+ * Storage of {@link Entry}-s.
  */
 @Component(
     service = {Storage.class, JobConsumer.class},

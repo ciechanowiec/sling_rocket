@@ -1,7 +1,13 @@
 package eu.ciechanowiec.sling.rocket.observation.audit;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
+import lombok.SneakyThrows;
 import org.apache.jackrabbit.vault.util.JcrConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.observation.ResourceChange;
@@ -18,10 +24,7 @@ import javax.jcr.Repository;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -32,7 +35,7 @@ import java.util.stream.Collectors;
  */
 @Model(adaptables = Resource.class)
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class Entry {
+public class Entry implements Comparable<Entry>, JSON {
 
     /**
      * The type name of a {@link Node} that represents an {@link Entry} in the {@link Repository}.
@@ -164,6 +167,7 @@ public class Entry {
      * @return ID of the user related to the event described by this {@link Entry}
      */
     @SuppressWarnings("WeakerAccess")
+    @JsonProperty
     public String userID() {
         return userID.get();
     }
@@ -174,6 +178,7 @@ public class Entry {
      * @return target of the event described by this {@link Entry}, e.g., a {@link JCRPath}
      */
     @SuppressWarnings("WeakerAccess")
+    @JsonProperty
     public String subject() {
         return subject.get();
     }
@@ -184,6 +189,8 @@ public class Entry {
      * @return time when the event described by this {@link Entry} occurred
      */
     @SuppressWarnings("WeakerAccess")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonProperty
     public LocalDateTime timestamp() {
         return timestamp.get();
     }
@@ -194,6 +201,7 @@ public class Entry {
      * @return additional properties related to the event described by this {@link Entry}
      */
     @SuppressWarnings("WeakerAccess")
+    @JsonProperty
     public Map<String, String> additionalProperties() {
         return additionalProperties.get();
     }
@@ -209,11 +217,37 @@ public class Entry {
 
     @Override
     public String toString() {
-        return "Entry{"
-            + "userID='" + userID()
-            + ", subject='" + subject()
-            + ", timestamp=" + timestamp()
-            + ", additionalProperties=" + additionalProperties()
-            + '}';
+        return asJSON();
+    }
+
+    @Override
+    public int compareTo(Entry comparedEntry) {
+        return timestamp().compareTo(comparedEntry.timestamp());
+    }
+
+    @Override
+    public boolean equals(Object comparedObject) {
+        return this == comparedObject
+            || comparedObject instanceof Entry comparedEntry
+            && userID().equals(comparedEntry.userID())
+            && subject().equals(comparedEntry.subject())
+            && timestamp().equals(comparedEntry.timestamp())
+            && additionalProperties().equals(comparedEntry.additionalProperties());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userID().hashCode();
+        result = 31 * result + subject().hashCode();
+        result = 31 * result + timestamp().hashCode();
+        result = 31 * result + additionalProperties().hashCode();
+        return result;
+    }
+
+    @Override
+    @SneakyThrows
+    public String asJSON() {
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        return objectMapper.writeValueAsString(this);
     }
 }
