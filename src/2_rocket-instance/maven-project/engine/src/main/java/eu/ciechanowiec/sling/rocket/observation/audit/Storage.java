@@ -90,6 +90,11 @@ public class Storage extends AnnotatedStandardMBean implements JobConsumer, With
         }
     }
 
+    @Override
+    public String getJCRPath() {
+        return jcrPath().get();
+    }
+
     @SuppressWarnings("NestedTryDepth")
     @Override
     public void deleteAll() {

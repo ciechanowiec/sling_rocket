@@ -266,4 +266,10 @@ class AuditSystemTest extends TestEnvironment {
         // Should not have called jobManager.addJob because it's disabled
         verify(mockJobManager, never()).addJob(eq(Storage.JOB_TOPIC), anyMap());
     }
+
+    @Test
+    void testJCRPathOfStorage() {
+        String jcrPath = storage.getJCRPath();
+        assertEquals("/var/audit/eu.ciechanowiec.sling.rocket", jcrPath);
+    }
 }

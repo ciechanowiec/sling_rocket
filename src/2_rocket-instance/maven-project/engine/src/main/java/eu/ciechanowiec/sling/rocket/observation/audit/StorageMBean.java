@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.observation.audit;
 
+import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import org.apache.jackrabbit.oak.api.jmx.Description;
 import org.apache.jackrabbit.oak.api.jmx.Name;
 
@@ -20,6 +21,14 @@ public interface StorageMBean {
     @SuppressWarnings("unused")
     @Description("Counts the number of entries stored in the storage")
     long getCount();
+
+    /**
+     * Retrieves {@link JCRPath} of the {@link Storage}.
+     *
+     * @return {@link JCRPath} of the {@link Storage}
+     */
+    @Description("Retrieves JCR path of the storage")
+    String getJCRPath();
 
     /**
      * Deletes all {@link Entry}-s stored in the {@link Storage}.
