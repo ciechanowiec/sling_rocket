@@ -235,6 +235,10 @@
     {
       "id": "de.rototor.pdfbox:graphics2d:${graphics2d.version}",
       "start-order": "30"
+    },
+    {
+      "id": "org.jspecify:jspecify:${jspecify.version}",
+      "start-order": "30"
     }
   ]
 }
