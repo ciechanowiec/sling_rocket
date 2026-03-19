@@ -10,8 +10,10 @@ import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Repository;
 import javax.jcr.query.Query;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -45,10 +47,10 @@ public class AuthRepository {
                 .map(SneakyFunction.sneaky(Authorizable::getID))
                 .map(AuthIDUniversal::new)
                 .map(AuthID.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toCollection(TreeSet::new));
             int numOfAuths = all.size();
             log.debug("Retrieved {} authorizables", numOfAuths);
-            return all;
+            return Collections.unmodifiableSet(all);
         }
     }
 }
