@@ -136,6 +136,7 @@
                         caffeine.version,
                         openhtmltopdf.version,
                         graphics2d.version,
+                        jspecify.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

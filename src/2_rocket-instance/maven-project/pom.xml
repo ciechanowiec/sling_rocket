@@ -192,6 +192,7 @@
         <caffeine.version>3.2.3</caffeine.version>
         <openhtmltopdf.version>1.1.37</openhtmltopdf.version>
         <graphics2d.version>3.0.5</graphics2d.version>
+        <jspecify.version>1.0.0</jspecify.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -1202,6 +1203,12 @@
                 <groupId>de.rototor.pdfbox</groupId>
                 <artifactId>graphics2d</artifactId>
                 <version>${graphics2d.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>${jspecify.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
