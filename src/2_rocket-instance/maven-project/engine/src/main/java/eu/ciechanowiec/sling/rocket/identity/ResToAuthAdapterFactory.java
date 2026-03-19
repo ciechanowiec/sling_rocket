@@ -3,22 +3,27 @@ package eu.ciechanowiec.sling.rocket.identity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.adapter.AdapterFactory;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.Optional;
 
 /**
- * {@link AdapterFactory} that adapts a {@link Resource} to an {@link Authorizable} based on the
- * {@link Resource#getPath()}.
+ * {@link AdapterFactory} that adapts a {@link Resource} to an {@link Authorizable}, {@link User} or {@link Group} based
+ * on the {@link Resource#getPath()}.
  */
 @Component(
     service = {AdapterFactory.class, ResToAuthAdapterFactory.class},
     property = {
         AdapterFactory.ADAPTER_CLASSES + "=org.apache.jackrabbit.api.security.user.Authorizable",
+        AdapterFactory.ADAPTER_CLASSES + "=org.apache.jackrabbit.api.security.user.User",
+        AdapterFactory.ADAPTER_CLASSES + "=org.apache.jackrabbit.api.security.user.Group",
         AdapterFactory.ADAPTABLE_CLASSES + "=org.apache.sling.api.resource.Resource"
     }
 )
@@ -44,11 +49,15 @@ public class ResToAuthAdapterFactory implements AdapterFactory {
     }
 
     @SneakyThrows
-    @SuppressWarnings("PMD.CloseResource")
+    @SuppressWarnings({"PMD.CloseResource", "MatchXpath"})
+    @Nullable
     private <T> T getAdapter(Resource resource, Class<T> type) {
         ResourceResolver resourceResolver = resource.getResourceResolver();
         String resourcePath = resource.getPath();
         UserManager userManager = new WithUserManager(resourceResolver).get();
-        return type.cast(userManager.getAuthorizableByPath(resourcePath));
+        return Optional.ofNullable(userManager.getAuthorizableByPath(resourcePath))
+            .filter(type::isInstance)
+            .map(type::cast)
+            .orElse(null);
     }
 }
