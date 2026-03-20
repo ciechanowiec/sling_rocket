@@ -197,6 +197,7 @@
                         org.osgi.service.useradmin.version,
 
                         org.apache.sling.jcr.maintenance.version,
+                        org.apache.sling.jaxp-configurator.version,
                         org.apache.sling.javax.activation.version,
                         org.apache.sling.settings.version,
                         org.apache.sling.extensions.threaddump.version,

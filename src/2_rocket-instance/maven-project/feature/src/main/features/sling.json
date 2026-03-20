@@ -7,6 +7,10 @@
   },
   "bundles": [
     {
+      "id": "org.apache.sling:org.apache.sling.jaxp-configurator:${org.apache.sling.jaxp-configurator.version}",
+      "start-order": "1"
+    },
+    {
       "id": "org.apache.sling:org.apache.sling.javax.activation:${org.apache.sling.javax.activation.version}",
       "start-order": "1"
     },

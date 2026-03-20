@@ -272,6 +272,7 @@
         <!-- SLING                                                                  -->
         <!-- ====================================================================== -->
         <org.apache.sling.jcr.maintenance.version>1.1.0</org.apache.sling.jcr.maintenance.version>
+        <org.apache.sling.jaxp-configurator.version>1.0.0</org.apache.sling.jaxp-configurator.version>
         <org.apache.sling.javax.activation.version>0.3.0</org.apache.sling.javax.activation.version>
         <org.apache.sling.settings.version>1.5.0</org.apache.sling.settings.version>
         <org.apache.sling.extensions.threaddump.version>0.2.2</org.apache.sling.extensions.threaddump.version>
@@ -1786,6 +1787,12 @@
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.jcr.maintenance</artifactId>
                 <version>${org.apache.sling.jcr.maintenance.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.jaxp-configurator</artifactId>
+                <version>${org.apache.sling.jaxp-configurator.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
