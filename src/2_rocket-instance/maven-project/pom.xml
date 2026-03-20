@@ -173,7 +173,7 @@
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
-        <icu4j.version>78.2</icu4j.version>
+        <icu4j.version>78.3</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
         <oauth2-oidc-sdk.version>11.34</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.8</nimbus-jose-jwt.version>
@@ -2843,6 +2843,16 @@
                                     <ignoreVersion>
                                         <type>range</type>
                                         <version>(,${com.google.guava.version}]</version>
+                                    </ignoreVersion>
+                                </ignoreVersions>
+                            </rule>
+                            <rule>
+                                <groupId>io.dropwizard.metrics</groupId>
+                                <artifactId>metrics-core</artifactId>
+                                <ignoreVersions>
+                                    <ignoreVersion>
+                                        <type>range</type>
+                                        <version>(,${metrics-core.version}]</version>
                                     </ignoreVersion>
                                 </ignoreVersions>
                             </rule>
