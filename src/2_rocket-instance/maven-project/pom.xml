@@ -165,6 +165,8 @@
         <javassist.version>3.30.2-GA</javassist.version>
         <jstl.version>1.2_1</jstl.version>
         <javax.mail.version>1.5.0-b01</javax.mail.version>
+        <jakarta.mail.version>2.0.2</jakarta.mail.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
         <sling.rocket.login-form.version>21.0.0-SNAPSHOT</sling.rocket.login-form.version>
         <sling.rocket.oak-auth-external.version>21.0.0-SNAPSHOT</sling.rocket.oak-auth-external.version>
         <sling.rocket.engine.version>21.0.0-SNAPSHOT</sling.rocket.engine.version>
@@ -320,6 +322,8 @@
         <org.apache.sling.commons.threads.version>3.3.0</org.apache.sling.commons.threads.version>
         <org.apache.sling.commons.json.version>2.0.28</org.apache.sling.commons.json.version>
         <org.apache.sling.commons.crypto.version>1.1.0</org.apache.sling.commons.crypto.version>
+        <org.apache.sling.commons.messaging.version>1.0.2</org.apache.sling.commons.messaging.version>
+        <org.apache.sling.commons.messaging.mail.version>2.0.0</org.apache.sling.commons.messaging.mail.version>
         <!-- ====================================================================== -->
         <!-- SLING_DISCOVERY                                                        -->
         <!-- ====================================================================== -->
@@ -1035,6 +1039,18 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>${javax.mail.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+                <version>${jakarta.mail.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -2054,6 +2070,18 @@
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.commons.crypto</artifactId>
                 <version>${org.apache.sling.commons.crypto.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.commons.messaging</artifactId>
+                <version>${org.apache.sling.commons.messaging.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.commons.messaging.mail</artifactId>
+                <version>${org.apache.sling.commons.messaging.mail.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

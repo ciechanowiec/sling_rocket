@@ -43,6 +43,14 @@
     {
       "id": "org.apache.sling:org.apache.sling.commons.crypto:${org.apache.sling.commons.crypto.version}",
       "start-order": "15"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.messaging:${org.apache.sling.commons.messaging.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "org.apache.sling:org.apache.sling.commons.messaging.mail:${org.apache.sling.commons.messaging.mail.version}",
+      "start-order": "30"
     }
   ]
 }

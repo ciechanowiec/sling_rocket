@@ -113,6 +113,8 @@
                         javassist.version,
                         jstl.version,
                         javax.mail.version,
+                        jakarta.mail.version,
+                        jakarta.activation-api.version,
                         sneakyfun.version,
                         conditional.version,
                         javax.servlet-api.version,
@@ -243,6 +245,8 @@
                         org.apache.sling.commons.threads.version,
                         org.apache.sling.commons.json.version,
                         org.apache.sling.commons.crypto.version,
+                        org.apache.sling.commons.messaging.version,
+                        org.apache.sling.commons.messaging.mail.version,
 
                         org.apache.sling.discovery.api.version,
                         org.apache.sling.discovery.base.version,

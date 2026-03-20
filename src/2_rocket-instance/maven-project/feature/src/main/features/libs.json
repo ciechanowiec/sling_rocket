@@ -129,6 +129,14 @@
       "start-order": "20"
     },
     {
+      "id": "com.sun.mail:jakarta.mail:${jakarta.mail.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "jakarta.activation:jakarta.activation-api:${jakarta.activation-api.version}",
+      "start-order": "20"
+    },
+    {
       "id": "eu.ciechanowiec:sling.rocket.login-form:${project.version}",
       "start-order": "30"
     },
