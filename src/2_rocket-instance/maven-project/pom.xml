@@ -144,7 +144,7 @@
         <stax-ex.version>1.8.3</stax-ex.version>
         <stax2-api.version>4.2.2</stax2-api.version>
         <encoder.version>1.4.0</encoder.version>
-        <metrics-core.version>4.2.37</metrics-core.version>
+        <metrics-core.version>4.2.38</metrics-core.version>
         <fontbox.version>3.0.7</fontbox.version>
         <jempbox.version>1.8.17</jempbox.version>
         <pdfbox.version>3.0.7</pdfbox.version>
@@ -2841,16 +2841,6 @@
                                     <type>regex</type>
                                     <version>200.*</version>
                                 </ignoreVersion>
-                            </rule>
-                            <rule>
-                                <groupId>io.dropwizard.metrics</groupId>
-                                <artifactId>metrics-core</artifactId>
-                                <ignoreVersions>
-                                    <ignoreVersion>
-                                        <type>range</type>
-                                        <version>(,${metrics-core.version}]</version>
-                                    </ignoreVersion>
-                                </ignoreVersions>
                             </rule>
                             <rule>
                                 <groupId>eu.ciechanowiec</groupId>
