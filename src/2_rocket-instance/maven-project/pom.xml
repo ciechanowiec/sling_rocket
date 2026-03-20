@@ -175,7 +175,6 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>78.2</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <json.version>20251224</json.version>
         <oauth2-oidc-sdk.version>11.34</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.8</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
@@ -1101,12 +1100,6 @@
                 <groupId>eu.ciechanowiec</groupId>
                 <artifactId>jimage.hash</artifactId>
                 <version>${jimage.hash.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>${json.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -2861,14 +2854,6 @@
                                         <version>(,${com.google.guava.version}]</version>
                                     </ignoreVersion>
                                 </ignoreVersions>
-                            </rule>
-                            <rule>
-                                <groupId>org.apache.sling</groupId>
-                                <artifactId>org.apache.sling.commons.johnzon</artifactId>
-                                <ignoreVersion>
-                                    <type>range</type>
-                                    <version>(,${org.apache.sling.commons.johnzon.version}]</version>
-                                </ignoreVersion>
                             </rule>
                             <rule>
                                 <groupId>org.apache.tika</groupId>

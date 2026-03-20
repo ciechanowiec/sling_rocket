@@ -169,10 +169,6 @@
       "start-order": "25"
     },
     {
-      "id": "org.json:json:${json.version}",
-      "start-order": "25"
-    },
-    {
       "id": "com.nimbusds:oauth2-oidc-sdk:${oauth2-oidc-sdk.version}",
       "start-order": "25"
     },
