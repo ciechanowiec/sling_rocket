@@ -844,12 +844,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-testng</artifactId>
-                <version>${groovy.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-xml</artifactId>
                 <version>${groovy.version}</version>
                 <scope>provided</scope>

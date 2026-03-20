@@ -77,10 +77,6 @@
       "start-order": "20"
     },
     {
-      "id": "org.apache.groovy:groovy-testng:${groovy.version}",
-      "start-order": "20"
-    },
-    {
       "id": "org.apache.groovy:groovy-xml:${groovy.version}",
       "start-order": "20"
     }
