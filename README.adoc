@@ -42,7 +42,7 @@ A Maven project object model that declaratively describes basic and universal ap
 +
 . Sling Rocket Backuper ("*SR Backuper*")
 +
-Application that performs backups of the database via backing it up into a separate destination.
+Application that performs backups of the database and logs via backing them up into a separate destination.
 . Sling Rocket Nginx ("*SR Nginx*")
 +
 Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It is responsible for all incoming and outgoing HTTP(S) traffic.
@@ -81,11 +81,11 @@ image::docs/img/sling-rocket-components-diagram.svg[]
                                                                 |cDAF           |
                                                                 +-------+-------+
                                                                         |
-                                                                        |backups the database
+                                                                        |backups the database and logs
                                                                         v
                                                                 +---------------+
                                                                 :               |
-                                                                |    database   |
+                                                                |database & logs|
                                                                 |     backup    |
                                                                 |{s}cPNK        |
                                                                 +---------------+
@@ -176,11 +176,11 @@ The SR Parent POM is published in the Maven Central Repository. It should be def
 
 === SR Instance
 
-The SR Instance is intended to run as a Docker container with the persistence layer extracted into separate volumes. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`.
+The SR Instance is intended to run as a Docker container with the persistence and logs layers extracted into separate volumes. The image of an SR Instance is published on Docker Hub at `ciechanowiec/rocket-instance`.
 
-==== Persistence and Application Files
+==== Persistence, Log, and Application Files
 
-Static files related to an SR Instance reside in `/opt/sling`. Typical structure of that directory looks this way:
+Static files related to an SR Instance reside in `/opt/sling`. The typical structure of that directory looks this way:
 [source,bash]
 ....
 /opt/sling
@@ -221,84 +221,61 @@ Static files related to an SR Instance reside in `/opt/sling`. Typical structure
 └── sling.rocket.feature-22.0.0-SNAPSHOT-oak_tar.far <12>
 ....
 <1> scripts that launch the SR Instance
-<2> script that dumps the database into a separate destination
-<3> https://sling.apache.org/documentation/configuration.html[`sling.home`] directory where basic SR Instance files are stored
-<4> https://felix.apache.org/documentation/subprojects/apache-felix-framework/apache-felix-framework-bundle-cache.html[`org.osgi.framework.storage`] directory with bundles cache
-<5> https://sling.apache.org/documentation/bundles/file-installer-provider.html[`sling.fileinstall.dir`] directory; artifacts put into this directory are automatically installed when SR Instance starts
-<6> https://sling.apache.org/documentation/development/logging.html[log files]
-<7> https://jackrabbit.apache.org/oak/docs/osgi_config.html[`repository.home`] directory where the database files are stored
-<8> https://jackrabbit.apache.org/oak/docs/query/lucene.html[`localIndexDir`] directory where database indexes are stored
-<9> https://jackrabbit.apache.org/oak/docs/osgi_config.html[`segmentstore`] directory with <<Persistence Files>>, i.e. Segment Node Storage files
-<10> https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md[Oak Run tool] for operations on the database
+<2> [[database-dump-script]]script that dumps the database into a separate destination
+<3> https://sling.apache.org/documentation/configuration.html[`sling.home`^] directory where basic SR Instance files are stored
+<4> https://felix.apache.org/documentation/subprojects/apache-felix-framework/apache-felix-framework-bundle-cache.html[`org.osgi.framework.storage`^] directory with bundles cache
+<5> https://sling.apache.org/documentation/bundles/file-installer-provider.html[`sling.fileinstall.dir`^] directory; artifacts put into this directory are automatically installed when SR Instance starts
+<6> [[log-files-directory]]https://sling.apache.org/documentation/development/logging.html[conventional directory] for xref:#log-files[log files]
+<7> https://jackrabbit.apache.org/oak/docs/osgi_config.html[`repository.home`^] directory where the database files are stored
+<8> https://jackrabbit.apache.org/oak/docs/query/lucene.html[`localIndexDir`^] directory where database indexes are stored
+<9> [[segment-store-directory]]https://jackrabbit.apache.org/oak/docs/osgi_config.html[`segmentstore`^] directory with xref:#persistence-files[persistence files], i.e. Segment Node Storage files
+<10> https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md[Oak Run tool^] for operations on the database
 <11> proxy script that launches the SR Instance
 <12> OSGi Feature that describes the SR Instance
 
-All static files residing in `/opt/sling` are of two types: _persistence files_ and _application files_.
+All static files residing in `/opt/sling` are of three types: _persistence files_, _log files_ and _application files_.
 
+[[persistence-files]]
 ===== Persistence Files
 As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage^]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
 [upperalpha]
 . should be mounted as a persistent volume for a given SR Instance,
 . should be retained and reused between _Sling Rocket_ updates for a given SR Instance.
 
+[[log-files]]
+===== Log Files
+SR Instance writes logs to the xref:#log-files-directory[`/opt/sling/launcher/logs`] directory. All files located in that directory are referred to as _log files_. For auditing purposes, that directory should be mounted as a persistent volume for a given SR Instance.
+
 ===== Application Files
 
-Static files related to an SR Instance that reside in `/opt/sling` but aren't _persistence files_ are classified as _application files_. These files:
+Static files related to an SR Instance that reside in `/opt/sling` but aren't _persistence files_ or _log files_ are classified as _application files_. These files:
 [upperalpha]
 . are managed by _Sling Rocket_, meaning that _Sling Rocket_ provides new application files upon every container (re)creation,
 . are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
 . do not persistently store any business data.
 
 ==== Volumes
-SR Instance has two volumes attached to it: `rocket-data-raw` and `rocket-data-dump`.
+SR Instance has three volumes attached to it: `rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`.
 
+[[rocket-data-raw]]
 ===== `rocket-data-raw`
-The `rocket-data-raw` volume is mounted at `/opt/sling/launcher/repository/segmentstore`. It contains all actual _persistence files_ of the SR Instance. Therefore, this volume is the actual database of the SR Instance.
+The `rocket-data-raw` volume is mounted at xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]. It contains all xref:#persistence-files[persistence files] of the SR Instance. Therefore, this volume is the actual database of the SR Instance.
 
+[[rocket-data-dump]]
 ===== `rocket-data-dump`
-The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where `/opt/sling/dump-rocket-data.sh` puts the database dumps created out of persistence files, i.e. out of Segment Node Storage at `/opt/sling/launcher/repository/segmentstore`. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup] Oak Run command are stored, i.e. the dumps represented as tar files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export] Oak Run command are stored, i.e. the dumps represented as human-readable json files with referenced binary files.
+The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where the xref:#database-dump-script[`/opt/sling/dump-rocket-data.sh`] script puts the database dumps created out of xref:#persistence-files[persistence files], i.e. out of Segment Node Storage at xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup^] Oak Run command are stored, i.e. the dumps represented as tar files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export^] Oak Run command are stored, i.e. the dumps represented as human-readable JSON files with referenced binary files.
 
-image::docs/img/sling-rocket-backuper-diagram.svg[]
+[[rocket-instance-logs]]
+===== `rocket-instance-logs`
+The `rocket-instance-logs` volume is mounted at xref:#log-files-directory[`/opt/sling/launcher/logs`]. It contains all xref:#log-files[log files] of the SR Instance.
 
-.Raw diagram
-[%collapsible]
-====
-[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-backuper-diagram, format=svg, opts=inline]
-....
-                                             +---------+---------+
-                                             |                   |
-                                             |    SR Instance    |
-                                             | cGRE              |
-                                             | +---------------+ |
-                                             | |               | |
-                                             | |    database   | |
-                                             | |{s} cPNK       | |
-                                             +-+-------+-------+-+
-                                                       |
-                                                       |volumes
-                                                       |
-                      +--------------------------------+--------------------------------------+
-                      |                                                                       |
-                      |rocket–data–raw                                                        |rocket–data–dump
-                      |                                                                       |
-                      v                                                                       v
-+---------------------+---------------------+              +----------------------------------+--------------------------------+
-| {s} cFEE                                  |              | {s} cFEE                   database dumps                         |
-|                                           |              |                        /var/rocket–data–dump                      |
-|/opt/sling/launcher/repository/segmentstore|              |    +----------------------------+  +----------------------------+ |
-|                                           |              |    |/var/rocket–data–dump/backup|  |/var/rocket–data–dump/export| |
-|                                           |              |    |                            |  |                            | |
-|             persistence files             |              |    |          tar files         |  |json + related binary files | |
-|                                           |              |    |                            |  |                            | |
-|                                           |              |    |cFEE                        |  |cFEE                        | |
-|                                           |              |    +----------------------------+  +----------------------------+ |
-+-------------------------------------------+              +-------------------------------------------------------------------+
-....
-====
+===== Diagram
+image::docs/img/sling-rocket-instance-volumes.drawio.png[]
+
 
 === SR Backuper
 
-SR Backuper is an application that performs backups of the database via backing it up into a separate destination on the host machine. It is done via backing up the contents of `rocket-data-raw` (`/opt/sling/launcher/repository/segmentstore`) and `rocket–data–dump` (`/var/rocket–data–dump`) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
+SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It is done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket–data–dump` (`/var/rocket–data–dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
 
 A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a tar archive. Internally, that archive has the following structure:
 
@@ -316,17 +293,23 @@ rocket-backup-2025-03-01T11-00-00.tar.gz
     │   └── export <3>
     │       ├── blobs
     │       └── nodestates.json
-    └── rocket-data-raw <4>
-        ├── data00000a.tar
-        ├── data00001a.tar
-        ├── journal.log
-        ├── manifest
-        └── repo.lock
+    ├── rocket-data-raw <4>
+    │   ├── data00000a.tar
+    │   ├── data00001a.tar
+    │   ├── journal.log
+    │   ├── manifest
+    │   └── repo.lock
+    └── rocket-instance-logs <5>
+        ├── access.log
+        ├── error.log
+        ├── query.log
+        └── request.log
 ....
 <1> content of `rocket-data-dump` volume (`/var/rocket–data–dump`)
 <2> content of `/var/rocket–data–dump/backup` path from the `rocket-data-dump` volume
 <3> content of `/var/rocket–data–dump/export` path from the `rocket-data-dump` volume
 <4> content of `rocket-data-raw` volume (`/opt/sling/launcher/repository/segmentstore`)
+<5> content of `rocket-instance-logs` volume (`/opt/sling/launcher/logs`)
 
 ==== Backups Trigger
 Backups are performed regularly and automatically according to the schedule configured in the `docker-compose.yml` file.
@@ -341,12 +324,12 @@ docker exec rocket-backuper backup
 The database can be restored both from the `rocket-data-dump` volume backup, as well as from the `rocket-data-raw` volume backup. The latter one is the recommended way of restoring the database and can be performed as follows:
 
 [upperalpha]
-. Remove SR Instance container (`rocket-instance`) and volumes (`rocket-data-raw` and `rocket-data-dump`):
+. Remove SR Instance container (`rocket-instance`) and volumes (`rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`):
 +
 [source,bash]
 ....
 docker container rm -f rocket-instance
-docker volume rm rocket-data-raw rocket-data-dump
+docker volume rm rocket-data-raw rocket-data-dump rocket-instance-logs
 ....
 
 . Restore the backup archive that contains the persistence files into a new `rocket-data-raw` volume before running a new `rocket-instance` container.
@@ -386,7 +369,7 @@ volumes:
         external: true
 ....
 
-. Run a new `rocket-instance` container. It will automatically attach to the newly created `rocket-data-raw` volume, ensuring that the restored SR Instance state (i.e., persistent files) is accurately reflected in the running application.
+. Run a new `rocket-instance` container. It will automatically attach itself to the newly created `rocket-data-raw` volume, ensuring that the restored SR Instance state (i.e., persistent files) is accurately reflected in the running application.
 
 === SR Nginx
 In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`.

@@ -43,6 +43,9 @@ services:
       - type: volume
         source: rocket-data-dump
         target: /var/rocket-data-dump
+      - type: volume
+        source: rocket-instance-logs
+        target: /opt/sling/launcher/logs
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: rocket-instance
@@ -90,6 +93,8 @@ volumes:
     name: "rocket-data-raw"
   rocket-data-dump:
     name: "rocket-data-dump"
+  rocket-instance-logs:
+    name: "rocket-instance-logs"
 
 networks:
   rocket-network:

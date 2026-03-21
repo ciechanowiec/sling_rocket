@@ -15,6 +15,7 @@ node_modules
 .terraform/
 *.tfstate.backup
 *.drawio.png.bkp
+*.drawio.png.dtmp
 # Compiled documentation:
 README.html
 README.pdf
