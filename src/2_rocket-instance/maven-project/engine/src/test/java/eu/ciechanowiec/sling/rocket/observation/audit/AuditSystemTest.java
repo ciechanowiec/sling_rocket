@@ -20,6 +20,8 @@ import org.apache.sling.event.jobs.consumer.JobConsumer;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
+import org.eclipse.jetty.http.HttpHeader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,16 +29,19 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"MagicNumber", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
+@SuppressWarnings(
+    {
+        "MagicNumber", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals", "ClassWithTooManyMethods", "MethodCount",
+        "PMD.CouplingBetweenObjects", "PMD.TooManyMethods", "PMD.AvoidUsingHardCodedIP"
+    }
+)
 class AuditSystemTest extends TestEnvironment {
 
     private Storage storage;
@@ -481,5 +486,273 @@ class AuditSystemTest extends TestEnvironment {
 
         verify(jobManager, never()).addJob(eq(Storage.JOB_TOPIC), anyMap());
         assertEquals(0, storage.getCount());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorSingleXForwardedForHeader() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("headerUser");
+        request.addHeader(HttpHeader.X_FORWARDED_FOR.name(), "192.168.1.1");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onCreated("/content/forwarded")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("headerUser", stored.userID()),
+            () -> assertEquals("192.168.1.1", stored.additionalProperties().get(HttpHeader.X_FORWARDED_FOR.name())),
+            () -> assertFalse(stored.additionalProperties().containsKey(HttpHeader.X_FORWARDED_FOR.name() + "[1]"))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorMultipleXForwardedForHeaders() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("multiHeaderUser");
+        request.addHeader(HttpHeader.X_FORWARDED_FOR.name(), "10.0.0.1");
+        request.addHeader(HttpHeader.X_FORWARDED_FOR.name(), "10.0.0.2");
+        request.addHeader(HttpHeader.X_FORWARDED_FOR.name(), "10.0.0.3");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onModified("/content/multi")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("multiHeaderUser", stored.userID()),
+            () -> assertEquals(
+                "10.0.0.1", stored.additionalProperties().get(HttpHeader.X_FORWARDED_FOR.name() + "[1]")
+            ),
+            () -> assertEquals(
+                "10.0.0.2", stored.additionalProperties().get(HttpHeader.X_FORWARDED_FOR.name() + "[2]")
+            ),
+            () -> assertEquals(
+                "10.0.0.3", stored.additionalProperties().get(HttpHeader.X_FORWARDED_FOR.name() + "[3]")
+            ),
+            () -> assertFalse(stored.additionalProperties().containsKey(HttpHeader.X_FORWARDED_FOR.name()))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorSingleXRealIPHeader() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("realIPUser");
+        request.addHeader("X-Real-IP", "203.0.113.42");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onCreated("/content/realip")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("realIPUser", stored.userID()),
+            () -> assertEquals("203.0.113.42", stored.additionalProperties().get("X-Real-IP")),
+            () -> assertFalse(stored.additionalProperties().containsKey("X-Real-IP[1]"))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorBothForwardedForAndRealIP() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("dualHeaderUser");
+        request.addHeader(HttpHeader.X_FORWARDED_FOR.name(), "172.16.0.1");
+        request.addHeader("X-Real-IP", "198.51.100.5");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onDeleted("/content/dual")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("dualHeaderUser", stored.userID()),
+            () -> assertEquals("172.16.0.1", stored.additionalProperties().get(HttpHeader.X_FORWARDED_FOR.name())),
+            () -> assertEquals("198.51.100.5", stored.additionalProperties().get("X-Real-IP"))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorNoClientHeaders() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("noHeaderUser");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onCreated("/content/noheaders")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("noHeaderUser", stored.userID()),
+            () -> assertFalse(stored.additionalProperties().containsKey(HttpHeader.X_FORWARDED_FOR.name())),
+            () -> assertFalse(stored.additionalProperties().containsKey("X-Real-IP")),
+            () -> assertNotNull(stored.additionalProperties().get("threadName"))
+        );
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void testSlingPostMonitorEmptyHeaderEnumeration() {
+        context.registerInjectActivateService(SlingPostMonitor.class, Map.of("is-enabled", true));
+
+        MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
+        request.setRemoteUser("emptyHeaderUser");
+
+        SlingPostMonitor monitor = context.getService(SlingPostMonitor.class);
+        assertNotNull(monitor);
+        monitor.process(request, List.of(Modification.onModified("/content/empty")));
+
+        entryTrampoline.deactivate();
+
+        ArgumentCaptor<Map<String, Object>> jobPropsCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(jobManager, atLeastOnce()).addJob(eq(Storage.JOB_TOPIC), jobPropsCaptor.capture());
+        jobPropsCaptor.getAllValues().forEach(
+            props -> {
+                Job mockJob = mock(Job.class);
+                when(mockJob.getProperty(EntriesBatch.PN_ENTRIES_BATCHED, List.class))
+                    .thenReturn((List) props.get(EntriesBatch.PN_ENTRIES_BATCHED));
+                storage.process(mockJob);
+            }
+        );
+
+        List<Entry> postEntries = storage.entries(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth()
+            ).stream()
+            .filter(entry -> Modification.class.getName().equals(entry.subject()))
+            .toList();
+
+        assertEquals(1, postEntries.size());
+        Entry stored = postEntries.getFirst();
+        assertAll(
+            () -> assertEquals("emptyHeaderUser", stored.userID()),
+            () -> assertFalse(stored.additionalProperties().containsKey(HttpHeader.X_FORWARDED_FOR.name())),
+            () -> assertFalse(stored.additionalProperties().containsKey("X-Real-IP"))
+        );
     }
 }

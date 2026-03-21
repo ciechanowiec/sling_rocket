@@ -12,4 +12,7 @@
     <suppress checks="FileLength"
               files="AssetTest.java"
               lines="1"/>
+    <suppress checks="FileLength"
+              files="AuditSystemTest.java"
+              lines="1"/>
 </suppressions>
