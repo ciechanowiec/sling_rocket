@@ -319,8 +319,6 @@ rocket-backup-2025-03-01T11-00-00.tar.gz
     └── rocket-data-raw <4>
         ├── data00000a.tar
         ├── data00001a.tar
-        ├── data00001a.tar.2.ro.bak
-        ├── data00001a.tar.ro.bak
         ├── journal.log
         ├── manifest
         └── repo.lock
