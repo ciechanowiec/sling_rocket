@@ -5,19 +5,23 @@ import eu.ciechanowiec.sling.rocket.observation.audit.EntryTrampoline;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.servlets.post.Modification;
 import org.apache.sling.servlets.post.ModificationType;
 import org.apache.sling.servlets.post.SlingJakartaPostProcessor;
+import org.eclipse.jetty.http.HttpHeader;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * {@link SlingJakartaPostProcessor} that converts the incoming {@link Modification}s into {@link Entry}-s and sumbits
@@ -74,22 +78,57 @@ public class SlingPostMonitor implements SlingJakartaPostProcessor {
 
     private void process(HttpServletRequest request, Modification modification) {
         log.trace("Processing {}", modification);
+        Map<String, String> additionalProperties = new ConcurrentHashMap<>();
         String userID = Optional.ofNullable(request.getRemoteUser()).orElse(Entry.UNKNOWN);
         ModificationType modificationType = modification.getType();
         String source = Optional.ofNullable(modification.getSource()).orElse(Entry.UNKNOWN);
         String destination = Optional.ofNullable(modification.getDestination()).orElse(Entry.UNKNOWN);
         String threadName = Thread.currentThread().getName();
+        additionalProperties.put(ModificationType.class.getName(), modificationType.name());
+        additionalProperties.put("source", source);
+        additionalProperties.put("destination", destination);
+        additionalProperties.put("threadName", threadName);
+        additionalProperties.putAll(clientHeaders(request));
         Entry entry = new Entry(
             userID,
             Modification.class.getName(),
             LocalDateTime.now(),
-            Map.of(
-                ModificationType.class.getName(), modificationType.name(),
-                "source", source,
-                "destination", destination,
-                "threadName", threadName
-            )
+            Collections.unmodifiableMap(additionalProperties)
         );
         entryTrampoline.submitForSaving(entry);
+    }
+
+    @SuppressWarnings({"squid:S3599", "squid:S1171"})
+    private Map<String, String> clientHeaders(HttpServletRequest request) {
+        Map<String, String> forwardedForHeaders = clientHeaders(request, HttpHeader.X_FORWARDED_FOR.name());
+        Map<String, String> realIPHeaders = clientHeaders(request, "X-Real-IP");
+        return Collections.unmodifiableMap(
+            new ConcurrentHashMap<>() {{
+                putAll(forwardedForHeaders);
+                putAll(realIPHeaders);
+            }}
+        );
+    }
+
+    private Map<String, String> clientHeaders(HttpServletRequest request, String headerName) {
+        List<String> headers = Optional.ofNullable(request.getHeaders(headerName))
+            .map(enumeration -> (List<String>) Collections.list(enumeration))
+            .orElse(List.of());
+        int numOfHeaders = headers.size();
+        boolean isSingularHeader = numOfHeaders == NumberUtils.INTEGER_ONE;
+        Map<Boolean, Supplier<Map<String, String>>> strategies = Map.of(
+            true, () -> Map.of(headerName, headers.getFirst()),
+            false, () -> IntStream.range(0, numOfHeaders)
+                .boxed()
+                .collect(
+                    Collectors.toMap(
+                        index -> headerName + "[" + (index + 1) + "]",
+                        headers::get,
+                        (_, replacement) -> replacement,
+                        ConcurrentHashMap::new
+                    )
+                )
+        );
+        return Collections.unmodifiableMap(strategies.get(isSingularHeader).get());
     }
 }
