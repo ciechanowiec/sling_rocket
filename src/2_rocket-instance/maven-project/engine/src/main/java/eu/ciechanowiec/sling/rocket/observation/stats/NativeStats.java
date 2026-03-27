@@ -15,7 +15,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.propertytypes.ServiceDescription;
 
-import java.io.File;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Native Sling Rocket statistics.
@@ -47,18 +50,20 @@ public class NativeStats implements RocketStats {
         this.fullResourceAccess = fullResourceAccess;
     }
 
+    @SneakyThrows
     @JsonProperty("diskStats")
     @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     DiskStats diskStats() {
         log.info("Collecting disk stats");
-        File root = new File("/");
-        long totalSpace = root.getTotalSpace();
-        long freeSpace = root.getFreeSpace();
-        long occupiedSpace = totalSpace - freeSpace;
+        Path rootPath = Paths.get("/");
+        FileStore fileStore = Files.getFileStore(rootPath);
+        long totalSpace = fileStore.getTotalSpace();
+        long usableSpace = fileStore.getUsableSpace();
+        long occupiedSpace = totalSpace - usableSpace;
         return new DiskStats(
             new DataSize(totalSpace, DataUnit.BYTES),
             new DataSize(occupiedSpace, DataUnit.BYTES),
-            new DataSize(freeSpace, DataUnit.BYTES)
+            new DataSize(usableSpace, DataUnit.BYTES)
         );
     }
 

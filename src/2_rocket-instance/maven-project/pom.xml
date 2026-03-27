@@ -177,7 +177,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>78.3</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <oauth2-oidc-sdk.version>11.34</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.35</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.8</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -224,7 +224,7 @@
         <!-- ====================================================================== -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <jackson-annotations.version>2.21</jackson-annotations.version>
-        <jackson.version>2.21.1</jackson.version>
+        <jackson.version>2.21.2</jackson.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
@@ -424,7 +424,7 @@
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
-        <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
         <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -432,7 +432,7 @@
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
-        <bnd-maven-plugin.version>7.2.1</bnd-maven-plugin.version>
+        <bnd-maven-plugin.version>7.2.3</bnd-maven-plugin.version>
         <org.apache.sling.caconfig.bnd-plugin.version>1.0.2</org.apache.sling.caconfig.bnd-plugin.version>
         <org.apache.sling.bnd.models.version>1.0.0</org.apache.sling.bnd.models.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -450,7 +450,7 @@
         <asciidoctor-maven-plugin.version>3.2.0</asciidoctor-maven-plugin.version>
         <jruby.version>10.0.4.0</jruby.version>
         <asciidoctorj.version>3.0.1</asciidoctorj.version>
-        <asciidoctorj.diagram.version>3.2.0</asciidoctorj.diagram.version>
+        <asciidoctorj.diagram.version>3.2.1</asciidoctorj.diagram.version>
         <htl-maven-plugin.version>2.0.4-1.4.0</htl-maven-plugin.version>
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>

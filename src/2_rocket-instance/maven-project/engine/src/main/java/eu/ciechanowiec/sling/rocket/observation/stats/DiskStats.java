@@ -10,12 +10,12 @@ class DiskStats implements JSON {
 
     private final DataSize totalSpace;
     private final DataSize occupiedSpace;
-    private final DataSize freeSpace;
+    private final DataSize usableSpace;
 
-    DiskStats(DataSize totalSpace, DataSize occupiedSpace, DataSize freeSpace) {
+    DiskStats(DataSize totalSpace, DataSize occupiedSpace, DataSize usableSpace) {
         this.totalSpace = totalSpace;
         this.occupiedSpace = occupiedSpace;
-        this.freeSpace = freeSpace;
+        this.usableSpace = usableSpace;
     }
 
     @JsonProperty("totalSpace")
@@ -29,10 +29,10 @@ class DiskStats implements JSON {
         return String.format("%s (%s%% of total space)", occupiedSpace, occupiedPercentage);
     }
 
-    @JsonProperty("freeSpace")
-    String freeSpace() {
-        String freePercentage = String.format("%.2f", (double) freeSpace.bytes() / totalSpace.bytes() * 100);
-        return String.format("%s (%s%% of total space)", freeSpace, freePercentage);
+    @JsonProperty("usableSpace")
+    String usableSpace() {
+        String freePercentage = String.format("%.2f", (double) usableSpace.bytes() / totalSpace.bytes() * 100);
+        return String.format("%s (%s%% of total space)", usableSpace, freePercentage);
     }
 
     @SneakyThrows

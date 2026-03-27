@@ -59,7 +59,7 @@ class RocketStatsDisplayTest extends TestEnvironment {
             () -> assertTrue(actualJson.contains("diskStats")),
             () -> assertTrue(actualJson.contains("totalSpace")),
             () -> assertTrue(actualJson.contains("occupiedSpace")),
-            () -> assertTrue(actualJson.contains("freeSpace")),
+            () -> assertTrue(actualJson.contains("usableSpace")),
             () -> assertTrue(actualJson.contains("assetsStats")),
             () -> assertTrue(actualJson.contains("numberOfAllAssets")),
             () -> assertTrue(actualJson.contains("dataSizeOfAllAssets")),
