@@ -109,11 +109,18 @@ killSling () {
   sleep 2
 }
 
+setupRootRedirect () {
+  echo "Setting up root redirect to Sling Console..."
+  curl --user admin:admin --verbose --form "sling:resourceType=sling:redirect" --form "sling:target=/system/console" http://localhost:"$HTTP_PORT"/
+  sleep 2
+}
+
 echo "ROCKET_FEATURE_ARTIFACT_FINAL_NAME=$ROCKET_FEATURE_ARTIFACT_FINAL_NAME"
 echo "Setting the static name of the main feature artifact..."
 sed -i "s/{{ROCKET_FEATURE_ARTIFACT_FINAL_NAME}}/$ROCKET_FEATURE_ARTIFACT_FINAL_NAME/g" rocket-instance-starter.sh
 downloadLauncher
 startSlingInBackground # warmup and initialize
 waitUntilBundlesStatusMatch
+setupRootRedirect
 killSling
 setupOakRun

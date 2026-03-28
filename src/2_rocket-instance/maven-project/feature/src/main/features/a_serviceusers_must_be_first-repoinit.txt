@@ -77,11 +77,6 @@ set ACL for everyone
     deny jcr:all on :repository,/,/content
 end
 
-create path / with properties
-  set sling:resourceType to sling:redirect
-  set sling:target to /system/console
-end
-
 create service user sling-rocket-admin with forced path /home/users/system/sling-rocket-users
 set ACL for sling-rocket-admin
     allow jcr:all on :repository,/

@@ -177,7 +177,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>78.3</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <oauth2-oidc-sdk.version>11.35</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.36</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.8</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -247,7 +247,7 @@
         <org.apache.sling.commons.log.version>6.0.4</org.apache.sling.commons.log.version>
         <logback.version>1.5.32</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
-        <log4j.version>2.25.3</log4j.version>
+        <log4j.version>2.25.4</log4j.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->
@@ -321,7 +321,7 @@
         <org.apache.sling.commons.scheduler.version>2.7.14</org.apache.sling.commons.scheduler.version>
         <org.apache.sling.commons.threads.version>3.3.0</org.apache.sling.commons.threads.version>
         <org.apache.sling.commons.json.version>2.0.28</org.apache.sling.commons.json.version>
-        <org.apache.sling.commons.crypto.version>1.1.0</org.apache.sling.commons.crypto.version>
+        <org.apache.sling.commons.crypto.version>1.2.0</org.apache.sling.commons.crypto.version>
         <org.apache.sling.commons.messaging.version>1.0.2</org.apache.sling.commons.messaging.version>
         <org.apache.sling.commons.messaging.mail.version>2.0.0</org.apache.sling.commons.messaging.mail.version>
         <!-- ====================================================================== -->
