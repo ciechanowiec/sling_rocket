@@ -1,5 +1,8 @@
 package eu.ciechanowiec.sling.rocket.observation.audit;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.calendar.*;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
@@ -7,7 +10,9 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.ParentJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.WithJCRPath;
+import eu.ciechanowiec.sling.rocket.observation.stats.RocketStats;
 import eu.ciechanowiec.sneakyfun.SneakyFunction;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.jackrabbit.JcrConstants;
@@ -34,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Storage of {@link Entry}-s.
  */
 @Component(
-    service = {Storage.class, JobConsumer.class},
+    service = {Storage.class, JobConsumer.class, RocketStats.class},
     immediate = true,
     property = {
         JobConsumer.PROPERTY_TOPICS + "=" + Storage.JOB_TOPIC,
@@ -43,7 +48,13 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 @ServiceDescription(Storage.SERVICE_DESCRIPTION)
 @Slf4j
-public class Storage extends AnnotatedStandardMBean implements JobConsumer, WithJCRPath, StorageMBean {
+@SuppressWarnings("ClassFanOutComplexity")
+@JsonAutoDetect(
+    getterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+    fieldVisibility = JsonAutoDetect.Visibility.NONE
+)
+public class Storage extends AnnotatedStandardMBean implements JobConsumer, WithJCRPath, StorageMBean, RocketStats {
 
     static final String JOB_TOPIC = "eu/ciechanowiec/sling/rocket/observation/audit/STORAGE";
     static final String SERVICE_DESCRIPTION = "Storage of audit entries";
@@ -78,6 +89,7 @@ public class Storage extends AnnotatedStandardMBean implements JobConsumer, With
     }
 
     @Override
+    @JsonProperty("numberOfEntries")
     public long getCount() {
         try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
             String query = "SELECT * FROM [%s] as node WHERE ISDESCENDANTNODE (node, '%s')".formatted(
@@ -292,5 +304,17 @@ public class Storage extends AnnotatedStandardMBean implements JobConsumer, With
     @Override
     public JCRPath jcrPath() {
         return storagePath;
+    }
+
+    @Override
+    public String name() {
+        return Storage.class.getName();
+    }
+
+    @SneakyThrows
+    @Override
+    public String asJSON() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
     }
 }

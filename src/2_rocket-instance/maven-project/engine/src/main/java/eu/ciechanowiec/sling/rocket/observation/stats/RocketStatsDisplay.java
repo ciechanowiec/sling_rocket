@@ -1,8 +1,9 @@
 package eu.ciechanowiec.sling.rocket.observation.stats;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
 import lombok.SneakyThrows;
@@ -40,6 +41,7 @@ public class RocketStatsDisplay implements InventoryPrinter, JSON {
     /**
      * {@link Collection} of {@link RocketStats} that will be displayed.
      */
+    @SuppressWarnings("unused")
     @Reference(
         cardinality = ReferenceCardinality.MULTIPLE,
         policy = ReferencePolicy.DYNAMIC,
@@ -75,7 +77,8 @@ public class RocketStatsDisplay implements InventoryPrinter, JSON {
     @Override
     public String asJSON() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        return mapper.writeValueAsString(this);
+        DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+        printer.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+        return mapper.writer(printer).writeValueAsString(this);
     }
 }
