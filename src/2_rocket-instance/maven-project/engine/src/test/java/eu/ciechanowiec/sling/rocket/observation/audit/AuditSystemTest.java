@@ -188,6 +188,24 @@ class AuditSystemTest extends TestEnvironment {
         assertEquals(0, storage.getCount());
     }
 
+    @Test
+    void testStorageAsJSON() {
+        String json = storage.asJSON();
+        assertNotNull(json);
+        assertTrue(json.contains("\"numberOfEntries\":0"));
+        assertFalse(json.contains("\"name\""));
+        assertFalse(json.contains("\"jcrPath\""));
+        assertFalse(json.contains("\"storagePath\""));
+
+        // Add an entry and check again
+        LocalDateTime timestamp = LocalDateTime.of(2026, 3, 9, 10, 0);
+        Entry entry = new Entry("user1", "subject1", timestamp, Map.of("prop1", "val1"));
+        saveDirectly(List.of(entry));
+
+        String jsonWithEntry = storage.asJSON();
+        assertTrue(jsonWithEntry.contains("\"numberOfEntries\":1"));
+    }
+
     private void saveDirectly(List<Entry> entries) {
         Job mockJob = mock(Job.class);
         EntriesBatch batch = new EntriesBatch(entries);
