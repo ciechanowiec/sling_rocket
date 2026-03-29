@@ -10,6 +10,7 @@ import eu.ciechanowiec.sling.rocket.observation.stats.RocketStats;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.auth.core.spi.JakartaAuthenticationInfoPostProcessor;
 import org.osgi.service.component.annotations.Activate;
@@ -20,6 +21,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+/**
+ * Registry of last login times for {@link User}s.
+ */
 @Component(
     service = {LastLoginRegistry.class, JakartaAuthenticationInfoPostProcessor.class, RocketStats.class},
     immediate = true
@@ -35,10 +39,14 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
     @JsonProperty
     private final Map<AuthIDUser, LocalDateTime> lastLoginTimes;
 
+    @SuppressWarnings("unused")
     @JsonProperty
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private final LocalDateTime since;
 
+    /**
+     * Constructs an instance of this class.
+     */
     @Activate
     public LastLoginRegistry() {
         lastLoginTimes = new TreeMap<>();

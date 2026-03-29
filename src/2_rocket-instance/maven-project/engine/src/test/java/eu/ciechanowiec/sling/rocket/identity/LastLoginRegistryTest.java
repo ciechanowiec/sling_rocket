@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("PMD.LooseCoupling")
 class LastLoginRegistryTest extends TestEnvironment {
 
     private LastLoginRegistry lastLoginRegistry;
