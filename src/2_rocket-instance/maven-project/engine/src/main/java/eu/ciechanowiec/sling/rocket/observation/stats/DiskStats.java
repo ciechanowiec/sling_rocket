@@ -6,24 +6,16 @@ import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import lombok.SneakyThrows;
 
-import java.time.Instant;
-
-@SuppressWarnings("PMD.DataClass")
 class DiskStats implements JSON {
 
     private final DataSize totalSpace;
     private final DataSize occupiedSpace;
     private final DataSize usableSpace;
-    private final Instant generatedAt;
-    private final String ttl;
 
-    @SuppressWarnings({"ParameterNumber", "ConstructorWithTooManyParameters", "PMD.ExcessiveParameterList"})
-    DiskStats(DataSize totalSpace, DataSize occupiedSpace, DataSize usableSpace, Instant generatedAt, String ttl) {
+    DiskStats(DataSize totalSpace, DataSize occupiedSpace, DataSize usableSpace) {
         this.totalSpace = totalSpace;
         this.occupiedSpace = occupiedSpace;
         this.usableSpace = usableSpace;
-        this.generatedAt = generatedAt;
-        this.ttl = ttl;
     }
 
     @JsonProperty("totalSpace")
@@ -41,16 +33,6 @@ class DiskStats implements JSON {
     String usableSpace() {
         String freePercentage = String.format("%.2f", (double) usableSpace.bytes() / totalSpace.bytes() * 100);
         return String.format("%s (%s%% of total space)", usableSpace, freePercentage);
-    }
-
-    @JsonProperty("generatedAt")
-    String generatedAt() {
-        return generatedAt.toString();
-    }
-
-    @JsonProperty("ttl")
-    String ttl() {
-        return ttl;
     }
 
     @SneakyThrows
