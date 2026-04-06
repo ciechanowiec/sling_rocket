@@ -117,7 +117,7 @@ public class JMXStats implements JSON, RocketStats {
         mbeanNamesToAttributeNames.put(
             "java.lang:type=Threading", List.of("ThreadCount", "PeakThreadCount", "TotalStartedThreadCount")
         );
-        mbeanNamesToAttributeNames.put("java.lang:type=Runtime", List.of("StartTime"));
+        mbeanNamesToAttributeNames.put("java.lang:type=Runtime", List.of("Name", "StartTime"));
         Map<String, Map<String, Object>> mbeanNamesToAttributes = mbeanNamesToAttributes(mbeanNamesToAttributeNames);
         Map<String, Map<String, Object>> resultAttributes = new LinkedHashMap<>(mbeanNamesToAttributes);
 

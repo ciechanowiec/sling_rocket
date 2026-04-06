@@ -124,6 +124,7 @@ class JMXStatsTest extends TestEnvironment {
             () -> assertTrue(json.contains("org.apache.sling.auth.core"), "Should contain sling.auth.core"),
             () -> assertTrue(json.contains("org.apache.sling.resourceresolver"), "Should contain resourceresolver"),
             () -> assertTrue(json.contains("ThreadCount"), "Should contain ThreadCount"),
+            () -> assertTrue(json.contains("Name"), "Should contain StartTimeReadable"),
             () -> assertTrue(json.contains("StartTimeReadable"), "Should contain StartTimeReadable"),
             () -> assertTrue(json.contains("SegmentCount"), "Should contain SegmentCount"),
             () -> assertTrue(json.contains("1024"), "Should contain ApproximateSize value"),
