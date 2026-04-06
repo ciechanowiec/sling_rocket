@@ -125,15 +125,19 @@
       "start-order": "23"
     },
     {
-      "id": "javax.mail:mail:${javax.mail.version}",
+      "id": "jakarta.mail:jakarta.mail-api:${jakarta.mail-api.version}",
       "start-order": "20"
     },
     {
-      "id": "com.sun.mail:jakarta.mail:${jakarta.mail.version}",
+      "id": "org.eclipse.angus:angus-mail:${angus-mail.version}",
       "start-order": "20"
     },
     {
       "id": "jakarta.activation:jakarta.activation-api:${jakarta.activation-api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.eclipse.angus:angus-activation:${angus-activation.version}",
       "start-order": "20"
     },
     {
