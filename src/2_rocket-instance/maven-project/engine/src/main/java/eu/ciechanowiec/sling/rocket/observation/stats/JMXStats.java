@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import eu.ciechanowiec.sling.rocket.commons.JSON;
+import eu.ciechanowiec.sling.rocket.unit.DataSize;
+import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.osgi.service.component.annotations.Activate;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
     fieldVisibility = JsonAutoDetect.Visibility.NONE
 )
 @ServiceDescription("Selected JMX statistics delivered as RocketStats")
-public class JMXStats implements JSON, RocketStats {
+public class JMXStats implements RocketStats {
 
     /**
      * Constructs an instance of this class.
@@ -154,6 +155,7 @@ public class JMXStats implements JSON, RocketStats {
     }
 
     @JsonProperty("org.apache.jackrabbit.oak")
+    @SuppressWarnings("MethodLength")
     private Map<String, Map<String, Object>> orgApacheJackrabbitOak() {
         Map<String, List<String>> mbeanNamesToAttributeNames = new LinkedHashMap<>();
         mbeanNamesToAttributeNames.put(
@@ -182,7 +184,29 @@ public class JMXStats implements JSON, RocketStats {
             "org.apache.jackrabbit.oak:name=\"QUERY_DURATION;index=uuid\",type=Metrics",
             List.of("Mean", "DurationUnit", "Count")
         );
-        return mbeanNamesToAttributes(mbeanNamesToAttributeNames);
+        Map<String, Map<String, Object>> mbeanNamesToAttributes = mbeanNamesToAttributes(mbeanNamesToAttributeNames);
+        Map<String, Map<String, Object>> resultAttributes = new LinkedHashMap<>(mbeanNamesToAttributes);
+
+        Optional.ofNullable(
+            resultAttributes.get("org.apache.jackrabbit.oak:name=FileStore statistics,type=FileStoreStats")
+        ).ifPresent(
+            fileStoreStats -> {
+                Map<String, Object> updatedStats = new LinkedHashMap<>(fileStoreStats);
+                Optional.ofNullable(updatedStats.get("ApproximateSize"))
+                    .filter(Number.class::isInstance)
+                    .map(Number.class::cast)
+                    .ifPresent(
+                        number -> {
+                            DataSize dataSize = new DataSize(number.longValue(), DataUnit.BYTES);
+                            updatedStats.put("ApproximateSizeReadable", dataSize.toString());
+                        }
+                    );
+                resultAttributes.put(
+                    "org.apache.jackrabbit.oak:name=FileStore statistics,type=FileStoreStats", updatedStats
+                );
+            }
+        );
+        return Collections.unmodifiableMap(resultAttributes);
     }
 
     @JsonProperty("org.apache.sling")

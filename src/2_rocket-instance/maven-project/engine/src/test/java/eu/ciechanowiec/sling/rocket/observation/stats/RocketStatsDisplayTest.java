@@ -48,22 +48,26 @@ class RocketStatsDisplayTest extends TestEnvironment {
             }
         };
         context.registerService(RocketStats.class, customStats);
-        context.registerInjectActivateService(NativeStats.class);
+        context.registerInjectActivateService(DiskStats.class);
+        context.registerInjectActivateService(AssetsStats.class);
         RocketStatsDisplay rocketStatsDisplay = context.registerInjectActivateService(RocketStatsDisplay.class);
         String actualJson = rocketStatsDisplay.asJSON();
         assertAll(
             () -> assertEquals("{\"datus\":\"This is some custom data\"}", customStats.asJSON()),
-            () -> assertTrue(actualJson.contains("NativeStats")),
             () -> assertTrue(actualJson.contains("rocketStats")),
-            () -> assertTrue(actualJson.contains("eu.ciechanowiec.sling.rocket.observation.stats.NativeStats")),
-            () -> assertTrue(actualJson.contains("diskStats")),
-            () -> assertTrue(actualJson.contains("totalSpace")),
-            () -> assertTrue(actualJson.contains("occupiedSpace")),
-            () -> assertTrue(actualJson.contains("usableSpace")),
-            () -> assertTrue(actualJson.contains("assetsStats")),
+            () -> assertTrue(actualJson.contains("eu.ciechanowiec.sling.rocket.observation.stats.DiskStats")),
+            () -> assertTrue(actualJson.contains("totalSpaceBytes")),
+            () -> assertTrue(actualJson.contains("totalSpaceReadable")),
+            () -> assertTrue(actualJson.contains("occupiedSpaceBytes")),
+            () -> assertTrue(actualJson.contains("occupiedSpaceReadable")),
+            () -> assertTrue(actualJson.contains("usableSpaceBytes")),
+            () -> assertTrue(actualJson.contains("usableSpaceReadable")),
+            () -> assertTrue(actualJson.contains("eu.ciechanowiec.sling.rocket.observation.stats.AssetsStats")),
             () -> assertTrue(actualJson.contains("numberOfAllAssets")),
-            () -> assertTrue(actualJson.contains("dataSizeOfAllAssets")),
-            () -> assertTrue(actualJson.contains("averageAssetSize")),
+            () -> assertTrue(actualJson.contains("dataSizeOfAllAssetsBytes")),
+            () -> assertTrue(actualJson.contains("dataSizeOfAllAssetsReadable")),
+            () -> assertTrue(actualJson.contains("averageAssetSizeBytes")),
+            () -> assertTrue(actualJson.contains("averageAssetSizeReadable")),
             () -> assertTrue(actualJson.contains("biggestAssets")),
             () -> assertTrue(actualJson.contains("CustomStats")),
             () -> assertTrue(actualJson.contains("customData")),

@@ -32,6 +32,7 @@ class JMXStatsTest extends TestEnvironment {
             "org.apache.jackrabbit.oak:name=FileStore statistics,type=FileStoreStats", Map.of(
                 "SegmentCount", 100,
                 "ApproximateSize", 1024L,
+                "ApproximateSizeReadable", "1 KB",
                 "TarFileCount", 5
             )
         );
@@ -128,6 +129,7 @@ class JMXStatsTest extends TestEnvironment {
             () -> assertTrue(json.contains("StartTimeReadable"), "Should contain StartTimeReadable"),
             () -> assertTrue(json.contains("SegmentCount"), "Should contain SegmentCount"),
             () -> assertTrue(json.contains("1024"), "Should contain ApproximateSize value"),
+            () -> assertTrue(json.contains("1 KB"), "Should contain ApproximateSizeReadable value"),
             () -> assertTrue(json.contains("QUERY_DURATION;index=uuid"), "Should contain quoted MBean name"),
             () -> assertTrue(
                 json.contains("TimeElapsedFromStartReadable"), "Should contain TimeElapsedFromStartReadable"

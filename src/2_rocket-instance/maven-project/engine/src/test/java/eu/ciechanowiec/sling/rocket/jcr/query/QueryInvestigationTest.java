@@ -1,5 +1,6 @@
 package eu.ciechanowiec.sling.rocket.jcr.query;
 
+import eu.ciechanowiec.conditional.Conditional;
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.Test;
@@ -73,6 +74,13 @@ class QueryInvestigationTest extends TestEnvironment {
               - /content/someClient
               1. TOTAL NUMBER OF RESULTS:       1""";
         String queryInvestigationResult = queryInvestigation.investigate(query).toString();
+        Conditional.isTrueOrThrow(
+            queryInvestigationResult.contains(expectedQueryInvestigationPart),
+            new IllegalArgumentException(
+                "Expected query investigation part not found in result. This is not deterministic enough test that "
+                    + "should be fixed in future. Result:%n%s".formatted(queryInvestigationResult)
+            )
+        );
         assertAll(
             () -> assertTrue(queryInvestigationResult.contains(expectedQueryInvestigationPart)),
             () -> assertTrue(queryInvestigationResult.contains("2. QUERY EXECUTION TIME:          ")),

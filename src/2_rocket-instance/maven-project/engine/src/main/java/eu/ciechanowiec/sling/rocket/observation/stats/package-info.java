@@ -2,7 +2,7 @@
  * Statistics.
  */
 @Export
-@Version("14.1.0")
+@Version("15.0.0")
 package eu.ciechanowiec.sling.rocket.observation.stats;
 
 import org.osgi.annotation.bundle.Export;

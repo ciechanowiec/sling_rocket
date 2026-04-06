@@ -3,7 +3,6 @@ package eu.ciechanowiec.sling.rocket.observation.stats;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import eu.ciechanowiec.sling.rocket.commons.JSON;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
     immediate = true
 )
 @ServiceDescription("Selected Felix Health Checks delivered as RocketStats")
-public class FelixStats implements JSON, RocketStats {
+public class FelixStats implements RocketStats {
 
     private static final String BUNDLES_STARTED_CHECK = "org.apache.felix.hc.generalchecks.BundlesStartedCheck";
     private static final String CPU_CHECK = "org.apache.felix.hc.generalchecks.CpuCheck";
