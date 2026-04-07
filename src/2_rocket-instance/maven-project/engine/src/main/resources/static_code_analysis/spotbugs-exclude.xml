@@ -65,6 +65,10 @@
         <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
     </Match>
     <Match>
+        <Class name="eu.ciechanowiec.sling.rocket.commons.AngusMailActivation"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+    <Match>
         <Class name="eu.ciechanowiec.sling.rocket.identity.AuthIDTest" />
     </Match>
 </FindBugsFilter>
