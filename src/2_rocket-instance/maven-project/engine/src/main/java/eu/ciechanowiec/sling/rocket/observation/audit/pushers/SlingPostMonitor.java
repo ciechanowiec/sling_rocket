@@ -38,7 +38,7 @@ import java.util.stream.IntStream;
 )
 @ToString
 @ServiceDescription(
-    "Sling POST Monitor that converts the incoming modifications into entries and submits them to the EntryTrampoline"
+    "Sling POST Processor that converts the incoming modifications into entries and submits them to the EntryTrampoline"
 )
 public class SlingPostMonitor implements SlingJakartaPostProcessor {
 
