@@ -20,8 +20,8 @@ import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 
 /**
  * Display of Rocket Stats.
@@ -59,7 +59,7 @@ public class RocketStatsDisplay implements InventoryPrinter, JSON {
      */
     @Activate
     public RocketStatsDisplay() {
-        rocketStats = new ArrayList<>();
+        rocketStats = new TreeSet<>();
     }
 
     @SneakyThrows

@@ -7,7 +7,7 @@ import eu.ciechanowiec.sling.rocket.commons.JSON;
  * <p>
  * Every {@link RocketStats} instance must be serializable into JSON by Jackson.
  */
-public interface RocketStats extends JSON {
+public interface RocketStats extends JSON, Comparable<RocketStats> {
 
     /**
      * Returns the unique name of this {@link RocketStats}. Among others, it can be a fully qualified name of the class
@@ -16,4 +16,9 @@ public interface RocketStats extends JSON {
      * @return unique name of this {@link RocketStats}
      */
     String name();
+
+    @Override
+    default int compareTo(RocketStats other) {
+        return this.name().compareTo(other.name());
+    }
 }
