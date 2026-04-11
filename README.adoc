@@ -321,20 +321,20 @@ docker exec rocket-backuper backup
 ....
 
 ==== Backups Restoration
-The database can be restored both from the `rocket-data-dump` volume backup, as well as from the `rocket-data-raw` volume backup. The latter one is the recommended way of restoring the database and can be performed as follows:
+The database can be restored both from the `rocket-data-dump` volume backup, as well as from the `rocket-data-raw` volume backup. The first one is the recommended way of restoring the database and can be performed as follows:
 
 [upperalpha]
-. Remove SR Instance container (`rocket-instance`) and volumes (`rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`):
+. Remove SR Instance container (`rocket-instance`), SR Backuper container (`rocket-backuper`) and volumes (`rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`):
 +
 [source,bash]
 ....
-docker container rm -f rocket-instance
+docker container rm -f rocket-instance rocket-backuper
 docker volume rm rocket-data-raw rocket-data-dump rocket-instance-logs
 ....
 
 . Restore the backup archive that contains the persistence files into a new `rocket-data-raw` volume before running a new `rocket-instance` container.
 +
-Assuming that backups are stored in the `$HOME/backups` directory and the backup archive is named `rocket-backup-2025-03-05T01-00-00.tar.gz`, you can use a command structure like the following:
+Assuming that backups are stored in the `$HOME/backups` directory and the backup archive is named `rocket-backup-2026-04-10T01-00-00.tar.gz`, you can use a command structure like the following:
 +
 [source,bash]
 ....
@@ -346,10 +346,10 @@ docker run \
   --volume "$HOME/backups:/archive:ro" \
   alpine \
   tar --extract --verbose --gzip \
-      --file /archive/rocket-backup-2025-03-05T01-00-00.tar.gz \
+      --file /archive/rocket-backup-2026-04-10T01-00-00.tar.gz \
       --directory /restore \
-      --strip-components=2 \
-      backup/rocket-data-raw
+      --strip-components=3 \
+      backup/rocket-data-dump/backup
 ....
 +
 In the example above:
@@ -357,7 +357,7 @@ In the example above:
 .. The volume `rocket-data-raw` (where the restored persistent files will be located) is mounted at `/restore` inside the temporary container.
 .. The local backups directory (`$HOME/backups`) is mounted in read-only mode at `/archive` inside the temporary container.
 .. The `tar` command expands the backup archive that contains the persistent files into `/restore`, thereby placing all persistent files from the archive there.
-.. The `--strip-components=2` parameter removes the first two path components from the extracted files (due to the default structure of the backups).
+.. The `--strip-components=3` parameter removes the first two path components from the extracted files (due to the default structure of the backups).
 
 . In the `volumes` section of the `docker-compose.yml` file, adjust the `rocket-data-raw` configuration by adding the `external: true` parameter:
 +
