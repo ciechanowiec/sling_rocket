@@ -275,7 +275,7 @@ image::docs/img/sling-rocket-instance-volumes.drawio.png[]
 
 === SR Backuper
 
-SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It is done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket–data–dump` (`/var/rocket–data–dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
+SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It is done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket-data-dump` (`/var/rocket-data-dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
 
 A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a tar archive. Internally, that archive has the following structure:
 
@@ -305,9 +305,9 @@ rocket-backup-2025-03-01T11-00-00.tar.gz
         ├── query.log
         └── request.log
 ....
-<1> content of `rocket-data-dump` volume (`/var/rocket–data–dump`)
-<2> content of `/var/rocket–data–dump/backup` path from the `rocket-data-dump` volume
-<3> content of `/var/rocket–data–dump/export` path from the `rocket-data-dump` volume
+<1> content of `rocket-data-dump` volume (`/var/rocket-data-dump`)
+<2> content of `/var/rocket-data-dump/backup` path from the `rocket-data-dump` volume
+<3> content of `/var/rocket-data-dump/export` path from the `rocket-data-dump` volume
 <4> content of `rocket-data-raw` volume (`/opt/sling/launcher/repository/segmentstore`)
 <5> content of `rocket-instance-logs` volume (`/opt/sling/launcher/logs`)
 
