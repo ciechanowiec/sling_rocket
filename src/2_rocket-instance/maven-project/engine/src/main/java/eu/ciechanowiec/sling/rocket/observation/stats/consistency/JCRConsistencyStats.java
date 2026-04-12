@@ -4,17 +4,20 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.FullResourceAccess;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.observation.audit.Entry;
 import eu.ciechanowiec.sling.rocket.observation.audit.EntryTrampoline;
 import eu.ciechanowiec.sling.rocket.observation.stats.RocketStats;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.jspecify.annotations.Nullable;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.propertytypes.ServiceDescription;
 import org.osgi.service.metatype.annotations.Designate;
 
 import javax.jcr.Repository;
@@ -32,6 +35,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+/**
+ * Reports on the consistency of the {@link Repository}.
+ */
+@SuppressWarnings("ClassFanOutComplexity")
 @Component(
     service = {JCRConsistencyStats.class, RocketStats.class},
     immediate = true,
@@ -44,14 +51,27 @@ import java.util.stream.Stream;
     isGetterVisibility = JsonAutoDetect.Visibility.NONE,
     fieldVisibility = JsonAutoDetect.Visibility.NONE
 )
+@ServiceDescription("Reports on the consistency of the repository")
+@ToString(onlyExplicitlyIncluded = true)
 public class JCRConsistencyStats implements RocketStats {
 
     private final FullResourceAccess fullResourceAccess;
     private final BundleContext bundleContext;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<EntryTrampoline> entryTrampoline;
+    @ToString.Include
     private final AtomicReference<JCRConsistencyStatsConfig> config;
 
+    /**
+     * Constructs an instance of this class.
+     *
+     * @param fullResourceAccess {@link FullResourceAccess} to acquire {@link ResourceResolver} for accessing the
+     *                           {@link Repository} and obtaining the {@link Repository} version
+     * @param bundleContext      {@link BundleContext} to obtain the {@link Repository} home path
+     * @param entryTrampoline    {@link EntryTrampoline} to log the results of the consistency check
+     * @param config             {@link JCRConsistencyStatsConfig} used by the constructed instance
+     *
+     */
     @Activate
     public JCRConsistencyStats(
         @Reference(cardinality = ReferenceCardinality.MANDATORY)
@@ -70,12 +90,13 @@ public class JCRConsistencyStats implements RocketStats {
         this.bundleContext = bundleContext;
         this.entryTrampoline = Optional.ofNullable(entryTrampoline);
         this.config = new AtomicReference<>(config);
+        log.info("Initialized {}", this);
     }
 
     @Modified
     void configure(JCRConsistencyStatsConfig config) {
         this.config.set(config);
-        log.info("Reconfigured");
+        log.info("Reconfigured: {}", this);
     }
 
     private Optional<String> lastValidSegment(Path segmentStoreAbsPath) {
@@ -97,8 +118,8 @@ public class JCRConsistencyStats implements RocketStats {
         return journalLogAbsPath(segmentStoreAbsPath).flatMap(
             path -> {
                 try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
-                    List<String> recentSegments = lines
-                        .filter(line -> !line.trim().isEmpty())
+                    List<String> recentSegments = lines.map(String::trim)
+                        .filter(line -> !line.isEmpty())
                         .map(line -> line.split("\\s+")[0])
                         .toList();
                     int size = recentSegments.size();
@@ -112,6 +133,8 @@ public class JCRConsistencyStats implements RocketStats {
     }
 
     @JsonProperty
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private JSON nativeSegmentStore() {
         return segmentStoreAbsPathRepositoryHome().map(
                 path -> new JCRConsistencyInfo(
@@ -124,10 +147,12 @@ public class JCRConsistencyStats implements RocketStats {
     }
 
     @JsonProperty
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private JSON backupSegmentStore() {
         return Optional.of(config)
             .map(AtomicReference::get)
-            .map(JCRConsistencyStatsConfig::backup$_$segmentstore$_$path)
+            .map(JCRConsistencyStatsConfig::backup_segmentstore_path)
             .map(Path::of)
             .filter(Files::isDirectory)
             .map(

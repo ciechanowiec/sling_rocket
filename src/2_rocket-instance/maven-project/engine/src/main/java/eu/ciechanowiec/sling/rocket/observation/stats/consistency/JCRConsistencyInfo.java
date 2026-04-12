@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.ciechanowiec.sling.rocket.commons.JSON;
 import eu.ciechanowiec.sling.rocket.commons.MemoizingSupplier;
 import lombok.SneakyThrows;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@SuppressWarnings("PMD.UnusedPrivateMethod")
 class JCRConsistencyInfo implements JSON {
 
     private final Path segmentStoreAbsPath;
@@ -34,21 +36,25 @@ class JCRConsistencyInfo implements JSON {
 
     @JsonProperty
     @JsonSerialize(using = ToStringSerializer.class)
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private Path segmentStoreAbsPath() {
         return segmentStoreAbsPath;
     }
 
     @JsonProperty
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private String lastValidSegment() {
         return lastValidSegment.get().orElse("UNKNOWN");
     }
 
     @JsonProperty
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private List<String> journalLogRecentSegments() {
         return journalLogRecentSegments.get().orElse(List.of());
     }
 
     @JsonProperty
+    @SuppressFBWarnings("UPM_UNCALLED_PRIVATE_METHOD")
     private boolean consistencyIssues() {
         return lastValidSegment.get().map(
             validSegment -> journalLogRecentSegments.get().map(

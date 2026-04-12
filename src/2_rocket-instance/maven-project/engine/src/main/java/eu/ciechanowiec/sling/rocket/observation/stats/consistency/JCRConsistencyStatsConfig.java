@@ -28,5 +28,5 @@ public @interface JCRConsistencyStatsConfig {
         defaultValue = "/var/rocket-data-dump/backup"
     )
     @SuppressWarnings("squid:S100")
-    String backup$_$segmentstore$_$path() default "/var/rocket-data-dump/backup";
+    String backup_segmentstore_path() default "/var/rocket-data-dump/backup";
 }
