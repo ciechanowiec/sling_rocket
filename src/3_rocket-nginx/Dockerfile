@@ -1,4 +1,4 @@
-FROM ubuntu/nginx:1.18-22.04_edge
+FROM ubuntu/nginx:1.24-24.04_edge
 
 COPY ../commons/apt-installer.sh .
 RUN ./apt-installer.sh
