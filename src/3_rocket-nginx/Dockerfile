@@ -4,6 +4,11 @@ COPY ../commons/apt-installer.sh .
 RUN ./apt-installer.sh
 RUN rm apt-installer.sh
 
+# Configuring default ModSecurity
+RUN sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/g' /etc/nginx/modsecurity.conf
+RUN sed -i 's/^#//' /etc/nginx/modsecurity_includes.conf
+RUN sed -i 's/IncludeOptional/#IncludeOptional/g' /usr/share/modsecurity-crs/owasp-crs.load
+
 COPY ../3_rocket-nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ../3_rocket-nginx/rocket-nginx-starter.sh /etc/nginx/rocket-nginx-starter.sh
 RUN chmod +x /etc/nginx/rocket-nginx-starter.sh

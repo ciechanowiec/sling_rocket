@@ -385,6 +385,8 @@ volumes:
     read_only: true
 ....
 
+Additionally, the SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^].
+
 == Miscellaneous
 
 === Apache Sling
