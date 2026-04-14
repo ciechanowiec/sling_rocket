@@ -2,6 +2,7 @@ package eu.ciechanowiec.sling.rocket.observation.stats.consistency;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -46,6 +47,7 @@ import java.util.stream.Stream;
 )
 @Designate(ocd = JCRConsistencyStatsConfig.class)
 @Slf4j
+@JsonPropertyOrder(alphabetic = true)
 @JsonAutoDetect(
     getterVisibility = JsonAutoDetect.Visibility.NONE,
     isGetterVisibility = JsonAutoDetect.Visibility.NONE,

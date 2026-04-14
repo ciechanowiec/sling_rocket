@@ -152,10 +152,10 @@ public class Storage extends AnnotatedStandardMBean implements JobConsumer, With
             )
         ).jcrPath();
         JCRPath hourJCRPath = new TargetJCRPath(
-            new ParentJCRPath(dayJCRPath), String.valueOf(timestamp.getHour())
+            new ParentJCRPath(dayJCRPath), "%02d".formatted(timestamp.getHour())
         );
         JCRPath hourMuniteJCRPath = new TargetJCRPath(
-            new ParentJCRPath(hourJCRPath), String.valueOf(timestamp.getMinute())
+            new ParentJCRPath(hourJCRPath), "%02d".formatted(timestamp.getMinute())
         );
         JCRPath hourMuniteSecondJCRPath = new TargetJCRPath(
             new ParentJCRPath(hourMuniteJCRPath), "%02d".formatted(timestamp.getSecond())
