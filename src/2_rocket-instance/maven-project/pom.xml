@@ -95,7 +95,7 @@
         <org.apache.felix.cm.json.version>2.0.6</org.apache.felix.cm.json.version>
         <org.apache.felix.log.version>1.3.0</org.apache.felix.log.version>
         <org.apache.felix.http.servlet-api.version>6.1.0</org.apache.felix.http.servlet-api.version>
-        <org.apache.felix.scr.version>2.2.14</org.apache.felix.scr.version>
+        <org.apache.felix.scr.version>2.2.18</org.apache.felix.scr.version>
         <org.apache.felix.metatype.version>1.2.4</org.apache.felix.metatype.version>
         <org.apache.felix.bundlerepository.version>2.0.10</org.apache.felix.bundlerepository.version>
         <org.apache.felix.http.jetty12.version>1.1.8</org.apache.felix.http.jetty12.version>
@@ -240,7 +240,7 @@
         <google-oauth-client-jetty.version>1.39.0</google-oauth-client-jetty.version>
         <google-oauth-client-java6.version>1.39.0</google-oauth-client-java6.version>
         <google-http-client-jackson2.version>1.47.0</google-http-client-jackson2.version>
-        <google-api-services-admin-directory.version>20250930</google-api-services-admin-directory.version>
+        <google-api-services-admin-directory.version>20260227</google-api-services-admin-directory.version>
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
@@ -291,7 +291,7 @@
         <org.apache.sling.hc.support.version>1.0.10</org.apache.sling.hc.support.version>
         <org.apache.sling.adapter.version>2.3.0</org.apache.sling.adapter.version>
         <org.apache.sling.auth.form.version>2.0.0</org.apache.sling.auth.form.version>
-        <org.apache.sling.bundleresource.impl.version>2.4.0</org.apache.sling.bundleresource.impl.version>
+        <org.apache.sling.bundleresource.impl.version>3.0.0</org.apache.sling.bundleresource.impl.version>
         <org.apache.sling.engine.version>3.0.2</org.apache.sling.engine.version>
         <org.apache.sling.fsresource.version>2.3.0</org.apache.sling.fsresource.version>
         <org.apache.sling.i18n.version>3.0.0</org.apache.sling.i18n.version>
@@ -318,7 +318,7 @@
         <org.apache.sling.commons.classloader.version>1.4.4</org.apache.sling.commons.classloader.version>
         <org.apache.sling.commons.compiler.version>2.4.0</org.apache.sling.commons.compiler.version>
         <org.apache.sling.commons.fsclassloader.version>1.0.16</org.apache.sling.commons.fsclassloader.version>
-        <org.apache.sling.commons.mime.version>2.3.0</org.apache.sling.commons.mime.version>
+        <org.apache.sling.commons.mime.version>3.0.0</org.apache.sling.commons.mime.version>
         <org.apache.sling.commons.scheduler.version>2.7.14</org.apache.sling.commons.scheduler.version>
         <org.apache.sling.commons.threads.version>3.3.0</org.apache.sling.commons.threads.version>
         <org.apache.sling.commons.json.version>2.0.28</org.apache.sling.commons.json.version>
@@ -396,7 +396,7 @@
         <org.apache.sling.extensions.webconsolesecurityprovider.version>1.2.8
         </org.apache.sling.extensions.webconsolesecurityprovider.version>
         <org.apache.sling.jcr.webconsole.version>1.1.0</org.apache.sling.jcr.webconsole.version>
-        <org.apache.sling.serviceuser.webconsole.version>1.0.4</org.apache.sling.serviceuser.webconsole.version>
+        <org.apache.sling.serviceuser.webconsole.version>2.0.0</org.apache.sling.serviceuser.webconsole.version>
         <!-- ====================================================================== -->
         <!-- TESTING                                                                -->
         <!-- ====================================================================== -->
@@ -404,9 +404,9 @@
         <junit-jupiter-params.version>6.0.3</junit-jupiter-params.version>
         <mockito-core.version>5.23.0</mockito-core.version>
         <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
-        <org.apache.sling.testing.sling-mock.junit5.version>4.0.4</org.apache.sling.testing.sling-mock.junit5.version>
+        <org.apache.sling.testing.sling-mock.junit5.version>4.0.6</org.apache.sling.testing.sling-mock.junit5.version>
         <org.apache.sling.testing.sling-mock-oak.version>4.1.0-1.86.0</org.apache.sling.testing.sling-mock-oak.version>
-        <org.apache.sling.testing.sling-mock.core.version>4.0.4</org.apache.sling.testing.sling-mock.core.version>
+        <org.apache.sling.testing.sling-mock.core.version>4.0.6</org.apache.sling.testing.sling-mock.core.version>
         <awaitility.version>4.3.0</awaitility.version>
         <!-- ====================================================================== -->
         <!-- NON-RUNTIME                                                            -->

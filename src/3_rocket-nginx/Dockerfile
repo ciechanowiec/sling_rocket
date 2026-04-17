@@ -15,7 +15,7 @@ RUN wget https://raw.githubusercontent.com/mitchellkrogza/nginx-ultimate-bad-bot
     chmod +x /usr/local/sbin/install-ngxblocker && \
     /usr/local/sbin/install-ngxblocker -x && \
     chmod +x /usr/local/sbin/setup-ngxblocker && \
-    chmod +x /usr/local/sbin/update-ngxblocker \
+    chmod +x /usr/local/sbin/update-ngxblocker
 RUN echo '"~*(?:\b)libredtail-http(?:\b)" 3;' >> /etc/nginx/bots.d/blacklist-user-agents.conf
 
 COPY ../3_rocket-nginx/nginx.conf /etc/nginx/nginx.conf
