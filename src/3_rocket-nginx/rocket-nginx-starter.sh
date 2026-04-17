@@ -9,8 +9,10 @@ echo "### DOMAIN: $DOMAIN"
 echo "### EMAIL: $EMAIL"
 echo "### IS_STAGING_ENV: $IS_STAGING_ENV"
 
-echo "### This domain will be set in Nginx : '$DOMAIN'"
-sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" /etc/nginx/nginx.conf
+if [ -w "/etc/nginx/nginx.conf" ]; then
+  echo "### This domain will be set in Nginx : '$DOMAIN'"
+  sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" /etc/nginx/nginx.conf
+fi
 
 echo "### Starting cron in the background..."
 cron
