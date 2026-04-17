@@ -358,7 +358,7 @@ class GoogleAuthenticationHandlerTest extends TestEnvironment {
     @SuppressWarnings("LineLength")
     void testHostedDomainMatch() {
         handler = context.registerInjectActivateService(
-            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "^ciechanowiec\\.eu$")
         );
         MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
         request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
@@ -387,7 +387,7 @@ class GoogleAuthenticationHandlerTest extends TestEnvironment {
     @SuppressWarnings("LineLength")
     void testHostedDomainNoMatch() {
         handler = context.registerInjectActivateService(
-            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "^ciechanowiec\\.eu$")
         );
         MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
         request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");
@@ -408,7 +408,7 @@ class GoogleAuthenticationHandlerTest extends TestEnvironment {
     @SuppressWarnings("LineLength")
     void testHostedDomainNoClaim() {
         handler = context.registerInjectActivateService(
-            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "ciechanowiec\\.eu")
+            GoogleAuthenticationHandler.class, Map.of("expected-hosted-domain.regex", "^ciechanowiec\\.eu$")
         );
         MockSlingJakartaHttpServletRequest request = context.jakartaRequest();
         request.setHeader(GoogleAuthenticationHandler.HEADER_NAME, "test-id-token");

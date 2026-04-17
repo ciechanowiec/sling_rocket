@@ -49,8 +49,8 @@ public @interface GoogleAuthenticationHandlerConfig {
      *     <li>
      * The default value is {@code ".*"}, which matches any value, including an {@link StringUtils#EMPTY}
      * {@link String}, thus allowing users both belonging and not belonging to some domain. To require a specific domain
-     * like {@code "example.com"}, the value should be set to {@code "example\\.com"} (note that this would reject users
-     * without the {@code hd} claim).
+     * like {@code "example.com"}, the value should be set to {@code "^example\\.com$"} (note that this would reject
+     * users without the {@code hd} claim).
      *     </li>
      * </ol>
      *
@@ -82,6 +82,7 @@ public @interface GoogleAuthenticationHandlerConfig {
      * the value should be set to {@code "^[A-Za-z0-9._%+-]+@example\\.com$"}.
      *     </li>
      * </ol>
+     *
      * @return regular expression (regex) for the expected {@code email} claim of a {@link GoogleIdToken}
      */
     String expected$_$email_regex() default ".*";
