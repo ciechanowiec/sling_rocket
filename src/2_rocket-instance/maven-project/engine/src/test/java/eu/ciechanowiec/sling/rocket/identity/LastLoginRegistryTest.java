@@ -2,16 +2,23 @@ package eu.ciechanowiec.sling.rocket.identity;
 
 import eu.ciechanowiec.sling.rocket.test.TestEnvironment;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.sling.api.SlingConstants;
+import org.apache.sling.auth.core.AuthConstants;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletRequest;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingJakartaHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
+
+import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("PMD.LooseCoupling")
+@SuppressWarnings({"PMD.LooseCoupling", "MultipleStringLiterals", "PMD.AvoidDuplicateLiterals"})
 class LastLoginRegistryTest extends TestEnvironment {
 
     private LastLoginRegistry lastLoginRegistry;
@@ -39,7 +46,9 @@ class LastLoginRegistryTest extends TestEnvironment {
         String json = lastLoginRegistry.asJSON();
         assertAll(
             () -> assertTrue(json.contains("since")),
-            () -> assertTrue(json.contains("lastLoginTimes")),
+            () -> assertTrue(json.contains("lastLoginAttempts")),
+            () -> assertTrue(json.contains("lastAndFreshLoginSuccesses")),
+            () -> assertTrue(json.contains("note")),
             () -> assertTrue(json.contains("test-user"))
         );
     }
@@ -86,5 +95,35 @@ class LastLoginRegistryTest extends TestEnvironment {
             () -> assertTrue(json1.contains("test-user")),
             () -> assertTrue(json2.contains("test-user"))
         );
+    }
+
+    @Test
+    void handleEvent() {
+        EventAdmin eventAdmin = Objects.requireNonNull(context.getService(EventAdmin.class));
+        Event event = new Event(AuthConstants.TOPIC_LOGIN, Map.of(SlingConstants.PROPERTY_USERID, "test-user"));
+        eventAdmin.sendEvent(event);
+        String json = lastLoginRegistry.asJSON();
+        assertAll(
+            () -> assertTrue(json.contains("lastAndFreshLoginSuccesses")),
+            () -> assertTrue(json.contains("test-user"))
+        );
+    }
+
+    @Test
+    void handleEventWrongTopic() {
+        EventAdmin eventAdmin = Objects.requireNonNull(context.getService(EventAdmin.class));
+        Event event = new Event("wrong/topic", Map.of(SlingConstants.PROPERTY_USERID, "test-user"));
+        eventAdmin.sendEvent(event);
+        String json = lastLoginRegistry.asJSON();
+        assertFalse(json.contains("test-user"));
+    }
+
+    @Test
+    void handleEventNoUser() {
+        EventAdmin eventAdmin = Objects.requireNonNull(context.getService(EventAdmin.class));
+        Event event = new Event(AuthConstants.TOPIC_LOGIN, Map.of());
+        eventAdmin.sendEvent(event);
+        String json = lastLoginRegistry.asJSON();
+        assertFalse(json.contains("test-user"));
     }
 }
