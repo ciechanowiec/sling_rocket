@@ -11,10 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.apache.jackrabbit.api.security.user.User;
+import org.apache.sling.api.SlingConstants;
+import org.apache.sling.auth.core.AuthConstants;
 import org.apache.sling.auth.core.spi.AuthenticationInfo;
 import org.apache.sling.auth.core.spi.JakartaAuthenticationInfoPostProcessor;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.propertytypes.ServiceDescription;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -22,22 +28,35 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * Registry of last login times for {@link User}s.
+ * Registry of last login facts for {@link User}s.
  */
 @Component(
-    service = {LastLoginRegistry.class, JakartaAuthenticationInfoPostProcessor.class, RocketStats.class},
-    immediate = true
+    service = {
+        LastLoginRegistry.class, EventHandler.class, JakartaAuthenticationInfoPostProcessor.class,
+        RocketStats.class
+    },
+    immediate = true,
+    property = EventConstants.EVENT_TOPIC + "=" + AuthConstants.TOPIC_LOGIN
 )
 @JsonAutoDetect(
     getterVisibility = JsonAutoDetect.Visibility.NONE,
     isGetterVisibility = JsonAutoDetect.Visibility.NONE,
     fieldVisibility = JsonAutoDetect.Visibility.NONE
 )
-public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor, RocketStats {
+@ServiceDescription("Registry of last login facts for users")
+public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor, RocketStats, EventHandler {
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @JsonProperty
-    private final Map<AuthIDUser, LocalDateTime> lastLoginTimes;
+    private final Map<AuthIDUser, LocalDateTime> lastLoginAttempts;
+
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    @JsonProperty
+    private final Map<AuthIDUser, LocalDateTime> lastAndFreshLoginSuccesses;
+
+    @SuppressWarnings("unused")
+    @JsonProperty
+    private final String note;
 
     @SuppressWarnings("unused")
     @JsonProperty
@@ -49,8 +68,12 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
      */
     @Activate
     public LastLoginRegistry() {
-        lastLoginTimes = new TreeMap<>();
+        lastLoginAttempts = new TreeMap<>();
+        lastAndFreshLoginSuccesses = new TreeMap<>();
         since = LocalDateTime.now();
+        note
+            = "Due to session caching, the recorded last login attempt might be more recent than the recorded last "
+            + "and fresh login success for the same user even if the attempt was successful";
     }
 
     @Override
@@ -64,7 +87,7 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
     }
 
     private void updateLastLoginTime(AuthIDUser user) {
-        lastLoginTimes.put(user, LocalDateTime.now());
+        lastLoginAttempts.put(user, LocalDateTime.now());
     }
 
     @Override
@@ -79,5 +102,16 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper.writeValueAsString(this);
+    }
+
+    @Override
+    public void handleEvent(Event event) {
+        Optional.of(event.getTopic())
+            .filter(AuthConstants.TOPIC_LOGIN::equals)
+            .map(_ -> event.getProperty(SlingConstants.PROPERTY_USERID))
+            .filter(String.class::isInstance)
+            .map(String.class::cast)
+            .map(AuthIDUser::new)
+            .ifPresent(authIDUser -> lastAndFreshLoginSuccesses.put(authIDUser, LocalDateTime.now()));
     }
 }
