@@ -317,7 +317,7 @@
         <org.apache.sling.commons.metrics.version>1.2.14</org.apache.sling.commons.metrics.version>
         <org.apache.sling.commons.classloader.version>1.4.4</org.apache.sling.commons.classloader.version>
         <org.apache.sling.commons.compiler.version>2.4.0</org.apache.sling.commons.compiler.version>
-        <org.apache.sling.commons.fsclassloader.version>1.0.16</org.apache.sling.commons.fsclassloader.version>
+        <org.apache.sling.commons.fsclassloader.version>2.0.0</org.apache.sling.commons.fsclassloader.version>
         <org.apache.sling.commons.mime.version>3.0.0</org.apache.sling.commons.mime.version>
         <org.apache.sling.commons.scheduler.version>2.7.14</org.apache.sling.commons.scheduler.version>
         <org.apache.sling.commons.threads.version>3.3.0</org.apache.sling.commons.threads.version>
@@ -356,7 +356,7 @@
         <org.apache.sling.jcr.jackrabbit.usermanager.version>3.0.0
         </org.apache.sling.jcr.jackrabbit.usermanager.version>
         <org.apache.sling.jcr.resource.version>3.3.6</org.apache.sling.jcr.resource.version>
-        <org.apache.sling.jcr.contentloader.version>2.6.0</org.apache.sling.jcr.contentloader.version>
+        <org.apache.sling.jcr.contentloader.version>3.0.0</org.apache.sling.jcr.contentloader.version>
         <org.apache.sling.jcr.jackrabbit.accessmanager.version>5.0.0
         </org.apache.sling.jcr.jackrabbit.accessmanager.version>
         <!-- ====================================================================== -->
