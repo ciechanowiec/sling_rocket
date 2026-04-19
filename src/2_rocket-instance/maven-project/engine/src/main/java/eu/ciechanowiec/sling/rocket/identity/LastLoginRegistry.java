@@ -52,7 +52,7 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @JsonProperty
-    private final Map<AuthIDUser, LocalDateTime> lastAndFreshLoginSuccesses;
+    private final Map<AuthIDUser, LocalDateTime> lastFirstLoginSuccess;
 
     @SuppressWarnings("unused")
     @JsonProperty
@@ -69,11 +69,13 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
     @Activate
     public LastLoginRegistry() {
         lastLoginAttempts = new TreeMap<>();
-        lastAndFreshLoginSuccesses = new TreeMap<>();
+        lastFirstLoginSuccess = new TreeMap<>();
         since = LocalDateTime.now();
         note
-            = "Due to session caching, the recorded last login attempt might be more recent than the recorded last "
-            + "and fresh login success for the same user even if the attempt was successful";
+            = "Only logins that emit the `org/apache/sling/auth/core/Authenticator/LOGIN` login event are recorded "
+            + "as last first login successes. Among others, the successful logins via "
+            + "`org.apache.sling.auth.core.impl.HttpBasicAuthenticationHandler` aren't recorded since they don't "
+            + "emit the mentioned event";
     }
 
     @Override
@@ -112,6 +114,6 @@ public class LastLoginRegistry implements JakartaAuthenticationInfoPostProcessor
             .filter(String.class::isInstance)
             .map(String.class::cast)
             .map(AuthIDUser::new)
-            .ifPresent(authIDUser -> lastAndFreshLoginSuccesses.put(authIDUser, LocalDateTime.now()));
+            .ifPresent(authIDUser -> lastFirstLoginSuccess.put(authIDUser, LocalDateTime.now()));
     }
 }

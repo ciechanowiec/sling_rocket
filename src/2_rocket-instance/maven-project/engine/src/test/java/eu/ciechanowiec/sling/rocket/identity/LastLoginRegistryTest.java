@@ -47,7 +47,7 @@ class LastLoginRegistryTest extends TestEnvironment {
         assertAll(
             () -> assertTrue(json.contains("since")),
             () -> assertTrue(json.contains("lastLoginAttempts")),
-            () -> assertTrue(json.contains("lastAndFreshLoginSuccesses")),
+            () -> assertTrue(json.contains("lastFirstLoginSuccess")),
             () -> assertTrue(json.contains("note")),
             () -> assertTrue(json.contains("test-user"))
         );
@@ -104,7 +104,7 @@ class LastLoginRegistryTest extends TestEnvironment {
         eventAdmin.sendEvent(event);
         String json = lastLoginRegistry.asJSON();
         assertAll(
-            () -> assertTrue(json.contains("lastAndFreshLoginSuccesses")),
+            () -> assertTrue(json.contains("lastFirstLoginSuccess")),
             () -> assertTrue(json.contains("test-user"))
         );
     }
