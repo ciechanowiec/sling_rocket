@@ -250,7 +250,7 @@ public class GoogleAuthenticationHandler extends AnnotatedStandardMBean
         entryTrampolineNullable.ifPresent(
             entryTrampoline -> entryTrampoline.submitForSaving(
                 new Entry(
-                    remoteUser, "%s/LOGOUT".formatted(GoogleAuthenticationHandler.class.getName()),
+                    remoteUser, "%s/LOGOUT-REQUESTED".formatted(GoogleAuthenticationHandler.class.getName()),
                     LocalDateTime.now(),
                     Map.of()
                 )
