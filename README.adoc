@@ -594,17 +594,19 @@ Analyze the performance of the webpages with the https://github.com/GoogleChrome
 . *JCR Version Cleanup*
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
-. *ZAP Tests*
+. *Security Tests*
+[upperroman]
+.. *ZAP Tests*
 +
 Run https://www.zaproxy.org/[_Zed Attack Proxy (ZAP)_] security tests.
 [upperroman]
-.. The basic test can be performed with the use of the command constructed the following way:
+... The basic test can be performed with the use of the command constructed the following way:
 +
 [source, bash]
 ----
 docker run -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py -t https://example.com
 ----
-.. Security headers can be added to the above command the following way:
+... Security headers can be added to the above command the following way:
 +
 [source, bash]
 ----
@@ -614,6 +616,22 @@ docker run -t \
     ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
     -t https://example.com
 ----
+.. *Nuclei*
+... Run https://github.com/projectdiscovery/nuclei[_Nuclei_] security tests.
+... The basic test can be performed with the use of the command constructed the following way:
++
+[source, bash]
+----
+nuclei -target http://localhost/content/form.html -stats -si 10 -rl 15 -c 10 -bs 5 \
+    -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" \
+    -H "Referer: http://localhost/content/form.html" \
+    -H "Cookie: SESSION=6a08d33d-a242-40f9-b172-d69c8bab868f" \
+    -t http \
+    -em "fingerprinthub-web-fingerprints:openfire,tech-detect:jsdelivr,tech-detect:font-awesome,tech-detect:bootstrap,http-missing-security-headers:clear-site-data,http-missing-security-headers:missing-content-type" \
+    -eid "form-detection,options-method" \
+    -o matches.txt -elog errors.txt
+----
+
 . *Disable Unsafe Extensions*
 +
 Depending on the needs of the business application, consider disabling unsafe rendering extensions, i.e. https://sling.apache.org/documentation/bundles/rendering-content-default-get-servlets.html[`json`, `xml` and `txt` extensions of `DefaultGetServlet`]. Among others, this can be achieved via creating a `org.apache.sling.servlets.get.DefaultGetServlet.cfg.json` OSGi configuration with the following content:
