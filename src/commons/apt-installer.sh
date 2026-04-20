@@ -29,4 +29,5 @@ apt install less -y && \
     apt install libnginx-mod-http-headers-more-filter -y && \
     apt install libnginx-mod-http-modsecurity -y && \
     apt install modsecurity-crs -y && \
-    apt install cron -y
+    apt install cron -y && \
+    apt install logrotate -y

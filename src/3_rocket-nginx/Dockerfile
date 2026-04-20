@@ -26,8 +26,11 @@ COPY ../3_rocket-nginx/error.html /usr/share/nginx/html/error.html
 
 COPY ../3_rocket-nginx/renew-ssl-certs.sh /etc/nginx/renew-ssl-certs.sh
 RUN chmod +x /etc/nginx/renew-ssl-certs.sh
+COPY ../3_rocket-nginx/nginx-logrotate.conf /etc/logrotate.d/nginx
+RUN chmod 0644 /etc/logrotate.d/nginx
 RUN echo "0 0 * * * /etc/nginx/renew-ssl-certs.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/dailyjob
 RUN echo "0 2 * * * /usr/local/sbin/update-ngxblocker -e botblocker@localhost >> /var/log/cron.log 2>&1" >> /etc/cron.d/dailyjob
+RUN echo "0 3 * * * /usr/sbin/logrotate /etc/logrotate.conf >> /var/log/cron.log 2>&1" >> /etc/cron.d/dailyjob
 RUN chmod 0644 /etc/cron.d/dailyjob
 
 # Generate self-signed certificates (required for initial nginx start)

@@ -374,8 +374,9 @@ volumes:
 === SR Nginx
 In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`.
 
-The image of an SR Nginx includes a default configuration file at `/etc/nginx/nginx.conf`. This file is a template that can be customized according to the specific needs of a given deployment. Among others, it can be done via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
-
+[upperalpha]
+. The image of an SR Nginx includes a default configuration file at `/etc/nginx/nginx.conf`. This file is a template that can be customized according to the specific needs of a given deployment. Among others, it can be done via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
++
 [source,yml]
 ....
 volumes:
@@ -384,8 +385,28 @@ volumes:
     target: /etc/nginx/nginx.conf
     read_only: true
 ....
-
-Additionally, the SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
+. The SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
+. *Logs*
+[upperroman]
+.. The logs for the Nginx itself (`access.log` and `error.log`) and for the ModSecurity WAF module (`modsec_audit.log`) are stored in the `/var/log/nginx` directory inside the container. It is recommended to mount that directory as a persistent volume for a given SR Nginx container, e.g. this way:
++
+[source,yml]
+....
+volumes:
+  - type: volume
+    source: rocket-nginx-logs
+    target: /var/log/nginx
+....
+.. Logs are configured for rotation in the `/etc/logrotate.d/nginx` configuration file. If needed, that file can be overridden by mounting a custom configuration file from the host machine to the container, e.g. this way:
++
+[source,yml]
+....
+volumes:
+  - type: bind
+    source: infra/nginx-logrotate.conf
+    target: /etc/logrotate.d/nginx
+    read_only: true
+....
 
 == Miscellaneous
 
