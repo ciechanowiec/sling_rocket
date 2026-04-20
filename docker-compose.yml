@@ -48,7 +48,7 @@ services:
       BACKUP_FILENAME: rocket-backup-%Y-%m-%dT%H-%M-%S.tar.gz
       BACKUP_PRUNING_PREFIX: rocket-backup-
       BACKUP_RETENTION_DAYS: 7
-    image: offen/docker-volume-backup:v2
+    image: offen/docker-volume-backup:v2.48.0
     container_name: rocket-backuper
     volumes:
       - type: volume
