@@ -15,7 +15,7 @@ import org.apache.jackrabbit.api.security.user.Group;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
-import org.apache.jackrabbit.core.config.DataSourceConfig;
+import org.apache.jackrabbit.vault.fs.config.SimpleCredentialsConfig;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.jcr.api.SlingRepository;
@@ -124,7 +124,7 @@ public abstract class TestEnvironment {
      * Retrieves a {@link ResourceResolver} for a {@link User} represented by the specified {@link AuthIDUser}.
      * <p>
      * The {@link User} for which the {@link ResourceResolver} is returned must be loggable with
-     * {@link SimpleCredentials} and {@link DataSourceConfig#PASSWORD} as the password.
+     * {@link SimpleCredentials} and {@link SimpleCredentialsConfig#ATTR_PASSWORD} as the password.
      *
      * @param authIDUser {@link AuthIDUser} for which a {@link ResourceResolver} should be returned.
      * @return {@link ResourceResolver} for a {@link User} represented by the specified {@link AuthIDUser}
@@ -137,7 +137,9 @@ public abstract class TestEnvironment {
         Optional<Repository> repositoryNullable = Optional.ofNullable(context.getService(SlingRepository.class));
         ResourceResolverFactory resourceResolverFactory = rrFactoryNullable.orElseThrow();
         Repository repository = repositoryNullable.orElseThrow();
-        Credentials credentials = new SimpleCredentials(authIDUser.get(), DataSourceConfig.PASSWORD.toCharArray());
+        Credentials credentials = new SimpleCredentials(
+            authIDUser.get(), SimpleCredentialsConfig.ATTR_PASSWORD.toCharArray()
+        );
         Session userSession = repository.login(credentials);
         Map<String, Object> authInfo =
             Collections.singletonMap(JcrResourceConstants.AUTHENTICATION_INFO_SESSION, userSession);
@@ -255,7 +257,7 @@ public abstract class TestEnvironment {
                     String id = group.getID();
                     return Optional.of(new AuthIDGroup(id));
                 } else if (authType == User.class) {
-                    User user = userManager.createUser(authID.get(), DataSourceConfig.PASSWORD);
+                    User user = userManager.createUser(authID.get(), SimpleCredentialsConfig.ATTR_PASSWORD);
                     resourceResolver.commit();
                     String id = user.getID();
                     return Optional.of(new AuthIDUser(id));

@@ -91,8 +91,8 @@ class JCRConsistencyStatsTest extends TestEnvironment {
                 )
             );
             String output = """
-                 root@rocket-instance:/opt/sling/launcher/repository/segmentstore# java -jar /opt/sling/oak-run-1.92.0.jar check /opt/sling/launcher/repository/segmentstore --bin
-                 Apache Jackrabbit Oak 1.92.0
+                 root@rocket-instance:/opt/sling/launcher/repository/segmentstore# java -jar /opt/sling/oak-run-2.0.0.jar check /opt/sling/launcher/repository/segmentstore --bin
+                 Apache Jackrabbit Oak 2.0.0
                  06:24:27.061 [segmentstore-init-4] WARN  o.a.j.o.s.file.tar.SegmentTarReader [loadAndValidateIndex:125] - Unable to load index of file data00003a.tar: Unrecognized magic number
                  06:24:27.064 [segmentstore-init-4] WARN  o.a.j.o.s.file.tar.SegmentTarReader [loadAndValidateIndex:125] - Unable to load index of file data00003a.tar: Unrecognized magic number
 

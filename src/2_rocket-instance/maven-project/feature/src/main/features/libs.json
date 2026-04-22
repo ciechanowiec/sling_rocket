@@ -89,6 +89,10 @@
       "start-order": "15"
     },
     {
+      "id": "com.github.ben-manes.caffeine:caffeine:${caffeine.version}",
+      "start-order": "15"
+    },
+    {
       "id": "org.antlr:antlr4-runtime:${antlr4-runtime.version}",
       "start-order": "20"
     },
@@ -226,10 +230,6 @@
     },
     {
       "id": "eu.ciechanowiec:io.opencensus:${io.opencensus.version}",
-      "start-order": "30"
-    },
-    {
-      "id": "com.github.ben-manes.caffeine:caffeine:${caffeine.version}",
       "start-order": "30"
     },
     {
