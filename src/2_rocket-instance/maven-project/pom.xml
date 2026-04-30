@@ -2808,6 +2808,23 @@
                     <groupId>org.apache.sling</groupId>
                     <artifactId>sling-feature-converter-maven-plugin</artifactId>
                     <version>${sling-feature-converter-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.felix</groupId>
+                            <artifactId>org.apache.felix.cm.json</artifactId>
+                            <version>1.0.8</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish</groupId>
+                            <artifactId>javax.json</artifactId>
+                            <version>1.1.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.osgi</groupId>
+                            <artifactId>org.osgi.util.function</artifactId>
+                            <version>${org.osgi.util.function.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
@@ -2831,6 +2848,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <processPluginDependencies>false</processPluginDependencies>
+                    <processPluginDependenciesInPluginManagement>false</processPluginDependenciesInPluginManagement>
                     <ruleSet>
                         <ignoreVersions>
                             <ignoreVersion>
