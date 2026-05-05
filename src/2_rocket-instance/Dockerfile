@@ -1,4 +1,6 @@
-FROM ciechanowiec/rocket-base:25.0.0-SNAPSHOT
+ARG BASE_IMAGE=ciechanowiec/rocket-base:25.0.0-SNAPSHOT
+
+FROM ${BASE_IMAGE}
 
 ARG SLING_DIR
 ARG RUN_MODES
