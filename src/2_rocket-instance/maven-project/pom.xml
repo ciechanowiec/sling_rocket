@@ -74,7 +74,7 @@
         <lombok.version>1.18.46</lombok.version>
         <javax.inject.version>1</javax.inject.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
-        <checkstyle.version>13.4.1</checkstyle.version>
+        <checkstyle.version>13.4.2</checkstyle.version>
         <!-- ====================================================================== -->
         <!-- A_SERVICEUSERS_MUST_BE_FIRST                                           -->
         <!-- ====================================================================== -->
@@ -191,7 +191,7 @@
         <org.apache.servicemix.bundles.xmlresolver.version>1.2_5</org.apache.servicemix.bundles.xmlresolver.version>
         <org.apache.servicemix.bundles.xerces.version>2.12.2_1</org.apache.servicemix.bundles.xerces.version>
         <io.opencensus.version>0.31.1</io.opencensus.version>
-        <caffeine.version>3.2.3</caffeine.version>
+        <caffeine.version>3.2.4</caffeine.version>
         <openhtmltopdf.version>1.1.37</openhtmltopdf.version>
         <graphics2d.version>3.0.5</graphics2d.version>
         <jspecify.version>1.0.0</jspecify.version>
