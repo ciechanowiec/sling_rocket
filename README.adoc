@@ -28,6 +28,7 @@ _Sling Rocket_ is a framework for building dynamic web applications.
 === Sling Rocket Components
 
 _Sling Rocket_ consists of four basic parts:
+[upperalpha]
 . Sling Rocket Parent POM ("*SR Parent POM*")
 +
 A Maven project object model that declaratively describes basic and universal application components of _Sling Rocket_.
@@ -93,6 +94,7 @@ image::docs/img/sling-rocket-components-diagram.svg[]
 === Business Applications Development Flow
 The development of business applications for _Sling Rocket_ has this flow:
 
+[upperalpha]
 . Deploy an SR Instance.
 . Develop a business application with the SR Parent POM.
 +
@@ -140,9 +142,11 @@ image::docs/img/sling-rocket-architecture-diagram.svg[]
 == Usage
 [[docker-compose]]
 === `docker-compose.yml`
+[upperalpha]
 . _Sling Rocket_ is supposed to be run and managed using the `docker-compose.yml` file located in the root of this repository.
 . The `docker-compose.yml` file defines default setup of _Sling Rocket_ components and can be adjusted according to the specific needs of a given deployment, hence serve as a template for custom deployments.
 . The default `docker-compose.yml` contains a setup of the following _Sling Rocket_ components:
+[upperroman]
 .. SR Instance - `rocket-instance` container.
 .. SR Backuper - `rocket-backuper` container.
 .. SR Nginx - `rocket-nginx` container.
@@ -233,6 +237,7 @@ All static files residing in `/opt/sling` are of three types: _persistence files
 [[persistence-files]]
 ===== Persistence Files
 As mentioned earlier, _Sling Rocket_ has an embedded NoSQL database, which is Apache Jackrabbit Oak (Java Content Repository, JCR). There are multiple ways this database can be stored physically on disk. In the case of _Sling Rocket_, the entire database is stored in https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html[Segment Node Storage^]. All Segment Node Storage files are referred to as _persistence files_ and are located in `/opt/sling/launcher/repository/segmentstore`. Since these persistence files represent the entire database, the `/opt/sling/launcher/repository/segmentstore` directory is the indivisible persistence layer of a given SR Instance. All persistence-related actions must be performed upon that persistence layer, which includes creating, reading, updating, and deleting specific resources from the database, as well as performing general database operations such as backups, relocations, and restorations. Among others, this means that `/opt/sling/launcher/repository/segmentstore` directory:
+[upperalpha]
 . should be mounted as a persistent volume for a given SR Instance,
 . should be retained and reused between _Sling Rocket_ updates for a given SR Instance.
 
@@ -243,6 +248,7 @@ SR Instance writes logs to the xref:#log-files-directory[`/opt/sling/launcher/lo
 ===== Application Files
 
 Static files related to an SR Instance that reside in `/opt/sling` but aren't _persistence files_ or _log files_ are classified as _application files_. These files:
+[upperalpha]
 . are managed by _Sling Rocket_, meaning that _Sling Rocket_ provides new application files upon every container (re)creation,
 . are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
 . do not persistently store any business data.
@@ -316,6 +322,7 @@ docker exec rocket-backuper backup
 ==== Backups Restoration
 The database can be restored both from the `rocket-data-dump` volume backup, as well as from the `rocket-data-raw` volume backup. The first one is the recommended way of restoring the database and can be performed as follows:
 
+[upperalpha]
 . Remove SR Instance container (`rocket-instance`), SR Backuper container (`rocket-backuper`) and volumes (`rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`):
 +
 [source,bash]
@@ -345,6 +352,7 @@ docker run \
 ....
 +
 In the example above:
+[upperroman]
 .. The volume `rocket-data-raw` (where the restored persistent files will be located) is mounted at `/restore` inside the temporary container.
 .. The local backups directory (`$HOME/backups`) is mounted in read-only mode at `/archive` inside the temporary container.
 .. The `tar` command expands the backup archive that contains the persistent files into `/restore`, thereby placing all persistent files from the archive there.
@@ -365,6 +373,7 @@ volumes:
 === SR Nginx
 In general, all traffic to an SR Instance should be routed through the SR Nginx. The SR Nginx is intended to run as a Docker container. The image of an SR Nginx is published on Docker Hub at `ciechanowiec/rocket-nginx`.
 
+[upperalpha]
 . The image of an SR Nginx includes a default configuration file at `/etc/nginx/nginx.conf`. This file is a template that can be customized according to the specific needs of a given deployment. Among others, it can be done via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
 +
 [source,yml]
@@ -377,6 +386,7 @@ volumes:
 ....
 . The SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
 . *Logs*
+[upperroman]
 .. The logs for the Nginx itself (`access.log` and `error.log`) and for the ModSecurity WAF module (`modsec_audit.log`) are stored in the `/var/log/nginx` directory inside the container. It is recommended to mount that directory as a persistent volume for a given SR Nginx container, e.g. this way:
 +
 [source,yml]
@@ -407,11 +417,13 @@ _Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling,w
 
 ==== Public
 Public building and publication of new versions of _Sling Rocket_ is driven by GitHub workflows defined at `.github/workflows` directory. It consists of two following steps:
+[upperalpha]
 . Build and publish the SR Parent POM and subordinate artifacts in the Maven Central Repository via running the `.github/workflows/release-maven-artifacts.yaml` workflow.
 . Build and publish the SR Instance image and SR Nginx image in Docker Hub via running the `.github/workflows/release-docker-images.yaml` workflow.
 
 ==== Local
 Local builds of _Sling Rocket_ consist of two following steps:
+[upperalpha]
 . Build the SR Parent POM and subordinate artifacts, and install them in the local Maven Central Repository:
 +
 [source,bash]
@@ -437,6 +449,7 @@ To ensure architectural consistency and leverage the native resource resolution 
 
 Web APIs should be exposed via a standardized Uniform Resource Identifier (URI) structure that maps directly to a persistent content structure in the JCR.
 
+[upperalpha]
 . *URI Path Schema*
 +
 The recommended schema for API paths is:
@@ -469,6 +482,7 @@ The terminal node of the path (the node representing `<api-name>`) should explic
 
 It is recommended to decouple request processing logic from https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-path[specific abstract paths] and https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-resource-type-etc[bind it instead to resource types].
 
+[upperalpha]
 . *Resource Type Binding*
 +
 Servlets should be registered using the OSGi DS component property https://sling.apache.org/documentation/the-sling-engine/servlets.html#servlet-registration[`sling.servlet.resourceTypes`]. The value should match the https://sling.apache.org/documentation/the-sling-engine/resources.html#resource-types[`sling:resourceType`] property defined on the target JCR node.
@@ -478,6 +492,7 @@ Registering servlets via absolute paths (https://sling.apache.org/documentation/
 
 
 === JCR Structure
+[upperalpha]
 . It is recommended that business applications deployed to an SR Instance follow the JCR structure described in this section.
 . The JCR tree recommended in this section is not exhaustive and only covers the foundational nodes:
 +
@@ -544,6 +559,7 @@ end
 === Useful Links
 
 The list below contains useful links to default administration tools of an SR instance.
+[upperalpha]
 . JCR Browser:
 +
 http://localhost:8080/bin/browser.html
@@ -567,6 +583,7 @@ http://localhost:8080/system/console/slinglog
 === Production Deployments
 
 This section describes selected topics that should be considered for production deployments of _Sling Rocket_.
+[upperalpha]
 . *Apache Sling Referrer Filter*
 +
 Configure the https://github.com/apache/sling-org-apache-sling-security?tab=readme-ov-file#referrer-filter-csrf-protection[_Apache Sling Referrer Filter_] to allow only specific hosts.
@@ -586,7 +603,9 @@ curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -Fn
 +
 Analyze the performance of the webpages with the https://github.com/GoogleChrome/lighthouse[_Lighthouse_] tool and fix detected problems.
 . *JCR Query Audit*
+[upperroman]
 .. Monitor JCR query statistics available in the JMX beans listed below and address the detected problems:
+[lowergreek]
 ... `org.apache.jackrabbit.oak: Oak Query Statistics (QueryStat)`
 ... `org.apache.jackrabbit.oak: Oak Query Statistics (Extended) (QueryStats)`
 .. To investigate the details of how a given JCR query performs, the following JMX bean can be used:
@@ -596,9 +615,11 @@ Analyze the performance of the webpages with the https://github.com/GoogleChrome
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
 . *Security Tests*
+[upperroman]
 .. *ZAP Tests*
 +
 Run https://www.zaproxy.org/[_Zed Attack Proxy (ZAP)_] security tests.
+[upperroman]
 ... The basic test can be performed with the use of the command constructed the following way:
 +
 [source, bash]
@@ -644,6 +665,7 @@ Depending on the needs of the business application, consider disabling unsafe re
 }
 ----
 . *Request Size and Encoding*
+[upperroman]
 .. The https://github.com/apache/sling-org-apache-sling-engine/blob/dce8005d0cf8917c94b2871f0e9a5207dee633a5/src/main/java/org/apache/sling/engine/impl/parameters/RequestParameterSupportConfigurer.java#L133[`org.apache.sling.engine.parameters`] should be configured. Firstly, the `sling.default.parameter.encoding` parameter should be set to `UTF-8` to ensure that all request parameters are correctly interpreted as UTF-8 encoded. Secondly, the `file.max` and `request.max` parameters should be set to appropriate values to prevent denial-of-service attacks via excessively large requests.
 +
 For example, to achieve the above, the following `org.apache.sling.engine.parameters.cfg.json` OSGi configuration can be created:
@@ -657,6 +679,7 @@ For example, to achieve the above, the following `org.apache.sling.engine.parame
 }
 ----
 .. [[file-size-deployment-limitations]]Setting size limits in `sling.default.parameter.encoding` will limit _all_ requests to the SR Instance, including requests whose purpose is to deploy business applications via https://wcm.io/tooling/maven/plugins/wcmio-content-package-maven-plugin/install-mojo.html[Content Package Maven Plugin] and https://www.composum.com/home/nodes/pckgmgr.html[Composum Package Manager]. In such cases the following approach is recommended:
+[lowergreek]
 ... Set the `file.max` and `request.max` parameters with the use of an environment variable, e.g., `MAX_REQUEST_SIZE`, that will be https://github.com/apache/felix-dev/blob/master/configadmin-plugins/interpolation/README.md[interpolated].
 ... For local development, the respective environment variable, e.g., `MAX_REQUEST_SIZE`, can be set to a large value (e.g., `MAX_REQUEST_SIZE=20000000`) to allow for the deployment of business applications without any issues.
 ... For production deployments, the respective environment variable, e.g., `MAX_REQUEST_SIZE`, can be set to a smaller value (e.g., `MAX_REQUEST_SIZE=1000000`). However, if the value isn't sufficient for deploying a business application, it can be temporarily increased to allow for the deployment and then decreased again to the original value to ensure that the SR Instance is protected against excessively large requests.
@@ -683,6 +706,7 @@ The `rocket-sync.sh` utility can be integrated with IntelliJ IDEA as described b
 [NOTE]
 The instructions below are for UNIX.
 
+[upperalpha]
 . Download and save the `rocket-sync.sh` utility on a local machine, e.g., in the `~/scripts` directory:
 +
 [source,bash]
@@ -690,10 +714,12 @@ The instructions below are for UNIX.
 curl https://raw.githubusercontent.com/ciechanowiec/sling_rocket/main/src/4_rocket-sync/rocket-sync.sh > ~/scripts/rocket-sync.sh
 ....
 . Set up the `rocket-sync.sh` utility as an _External Tool_ in IntelliJ IDEA.
+[upperroman]
 .. Go to _Settings_ -> _Tools_ -> _External Tools_.
 .. Add the `rocket-sync.sh` utility as an _External Tool_.
 +
 image::docs/img/rocket-sync.png[]
+[lowergreek]
 ... _Name_: `rocket(put)`
 ... _Program_: the local directory where the `rocket-sync.sh` utility is stored, e.g., `~/scripts/rocket-sync.sh`
 ... _Arguments_: `put -f $FilePath$`
@@ -701,6 +727,7 @@ image::docs/img/rocket-sync.png[]
 .. Assign the `rocket-sync.sh` utility a keyboard shortcut.
 +
 image::docs/img/rocket-sync-keymap.png[]
+[lowergreek]
 ... Got to _Settings_ -> _Keymap_ -> _External Tools_ -> _External Tools_.
 ... Assign the _rocket(put)_ a desired keyboard shortcut.
 .. To run the `rocket-sync.sh` utility on the local directory or file, put focus on that directory/file in the file view in IntelliJ IDEA. After that, press the configured shortcut, which will trigger the immediate synchronization.
@@ -709,6 +736,7 @@ image::docs/img/rocket-sync-idea.png[]
 
 === Ideas to be Considered for Implementation
 
+[upperalpha]
 . Implementing an https://jackrabbit.apache.org/filevault/installhooks.html[installation hook,window=_blank] for index deployments, similar to https://github.com/code-distillery/filevault-oak-reindex-hook, but should reside in the OSGi container so that it can be referenced by packages.
 . Integration tests for the running SR Instance, including additional Apache Felix Health Checks, write-read operations on the JCR repository and Composum console verification. The https://github.com/apache/sling-org-apache-sling-starter/tree/master/src/test/java/org/apache/sling/launchpad[Apache Sling Starter integration tests,window=_blank] can serve as an example.
 . JMX plugin for the Apache Felix Web Console.

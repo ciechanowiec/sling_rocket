@@ -129,7 +129,7 @@
         <!-- ====================================================================== -->
         <!-- GROOVY                                                                -->
         <!-- ====================================================================== -->
-        <groovy.version>5.0.5</groovy.version>
+        <groovy.version>5.0.6</groovy.version>
         <!-- ====================================================================== -->
         <!-- LIBS                                                                   -->
         <!-- ====================================================================== -->
@@ -178,7 +178,7 @@
         <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
         <icu4j.version>78.3</icu4j.version>
         <jimage.hash.version>1.0.0</jimage.hash.version>
-        <oauth2-oidc-sdk.version>11.37</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>11.37.1</oauth2-oidc-sdk.version>
         <nimbus-jose-jwt.version>10.9</nimbus-jose-jwt.version>
         <content-type.version>2.3</content-type.version>
         <lang-tag.version>1.7</lang-tag.version>
@@ -248,7 +248,7 @@
         <org.apache.sling.commons.log.version>6.0.4</org.apache.sling.commons.log.version>
         <logback.version>1.5.32</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
-        <log4j.version>2.25.4</log4j.version>
+        <log4j.version>2.26.0</log4j.version>
         <!-- ====================================================================== -->
         <!-- OAK                                                                    -->
         <!-- ====================================================================== -->

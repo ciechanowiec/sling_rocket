@@ -3,74 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
+    <title>Sign in</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .login-container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 300px;
-            text-align: center;
-            font-family: Arial, sans-serif; /* Ensures unified font */
-        }
-        .login-container input[type="text"],
-        .login-container input[type="password"],
-        .login-container input[type="submit"] {
-            width: 100%;
-            box-sizing: border-box; /* Includes padding and border in the element's total width */
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: Arial, sans-serif; /* Ensures unified font */
-        }
-        .login-container input[type="submit"] {
-            border: none;
-            background-color: #5cb85c;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 0; /* No margin-bottom for the last element */
-        }
-        .login-container input[type="submit"]:hover {
-            background-color: #4cae4c;
-        }
-    </style>
-    <script>
-        // Function to focus on the Login button when the page loads
-        function focusOnLoginButton() {
-            var loginButton = document.querySelector('.login-container input[type="submit"]');
-            loginButton.focus(); // Set focus on the Login button
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --text: #111111;
+            --text-muted: #6b6b6b;
+            --border: #e0e0e0;
+            --border-focus: #111111;
+            --error: #b00020;
+            --accent: #111111;
+            --accent-hover: #000000;
+            --accent-text: #ffffff;
+            --radius: 6px;
+            --space: 1rem;
         }
 
-        // Call focusOnLoginButton function when the window finishes loading
-        window.onload = function() {
-            focusOnLoginButton();
-        };
-    </script>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0e0e0e;
+                --surface: #161616;
+                --text: #f2f2f2;
+                --text-muted: #9a9a9a;
+                --border: #2a2a2a;
+                --border-focus: #f2f2f2;
+                --error: #ff6b6b;
+                --accent: #f2f2f2;
+                --accent-hover: #ffffff;
+                --accent-text: #0e0e0e;
+            }
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: var(--space);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 360px;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+        }
+
+        h1 {
+            margin: 0 0 0.25rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            margin: 0 0 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .field {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .field input {
+            width: 100%;
+            height: 3.5rem;
+            padding: 1.5rem 0.875rem 0.5rem;
+            font: inherit;
+            line-height: 1.25;
+            color: var(--text);
+            background-color: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .field input:focus {
+            border-color: var(--border-focus);
+        }
+
+        .field label {
+            position: absolute;
+            top: 50%;
+            left: 0.875rem;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: top 0.15s ease, font-size 0.15s ease, transform 0.15s ease;
+        }
+
+        .field input:focus + label,
+        .field input:not(:placeholder-shown) + label {
+            top: 0.45rem;
+            font-size: 0.75rem;
+            transform: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-top: 0.5rem;
+            font: inherit;
+            font-weight: 500;
+            color: var(--accent-text);
+            background-color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--border-focus);
+            outline-offset: 2px;
+        }
+
+        .error {
+            margin: 0 0 1rem;
+            padding: 0.625rem 0.75rem;
+            color: var(--error);
+            font-size: 0.875rem;
+            border: 1px solid var(--error);
+            border-radius: var(--radius);
+            background-color: transparent;
+        }
+
+        .error:empty {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="login-container">
-    <form id="loginform" method="POST" action="${contextPath}/j_security_check" enctype="multipart/form-data" accept-charset="UTF-8">
-        <input type="hidden" name="_charset_" value="UTF-8" />
-        <input type="hidden" name="resource" value="${resource}" />
-        <div id="error">
-            <p>${j_reason}</p>
+<main class="card">
+    <h1>Sign in</h1>
+    <p class="subtitle">Enter your credentials to continue.</p>
+
+    <form id="loginform" method="POST" action="${contextPath}/j_security_check"
+          enctype="multipart/form-data" accept-charset="UTF-8">
+        <input type="hidden" name="_charset_" value="UTF-8">
+        <input type="hidden" name="resource" value="${resource}">
+
+        <div class="error" role="alert" id="error" hidden></div>
+
+        <div class="field">
+            <input type="text" id="username" name="j_username"
+                   placeholder=" " autocomplete="username" required>
+            <label for="username">Username</label>
         </div>
-        <input type="text" name="j_username" placeholder="Username" required>
-        <input type="password" name="j_password" placeholder="Password" required>
-        <input type="submit" value="Login">
+
+        <div class="field">
+            <input type="password" id="password" name="j_password"
+                   placeholder=" " autocomplete="current-password" required>
+            <label for="password">Password</label>
+        </div>
+
+        <button type="submit">Sign in</button>
     </form>
-</div>
+</main>
+
+<script>
+    (function () {
+        // Map Sling's j_reason codes to friendly messages
+        var REASONS = {
+            INVALID_CREDENTIALS: 'Invalid username or password.',
+            INVALID_LOGIN: 'Invalid username or password.',
+            EXPIRED_TOKEN: 'Your session has expired. Please sign in again.',
+            PASSWORD_EXPIRED: 'Your password has expired.',
+            PASSWORD_EXPIRED_AND_NEW_PASSWORD_IN_HISTORY:
+                'Your password has expired and cannot be reused.',
+            ACCOUNT_LOCKED: 'This account has been locked.',
+            ACCOUNT_NOT_FOUND: 'Account not found.',
+            UNKNOWN: 'Sign in failed. Please try again.'
+        };
+
+        // Read j_reason from the query string
+        var params = new URLSearchParams(window.location.search);
+        var reason = params.get('j_reason');
+        var err = document.getElementById('error');
+
+        if (reason && err) {
+            // Sanitize: only allow A-Z and underscore in the code
+            var safe = /^[A-Z_]+$/.test(reason) ? reason : 'UNKNOWN';
+            err.textContent = REASONS[safe] || REASONS.UNKNOWN;
+            err.hidden = false;
+        }
+
+        // Focus the first empty field
+        var u = document.getElementById('username');
+        var p = document.getElementById('password');
+        (u && !u.value ? u : (p && !p.value ? p : document.querySelector('button'))).focus();
+    })();
+</script>
 </body>
 </html>
