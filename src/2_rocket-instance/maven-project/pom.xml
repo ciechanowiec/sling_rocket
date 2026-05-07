@@ -3075,21 +3075,6 @@
                 </plugins>
             </build>
         </profile>
-        <!-- Release procedure:
-        1. `mvn clean deploy -P release` -> will perform deploy and release
-        2. Add the following settings to ~/.m2/settings.xml:
-        ****
-        <settings>
-          <servers>
-            <server>
-              <id>central</id>
-              <username>your-dynamic-nexus-id</username>
-              <password>your-nexus-token</password>
-            </server>
-          </servers>
-        </settings>
-        ****
-        -->
         <profile>
             <id>release</id>
             <build>

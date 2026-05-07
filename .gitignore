@@ -5,8 +5,6 @@ repo.xml
 *.logs*
 logs
 log
-!eu.ciechanowiec.sling.rocket*log*
-!org.apache.sling*log*
 .idea
 .vscode
 target
@@ -16,6 +14,9 @@ node_modules
 *.tfstate.backup
 *.drawio.png.bkp
 *.drawio.png.dtmp
-# Compiled documentation:
-README.html
-README.pdf
+README*.pdf
+README*.html
+README*.docx
+claude/settings.local.json
+!eu.ciechanowiec.sling.rocket*log*
+!org.apache.sling*log*

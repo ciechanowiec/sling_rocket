@@ -11,13 +11,21 @@
 :toc: left
 :toclevels: 5
 :icons: font
-// Docinfo is used for foldable TOC.
-// -> For full usage example see https://github.com/remkop/picocli
 :docinfo: shared,private
 :linkcss:
+:sourcedir: {docdir}
+:pdf-theme: {sourcedir}/docs/themes/basic.yml
 :stylesdir: https://www.ciechanowiec.eu/linux_mantra/
 :stylesheet: adoc-css-style.css
 :!table-caption:
+:!figure-caption:
+
+[cols=">.^1,<.^1"]
+|===
+| *Document created:* | 2024-01-01 00:00:00 +0100
+| *Document last modified:* | {docdatetime}
+| *Document generated:* | {localdatetime}
+|===
 
 == Overview
 
@@ -44,7 +52,7 @@ A Maven project object model that declaratively describes basic and universal ap
 Application that performs backups of the database and logs via backing them up into a separate destination.
 . Sling Rocket Nginx ("*SR Nginx*")
 +
-Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It is responsible for all incoming and outgoing HTTP(S) traffic.
+Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It's responsible for all incoming and outgoing HTTP(S) traffic.
 
 image::docs/img/sling-rocket-components-diagram.svg[]
 
@@ -250,8 +258,8 @@ SR Instance writes logs to the xref:#log-files-directory[`/opt/sling/launcher/lo
 Static files related to an SR Instance that reside in `/opt/sling` but aren't _persistence files_ or _log files_ are classified as _application files_. These files:
 [upperalpha]
 . are managed by _Sling Rocket_, meaning that _Sling Rocket_ provides new application files upon every container (re)creation,
-. are disposable and, therefore, are not intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
-. do not persistently store any business data.
+. are disposable and, therefore, aren't intended to be retained or reused between _Sling Rocket_ updates for a given SR Instance,
+. don't persistently store any business data.
 
 ==== Volumes
 SR Instance has three volumes attached to it: `rocket-data-raw`, `rocket-data-dump` and `rocket-instance-logs`.
@@ -274,7 +282,7 @@ image::docs/img/sling-rocket-instance-volumes.drawio.png[]
 
 === SR Backuper
 
-SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It is done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket-data-dump` (`/var/rocket-data-dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
+SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It's done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket-data-dump` (`/var/rocket-data-dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
 
 A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a tar archive. Internally, that archive has the following structure:
 
@@ -387,7 +395,7 @@ volumes:
 . The SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
 . *Logs*
 [upperroman]
-.. The logs for the Nginx itself (`access.log` and `error.log`) and for the ModSecurity WAF module (`modsec_audit.log`) are stored in the `/var/log/nginx` directory inside the container. It is recommended to mount that directory as a persistent volume for a given SR Nginx container, e.g. this way:
+.. The logs for the Nginx itself (`access.log` and `error.log`) and for the ModSecurity WAF module (`modsec_audit.log`) are stored in the `/var/log/nginx` directory inside the container. It's recommended to mount that directory as a persistent volume for a given SR Nginx container, e.g. this way:
 +
 [source,yml]
 ....
@@ -443,7 +451,7 @@ docker compose --progress=plain build
 [[web-api-exposure]]
 === Web API Exposure
 
-To ensure architectural consistency and leverage the native resource resolution capabilities of Apache Sling, it is recommended that _Sling Rocket_ business applications expose web APIs according to the resource-oriented specification described below.
+To ensure architectural consistency and leverage the native resource resolution capabilities of Apache Sling, it's recommended that _Sling Rocket_ business applications expose web APIs according to the resource-oriented specification described below.
 
 ==== Path and Node Specification
 
@@ -457,7 +465,7 @@ The recommended schema for API paths is:
 `/api/<domain-name>/<api-name>`
 . *JCR Node Existence*
 +
-The URI path should not be virtual. It is advised that the path corresponds to an existing JCR node hierarchy. For a target API identified as `search` within a domain named `adbco`, the full path `/api/adbco/search` should exist as a sequence of nodes in the JCR.
+The URI path shouldn't be virtual. It's advised that the path corresponds to an existing JCR node hierarchy. For a target API identified as `search` within a domain named `adbco`, the full path `/api/adbco/search` should exist as a sequence of nodes in the JCR.
 . *Resource Type Definition*
 +
 The terminal node of the path (the node representing `<api-name>`) should explicitly define a `sling:resourceType` property. This property identifies the resource type used for servlet resolution.
@@ -480,7 +488,7 @@ The terminal node of the path (the node representing `<api-name>`) should explic
 
 ==== Servlet Registration
 
-It is recommended to decouple request processing logic from https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-path[specific abstract paths] and https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-resource-type-etc[bind it instead to resource types].
+It's recommended to decouple request processing logic from https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-path[specific abstract paths] and https://sling.apache.org/documentation/the-sling-engine/servlets.html#example-registration-by-resource-type-etc[bind it instead to resource types].
 
 [upperalpha]
 . *Resource Type Binding*
@@ -493,8 +501,8 @@ Registering servlets via absolute paths (https://sling.apache.org/documentation/
 
 === JCR Structure
 [upperalpha]
-. It is recommended that business applications deployed to an SR Instance follow the JCR structure described in this section.
-. The JCR tree recommended in this section is not exhaustive and only covers the foundational nodes:
+. It's recommended that business applications deployed to an SR Instance follow the JCR structure described in this section.
+. The JCR tree recommended in this section isn't exhaustive and only covers the foundational nodes:
 +
 [source,bash]
 ....
@@ -601,7 +609,7 @@ curl --user "admin:admin" --verbose -FoldPwd=admin -FnewPwd=passwordus-novus -Fn
 ....
 . *_Lighthouse_*
 +
-Analyze the performance of the webpages with the https://github.com/GoogleChrome/lighthouse[_Lighthouse_] tool and fix detected problems.
+Analyze the performance of the web pages with the https://github.com/GoogleChrome/lighthouse[_Lighthouse_] tool and fix detected problems.
 . *JCR Query Audit*
 [upperroman]
 .. Monitor JCR query statistics available in the JMX beans listed below and address the detected problems:
@@ -742,6 +750,63 @@ image::docs/img/rocket-sync-idea.png[]
 . JMX plugin for the Apache Felix Web Console.
 . i18n support.
 
+== About the Document
+
+This document uses https://asciidoc.org[AsciiDoc^] markup language and resides in the project repository.
+
+=== Export
+. To export the document to the supported output formats, install the following tools:
+.. https://asciidoctor.org/#installation[Asciidoctor^]
+.. https://docs.asciidoctor.org/pdf-converter/latest/install/[Asciidoctor PDF^]
+.. https://pandoc.org/installing.html[Pandoc^]
+
+. To export to HTML:
++
+[source,bash]
+----
+asciidoctor --attribute allow-uri-read README.adoc
+----
+
+. To export to PDF:
++
+[source,bash]
+----
+asciidoctor-pdf --attribute allow-uri-read --require ./docs/lib/auto-list-style.rb README.adoc
+----
+
+. To export to DOCX - Asciidoctor converts the document to DocBook XML, which Pandoc then converts to DOCX:
++
+[source,bash]
+----
+asciidoctor --backend docbook --attribute allow-uri-read --out-file - README.adoc | pandoc --from docbook --to docx --output README.docx
+----
+
+=== Linting
+
+==== General Rules
+. https://vale.sh[Vale^] lints the document.
+. Vale enforces the following style guides:
+.. Native https://vale.sh/docs/styles#vale[Vale style^], with https://github.com/vale-cli/en_US-web/tree/master[English dictionary] included.
+.. modified https://developers.google.com/style[Google Developer Documentation Style Guide^] via the https://github.com/vale-cli/Google[Google package^]
+.. modified https://vale.sh/hub/jdkato/write-good/[write-good linter^] via the https://github.com/vale-cli/write-good[write-good package^]
+.. https://github.com/amperser/proselint/[proselint^] via the https://github.com/vale-cli/proselint[proselint package^]
+.. custom project rules
+. Vale configuration is in `link:.vale.ini[]`.
+
+==== Usage
+. Install Vale as described in the https://vale.sh/docs/install/[official documentation].
+
+. Lint the document:
++
+[source,bash]
+----
+vale README.adoc
+----
+
+++++
+<!-- vale off -->
+++++
+
 == License
 The program is subject to MIT No Attribution License
 
@@ -750,3 +815,7 @@ Copyright © 2024-2026 Herman Ciechanowiec
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
 
 The Software is provided 'as is', without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software.
+
+++++
+<!-- vale on -->
+++++
