@@ -67,6 +67,8 @@
         <sling.password>admin</sling.password>
         <sling.mock.resourceresolverfactoryactivator.timeout.ms>5000
         </sling.mock.resourceresolverfactoryactivator.timeout.ms>
+        <vale.version>3.14.1</vale.version>
+        <vale.dir>${project.build.directory}/vale</vale.dir>
         <!-- ====================================================================== -->
         <!-- NON_OSGI_DEPENDENCIES                                                  -->
         <!-- ====================================================================== -->
@@ -2463,6 +2465,12 @@
     </dependencyManagement>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+            </extension>
+        </extensions>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -3043,10 +3051,101 @@
                 <groupId>eu.ciechanowiec</groupId>
                 <artifactId>jcrcleaner-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>require-vale-target</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <fail message="Required file not found: ${project.basedir}/../../../README.adoc">
+                                    <condition>
+                                        <not>
+                                            <available file="${project.basedir}/../../../README.adoc"/>
+                                        </not>
+                                    </condition>
+                                </fail>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>install-vale</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://github.com/errata-ai/vale/releases/download/v${vale.version}/vale_${vale.version}_${vale.archive}
+                            </url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${vale.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>vale-lint-readme</id>
+                        <phase>package</phase>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${vale.dir}/vale</executable>
+                            <workingDirectory>${project.basedir}/../../..</workingDirectory>
+                            <arguments>
+                                <argument>README.adoc</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>vale-macos</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <vale.archive>macOS_arm64.tar.gz</vale.archive>
+            </properties>
+        </profile>
+        <profile>
+            <id>vale-linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <vale.archive>Linux_64-bit.tar.gz</vale.archive>
+            </properties>
+        </profile>
         <profile>
             <id>advanced-dependency-resolution</id>
             <activation>
