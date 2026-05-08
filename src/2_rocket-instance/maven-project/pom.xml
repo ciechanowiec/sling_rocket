@@ -3119,6 +3119,9 @@
                         <configuration>
                             <executable>${vale.dir}/vale</executable>
                             <workingDirectory>${project.basedir}/../../..</workingDirectory>
+                            <environmentVariables>
+                                <PATH>${vale.dir}${path.separator}${env.PATH}</PATH>
+                            </environmentVariables>
                             <arguments>
                                 <argument>README.adoc</argument>
                             </arguments>
@@ -3152,6 +3155,73 @@
             <properties>
                 <vale.archive>Linux_64-bit.tar.gz</vale.archive>
             </properties>
+        </profile>
+        <profile>
+            <!-- Bundles a JVM-based asciidoctor wrapper next to the vale binary so that
+                 'vale README.adoc' works on machines without a system asciidoctor.
+                 Activates only on the parent module (the only one with engine/pom.xml). -->
+            <id>vale-asciidoctor-wrapper</id>
+            <activation>
+                <file>
+                    <exists>${project.basedir}/engine/pom.xml</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctorj-cli</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>copy-asciidoctorj-cli</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${vale.dir}/asciidoctorj-lib</outputDirectory>
+                                    <!-- 'test' scope here means "all scopes" per the
+                                         maven-dependency-plugin convention; needed because
+                                         ASM is managed as 'provided' in this pom. -->
+                                    <includeScope>test</includeScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>write-asciidoctor-wrapper</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo file="${vale.dir}/asciidoctor" append="false">#!/usr/bin/env sh
+exec java -cp "$(dirname &quot;$0&quot;)/asciidoctorj-lib/*" org.asciidoctor.cli.jruby.AsciidoctorInvoker "$@"
+</echo>
+                                        <chmod file="${vale.dir}/asciidoctor" perm="755"/>
+                                        <echo file="${vale.dir}/asciidoctor.bat" append="false">@echo off
+java -cp "%~dp0asciidoctorj-lib\*" org.asciidoctor.cli.jruby.AsciidoctorInvoker %*
+</echo>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>advanced-dependency-resolution</id>
