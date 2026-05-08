@@ -759,21 +759,18 @@ This document uses https://asciidoc.org[AsciiDoc^] markup language and resides i
 .. https://asciidoctor.org/#installation[Asciidoctor^]
 .. https://docs.asciidoctor.org/pdf-converter/latest/install/[Asciidoctor PDF^]
 .. https://pandoc.org/installing.html[Pandoc^]
-
 . To export to HTML:
 +
 [source,bash]
 ----
 asciidoctor --attribute allow-uri-read README.adoc
 ----
-
 . To export to PDF:
 +
 [source,bash]
 ----
 asciidoctor-pdf --attribute allow-uri-read --require ./docs/lib/auto-list-style.rb README.adoc
 ----
-
 . To export to DOCX - Asciidoctor converts the document to DocBook XML, which Pandoc then converts to DOCX:
 +
 [source,bash]
