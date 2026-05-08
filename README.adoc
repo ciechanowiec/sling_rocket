@@ -795,7 +795,6 @@ asciidoctor --backend docbook --attribute allow-uri-read --out-file - README.ado
 
 ==== Usage
 . Install Vale as described in the https://vale.sh/docs/install/[official documentation].
-
 . Lint the document:
 +
 [source,bash]
