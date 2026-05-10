@@ -279,6 +279,38 @@
     {
       "id": "io.swagger.core.v3:swagger-integration:${swagger.version}",
       "start-order": "25"
+    },
+    {
+      "id": "io.modelcontextprotocol.sdk:mcp-core:${io.modelcontextprotocol.sdk.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "io.modelcontextprotocol.sdk:mcp-json-jackson2:${io.modelcontextprotocol.sdk.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "io.projectreactor:reactor-core:${reactor-core.version}",
+      "start-order": "30"
+    },
+    {
+      "id": "org.reactivestreams:reactive-streams:${reactive-streams.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "com.networknt:json-schema-validator:${json-schema-validator.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "com.ethlo.time:itu:${ethlo-itu.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.commonmark:commonmark:${commonmark.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "org.commonmark:commonmark-ext-yaml-front-matter:${commonmark.version}",
+      "start-order": "20"
     }
   ]
 }

@@ -143,6 +143,12 @@
                         classgraph.version,
                         jakarta.validation-api.version,
                         swagger.version,
+                        io.modelcontextprotocol.sdk.version,
+                        reactor-core.version,
+                        reactive-streams.version,
+                        json-schema-validator.version,
+                        ethlo-itu.version,
+                        commonmark.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

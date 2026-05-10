@@ -202,6 +202,12 @@
         <classgraph.version>4.8.184</classgraph.version>
         <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
         <swagger.version>2.2.49</swagger.version>
+        <io.modelcontextprotocol.sdk.version>1.1.2</io.modelcontextprotocol.sdk.version>
+        <reactor-core.version>3.8.5</reactor-core.version>
+        <reactive-streams.version>1.0.4</reactive-streams.version>
+        <json-schema-validator.version>2.0.1</json-schema-validator.version>
+        <ethlo-itu.version>1.14.0</ethlo-itu.version>
+        <commonmark.version>0.28.0</commonmark.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -1279,6 +1285,54 @@
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-integration</artifactId>
                 <version>${swagger.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp-core</artifactId>
+                <version>${io.modelcontextprotocol.sdk.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp-json-jackson2</artifactId>
+                <version>${io.modelcontextprotocol.sdk.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>${reactor-core.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.reactivestreams</groupId>
+                <artifactId>reactive-streams</artifactId>
+                <version>${reactive-streams.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.networknt</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <version>${json-schema-validator.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ethlo.time</groupId>
+                <artifactId>itu</artifactId>
+                <version>${ethlo-itu.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark-ext-yaml-front-matter</artifactId>
+                <version>${commonmark.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->
