@@ -140,6 +140,9 @@
                         graphics2d.version,
                         jspecify.version,
                         snakeyaml.version,
+                        classgraph.version,
+                        jakarta.validation-api.version,
+                        swagger.version,
 
                         org.apache.aries.util.version,
                         org.apache.aries.spifly.dynamic.bundle.version,

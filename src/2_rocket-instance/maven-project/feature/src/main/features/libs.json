@@ -251,6 +251,34 @@
     {
       "id": "org.yaml:snakeyaml:${snakeyaml.version}",
       "start-order": "20"
+    },
+    {
+      "id": "io.github.classgraph:classgraph:${classgraph.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "jakarta.validation:jakarta.validation-api:2.0.2",
+      "start-order": "20"
+    },
+    {
+      "id": "jakarta.validation:jakarta.validation-api:${jakarta.validation-api.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "io.swagger.core.v3:swagger-annotations:${swagger.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "io.swagger.core.v3:swagger-models:${swagger.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "io.swagger.core.v3:swagger-core:${swagger.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "io.swagger.core.v3:swagger-integration:${swagger.version}",
+      "start-order": "25"
     }
   ]
 }
