@@ -247,6 +247,10 @@
     {
       "id": "org.jspecify:jspecify:${jspecify.version}",
       "start-order": "30"
+    },
+    {
+      "id": "org.yaml:snakeyaml:${snakeyaml.version}",
+      "start-order": "20"
     }
   ]
 }

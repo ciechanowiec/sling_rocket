@@ -21,6 +21,10 @@
       "start-order": "20"
     },
     {
+      "id": "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jackson.version}",
+      "start-order": "20"
+    },
+    {
       "id": "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jackson.version}",
       "start-order": "20"
     },

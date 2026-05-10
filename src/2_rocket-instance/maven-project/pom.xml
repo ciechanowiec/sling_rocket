@@ -198,6 +198,7 @@
         <openhtmltopdf.version>1.1.37</openhtmltopdf.version>
         <graphics2d.version>3.0.5</graphics2d.version>
         <jspecify.version>1.0.0</jspecify.version>
+        <snakeyaml.version>2.6</snakeyaml.version>
         <!-- ====================================================================== -->
         <!-- LIBS_ARIES                                                             -->
         <!-- ====================================================================== -->
@@ -317,7 +318,7 @@
         <!-- ====================================================================== -->
         <org.apache.sling.commons.johnzon.version>2.0.0</org.apache.sling.commons.johnzon.version>
         <org.apache.sling.commons.osgi.version>2.4.2</org.apache.sling.commons.osgi.version>
-        <org.apache.sling.commons.metrics.version>1.2.14</org.apache.sling.commons.metrics.version>
+        <org.apache.sling.commons.metrics.version>2.0.0</org.apache.sling.commons.metrics.version>
         <org.apache.sling.commons.classloader.version>1.4.4</org.apache.sling.commons.classloader.version>
         <org.apache.sling.commons.compiler.version>2.4.0</org.apache.sling.commons.compiler.version>
         <org.apache.sling.commons.fsclassloader.version>2.0.0</org.apache.sling.commons.fsclassloader.version>
@@ -1235,6 +1236,12 @@
                 <version>${jspecify.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- ====================================================================== -->
             <!-- LIBS_ARIES                                                             -->
             <!-- ====================================================================== -->
@@ -1394,6 +1401,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson.version}</version>
                 <scope>provided</scope>
             </dependency>
