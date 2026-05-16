@@ -65,7 +65,7 @@ public @interface LLMConfig {
     @AttributeDefinition(
         name = "max_tokens",
         description = "Maximum number of tokens to generate for a single ChatCompletion. "
-            + "LLM may produce fewer tokens than this, but it will never generate more."
+            + "LLM may produce fewer tokens than this, but it will never generate more. "
             + "Either 'llm.max_tokens' or 'llm.max_completion_tokens' should be set to a non-zero value "
             + "(only one of them). Setting both to non-zero values might lead to invalid API responses.",
         defaultValue = "0",
@@ -86,7 +86,7 @@ public @interface LLMConfig {
     @AttributeDefinition(
         name = "max_completion_tokens",
         description = "Maximum number of tokens to generate for a single ChatCompletion. "
-            + "LLM may produce fewer tokens than this, but it will never generate more."
+            + "LLM may produce fewer tokens than this, but it will never generate more. "
             + "Either 'llm.max_tokens' or 'llm.max_completion_tokens' should be set to a non-zero value "
             + "(only one of them). Setting both to non-zero values might lead to invalid API responses.",
         defaultValue = "0",
@@ -115,15 +115,15 @@ public @interface LLMConfig {
     float llm_frequency__penalty() default 0;
 
     /**
-     * Parameter that determines the degree of randomness in the response. Higher values like will make the output more
+     * Parameter that determines the degree of randomness in the response. Higher values will make the output more
      * random, while lower values will make it more focused and deterministic.
      *
-     * @return parameter that determines the degree of randomness in the response; higher values like will make the
+     * @return parameter that determines the degree of randomness in the response; higher values will make the
      * output more random, while lower values will make it more focused and deterministic.
      */
     @AttributeDefinition(
         name = "temperature",
-        description = "Parameter that determines the degree of randomness in the response. Higher values like "
+        description = "Parameter that determines the degree of randomness in the response. Higher values "
             + "will make the output more random, while lower values will make "
             + "it more focused and deterministic.",
         defaultValue = "0",

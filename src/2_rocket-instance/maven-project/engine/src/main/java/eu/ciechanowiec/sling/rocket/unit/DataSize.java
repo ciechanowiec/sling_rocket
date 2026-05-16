@@ -113,7 +113,7 @@ public final class DataSize implements Comparable<DataSize> {
     /**
      * Number of {@link DataUnit#MEGABYTES} in this {@link DataSize}.
      *
-     * @return the number of bytes
+     * @return the number of {@link DataUnit#MEGABYTES} in this {@link DataSize}
      */
     public double megabytes() {
         return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_MB;
@@ -122,7 +122,7 @@ public final class DataSize implements Comparable<DataSize> {
     /**
      * Number of {@link DataUnit#GIGABYTES} in this {@link DataSize}.
      *
-     * @return the number of bytes
+     * @return the number of {@link DataUnit#GIGABYTES} in this {@link DataSize}
      */
     public double gigabytes() {
         return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_GB;
@@ -131,7 +131,7 @@ public final class DataSize implements Comparable<DataSize> {
     /**
      * Number of {@link DataUnit#TERABYTES} in this {@link DataSize}.
      *
-     * @return the number of bytes
+     * @return the number of {@link DataUnit#TERABYTES} in this {@link DataSize}
      */
     public double terabytes() {
         return (double) bytesSupplier.get() / DataUnitMultiplications.BYTES_PER_TB;

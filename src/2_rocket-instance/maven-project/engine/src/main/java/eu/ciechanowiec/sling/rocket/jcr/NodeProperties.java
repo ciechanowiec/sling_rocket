@@ -467,7 +467,7 @@ public class NodeProperties implements WithJCRPath {
             .flatMap(this::asBinary)
             .map(sneaky(Binary::getSize))
             .map(bytes -> new DataSize(bytes, DataUnit.BYTES))
-            .orElse(new DataSize(0, DataUnit.BYTES));
+            .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
     }
 
     /**

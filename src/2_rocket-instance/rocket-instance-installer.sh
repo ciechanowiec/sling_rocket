@@ -9,7 +9,7 @@ echo "[INFO] SLING_DIR=$SLING_DIR"
 HTTP_PORT="${HTTP_PORT:-8080}"
 echo "[INFO] HTTP_PORT=$HTTP_PORT"
 mkdir --parents --verbose "$SLING_DIR"
-cd "$SLING_DIR" || exec 1
+cd "$SLING_DIR" || exit 1
 
 downloadLauncher() {
   latestVersion=$(curl --silent https://repo1.maven.org/maven2/org/apache/sling/org.apache.sling.feature.launcher/maven-metadata.xml | grep '<latest>' | cut -d '>' -f 2 | cut -d '<' -f 1)
