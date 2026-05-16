@@ -140,6 +140,7 @@
                         graphics2d.version,
                         jspecify.version,
                         snakeyaml.version,
+                        snakeyaml-engine.version,
                         classgraph.version,
                         jakarta.validation-api.version,
                         swagger.version,
@@ -172,6 +173,7 @@
                         woodstox-core.version,
                         jackson-annotations.version,
                         jackson.version,
+                        jackson3.version,
 
                         gson.version,
                         com.google.guava.version,

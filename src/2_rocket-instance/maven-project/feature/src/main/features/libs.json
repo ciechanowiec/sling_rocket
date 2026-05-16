@@ -253,6 +253,10 @@
       "start-order": "20"
     },
     {
+      "id": "org.snakeyaml:snakeyaml-engine:${snakeyaml-engine.version}",
+      "start-order": "20"
+    },
+    {
       "id": "io.github.classgraph:classgraph:${classgraph.version}",
       "start-order": "20"
     },
@@ -294,6 +298,10 @@
     },
     {
       "id": "org.reactivestreams:reactive-streams:${reactive-streams.version}",
+      "start-order": "20"
+    },
+    {
+      "id": "com.networknt:json-schema-validator:2.0.1",
       "start-order": "20"
     },
     {

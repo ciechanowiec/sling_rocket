@@ -199,13 +199,14 @@
         <graphics2d.version>3.0.5</graphics2d.version>
         <jspecify.version>1.0.0</jspecify.version>
         <snakeyaml.version>2.6</snakeyaml.version>
+        <snakeyaml-engine.version>3.0.1</snakeyaml-engine.version>
         <classgraph.version>4.8.184</classgraph.version>
         <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
         <swagger.version>2.2.50</swagger.version>
         <io.modelcontextprotocol.sdk.version>1.1.2</io.modelcontextprotocol.sdk.version>
         <reactor-core.version>3.8.5</reactor-core.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
-        <json-schema-validator.version>2.0.1</json-schema-validator.version>
+        <json-schema-validator.version>3.0.2</json-schema-validator.version>
         <ethlo-itu.version>1.14.0</ethlo-itu.version>
         <commonmark.version>0.28.0</commonmark.version>
         <!-- ====================================================================== -->
@@ -239,6 +240,7 @@
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <jackson-annotations.version>2.21</jackson-annotations.version>
         <jackson.version>2.21.3</jackson.version>
+        <jackson3.version>3.1.3</jackson3.version>
         <!-- ====================================================================== -->
         <!-- LIBS_GOOGLE                                                            -->
         <!-- ====================================================================== -->
@@ -1252,6 +1254,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.snakeyaml</groupId>
+                <artifactId>snakeyaml-engine</artifactId>
+                <version>${snakeyaml-engine.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
                 <version>${classgraph.version}</version>
@@ -1513,6 +1521,24 @@
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson3.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson3.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson3.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

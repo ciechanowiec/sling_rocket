@@ -31,6 +31,18 @@
     {
       "id": "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson.version}",
       "start-order": "20"
+    },
+    {
+      "id": "tools.jackson.core:jackson-core:${jackson3.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "tools.jackson.core:jackson-databind:${jackson3.version}",
+      "start-order": "15"
+    },
+    {
+      "id": "tools.jackson.dataformat:jackson-dataformat-yaml:${jackson3.version}",
+      "start-order": "20"
     }
   ]
 }
