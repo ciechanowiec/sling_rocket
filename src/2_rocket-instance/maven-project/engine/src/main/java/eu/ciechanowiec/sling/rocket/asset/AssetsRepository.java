@@ -5,20 +5,25 @@ import eu.ciechanowiec.sling.rocket.jcr.NodeProperties;
 import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.ref.Referenceable;
+import eu.ciechanowiec.sling.rocket.jcr.ref.ReferenceableResolvable;
 import eu.ciechanowiec.sling.rocket.unit.DataSize;
 import eu.ciechanowiec.sling.rocket.unit.DataUnit;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.IteratorUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Repository;
 import javax.jcr.query.Query;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.StringJoiner;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Repository for {@link Asset}s.
@@ -48,28 +53,14 @@ public class AssetsRepository {
      */
     @SuppressWarnings("WeakerAccess")
     public Optional<Asset> find(Referenceable referenceable) {
-        String query = buildQuery(referenceable);
         log.trace(
-            "{} searching for Asset for {}. UUID: '{}'. Query: {}",
-            this, referenceable, referenceable.jcrUUID(), query
+            "{} searching for Asset for {}. UUID: '{}'", this, referenceable, referenceable.jcrUUID()
         );
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            Optional<Asset> assetNullable = IteratorUtils.toList(resourceResolver.findResources(query, Query.JCR_SQL2))
-                .stream()
-                .findFirst()
-                .filter(resource -> new NodeProperties(
-                    new TargetJCRPath(resource), resourceAccess).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES)
-                )
-                .map(resource -> new UniversalAsset(resource, resourceAccess))
-                .map(
-                    asset -> {
-                        log.trace(
-                            "{} found Asset for {}. UUID: '{}': {}",
-                            this, referenceable, referenceable.jcrUUID(), asset
-                        );
-                        return asset;
-                    }
-                );
+            Optional<Asset> assetNullable = new ReferenceableResolvable(referenceable, resourceResolver)
+                .resource()
+                .filter(resource -> new NodeProperties(resource).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES))
+                .map(resource -> new UniversalAsset(resource, resourceAccess));
             assetNullable.ifPresentOrElse(
                 asset -> log.debug(
                     "For {} (UUID: '{}') this Asset was found: {} by {}",
@@ -93,25 +84,12 @@ public class AssetsRepository {
     @SuppressWarnings("WeakerAccess")
     public List<Asset> find(JCRPath searchedPath) {
         log.debug("{} searching for Assets at {}", this, searchedPath);
-        StringJoiner nodeTypesQueryPart = new StringJoiner(" OR ");
-        Asset.SUPPORTED_PRIMARY_TYPES.forEach(
-            primaryType -> nodeTypesQueryPart.add(
-                String.format("node.[%s] = '%s'", JcrConstants.JCR_PRIMARYTYPE, primaryType)
-            )
-        );
-        String query = String.format(
-            "SELECT * FROM [%s] AS node WHERE (%s) AND ISDESCENDANTNODE(node, '%s')",
-            JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
-        );
+        String query = buildPathQuery(searchedPath);
         log.trace("This query was built by {} to retrieve Assets: {}", this, query);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            List<Asset> allAssets = IteratorUtils.toList(resourceResolver.findResources(query, Query.JCR_SQL2)).stream()
-                .filter(resource -> new NodeProperties(
-                        new TargetJCRPath(resource), resourceAccess).isPrimaryType(
-                        Asset.SUPPORTED_PRIMARY_TYPES
-                    )
-                )
-                .<Asset>map(jcrPath -> new UniversalAsset(new TargetJCRPath(jcrPath), resourceAccess))
+            List<Asset> allAssets = lazyStream(resourceResolver.findResources(query, Query.JCR_SQL2))
+                .filter(resource -> new NodeProperties(resource).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES))
+                .<Asset>map(resource -> new UniversalAsset(new TargetJCRPath(resource), resourceAccess))
                 .distinct()
                 .toList();
             log.debug("{} found {} Assets with this query: {}", this, allAssets.size(), query);
@@ -130,13 +108,20 @@ public class AssetsRepository {
      */
     public DataSize size(JCRPath searchedPath) {
         log.debug("{} calculating size of Assets at {}", this, searchedPath);
-        DataSize dataSize = find(searchedPath).stream()
-            .map(Asset::assetFile)
-            .map(AssetFile::size)
-            .reduce(DataSize::add)
-            .orElse(new DataSize(NumberUtils.LONG_ZERO, DataUnit.BYTES));
-        log.debug("Size of Assets at {} is {}. Calculated by {}", searchedPath, dataSize, this);
-        return dataSize;
+        String query = buildPathQuery(searchedPath);
+        try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
+            long totalBytes = lazyStream(resourceResolver.findResources(query, Query.JCR_SQL2))
+                .filter(resource -> new NodeProperties(resource).isPrimaryType(Asset.SUPPORTED_PRIMARY_TYPES))
+                .map(resource -> new UniversalAsset(new TargetJCRPath(resource), resourceAccess))
+                .distinct()
+                .map(Asset::assetFile)
+                .map(AssetFile::size)
+                .mapToLong(DataSize::bytes)
+                .sum();
+            DataSize dataSize = new DataSize(totalBytes, DataUnit.BYTES);
+            log.debug("Size of Assets at {} is {}. Calculated by {}", searchedPath, dataSize, this);
+            return dataSize;
+        }
     }
 
     /**
@@ -159,22 +144,22 @@ public class AssetsRepository {
         return find(new TargetJCRPath("/"));
     }
 
-    private String buildQuery(Referenceable referenceable) {
+    private String buildPathQuery(JCRPath searchedPath) {
         StringJoiner nodeTypesQueryPart = new StringJoiner(" OR ");
         Asset.SUPPORTED_PRIMARY_TYPES.forEach(
             primaryType -> nodeTypesQueryPart.add(
                 String.format("node.[%s] = '%s'", JcrConstants.JCR_PRIMARYTYPE, primaryType)
             )
         );
-        String query = String.format(
-            "SELECT * FROM [%s] AS node "
-                + "WHERE node.[%s] = '%s' "
-                + "AND (%s)",
-            JcrConstants.NT_BASE,
-            JcrConstants.JCR_UUID, referenceable.jcrUUID(),
-            nodeTypesQueryPart
+        return String.format(
+            "SELECT * FROM [%s] AS node WHERE (%s) AND ISDESCENDANTNODE(node, '%s')",
+            JcrConstants.NT_BASE, nodeTypesQueryPart, searchedPath.get()
         );
-        log.trace("For {} this query was built by {}: {}", referenceable, this, query);
-        return query;
+    }
+
+    private Stream<Resource> lazyStream(Iterator<Resource> iterator) {
+        return StreamSupport.stream(
+            Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false
+        );
     }
 }

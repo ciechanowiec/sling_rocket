@@ -6,13 +6,18 @@ import eu.ciechanowiec.sling.rocket.jcr.path.JCRPath;
 import eu.ciechanowiec.sling.rocket.jcr.path.TargetJCRPath;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 import javax.jcr.Repository;
 import javax.jcr.query.Query;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Repository for {@link CalendarNode}s.
@@ -54,13 +59,10 @@ public class CalendarRepository {
         );
         log.trace("This query was built by {} to retrieve Calendar Nodes: {}", this, query);
         try (ResourceResolver resourceResolver = resourceAccess.acquireAccess()) {
-            List<CalendarNode> calendarNodes = IteratorUtils.toList(
+            List<CalendarNode> calendarNodes = lazyStream(
                     resourceResolver.findResources(query, Query.JCR_SQL2)
-                ).stream()
-                .filter(
-                    resource -> new NodeProperties(new TargetJCRPath(resource), resourceAccess)
-                        .isPrimaryType(CalendarNode.NT_CALENDAR)
-                ).map(jcrPath -> new CalendarNode(new TargetJCRPath(jcrPath), resourceAccess))
+                ).filter(resource -> new NodeProperties(resource).isPrimaryType(CalendarNode.NT_CALENDAR))
+                .map(resource -> new CalendarNode(new TargetJCRPath(resource), resourceAccess))
                 .distinct()
                 .toList();
             log.debug("{} found {} Calendar Nodes with this query: {}", this, calendarNodes.size(), query);
@@ -76,5 +78,11 @@ public class CalendarRepository {
     public List<CalendarNode> all() {
         log.debug("{} retrieving all Calendar Nodes", this);
         return find(new TargetJCRPath("/"));
+    }
+
+    private Stream<Resource> lazyStream(Iterator<Resource> iterator) {
+        return StreamSupport.stream(
+            Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false
+        );
     }
 }
