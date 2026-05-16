@@ -201,7 +201,7 @@
         <snakeyaml.version>2.6</snakeyaml.version>
         <classgraph.version>4.8.184</classgraph.version>
         <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
-        <swagger.version>2.2.49</swagger.version>
+        <swagger.version>2.2.50</swagger.version>
         <io.modelcontextprotocol.sdk.version>1.1.2</io.modelcontextprotocol.sdk.version>
         <reactor-core.version>3.8.5</reactor-core.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
@@ -220,7 +220,7 @@
         <!-- ====================================================================== -->
         <!-- LIBS_ASM                                                               -->
         <!-- ====================================================================== -->
-        <asm.version>9.9.1</asm.version>
+        <asm.version>9.10</asm.version>
         <!-- ====================================================================== -->
         <!-- LIBS_COMMONS                                                           -->
         <!-- ====================================================================== -->
@@ -257,7 +257,7 @@
         <!-- ====================================================================== -->
         <!-- LOGGING                                                                -->
         <!-- ====================================================================== -->
-        <slf4j.version>2.0.17</slf4j.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <org.apache.sling.commons.log.version>6.0.4</org.apache.sling.commons.log.version>
         <logback.version>1.5.32</logback.version>
         <org.apache.sling.commons.logservice.version>1.1.2</org.apache.sling.commons.logservice.version>
@@ -302,7 +302,7 @@
         <org.apache.sling.caconfig.spi.version>1.4.0</org.apache.sling.caconfig.spi.version>
         <org.apache.sling.hc.api.version>1.0.4</org.apache.sling.hc.api.version>
         <org.apache.sling.hc.support.version>1.0.10</org.apache.sling.hc.support.version>
-        <org.apache.sling.adapter.version>2.3.0</org.apache.sling.adapter.version>
+        <org.apache.sling.adapter.version>3.0.0</org.apache.sling.adapter.version>
         <org.apache.sling.auth.form.version>2.0.0</org.apache.sling.auth.form.version>
         <org.apache.sling.bundleresource.impl.version>3.0.0</org.apache.sling.bundleresource.impl.version>
         <org.apache.sling.engine.version>3.0.2</org.apache.sling.engine.version>
@@ -406,7 +406,7 @@
         <!-- SLING_WEBCONSOLE                                                       -->
         <!-- ====================================================================== -->
         <org.apache.sling.commons.log.webconsole.version>2.0.0</org.apache.sling.commons.log.webconsole.version>
-        <org.apache.sling.extensions.webconsolesecurityprovider.version>1.2.8
+        <org.apache.sling.extensions.webconsolesecurityprovider.version>2.0.0
         </org.apache.sling.extensions.webconsolesecurityprovider.version>
         <org.apache.sling.jcr.webconsole.version>1.1.0</org.apache.sling.jcr.webconsole.version>
         <org.apache.sling.serviceuser.webconsole.version>2.0.0</org.apache.sling.serviceuser.webconsole.version>
