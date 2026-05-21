@@ -270,7 +270,7 @@ The `rocket-data-raw` volume is mounted at xref:#segment-store-directory[`/opt/s
 
 [[rocket-data-dump]]
 ===== `rocket-data-dump`
-The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where the xref:#database-dump-script[`/opt/sling/dump-rocket-data.sh`] script puts the database dumps created out of xref:#persistence-files[persistence files], i.e. out of Segment Node Storage at xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup^] Oak Run command are stored, i.e. the dumps represented as tar files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export^] Oak Run command are stored, i.e. the dumps represented as human-readable JSON files with referenced binary files.
+The `rocket-data-dump` volume is mounted at `/var/rocket-data-dump`. That path is the destination where the xref:#database-dump-script[`/opt/sling/dump-rocket-data.sh`] script puts the database dumps created out of xref:#persistence-files[persistence files], i.e. out of Segment Node Storage at xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]. In `/var/rocket-data-dump/backup` directory, the dumps performed via https://jackrabbit.apache.org/oak/docs/nodestore/segment/overview.html#backup[backup^] Oak Run command are stored, i.e. the dumps represented as TAR files with Oak segments. In `/var/rocket-data-dump/export` directory, in turn, the dumps performed via https://github.com/apache/jackrabbit-oak/blob/trunk/oak-run/README.md#export[export^] Oak Run command are stored, i.e. the dumps represented as human-readable JSON files with referenced binary files.
 
 [[rocket-instance-logs]]
 ===== `rocket-instance-logs`
@@ -284,7 +284,7 @@ image::docs/img/sling-rocket-instance-volumes.drawio.png[]
 
 SR Backuper is an application that performs backups of the database and logs via backing them up into a separate destination on the host machine. It's done via backing up the contents of xref:#rocket-data-raw[`rocket-data-raw`] (xref:#segment-store-directory[`/opt/sling/launcher/repository/segmentstore`]), xref:#rocket-data-dump[`rocket-data-dump` (`/var/rocket-data-dump`)], and xref:#rocket-instance-logs[`rocket-instance-logs`] (xref:#log-files-directory[`/opt/sling/launcher/logs`]) volumes. The exact backup mechanism is configured in the `docker-compose.yml` file.
 
-A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a tar archive. Internally, that archive has the following structure:
+A single backup is saved in the backups destination folder configured in the `docker-compose.yml` file as a TAR archive. Internally, that archive has the following structure:
 
 [source,bash]
 ....
