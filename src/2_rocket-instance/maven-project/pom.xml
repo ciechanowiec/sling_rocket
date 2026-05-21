@@ -84,6 +84,10 @@
         <org.apache.sling.repoinit.parser.version>1.9.2</org.apache.sling.repoinit.parser.version>
         <org.apache.sling.jcr.repoinit.version>1.1.54</org.apache.sling.jcr.repoinit.version>
         <!-- ====================================================================== -->
+        <!-- AC_TOOL                                                                -->
+        <!-- ====================================================================== -->
+        <accesscontroltool-bundle.version>4.2.1</accesscontroltool-bundle.version>
+        <!-- ====================================================================== -->
         <!-- COMPOSUM                                                               -->
         <!-- ====================================================================== -->
         <composum.nodes.version>4.3.5</composum.nodes.version>
@@ -537,6 +541,15 @@
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.jcr.repoinit</artifactId>
                 <version>${org.apache.sling.jcr.repoinit.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- ====================================================================== -->
+            <!-- AC_TOOL                                                                -->
+            <!-- ====================================================================== -->
+            <dependency>
+                <groupId>biz.netcentric.cq.tools.accesscontroltool</groupId>
+                <artifactId>accesscontroltool-bundle</artifactId>
+                <version>${accesscontroltool-bundle.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

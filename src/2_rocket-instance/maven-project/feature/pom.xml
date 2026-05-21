@@ -46,6 +46,8 @@
                         org.apache.sling.repoinit.parser.version,
                         org.apache.sling.jcr.repoinit.version,
 
+                        accesscontroltool-bundle.version,
+
                         composum.nodes.version,
 
                         org.apache.felix.framework.version,

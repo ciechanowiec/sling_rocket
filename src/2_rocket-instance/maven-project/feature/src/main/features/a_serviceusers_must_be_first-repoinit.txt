@@ -81,3 +81,10 @@ create service user sling-rocket-admin with forced path /home/users/system/sling
 set ACL for sling-rocket-admin
     allow jcr:all on :repository,/
 end
+
+# AC Tool
+create service user actool-service with path system/sling
+set principal ACL for actool-service
+    allow jcr:all on /
+    allow jcr:all on :repository
+end

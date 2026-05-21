@@ -1,0 +1,19 @@
+{
+  "bundles": [
+    {
+      "id": "biz.netcentric.cq.tools.accesscontroltool:accesscontroltool-bundle:${accesscontroltool-bundle.version}",
+      "start-order": "25"
+    }
+  ],
+  "configurations": {
+    "org.apache.sling.event.jobs.QueueConfiguration~actool": {
+      "queue.keepJobs": true,
+      "queue.name": "AC Tool Asynchronous Installer",
+      "queue.retries": 0,
+      "queue.topics": [
+        "biz/netcentric/cq/tools/actool/installation"
+      ],
+      "queue.type": "ORDERED"
+    }
+  }
+}
