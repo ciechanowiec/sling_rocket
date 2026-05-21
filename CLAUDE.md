@@ -9,7 +9,7 @@ _Sling Rocket_ is a custom build of [Apache Sling](https://sling.apache.org/) di
 1. **SR Parent POM** (`eu.ciechanowiec:sling.rocket.parent`) — published to Maven Central. Business applications inherit from it to get the exact dependency/configuration set of the matching SR Instance.
 2. **Docker images** (`ciechanowiec/rocket-base`, `ciechanowiec/rocket-instance`, `ciechanowiec/rocket-nginx`) — published to Docker Hub.
 
-The Parent POM version and the SR Instance image tag **must match** within a deployment (currently `25.0.0-SNAPSHOT`). The persistence layer is Apache Jackrabbit Oak (Segment Node Store, JCR).
+The Parent POM version and the SR Instance image tag **must match** within a deployment (currently `25.0.1`). The persistence layer is Apache Jackrabbit Oak (Segment Node Store, JCR).
 
 ## Repository layout
 
