@@ -1,7 +1,11 @@
 {
   "bundles": [
     {
-      "id": "biz.netcentric.cq.tools.accesscontroltool:accesscontroltool-bundle:${accesscontroltool-bundle.version}",
+      "id": "biz.netcentric.cq.tools.accesscontroltool:accesscontroltool-bundle:${accesscontroltool.version}",
+      "start-order": "25"
+    },
+    {
+      "id": "biz.netcentric.cq.tools.accesscontroltool:accesscontroltool-startuphook-bundle:${accesscontroltool.version}",
       "start-order": "25"
     }
   ],
@@ -14,6 +18,10 @@
         "biz/netcentric/cq/tools/actool/installation"
       ],
       "queue.type": "ORDERED"
+    },
+    "biz.netcentric.cq.tools.actool.startuphook.impl.AcToolStartupHookServiceImpl": {
+      "activationMode": "ALWAYS",
+      "runAsyncForMutableConent": false
     }
   }
 }

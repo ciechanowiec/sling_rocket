@@ -86,7 +86,7 @@
         <!-- ====================================================================== -->
         <!-- AC_TOOL                                                                -->
         <!-- ====================================================================== -->
-        <accesscontroltool-bundle.version>4.2.1</accesscontroltool-bundle.version>
+        <accesscontroltool.version>4.2.1</accesscontroltool.version>
         <!-- ====================================================================== -->
         <!-- COMPOSUM                                                               -->
         <!-- ====================================================================== -->
@@ -549,7 +549,13 @@
             <dependency>
                 <groupId>biz.netcentric.cq.tools.accesscontroltool</groupId>
                 <artifactId>accesscontroltool-bundle</artifactId>
-                <version>${accesscontroltool-bundle.version}</version>
+                <version>${accesscontroltool.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>biz.netcentric.cq.tools.accesscontroltool</groupId>
+                <artifactId>accesscontroltool-startuphook-bundle</artifactId>
+                <version>${accesscontroltool.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- ====================================================================== -->

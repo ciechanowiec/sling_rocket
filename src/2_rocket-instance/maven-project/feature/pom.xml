@@ -46,7 +46,7 @@
                         org.apache.sling.repoinit.parser.version,
                         org.apache.sling.jcr.repoinit.version,
 
-                        accesscontroltool-bundle.version,
+                        accesscontroltool.version,
 
                         composum.nodes.version,
 
