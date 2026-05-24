@@ -3028,6 +3028,14 @@
                 <configuration>
                     <processPluginDependencies>false</processPluginDependencies>
                     <processPluginDependenciesInPluginManagement>false</processPluginDependenciesInPluginManagement>
+                    <!--
+                        Older 2.x variants kept intentionally in feature/src/main/features/libs.json alongside
+                        the property-driven 3.x copies. slingfeature-maven-plugin injects every libs.json
+                        entry as a project <dependency>, so without this exclude the report would always show
+                        "2.0.x -> 3.x.y" for these. Excludes are version-pinned, so future 3.x updates are
+                        still reported via the property-driven occurrence.
+                    -->
+                    <dependencyExcludes>com.networknt:json-schema-validator:2.0.1,jakarta.validation:jakarta.validation-api:2.0.2</dependencyExcludes>
                     <ruleSet>
                         <ignoreVersions>
                             <ignoreVersion>
