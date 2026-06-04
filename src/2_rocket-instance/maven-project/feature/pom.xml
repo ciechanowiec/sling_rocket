@@ -67,6 +67,7 @@
                         org.apache.felix.http.sslfilter.version,
                         org.apache.felix.jaas.version,
                         org.apache.felix.fileinstall.version,
+                        org.eclipse.jetty.compression.version,
 
                         org.apache.felix.healthcheck.api.version,
                         org.apache.felix.healthcheck.core.version,

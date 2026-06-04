@@ -68,6 +68,14 @@
     {
       "id": "org.apache.felix:org.apache.felix.fileinstall:${org.apache.felix.fileinstall.version}",
       "start-order": "10"
+    },
+    {
+      "id": "org.eclipse.jetty.compression:jetty-compression-common:${org.eclipse.jetty.compression.version}",
+      "start-order": "5"
+    },
+    {
+      "id": "org.eclipse.jetty.compression:jetty-compression-gzip:${org.eclipse.jetty.compression.version}",
+      "start-order": "5"
     }
   ],
   "configurations": {
