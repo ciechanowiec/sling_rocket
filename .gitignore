@@ -1,22 +1,67 @@
-repo.xml
-*.class
+# IDE
 *.iml
+.idea/
+.vscode/
+.fleet/
+
+# OS
+.DS_Store
+Thumbs.db
+~$*.docx
+*.docx.tmp
+
+# Logs
 *.log*
 *.logs*
-logs
-log
-.idea
-.vscode
-target
-node_modules
-.DS_Store
+logs/
+log/
+!eu.ciechanowiec.sling.rocket*log*
+!org.apache.sling*log*
+
+# Java
+*.class
+target/
+.gradle/
+hs_err_pid*
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Next.js / Payload CMS
+.next/
+.turbo/
+out/
+
+# Supabase
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Terraform / Cloud
 .terraform/
-*.tfstate.backup
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Drawio
 *.drawio.png.bkp
 *.drawio.png.dtmp
+
+# Compiled documentation
 README*.pdf
 README*.html
 README*.docx
+
+# IDE / tool exports
+repo.xml
+
+# Local Claude config
 claude/settings.local.json
-!eu.ciechanowiec.sling.rocket*log*
-!org.apache.sling*log*
+.claude/settings.local.json
+
+# Custom CA certificates
+src/commons/extra-ca-certificates/*.crt
