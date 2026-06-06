@@ -9,6 +9,15 @@ echo "### DOMAIN: $DOMAIN"
 echo "### EMAIL: $EMAIL"
 echo "### IS_STAGING_ENV: $IS_STAGING_ENV"
 
+# Trust optional custom CA certificates, e.g. of a TLS-intercepting proxy. The certificates
+# can be baked into the image at build time or mounted into the directory below at runtime
+# (see the 'Custom CA Certificates' section of the Sling Rocket README):
+EXTRA_CA_CERTS_DIR="/usr/local/share/ca-certificates/extra"
+if ls "$EXTRA_CA_CERTS_DIR"/*.crt > /dev/null 2>&1; then
+  echo "### Installing custom CA certificates from $EXTRA_CA_CERTS_DIR..."
+  update-ca-certificates
+fi
+
 if [ -w "/etc/nginx/nginx.conf" ]; then
   echo "### This domain will be set in Nginx : '$DOMAIN'"
   sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" /etc/nginx/nginx.conf

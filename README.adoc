@@ -415,6 +415,62 @@ volumes:
     read_only: true
 ....
 
+[[custom-ca-certificates]]
+=== Custom CA Certificates
+
+A _custom CA certificate_ is a certificate of a certificate authority that isn't part of the default trust stores of the _Sling Rocket_ Docker images. A typical source of custom CA certificates is a TLS-intercepting proxy: such a proxy re-signs HTTPS traffic with its own certificate authority, so HTTPS connections from the containers fail certificate verification unless that certificate authority is trusted. _Sling Rocket_ can attach custom CA certificates both at image build time and at container runtime.
+
+[upperalpha]
+. *Build Time*
++
+Custom CA certificates in PEM format with the `.crt` extension dropped into the `src/commons/extra-ca-certificates` directory of this repository are installed into the trust stores of the built Docker images: into the system CA store of `rocket-base` and `rocket-nginx`, and additionally into the Java keystore of `rocket-base`. The directory ships empty because Git ignores `.crt` files in it. Builds without custom CA certificates therefore aren't affected.
+. *Runtime*
++
+Images built without custom CA certificates, e.g. the prebuilt images from Docker Hub, can have such certificates attached at runtime. To attach them, mount a directory with the certificates to `/usr/local/share/ca-certificates/extra` of the `rocket-instance` and `rocket-nginx` containers, e.g. this way:
++
+[source,yml]
+....
+volumes:
+  - type: bind
+    source: ./extra-ca-certificates
+    target: /usr/local/share/ca-certificates/extra
+    read_only: true
+....
++
+The startup scripts of those containers install all certificates found in that directory on every container start: into the system CA store and, for `rocket-instance`, also into the Java keystore.
+. *Exporting Certificates of a TLS-Intercepting Proxy*
+[upperroman]
+.. To reveal a TLS-intercepting proxy, check the issuer of the certificate presented for an arbitrary HTTPS connection:
++
+[source,bash]
+....
+openssl s_client -connect repo.maven.apache.org:443 </dev/null 2>/dev/null \
+  | openssl x509 -noout -issuer
+....
++
+On a machine behind such a proxy, the issuer isn't the genuine certificate authority of the requested host, but the proxy itself, e.g.:
++
+[source,bash]
+....
+issuer=C=US, ST=NY, L=New York, O=Example Org, CN=ca.example-proxy.com
+....
+.. From the common name (`CN`), extract the proxy's bare domain: the second-to-last dot-separated label, i.e. the label directly before the trailing `.com`, `.net` etc. For the common name `ca.example-proxy.com`, the bare domain is `example-proxy`. Take specifically that label and not a more specific prefix. A proxy can operate more than one certificate authority. The common names of those certificate authorities differ in prefixes but share the bare domain, e.g. `ca.division-one.example-proxy.com` and `ca.division-two.example-proxy.com`. Every one of them should be exported, since the proxy can switch between them over time.
+.. All the certificates of the proxy are expected to be among the certificates trusted by the host machine. For example, on macOS they can be exported from the system keychain by matching the bare domain extracted above:
++
+[source,bash]
+....
+security find-certificate -a -p -c example-proxy /Library/Keychains/System.keychain \
+  | awk '/-----BEGIN CERTIFICATE-----/{n++} {print > sprintf("custom-ca-%02d.crt", n)}'
+....
++
+The `-c` option of the `security find-certificate` command matches every certificate whose name contains the given string. In the command above, that string is the bare domain `example-proxy` extracted in the previous step. The `awk` command splits the matched certificates into separate files in the current working directory: `custom-ca-01.crt`, `custom-ca-02.crt` etc. Therefore run the export in the directory from which _Sling Rocket_ picks the certificates up. For the build time attachment, that directory is `src/commons/extra-ca-certificates` of this repository. For the runtime attachment, that directory is the one mounted to `/usr/local/share/ca-certificates/extra` of the containers. Before the export, delete the `custom-ca-*.crt` files left from previous exports. The file numbering restarts at `01` on every export, so an export that matches fewer certificates than a previous one overwrites only the first files. The remaining files of the previous export would survive and would be installed into the trust stores alongside the new certificates.
+.. Verify the export by listing the subject of every exported certificate:
++
+[source,bash]
+....
+for FILE in custom-ca-*.crt; do openssl x509 -in "$FILE" -noout -subject; done
+....
+
 == Miscellaneous
 
 === Apache Sling

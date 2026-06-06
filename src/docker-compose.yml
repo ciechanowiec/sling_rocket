@@ -13,6 +13,10 @@ services:
     build:
       context: .
       dockerfile: 2_rocket-instance/Dockerfile
+      # Resolve the base image from the local `rocket-base` build target instead of
+      # Docker Hub, so that parallel bake builds don't fail on a missing remote tag:
+      additional_contexts:
+        - ciechanowiec/rocket-base:${ROCKET_FEATURE_ARTIFACT_VERSION}=service:rocket-base
       args:
         SLING_DIR: /opt/sling
         # comma-separated, like: basic,sling

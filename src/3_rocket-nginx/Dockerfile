@@ -4,6 +4,12 @@ COPY ../commons/apt-installer.sh .
 RUN ./apt-installer.sh
 RUN rm apt-installer.sh
 
+# Trust optional custom CA certificates, e.g. of a TLS-intercepting proxy
+# (the directory ships empty - see the 'Custom CA Certificates' section of the README). Must run after the apt
+# setup above, which ensures that the `ca-certificates` package is installed:
+COPY ../commons/extra-ca-certificates /usr/local/share/ca-certificates/extra
+RUN update-ca-certificates
+
 # Configuring default ModSecurity
 RUN sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/g' /etc/nginx/modsecurity.conf
 RUN sed -i 's/^#//' /etc/nginx/modsecurity_includes.conf

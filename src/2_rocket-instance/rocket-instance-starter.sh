@@ -15,6 +15,25 @@ echo "[INFO] ENABLE_MULTI_VERSION_SUPPORT=$ENABLE_MULTI_VERSION_SUPPORT"
 ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE=${ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE:-}
 echo "[INFO] ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE=$ABS_PATH_TO_ADDITIONAL_FEATURE_ARCHIVE"
 
+# Trust optional custom CA certificates, e.g. of a TLS-intercepting proxy. The certificates
+# can be baked into the image at build time or mounted into the directory below at runtime
+# (see the 'Custom CA Certificates' section of the Sling Rocket README):
+EXTRA_CA_CERTS_DIR="/usr/local/share/ca-certificates/extra"
+if ls "$EXTRA_CA_CERTS_DIR"/*.crt > /dev/null 2>&1; then
+  echo "[INFO] Installing custom CA certificates from $EXTRA_CA_CERTS_DIR..."
+  update-ca-certificates
+  for CERT in "$EXTRA_CA_CERTS_DIR"/*.crt; do
+    CERT_ALIAS="extra-$(basename "$CERT" .crt)"
+    if keytool -list -cacerts -storepass changeit -alias "$CERT_ALIAS" > /dev/null 2>&1; then
+      echo "[INFO] Custom CA certificate is already in the Java keystore: $CERT"
+    else
+      echo "[INFO] Importing a custom CA certificate into the Java keystore: $CERT..."
+      keytool -importcert -noprompt -cacerts -storepass changeit \
+              -alias "$CERT_ALIAS" -file "$CERT"
+    fi
+  done
+fi
+
 # JAVA_OPTS are set similarly as in https://github.com/apache/sling-org-apache-sling-starter/blob/705420630579652acefe71bb5bdb6229f58ef30a/src/main/container/bin/launch.sh
 # Exported JAVA_OPTS will be read by the launcher script generated in https://github.com/apache/sling-org-apache-sling-feature-launcher
 if [ ! -z "${JAVA_DEBUG_PORT}" ]; then

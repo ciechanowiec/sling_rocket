@@ -23,6 +23,12 @@ services:
       - type: volume
         source: rocket-instance-logs
         target: /opt/sling/launcher/logs
+      # Uncomment to trust custom CA certificates, e.g. of a TLS-intercepting proxy
+      # (see the 'Custom CA Certificates' section of the README):
+      # - type: bind
+      #   source: ./extra-ca-certificates
+      #   target: /usr/local/share/ca-certificates/extra
+      #   read_only: true
     # Grace period should be long enough so that the JCR is closed correctly and doesn't get corrupted:
     stop_grace_period: 300s
     hostname: rocket-instance
@@ -86,6 +92,13 @@ services:
       IS_STAGING_ENV: true
     image: ciechanowiec/rocket-nginx:26.0.0-SNAPSHOT
     container_name: rocket-nginx
+    # Uncomment to trust custom CA certificates, e.g. of a TLS-intercepting proxy
+    # (see the 'Custom CA Certificates' section of the README):
+    # volumes:
+    #   - type: bind
+    #     source: ./extra-ca-certificates
+    #     target: /usr/local/share/ca-certificates/extra
+    #     read_only: true
     hostname: rocket-nginx
     networks:
       - rocket-network
