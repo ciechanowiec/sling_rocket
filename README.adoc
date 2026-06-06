@@ -392,7 +392,7 @@ volumes:
     target: /etc/nginx/nginx.conf
     read_only: true
 ....
-. The SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP CRS^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
+. The SR Nginx includes the https://github.com/owasp-modsecurity/ModSecurity[ModSecurity WAF module^] with https://coreruleset.org/docs/[OWASP Core Rule Set (CRS)^] and https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker[Ultimate Nginx Bad Bot Blocker^].
 . *Logs*
 [upperroman]
 .. The logs for the Nginx itself (`access.log` and `error.log`) and for the ModSecurity WAF module (`modsec_audit.log`) are stored in the `/var/log/nginx` directory inside the container. It's recommended to mount that directory as a persistent volume for a given SR Nginx container, e.g. this way:
@@ -529,7 +529,7 @@ Registering servlets via absolute paths (https://sling.apache.org/documentation/
 <2> Node for exposing xref:#web-api-exposure[web APIs] for a business application.
 <3> Technical static resources required specifically for a given framework deployment.
 <4> Technical static resources required specifically for a given business application deployment.
-<5> Business application resources required for web rendering (e.g., HTL scripts, JavaScript scripts, icons, fonts).
+<5> Business application resources required for web rendering (e.g., HTML Template Language (HTL) scripts, JavaScript scripts, icons, fonts).
 <6> Business application artifacts to be https://sling.apache.org/documentation/bundles/jcr-installer-provider.html#configuration-and-scanning[installed automatically] upon deployment.
 <7> OSGi configurations (`.config`, `.cfg.json`) to be https://sling.apache.org/documentation/bundles/configuration-installer-factory.html[installed automatically] upon deployment.
 <8> User-generated mutable content.
@@ -624,9 +624,9 @@ Analyze the performance of the web pages with the https://github.com/GoogleChrom
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
 . *Security Tests*
 [upperroman]
-.. *ZAP Tests*
+.. *Zed Attack Proxy (ZAP) Tests*
 +
-Run https://www.zaproxy.org/[_Zed Attack Proxy (ZAP)_] security tests.
+Run https://www.zaproxy.org/[ZAP^] security tests.
 [upperroman]
 ... The basic test can be performed with the use of the command constructed the following way:
 +
