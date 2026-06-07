@@ -156,16 +156,8 @@ class AssetTest extends TestEnvironment {
         new NodeProperties(ntFilePath, fullResourceAccess).assertPrimaryType(JcrConstants.NT_FILE);
         TargetJCRPath ntResourcePath = new TargetJCRPath(new ParentJCRPath(ntFilePath), JcrConstants.JCR_CONTENT);
         new NodeProperties(ntResourcePath, fullResourceAccess).assertPrimaryType(JcrConstants.NT_RESOURCE);
-        Asset ntFileAsset;
-        Asset ntResourceAsset;
-        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
-            ntFileAsset = Optional.ofNullable(resourceResolver.getResource(ntFilePath.get()))
-                .map(resource -> new UniversalAsset(resource, fullResourceAccess))
-                .orElseThrow();
-            ntResourceAsset = Optional.ofNullable(resourceResolver.getResource(ntResourcePath.get()))
-                .map(resource -> new UniversalAsset(resource, fullResourceAccess))
-                .orElseThrow();
-        }
+        Asset ntFileAsset = persistedAsset(ntFilePath);
+        Asset ntResourceAsset = persistedAsset(ntResourcePath);
         TargetJCRPath ntFileLinkPathOne = new TargetJCRPath(
             new ParentJCRPath(new TargetJCRPath("/content")), UUID.randomUUID()
         );
@@ -557,5 +549,13 @@ class AssetTest extends TestEnvironment {
             () -> assertTrue(nonExistingAsset.get().isEmpty()),
             () -> assertNotNull(fullResourceAccess.acquireAccess().getResource(nonAssetPath))
         );
+    }
+
+    private Asset persistedAsset(TargetJCRPath jcrPath) {
+        try (ResourceResolver resourceResolver = fullResourceAccess.acquireAccess()) {
+            return Optional.ofNullable(resourceResolver.getResource(jcrPath.get()))
+                .map(resource -> new UniversalAsset(resource, fullResourceAccess))
+                .orElseThrow();
+        }
     }
 }

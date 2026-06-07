@@ -166,15 +166,11 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
         List<Member> allMembers = new ArrayList<>();
         try {
             Directory.Members.List request = directory.get().members().list(groupKey);
-            String pageToken;
-            do {
-                Members members = request.execute();
-                List<Member> currentPage = members.getMembers();
-                Optional.ofNullable(currentPage)
-                    .ifPresent(allMembers::addAll);
-                pageToken = members.getNextPageToken();
-                request.setPageToken(pageToken);
-            } while (Objects.nonNull(pageToken));
+            Optional<String> nextPageToken = collectMembersPage(request, allMembers);
+            while (nextPageToken.isPresent()) {
+                request.setPageToken(nextPageToken.orElseThrow());
+                nextPageToken = collectMembersPage(request, allMembers);
+            }
             log.trace("Retrieved {} members for group '{}'", allMembers.size(), groupKey);
             return Collections.unmodifiableList(allMembers);
         } catch (IOException exception) {
@@ -182,5 +178,12 @@ public class GoogleDirectory extends AnnotatedStandardMBean implements GoogleDir
             log.warn(message, exception);
             return Collections.emptyList();
         }
+    }
+
+    private Optional<String> collectMembersPage(Directory.Members.List request, List<Member> allMembers)
+        throws IOException {
+        Members members = request.execute();
+        Optional.ofNullable(members.getMembers()).ifPresent(allMembers::addAll);
+        return Optional.ofNullable(members.getNextPageToken());
     }
 }
