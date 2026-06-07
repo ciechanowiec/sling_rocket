@@ -5,7 +5,7 @@ import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 /**
- * Configuration for {@link SlingRequestMonitor}.
+ * Configuration for {@link JettyRequestMonitor}.
  */
 @ObjectClassDefinition
 public @interface JettyRequestMonitorConfig {

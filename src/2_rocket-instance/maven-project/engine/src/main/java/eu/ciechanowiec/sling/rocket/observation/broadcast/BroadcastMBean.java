@@ -16,7 +16,7 @@ public interface BroadcastMBean {
      * Broadcast application statistics.
      *
      * @return {@link Optional} containing the JSON string that represents application statistics that were submitted to
-     * be broadcasted; empty {@link Optional} is returned if the application statistics were not sucessfully submitted
+     * be broadcasted; empty {@link Optional} is returned if the application statistics were not successfully submitted
      * for broadcast
      */
     @SuppressWarnings("unused")

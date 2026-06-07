@@ -30,7 +30,7 @@ public class ResponseWithAsset {
      * Constructs an instance of this class.
      *
      * @param wrappedResponse {@link HttpServletResponse} which will be used to send this {@link ResponseWithAsset}
-     * @param assetToSend     {@link Asset} that will be sent with this {@link Response}
+     * @param assetToSend     {@link Asset} that will be sent with this {@link ResponseWithAsset}
      */
     public ResponseWithAsset(HttpServletResponse wrappedResponse, Asset assetToSend) {
         this.wrappedResponse = wrappedResponse;
@@ -45,8 +45,8 @@ public class ResponseWithAsset {
      * committed as specified by {@link ServletResponse#isCommitted()}, an {@link AlreadySentException} is thrown.
      *
      * @param contentDispositionHeader {@link ContentDispositionHeader} to be sent with this {@link ResponseWithAsset}
-     * @throws AlreadySentException if this {@link Response} has already been sent or the response has been already
-     *                              committed as specified by {@link ServletResponse#isCommitted()}
+     * @throws AlreadySentException if this {@link ResponseWithAsset} has already been sent or the response has been
+     *                              already committed as specified by {@link ServletResponse#isCommitted()}
      */
     @SneakyThrows
     public void send(ContentDispositionHeader contentDispositionHeader) {

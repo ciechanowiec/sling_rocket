@@ -61,6 +61,7 @@ The parent POM defines the canonical version/dependency set the SR Instance runs
 ### Javadoc conventions
 
 - **Every public member gets full javadoc** (class, method, `@param`, `@return`) — Checkstyle enforces presence, but the conventions below go beyond what it can check.
+- **Exception: overridden public methods (`@Override`) don't need javadoc** — they inherit the doc of the overridden member. Add javadoc to an override only when it says something the inherited doc doesn't, e.g. `Same as {@link ...}` when the method delegates to a *different* type's member (see `LLM#jcrPath()` → `LLMConfig#jcr_home()`).
 - **Refer to concepts via `{@link}`, never via plain prose, whenever the concept exists as a type or member.** If a sentence mentions something that has a corresponding Java type/method in this codebase or the JDK, reference it with `{@link ...}` instead of naming it in words — including in the very first sentence of a class javadoc. Example: write `{@link RocketStats} on the antivirus engine used by a {@link VirusScanner}.`, not `Statistics on the antivirus engine used by a VirusScanner.` (the word "Statistics" *is* the `RocketStats` concept, so it must be the link).
 - **Repeat the link on every mention**, not just the first one — there is no "link only the first occurrence" rule in this codebase (see `llm/LLM.java` or `asset/Asset.java` for the expected density).
 - Use `{@code ...}` only for things that are *not* resolvable types/members: literals, protocol commands (`{@code INSTREAM}`), property names, and example values.

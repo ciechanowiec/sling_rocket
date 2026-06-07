@@ -239,7 +239,7 @@ public final class CalendarNode implements WithJCRPath {
      * @param yearMonth {@link YearMonth} for which the {@link MonthNode} is requested
      * @return {@link Optional} containing a {@link MonthNode} from this {@link CalendarNode} for the specified
      * {@link YearMonth}; empty {@link Optional} is returned if for the specified {@link YearMonth} no {@link MonthNode}
-     * exists§
+     * exists
      */
     @SuppressWarnings("WeakerAccess")
     public Optional<MonthNode> month(YearMonth yearMonth) {
@@ -282,7 +282,7 @@ public final class CalendarNode implements WithJCRPath {
      *
      * @param day {@link LocalDateTime} for which the {@link DayNode} is requested
      * @return {@link Optional} containing a {@link DayNode} from this {@link CalendarNode} for the specified
-     * {@link LocalDateTime}; empty {@link Optional} is returned if for the specified {@link LocalDate} no
+     * {@link LocalDateTime}; empty {@link Optional} is returned if for the specified {@link LocalDateTime} no
      * {@link DayNode} exists
      */
     @SuppressWarnings("WeakerAccess")
