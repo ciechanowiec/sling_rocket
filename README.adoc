@@ -35,7 +35,7 @@ _Sling Rocket_ is a framework for building dynamic web applications.
 
 === Sling Rocket Components
 
-_Sling Rocket_ consists of four basic parts:
+_Sling Rocket_ consists of five basic parts:
 [upperalpha]
 . Sling Rocket Parent POM ("*SR Parent POM*")
 +
@@ -53,6 +53,9 @@ Application that performs backups of the database and logs via backing them up i
 . Sling Rocket Nginx ("*SR Nginx*")
 +
 Reverse proxy Nginx server that serves as a gateway between the SR Instance and the outside world. It's responsible for all incoming and outgoing HTTP(S) traffic.
+. Sling Rocket ClamAV ("*SR ClamAV*")
++
+https://www.clamav.net/[ClamAV^] antivirus engine that scans content for the SR Instance. It listens on the clamd protocol (TCP port `3310`) and is reachable exclusively by the SR Instance over a dedicated isolated network.
 
 image::docs/img/sling-rocket-components-diagram.svg[]
 
@@ -70,11 +73,11 @@ image::docs/img/sling-rocket-components-diagram.svg[]
                                                                         |defines SR Instance
                                                                         |
                                                                         v
-+-------------------+          +-------------------+          +---------+---------+
-|                   |   HTTP   |                   |   HTTP   |                   |
-|   Outside world   +<-------->|      SR Nginx     +<-------->|    SR Instance    |
-|{io}               |          |c1FF               |          | cGRE              |
-+-------------------+          +-------------------+          | +---------------+ |
++-------------------+          +-------------------+          +---------+---------+          +-------------------+
+|                   |   HTTP   |                   |   HTTP   |                   |  clamd   |                   |
+|   Outside world   +<-------->|      SR Nginx     +<-------->|    SR Instance    +<-------->|     SR ClamAV     |
+|{io}               |          |c1FF               |          | cGRE              | TCP 3310 |cYEL               |
++-------------------+          +-------------------+          | +---------------+ |          +-------------------+
                                                               | |               | |
                                                               | |    database   | |
                                                               | |{s} cPNK       | |
@@ -158,6 +161,7 @@ image::docs/img/sling-rocket-architecture-diagram.svg[]
 .. SR Instance - `rocket-instance` container.
 .. SR Backuper - `rocket-backuper` container.
 .. SR Nginx - `rocket-nginx` container.
+.. SR ClamAV - `rocket-clamav` container.
 . To bootstrap _Sling Rocket_ with a default setup, run the following commands:
 +
 [source,bash]
@@ -415,6 +419,30 @@ volumes:
     read_only: true
 ....
 
+=== SR ClamAV
+The SR ClamAV is a https://www.clamav.net/[ClamAV^] antivirus engine that scans content for the SR Instance, e.g. uploaded assets. It's intended to run as a Docker container. The image of an SR ClamAV is published on Docker Hub at `ciechanowiec/rocket-clamav`.
+
+[upperalpha]
+. *Network Isolation*
+[upperroman]
+.. The SR ClamAV listens for the https://docs.clamav.net/manual/Usage/Scanning.html#clamd[clamd protocol^] on TCP port `3310` and is reachable exclusively by the SR Instance at `rocket-clamav:3310` over a dedicated `rocket-clamav-network` network. That port isn't published to the host machine, and other containers, among them the SR Nginx, aren't connected to that network, so neither the outside world nor those containers can reach the SR ClamAV.
+.. The `rocket-clamav-network` network is deliberately not declared as `internal`, because freshclam, the virus definitions update service running inside the SR ClamAV container, needs internet egress to download the definitions.
+. *Configuration*
++
+The image of an SR ClamAV includes a configuration file at `/etc/clamav/clamd.conf` with tuning described in the `src/5_rocket-clamav/clamd.conf` file of this repository, among others the maximum size of a single scanned data stream (`StreamMaxLength`), which must not be lower than the effective upload limits of the SR Instance. The configuration can be customized via overriding that file by mounting a custom configuration file from the host machine to the container, e.g. this way:
++
+[source,yml]
+....
+volumes:
+  - type: bind
+    source: ./clamd.conf
+    target: /etc/clamav/clamd.conf
+    read_only: true
+....
+. *Virus Definitions*
++
+Virus definitions are stored in the `/var/lib/clamav` directory inside the container, which is extracted into the `rocket-clamav-data` volume, so that the definitions persist across container restarts. That volume is deliberately not backed up by the SR Backuper, because the definitions are re-downloadable and would bloat the backup archives.
+
 [[custom-ca-certificates]]
 === Custom CA Certificates
 
@@ -423,10 +451,10 @@ A _custom CA certificate_ is a certificate of a certificate authority that isn't
 [upperalpha]
 . *Build Time*
 +
-Custom CA certificates in PEM format with the `.crt` extension dropped into the `src/commons/extra-ca-certificates` directory of this repository are installed into the trust stores of the built Docker images: into the system CA store of `rocket-base` and `rocket-nginx`, and additionally into the Java keystore of `rocket-base`. The directory ships empty because Git ignores `.crt` files in it. Builds without custom CA certificates therefore aren't affected.
+Custom CA certificates in PEM format with the `.crt` extension dropped into the `src/commons/extra-ca-certificates` directory of this repository are installed into the trust stores of the built Docker images: into the system CA store of `rocket-base`, `rocket-nginx`, and `rocket-clamav`, and additionally into the Java keystore of `rocket-base`. The directory ships empty because Git ignores `.crt` files in it. Builds without custom CA certificates therefore aren't affected.
 . *Runtime*
 +
-Images built without custom CA certificates, e.g. the prebuilt images from Docker Hub, can have such certificates attached at runtime. To attach them, mount a directory with the certificates to `/usr/local/share/ca-certificates/extra` of the `rocket-instance` and `rocket-nginx` containers, e.g. this way:
+Images built without custom CA certificates, e.g. the prebuilt images from Docker Hub, can have such certificates attached at runtime. To attach them, mount a directory with the certificates to `/usr/local/share/ca-certificates/extra` of the `rocket-instance`, `rocket-nginx`, and `rocket-clamav` containers, e.g. this way:
 +
 [source,yml]
 ....
@@ -483,7 +511,7 @@ _Sling Rocket_ is a custom build of the https://sling.apache.org/[Apache Sling,w
 Public building and publication of new versions of _Sling Rocket_ is driven by GitHub workflows defined at `.github/workflows` directory. It consists of two following steps:
 [upperalpha]
 . Build and publish the SR Parent POM and subordinate artifacts in the Maven Central Repository via running the `.github/workflows/release-maven-artifacts.yaml` workflow.
-. Build and publish the SR Instance image and SR Nginx image in Docker Hub via running the `.github/workflows/release-docker-images.yaml` workflow.
+. Build and publish the SR Instance image, SR Nginx image, and SR ClamAV image in Docker Hub via running the `.github/workflows/release-docker-images.yaml` workflow.
 
 ==== Local
 Local builds of _Sling Rocket_ consist of two following steps:
@@ -678,6 +706,9 @@ Analyze the performance of the web pages with the https://github.com/GoogleChrom
 . *JCR Version Cleanup*
 +
 Configure the JCR version cleanup with `org.apache.sling.jcr.maintenance.internal.VersionCleanupPath`.
+. *SR ClamAV Memory Sizing*
++
+The SR ClamAV holds the full virus definitions database in RAM, which results in a memory footprint of several gigabytes. Size the host machine accordingly. The `ConcurrentDatabaseReload no` setting baked into the image keeps the additional memory spike during definition reloads down.
 . *Security Tests*
 [upperroman]
 .. *Zed Attack Proxy (ZAP) Tests*

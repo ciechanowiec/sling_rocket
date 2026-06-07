@@ -7,14 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 _Sling Rocket_ is a custom build of [Apache Sling](https://sling.apache.org/) distributed in two forms:
 
 1. **SR Parent POM** (`eu.ciechanowiec:sling.rocket.parent`) — published to Maven Central. Business applications inherit from it to get the exact dependency/configuration set of the matching SR Instance.
-2. **Docker images** (`ciechanowiec/rocket-base`, `ciechanowiec/rocket-instance`, `ciechanowiec/rocket-nginx`) — published to Docker Hub.
+2. **Docker images** (`ciechanowiec/rocket-base`, `ciechanowiec/rocket-instance`, `ciechanowiec/rocket-nginx`, `ciechanowiec/rocket-clamav`) — published to Docker Hub.
 
 The Parent POM version and the SR Instance image tag **must match** within a deployment (currently `26.0.0-SNAPSHOT`). The persistence layer is Apache Jackrabbit Oak (Segment Node Store, JCR).
 
 ## Repository layout
 
 - `docker-compose.yml` (repo root) — public deployment template; pulls prebuilt images.
-- `src/docker-compose.yml` — internal build composition; builds the three images locally with `docker buildx`.
+- `src/docker-compose.yml` — internal build composition; builds the four images locally with `docker buildx`.
 - `src/1_rocket-base/` — `eclipse-temurin:25-jdk` + shared apt setup (`commons/apt-installer.sh`).
 - `src/2_rocket-instance/`
   - `Dockerfile` — copies the assembled OSGi feature archive (`*-oak_tar.far`) plus starter/installer scripts onto `rocket-base`.
@@ -23,6 +23,7 @@ The Parent POM version and the SR Instance image tag **must match** within a dep
   - `maven-project/` — the Java codebase (see below).
 - `src/3_rocket-nginx/` — Nginx reverse proxy with ModSecurity (rules enabled), OWASP CRS, Ultimate Bad Bot Blocker, daily certbot renewal cron, logrotate.
 - `src/4_rocket-sync/rocket-sync.sh` — local→remote JCR content sync via Composum Package Manager (see "Working with rocket-sync" below).
+- `src/5_rocket-clamav/` — ClamAV antivirus daemon (pinned `clamav/clamav` Debian variant + baked-in `clamd.conf` tuning). Reachable only by `rocket-instance` via the dedicated `rocket-clamav-network` (no published ports); the network is deliberately not `internal` so freshclam can update virus definitions. `rocket-clamav-starter.sh` installs runtime-mounted custom CA certs before exec'ing the stock `/init` (same pattern as the other images).
 - `.github/workflows/release-maven-artifacts.yaml` — `mvn deploy -P release` to Maven Central.
 - `.github/workflows/release-docker-images.yaml` — multi-arch (`linux/amd64,linux/arm64`) `docker buildx bake` to Docker Hub.
 - `README.adoc` — authoritative docs; lints with Vale.
@@ -91,11 +92,12 @@ The bundle install profile uses `<sling.host>`/`<sling.port>`/`<sling.user>`/`<s
 
 ## Architecture notes
 
-- **Three-container production stack** (see `docker-compose.yml`): `rocket-instance` (OSGi container, ports 8080 HTTP / 8081 JDWP) ← `rocket-nginx` (80/443, ModSecurity WAF) → outside world, with `rocket-backuper` (offen/docker-volume-backup) as a sidecar driven by `BACKUP_CRON_EXPRESSION`.
-- **Three named volumes**:
+- **Four-container production stack** (see `docker-compose.yml`): `rocket-instance` (OSGi container, ports 8080 HTTP / 8081 JDWP) ← `rocket-nginx` (80/443, ModSecurity WAF) → outside world, with `rocket-backuper` (offen/docker-volume-backup) as a sidecar driven by `BACKUP_CRON_EXPRESSION`, and `rocket-clamav` (clamd on TCP 3310) reachable only by `rocket-instance` over the dedicated `rocket-clamav-network`.
+- **Four named volumes**:
   - `rocket-data-raw` → `/opt/sling/launcher/repository/segmentstore` (live Oak segments — *the* database; must be persisted across upgrades).
   - `rocket-data-dump` → `/var/rocket-data-dump` — populated by `dump-rocket-data.sh` (an `oak-run backup` + `oak-run export`) which the backuper triggers via `archive-pre`. The instance container's `stop_grace_period` is 300s so the JCR closes cleanly.
   - `rocket-instance-logs` → `/opt/sling/launcher/logs`.
+  - `rocket-clamav-data` → `/var/lib/clamav` (virus definitions — persisted across restarts but deliberately *not* backed up; re-downloadable).
 - **Run modes** are comma-separated via the `RUN_MODES` env var. **Multi-version support** is opt-in via `ENABLE_MULTI_VERSION_SUPPORT`. **Debug** is enabled when `JAVA_DEBUG_PORT` is set.
 - **Default credentials are admin/admin**; production deployments must change them and follow the README's "Production Deployments" checklist (referrer filter, request size limits, `client_max_body_size`, ZAP/Nuclei scans, etc.).
 

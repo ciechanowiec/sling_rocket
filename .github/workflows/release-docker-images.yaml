@@ -64,3 +64,11 @@ jobs:
             --set '*.platform=linux/amd64,linux/arm64' \
             --push \
             rocket-nginx
+      - name: Deploy `rocket-clamav` image
+        working-directory: src
+        run: |
+          docker buildx bake \
+            --file docker-compose.yml \
+            --set '*.platform=linux/amd64,linux/arm64' \
+            --push \
+            rocket-clamav

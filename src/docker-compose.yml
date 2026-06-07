@@ -55,6 +55,7 @@ services:
     hostname: rocket-instance
     networks:
       - rocket-network
+      - rocket-clamav-network
     ports:
       - target: 8080
         host_ip: 127.0.0.1
@@ -68,6 +69,20 @@ services:
       - "docker-volume-backup.stop-during-backup=false"
     depends_on:
       - rocket-base
+
+  rocket-clamav:
+    build:
+      context: .
+      dockerfile: 5_rocket-clamav/Dockerfile
+    image: ciechanowiec/rocket-clamav:${ROCKET_FEATURE_ARTIFACT_VERSION}
+    container_name: rocket-clamav
+    volumes:
+      - type: volume
+        source: rocket-clamav-data
+        target: /var/lib/clamav
+    hostname: rocket-clamav
+    networks:
+      - rocket-clamav-network
 
   rocket-nginx:
     build:
@@ -99,6 +114,8 @@ volumes:
     name: "rocket-data-dump"
   rocket-instance-logs:
     name: "rocket-instance-logs"
+  rocket-clamav-data:
+    name: "rocket-clamav-data"
 
 networks:
   rocket-network:
@@ -109,3 +126,14 @@ networks:
       config:
         - subnet: 172.28.0.0/16
           gateway: 172.28.0.1
+  # A dedicated network that makes the SR ClamAV reachable only by the SR Instance.
+  # The network is deliberately not `internal`, because freshclam needs internet
+  # egress for virus definition updates:
+  rocket-clamav-network:
+    driver: bridge
+    # This name is required to avoid name prefixing by Docker:
+    name: rocket-clamav-network
+    ipam:
+      config:
+        - subnet: 172.29.0.0/16
+          gateway: 172.29.0.1
