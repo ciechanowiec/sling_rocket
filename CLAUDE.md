@@ -58,6 +58,14 @@ The parent POM defines the canonical version/dependency set the SR Instance runs
 - **Comment-block section headers must be mirrored between the POM `<properties>` and `<dependencyManagement>`.** Both use the same `<!-- ===== / NAME / ===== -->` banners (e.g. `FELIX`, `FELIX_HEALTHCHECK`) in the same order. When you add a new section to one, add the identically-named banner to the other in the corresponding position.
 - **A POM comment-block section maps 1:1 to a feature JSON file — and a section/file is created only for a group of 5+ bundles.** A group of 5+ bundles gets its own POM banner _and_ its own file under `feature/src/main/features/`, named after the section in lowercase (`FELIX` → `felix.json`, `FELIX_HEALTHCHECK` → `felix_healthcheck.json`, `LIBS_ASM` → `libs_asm.json`). A smaller group (fewer than 5 bundles) gets **neither** — it is folded into the most closely related existing section: its `<properties>`/`<dependencyManagement>` entries go under that section's banner (no banner of its own) and its bundles go into that section's feature file. Example: the two `jetty-compression-*` bundles live under the `FELIX` banner in the POM and inside `felix.json`, because they support `org.apache.felix.http.jetty12`. Never give a sub-5 group its own comment block, since a separate banner falsely implies a separate feature file. Files are auto-aggregated via `<filesInclude>*.json</filesInclude>`, so no registration is needed.
 
+### Javadoc conventions
+
+- **Every public member gets full javadoc** (class, method, `@param`, `@return`) — Checkstyle enforces presence, but the conventions below go beyond what it can check.
+- **Refer to concepts via `{@link}`, never via plain prose, whenever the concept exists as a type or member.** If a sentence mentions something that has a corresponding Java type/method in this codebase or the JDK, reference it with `{@link ...}` instead of naming it in words — including in the very first sentence of a class javadoc. Example: write `{@link RocketStats} on the antivirus engine used by a {@link VirusScanner}.`, not `Statistics on the antivirus engine used by a VirusScanner.` (the word "Statistics" *is* the `RocketStats` concept, so it must be the link).
+- **Repeat the link on every mention**, not just the first one — there is no "link only the first occurrence" rule in this codebase (see `llm/LLM.java` or `asset/Asset.java` for the expected density).
+- Use `{@code ...}` only for things that are *not* resolvable types/members: literals, protocol commands (`{@code INSTREAM}`), property names, and example values.
+- Delegating members are documented as `Same as {@link Target#member()}.` (see `LLM#contextWindowSize()`).
+
 ## Common commands
 
 Run all Maven commands from `src/2_rocket-instance/maven-project/`.
