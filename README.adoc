@@ -442,6 +442,21 @@ volumes:
 . *Virus Definitions*
 +
 Virus definitions are stored in the `/var/lib/clamav` directory inside the container, which is extracted into the `rocket-clamav-data` volume, so that the definitions persist across container restarts. That volume is deliberately not backed up by the SR Backuper, because the definitions are re-downloadable and would bloat the backup archives.
+. *Java API*
++
+Business applications scan content against the SR ClamAV through the `VirusScanner` OSGi service from the `eu.ciechanowiec.sling.rocket.clamav` package published by the SR Instance. By default, the service points to `rocket-clamav:3310`, so it's fully functional without any explicit configuration. No method of the service ever throws: every scan produces one of three explicit results, so that a scanner failure can't be confused with clean content:
++
+[source,java]
+....
+@Reference
+private VirusScanner virusScanner;
+// ...
+switch (virusScanner.scan(inputStream)) {
+    case Clean clean -> allow();
+    case Infected infected -> reject(infected.signatureName());
+    case Failed failed -> handleScannerFailure(failed.details());
+}
+....
 
 [[custom-ca-certificates]]
 === Custom CA Certificates

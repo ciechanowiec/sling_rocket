@@ -34,7 +34,7 @@ Java 25, packaging is OSGi-bundle-per-module aggregated into a single Sling Feat
 
 | Module              | Packaging | Role                                                                                       |
 | ------------------- | --------- | ------------------------------------------------------------------------------------------ |
-| `engine`            | jar       | The actual Java code (OSGi bundle). Domain packages: `asset`, `auth`, `calendar`, `commons`, `favicon`, `google`, `identity`, `jcr`, `job`, `llm`, `mail`, `network`, `observation`, `privilege`, `test`, `unit` |
+| `engine`            | jar       | The actual Java code (OSGi bundle). Domain packages: `asset`, `auth`, `calendar`, `clamav`, `commons`, `favicon`, `google`, `identity`, `jcr`, `job`, `llm`, `mail`, `network`, `observation`, `privilege`, `test`, `unit` |
 | `feature`           | pom       | Aggregates all OSGi bundles + repoinit + configs into `*-oak_tar.far` via `slingfeature-maven-plugin`. Also writes `JACKRABBIT_OAK_VERSION` for the installer to consume. Source feature JSONs live in `feature/src/main/features/`. |
 | `login-form`        | jar       | Static login form resources.                                                               |
 | `oak-auth-external` | jar       | OSGi **fragment** (shaded with `Fragment-Host: org.apache.jackrabbit.oak-auth-external`) that re-exports the `...impl.jmx` package. |
