@@ -57,50 +57,7 @@ Reverse proxy Nginx server that serves as a gateway between the SR Instance and 
 +
 https://www.clamav.net/[ClamAV^] antivirus engine that scans content for the SR Instance. It listens on the clamd protocol (TCP port `3310`) and is reachable exclusively by the SR Instance over a dedicated isolated network.
 
-image::docs/img/sling-rocket-components-diagram.svg[]
-
-.Raw diagram
-[%collapsible]
-====
-[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-components-diagram, format=svg, opts=inline]
-....
-                                                                /--------------\
-                                                                |              |
-                                                                | SR Parent POM|
-                                                                |   c68F       |
-                                                                \-------+------/
-                                                                        |
-                                                                        |defines SR Instance
-                                                                        |
-                                                                        v
-+-------------------+          +-------------------+          +---------+---------+          +-------------------+
-|                   |   HTTP   |                   |   HTTP   |                   |  clamd   |                   |
-|   Outside world   +<-------->|      SR Nginx     +<-------->|    SR Instance    +<-------->|     SR ClamAV     |
-|{io}               |          |c1FF               |          | cGRE              | TCP 3310 |cYEL               |
-+-------------------+          +-------------------+          | +---------------+ |          +-------------------+
-                                                              | |               | |
-                                                              | |    database   | |
-                                                              | |{s} cPNK       | |
-                                                              +-+-------+-------+-+
-                                                                        |
-                                                                        |
-                                                                        v
-                                                                +---------------+
-                                                                |               |
-                                                                |  SR Backuper  |
-                                                                |cDAF           |
-                                                                +-------+-------+
-                                                                        |
-                                                                        |backups the database and logs
-                                                                        v
-                                                                +---------------+
-                                                                :               |
-                                                                |database & logs|
-                                                                |     backup    |
-                                                                |{s}cPNK        |
-                                                                +---------------+
-....
-====
+image::docs/img/sling-rocket-components-diagram.drawio.png[]
 
 === Business Applications Development Flow
 The development of business applications for _Sling Rocket_ has this flow:
@@ -115,40 +72,7 @@ As a template for the business application https://github.com/ciechanowiec/slexa
 . The SR Parent POM will provide the business application with all dependencies and configurations available in the targeted SR Instance. In other words, the SR Parent POM will give the business application the environment in which it will run, as the SR Instance itself was built using the same SR Parent POM.
 . The business application can override the default application components of the targeted SR Instance.
 
-image::docs/img/sling-rocket-architecture-diagram.svg[]
-
-.Raw diagram
-[%collapsible]
-====
-[ditaa, shadows=false, separation=false, target=docs/img/sling-rocket-architecture-diagram, format=svg, opts=inline]
-....
-                                           /--------------\
-                                           |              |
-                                           | SR Parent POM|
-                                           |   c68F       |
-                                           \-------+------/
-                                                   |
-                   +-------------------------------+--------------------------------+
-                   |                               |                                |
-                   v                               |                                v
-      +------------------------+                   |                    +------------------------+
-      :                        |                   |                    :                        |
-      |   business application |                   |                    |   business application |
-      |          "UNO"         |                   |                    |          "DUO"         |
-      |                        |                   |                    |                        |
-      +------------+-----------+                   |                    +-----------+------------+
-                   |                               v                                |
-                   |                     +-------------------+                      |
-                   |                     |                   |                      |
-                   +-------------------->|    SR Instance    |<---------------------+
-                       is deployed       | cGRE              |      is deployed
-                     into SR Instance    | +---------------+ |    into SR Instance
-                                         | |               | |
-                                         | |    database   | |
-                                         | |{s} cPNK       | |
-                                         +-+---------------+-+
-....
-====
+image::docs/img/sling-rocket-architecture-diagram.drawio.png[]
 
 == Usage
 [[docker-compose]]
