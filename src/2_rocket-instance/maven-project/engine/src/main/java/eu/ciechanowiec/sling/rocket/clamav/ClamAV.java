@@ -161,9 +161,9 @@ public class ClamAV implements VirusScanner, RocketStats {
 
     private ScanResult register(ScanResult scanResult) {
         switch (scanResult) {
-            case Clean ignored -> cleanScans.increment();
-            case Infected ignored -> infectedScans.increment();
-            case Failed ignored -> failedScans.increment();
+            case Clean _ -> cleanScans.increment();
+            case Infected _ -> infectedScans.increment();
+            case Failed _ -> failedScans.increment();
         }
         log.trace("{} produced this scan result: {}", this, scanResult.summary());
         return scanResult;
