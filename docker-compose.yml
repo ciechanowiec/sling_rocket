@@ -11,7 +11,7 @@ services:
       # Leave the debug port empty to disable debugging mode:
       JAVA_DEBUG_PORT: 8081
       EXTRA_JAVA_OPTS:
-    image: ciechanowiec/rocket-instance:26.0.0-SNAPSHOT
+    image: ciechanowiec/rocket-instance:26.0.0
     container_name: rocket-instance
     volumes:
       - type: volume
@@ -87,7 +87,7 @@ services:
       - rocket-instance
 
   rocket-clamav:
-    image: ciechanowiec/rocket-clamav:26.0.0-SNAPSHOT
+    image: ciechanowiec/rocket-clamav:26.0.0
     container_name: rocket-clamav
     volumes:
       - type: volume
@@ -114,7 +114,7 @@ services:
       DOMAIN: ciechanowiec.hopto.org
       EMAIL: herman@ciechanowiec.eu
       IS_STAGING_ENV: true
-    image: ciechanowiec/rocket-nginx:26.0.0-SNAPSHOT
+    image: ciechanowiec/rocket-nginx:26.0.0
     container_name: rocket-nginx
     # Uncomment to trust custom CA certificates, e.g. of a TLS-intercepting proxy
     # (see the 'Custom CA Certificates' section of the README):
